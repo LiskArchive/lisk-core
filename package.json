@@ -1,0 +1,24 @@
+{
+  "name": "lisk-core-qa-external",
+  "version": "0.0.1",
+  "description": "Lisk core quality assurance",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LiskHQ/lisk-core-qa-external.git"
+  },
+  "keywords": [
+    "qa",
+    "bdd",
+    "cucumber"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LiskHQ/lisk-core-qa-external/issues"
+  },
+  "homepage": "https://github.com/LiskHQ/lisk-core-qa-external#readme"
+}
