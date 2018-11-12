@@ -1,5 +1,12 @@
+# Build
+build/
+
 # Dependency directory
 node_modules/
 
 # IDE
 .vscode/
+
+# Reports
+reports/*.html
+reports/*.json
