@@ -1,0 +1,4 @@
+{
+    "seed": ["http://localhost:4000"],
+    "nodes": ["http://localhost:4000"]
+}
