@@ -1,0 +1,26 @@
+{
+  "output": "./output",
+  "helpers": {},
+  "include": {},
+  "mocha": {},
+  "bootstrap": false,
+  "teardown": null,
+  "hooks": [],
+  "gherkin": {
+    "features": "./features/**/*.feature",
+    "steps": [
+      "./step_definitions/node/status.js"
+    ]
+  },
+  "plugins": {
+    "screenshotOnFail": {
+      "enabled": true
+    },
+    "allure": {
+      "enabled": true
+    }
+  },
+  "tests": "",
+  "timeout": 10000,
+  "name": "lisk-core-qa-external"
+}

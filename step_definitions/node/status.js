@@ -1,8 +1,7 @@
-import * as Promise from 'bluebird';
-import { expect } from "chai";
-import { Given, When, Then } from "cucumber";
-import { api } from "../../domains";
-import { config } from '../../fixtures/index';
+const Promise = require('bluebird');
+const { expect } = require('chai');
+const { api } = require('../../domains');
+const { config } = require('../../fixtures/index');
 
 Given("I have the valid address", async function() {
     this.address = config.config().seed;
@@ -13,7 +12,7 @@ Given("I have a list of valid address", async function() {
 });
 
 When("I make a get request", async function() {
-    this.results = await Promise.all(this.address.map(async (nodeAddress): Promise<string> => {
+    this.results = await Promise.all(this.address.map(async (nodeAddress) => {
         return await api.getNodeStatus(nodeAddress);
     }));
 });
