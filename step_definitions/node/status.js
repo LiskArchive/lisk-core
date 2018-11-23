@@ -1,40 +1,17 @@
 const Promise = require('bluebird');
-const { expect } = require('chai');
-const { api } = require('../../domains');
-const { config } = require('../../fixtures/index');
 
-Given("I have the valid address", async function() {
-    this.address = config.config().seed;
+const { lisk_schema, expect, apiHelper, networkConfig } = global.context;
+const { api_spec: { definitions: { NodeStatusResponse, NodeStatus } } } = lisk_schema;
+const addresses = [networkConfig.seed, networkConfig.nodes];
+
+NodeStatusResponse.properties.data = NodeStatus;
+
+When("I request for node status", async () => {
+    this.results = await Promise.all(addresses.map(async address => await apiHelper.getNodeStatus(address)));
 });
 
-Given("I have a list of valid address", async function() {
-    this.address = config.config().nodes;
-});
-
-When("I make a get request", async function() {
-    this.results = await Promise.all(this.address.map(async (nodeAddress) => {
-        return await api.getNodeStatus(nodeAddress);
-    }));
-});
-
-Then("I should get node status",  async function() {
-    this.results.forEach(res => {
-        expect(res).to.have.all.keys("meta", "data", "links");
-        expect(res.data).to.have.all.keys("broadhash",
-            "consensus",
-            "currentTime",
-            "secondsSinceEpoch",
-            "height",
-            "loaded",
-            "networkHeight",
-            "syncing",
-            "transactions",
-        );
-        expect(res.data.transactions).to.have.all.keys("confirmed",
-        "unconfirmed",
-        "unprocessed",
-        "unsigned",
-        "total",
-        );
+Then("I should get node status", async () => {
+    await this.results.forEach(res => {
+        expect(res).to.be.jsonSchema(NodeStatusResponse);
     });
 });
