@@ -11,4 +11,4 @@ Given("I have list of clients", function() {
         expect(this.addresses).that.includes(helperClient.address);
         expect(helperClient.client).to.be.an.instanceof(APIClient);
     });
-})
+});

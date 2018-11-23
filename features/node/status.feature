@@ -9,4 +9,7 @@ Feature: Node status
 
    Scenario: nodes status
       When I request for node status
-      Then I should get node status
+      Then I have the status from all the nodes
+      And consensus should be above 50%
+      And networkHeight should be greater than or equal to height
+
