@@ -9,7 +9,7 @@ class APIHelper {
         this.nodes = nodes;
 
         const apiClients = () => {
-            const addresses = [this.seed, this.nodes];
+            const addresses = [...this.seed, ...this.nodes];
             return addresses.map(address => {
                 const client = new elements.APIClient([address]);
                 return {

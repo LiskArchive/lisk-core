@@ -6,8 +6,7 @@ Feature: Enable Disable Forging
   I want to check if enable and disable feature works
 
   Background: Running node
-    Given I have list of addresses
-    And The node is running
+    Given I have list of clients
 
   Scenario: Enable forging
     Given The node is not forging

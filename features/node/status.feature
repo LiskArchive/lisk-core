@@ -5,8 +5,7 @@ Feature: Node status
    I want to check status of the node
 
    Background: Running node
-      Given I have list of addresses
-      And The node is running
+      Given I have list of clients
 
    Scenario: nodes status
       When I request for node status

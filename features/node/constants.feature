@@ -6,8 +6,7 @@ Feature: Node constants
   I want to verify the node constants
 
   Background: Running node
-    Given I have list of addresses
-    And The node is running
+    Given I have list of clients
 
   Scenario: validate node constants
     When I request for node constants

@@ -6,7 +6,7 @@ Feature: Create Lisk Account
   I want to create lisk account
 
   Scenario Outline: Create account
-    Given The node is running
+    Given I have list of clients
     When "<user>" create a lisk account
     Then has a balance "<balance>"LSK in the account
     Examples:

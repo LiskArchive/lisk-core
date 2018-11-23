@@ -5,7 +5,7 @@ Feature: Node transaction pool
 	As a user I should be able to search for specific transactions by providing the appropriate parameters.
 
 	Scenario Outline: Create account
-		Given The node is running
+		Given I have list of clients
 		When "<user>" create a lisk account
 		Then has a balance "<balance>"LSK in the account
 		Examples:
