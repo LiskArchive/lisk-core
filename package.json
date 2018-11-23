@@ -6,6 +6,7 @@
   "scripts": {
     "test": "npm-run-all features",
     "features": "./node_modules/.bin/codeceptjs run --features",
+    "snippets": "./node_modules/.bin/codeceptjs gherkin:snippets",
     "tests": "./node_modules/.bin/codeceptjs run --tests",
     "new_test": "./node_modules/.bin/codeceptjs gt",
     "report": "allure serve output"

@@ -7,11 +7,12 @@ Feature: Create Lisk Account
 
   Scenario Outline: Create account
     Given I have list of clients
+    Given The node is forging
     When "<user>" create a lisk account
-    Then has a balance "<balance>"LSK in the account
+    And has a balance "<amount>"LSK in the account
     Examples:
-      | user    | balance |
-      | jon     | 25      |
-      | amar    | 25      |
-      | akbar   | 25      |
-      | anthony | 25      |
+      | user    | amount |
+      | jon     | 25     |
+      | amar    | 25     |
+      | akbar   | 25     |
+      | anthony | 25     |

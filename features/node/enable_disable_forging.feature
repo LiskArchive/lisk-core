@@ -5,13 +5,13 @@ Feature: Enable Disable Forging
   As a Delegate
   I want to check if enable and disable feature works
 
-  Background: Running node
+  Background: Client list
     Given I have list of clients
 
   Scenario: Enable forging
     Given The node is not forging
     When I enable forging
-    Then The node should be enabled to forge
+    Then The node should forge
 
   Scenario: Disable forging
     Given The node is forging

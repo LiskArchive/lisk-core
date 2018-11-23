@@ -4,7 +4,7 @@ Feature: Node status
    As a user
    I want to check status of the node
 
-   Background: Running node
+   Background: Client list
       Given I have list of clients
 
    Scenario: nodes status
