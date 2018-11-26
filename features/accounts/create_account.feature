@@ -12,7 +12,7 @@ Feature: Create Lisk Account
     And has a balance "<amount>"LSK in the account
     Examples:
       | user    | amount |
-      | jon     | 25     |
-      | amar    | 25     |
-      | akbar   | 25     |
-      | anthony | 25     |
+      | sheldon | 1000   |
+      | raj     | 1000   |
+      | lenard  | 1000   |
+      | howard  | 1000   |

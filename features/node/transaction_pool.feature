@@ -11,10 +11,10 @@ Feature: Node transaction pool
 		And has a balance "<amount>"LSK in the account
 		Examples:
 			| user    | amount |
-			| jon     | 25     |
-			| amar    | 25     |
-			| akbar   | 25     |
-			| anthony | 25     |
+			| sheldon | 25     |
+			| raj     | 25     |
+			| lenard  | 25     |
+			| howard  | 25     |
 
 	Scenario: Unprocessed transactions
 		Given I sent "100" transactions of different types to network
