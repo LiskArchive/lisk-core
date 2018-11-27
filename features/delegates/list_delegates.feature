@@ -39,7 +39,7 @@ Feature: List Delegates
     Then I should get forging delegate statistics
 
     Examples:
-      | params        | values |
-      | address       |        |
-      | fromTimestamp |        |
-      | toTimestamp   |        |
+      | params        |
+      | address       |
+      | fromTimestamp |
+      | toTimestamp   |
