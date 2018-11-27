@@ -7,7 +7,7 @@ Feature: Transfer LSK
 
   Scenario: Transfer token to another account
     Given I have a lisk account
-    And I have minimum balance in my account for transfer
+    And I have minimum balance in my account for transaction "<send>"
       """
       "fees": {
       "send": "10000000",
@@ -15,16 +15,14 @@ Feature: Transfer LSK
       "secondSignature": "500000000",
       "delegate": "2500000000",
       "multisignature": "500000000",
-      "dappRegistration": "2500000000",
-      "dappWithdrawal": "10000000",
-      "dappDeposit": "10000000"
+      "dappRegistration": "2500000000"
       }
       """
     Then I should be able to send tokens to other account
 
   Scenario: Transfer token to self
     Given I have a lisk account
-    And I have minimum balance in my account for transfer
+    And I have minimum balance in my account for transaction "<send>"
       """
       "fees": {
       "send": "10000000",
@@ -32,9 +30,7 @@ Feature: Transfer LSK
       "secondSignature": "500000000",
       "delegate": "2500000000",
       "multisignature": "500000000",
-      "dappRegistration": "2500000000",
-      "dappWithdrawal": "10000000",
-      "dappDeposit": "10000000"
+      "dappRegistration": "2500000000"
       }
       """
     Then I should be able to transfer token to myself

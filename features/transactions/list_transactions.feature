@@ -13,24 +13,24 @@ Feature: List Transactions
 
   Scenario Outline: List transactions with params
     Given The network is moving
-    When I request for transactions with "<params>"  and "<sort>" field
+    When I request for transactions with "<params>"
     Then I should get transactions according to params
 
     Examples:
-      | params                | values                                                                                         |
-      | id                    |                                                                                                |
-      | recipientId           |                                                                                                |
-      | recipientPublicKey    |                                                                                                |
-      | senderId              |                                                                                                |
-      | senderPublicKey       |                                                                                                |
-      | senderIdOrRecipientId |                                                                                                |
-      | type                  |                                                                                                |
-      | height                |                                                                                                |
-      | minAmount             |                                                                                                |
-      | maxAmount             |                                                                                                |
-      | fromTimestamp         |                                                                                                |
-      | toTimestamp           |                                                                                                |
-      | blockId               |                                                                                                |
-      | limit                 |                                                                                                |
-      | offset                |                                                                                                |
-      | sort                  | amount:asc, amount:desc, fee:asc, fee:desc, type:asc, type:desc, timestamp:asc, timestamp:desc |
+      | params                                                                                              |
+      | id                                                                                                  |
+      | recipientId                                                                                         |
+      | recipientPublicKey                                                                                  |
+      | senderId                                                                                            |
+      | senderPublicKey                                                                                     |
+      | senderIdOrRecipientId                                                                               |
+      | type                                                                                                |
+      | height                                                                                              |
+      | minAmount                                                                                           |
+      | maxAmount                                                                                           |
+      | fromTimestamp                                                                                       |
+      | toTimestamp                                                                                         |
+      | blockId                                                                                             |
+      | limit                                                                                               |
+      | offset                                                                                              |
+      | sort=amount:asc, amount:desc, fee:asc, fee:desc, type:asc, type:desc, timestamp:asc, timestamp:desc |

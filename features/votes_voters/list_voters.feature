@@ -8,15 +8,15 @@ Feature: List Voters
 
   Scenario Outline: List voters with params
     Given The network is moving
-    When I request for voters with "<params>" and "<sort>" field
+    When I request for voters with "<params>"
     Then I should get voters according to params
 
     Examples:
-      | params          | values                                                 |
-      | address         |                                                        |
-      | username        |                                                        |
-      | publicKey       |                                                        |
-      | secondPublicKey |                                                        |
-      | offset          |                                                        |
-      | limit           |                                                        |
-      | sort            | username:asc, username:desc, balance:asc, balance:desc |
+      | params                                                      |
+      | address                                                     |
+      | username                                                    |
+      | publicKey                                                   |
+      | secondPublicKey                                             |
+      | offset                                                      |
+      | limit                                                       |
+      | sort=username:asc, username:desc, balance:asc, balance:desc |

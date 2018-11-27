@@ -1,24 +1,32 @@
-@smoke @fast
+
 Feature: Node transaction pool
 
 	By specifying the state of the transaction, I get a list of unprocessed, unconfiremed and unsigned transactions.
 	As a user I should be able to search for specific transactions by providing the appropriate parameters.
 
-	Scenario Outline: Create account
+	Background: Client list
 		Given I have list of clients
 		Given The node is forging
-		When "<user>" create a lisk account
-		And has a balance "<amount>"LSK in the account
+		Given The network is moving
+
+	Scenario Outline: Unprocessed, Unconfirmed and Unsigned transactions
+		Given I have a lisk account
+		And I have minimum balance in my account for transaction "all"
+			"""
+			"fees": {
+			"send": "10000000",
+			"vote": "100000000",
+			"secondSignature": "500000000",
+			"delegate": "2500000000",
+			"multisignature": "500000000",
+			"dappRegistration": "2500000000"
+			}
+			"""
+		When I send "all types" transaction to network
+		And I request for transaction with "<params>"
+		Then I should get list of transactions in Unprocessed, Unconfirmed and Unsigned state
+
 		Examples:
-			| user    | amount |
-			| sheldon | 25     |
-			| raj     | 25     |
-			| lenard  | 25     |
-			| howard  | 25     |
-
-	Scenario: Unprocessed transactions
-		Given I sent "100" transactions of different types to network
-		When I request for transaction with parameters
 			| params          |
 			| id              |
 			| recipientId     |
@@ -28,32 +36,3 @@ Feature: Node transaction pool
 			| limit           |
 			| offset          |
 			| sort            |
-		Then I should get the unprocessed transaction
-
-	Scenario: Unconfirmed transactions
-		Given I sent "100" transactions of different types to network
-		When I request for transaction with parameters
-			| params          |
-			| id              |
-			| recipientId     |
-			| senderId        |
-			| senderPublicKey |
-			| type            |
-			| limit           |
-			| offset          |
-			| sort            |
-		Then I should get the unconfiremed transaction
-
-	Scenario: Unsigned transactions
-		Given I sent "100" transactions of different types to network
-		When I request for transaction with parameters
-			| params          |
-			| id              |
-			| recipientId     |
-			| senderId        |
-			| senderPublicKey |
-			| type            |
-			| limit           |
-			| offset          |
-			| sort            |
-		Then I should get the unconfiremed transaction

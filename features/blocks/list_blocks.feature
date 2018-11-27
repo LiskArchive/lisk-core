@@ -14,14 +14,14 @@ Feature: List blocks
 
   Scenario Outline: List blocks with params
     Given The network is moving
-    When I request for blocks with "<params>" and "<sort>" field
+    When I request for blocks with "<params>"
     Then I should get blocks according to params
 
     Examples:
-      | params             | values                                                                                                          |
-      | blockId            |                                                                                                                 |
-      | height             |                                                                                                                 |
-      | limit              |                                                                                                                 |
-      | offset             |                                                                                                                 |
-      | generatorPublicKey |                                                                                                                 |
-      | sort               | height:asc,height:desc,totalAmount:asc,totalAmount:desc,totalFee:asc,totalFee:desc,timestamp:asc,timestamp:desc |
+      | params                                                                                                               |
+      | blockId                                                                                                              |
+      | height                                                                                                               |
+      | limit                                                                                                                |
+      | offset                                                                                                               |
+      | generatorPublicKey                                                                                                   |
+      | sort=height:asc,height:desc,totalAmount:asc,totalAmount:desc,totalFee:asc,totalFee:desc,timestamp:asc,timestamp:desc |

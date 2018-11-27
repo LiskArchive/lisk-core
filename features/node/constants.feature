@@ -1,4 +1,4 @@
-@smoke @fast
+
 Feature: Node constants
 
   In order to ensure if the has correct constants
@@ -13,15 +13,13 @@ Feature: Node constants
     Then I have the constants from all the nodes
     And should have a valid epoch time
     And fees should be
-    """
-    "fees": {
+      """
+      "fees": {
       "send": "10000000",
       "vote": "100000000",
       "secondSignature": "500000000",
       "delegate": "2500000000",
       "multisignature": "500000000",
-      "dappRegistration": "2500000000",
-      "dappWithdrawal": "10000000",
-      "dappDeposit": "10000000"
-    }
-    """
+      "dappRegistration": "2500000000"
+      }
+      """

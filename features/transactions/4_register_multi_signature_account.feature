@@ -9,7 +9,7 @@ Feature: Register a multisignature account
 
   Scenario: Register multisignature account for self
     Given I have a lisk account
-    And I have minimum balance in my account for registering multisignature account
+    And I have minimum balance in my account for transaction "<multisignature>"
       """
       "fees": {
       "send": "10000000",
@@ -17,18 +17,14 @@ Feature: Register a multisignature account
       "secondSignature": "500000000",
       "delegate": "2500000000",
       "multisignature": "500000000",
-      "dappRegistration": "2500000000",
-      "dappWithdrawal": "10000000",
-      "dappDeposit": "10000000"
+      "dappRegistration": "2500000000"
       }
       """
-    When I register for multisignature account with "my" public key
-    Then I should have a multisignature account enabled with my public key
-
+    Then I should be able to register for multisignature account
 
   Scenario: Register multisignature account minimum keys group
     Given I have a lisk account
-    And I have minimum balance in my account for registering multisignature account
+    And I have minimum balance in my account for transaction "<multisignature>"
       """
       "fees": {
       "send": "10000000",
@@ -36,9 +32,7 @@ Feature: Register a multisignature account
       "secondSignature": "500000000",
       "delegate": "2500000000",
       "multisignature": "500000000",
-      "dappRegistration": "2500000000",
-      "dappWithdrawal": "10000000",
-      "dappDeposit": "10000000"
+      "dappRegistration": "2500000000"
       }
       """
     When I have a "minimum" users with whom I want to setup multisignature account
@@ -47,14 +41,14 @@ Feature: Register a multisignature account
       | raj     |
       | lenard  |
       | howard  |
-    Then I register for multisignature account with minimum "2" keys group
+    Then I register for multisignature account with "2" keys group
     When the user "sheldon", "raj", "lenard" and "howard" send the signature for confirmation
     Then the signature should be accepted
     And multisignature account should be created
 
   Scenario: Register multisignature account maximum keys group
     Given I have a lisk account
-    And I have minimum balance in my account for registering multisignature account
+    And I have minimum balance in my account for transaction "<multisignature>"
       """
       "fees": {
       "send": "10000000",
@@ -62,19 +56,17 @@ Feature: Register a multisignature account
       "secondSignature": "500000000",
       "delegate": "2500000000",
       "multisignature": "500000000",
-      "dappRegistration": "2500000000",
-      "dappWithdrawal": "10000000",
-      "dappDeposit": "10000000"
+      "dappRegistration": "2500000000"
       }
       """
-    When I have a "maximum" of "15" users with whom I want to setup multisignature account
-    Then I register for multisignature account with maximum "15" keys group
+    When I have a maximum of "15" users with whom I want to setup multisignature account
+    Then I register for multisignature account with "15" keys group
     When all the "15" users send the signature for confirmation
     Then the signature should be accepted
     And multisignature account should be created
 
   Scenario: Transfer tokens using my multisignature account
-    Given There is enough balance in "my" multisignature account
+    Given I have minimum balance in my account for transaction "<send>"
       """
       "fees": {
       "send": "10000000",
@@ -82,16 +74,13 @@ Feature: Register a multisignature account
       "secondSignature": "500000000",
       "delegate": "2500000000",
       "multisignature": "500000000",
-      "dappRegistration": "2500000000",
-      "dappWithdrawal": "10000000",
-      "dappDeposit": "10000000"
+      "dappRegistration": "2500000000"
       }
       """
-    When I send tranfer transaction with "my" keys
-    Then tokens should be sent to other account
+    When I should be able to send tokens to other account
 
   Scenario: Transfer tokens using minimum keys group multisignature account
-    Given There is enough balance in "minimum" multisignature account
+    Given I have minimum balance in my account for transaction "<send>"
       """
       "fees": {
       "send": "10000000",
@@ -99,16 +88,15 @@ Feature: Register a multisignature account
       "secondSignature": "500000000",
       "delegate": "2500000000",
       "multisignature": "500000000",
-      "dappRegistration": "2500000000",
-      "dappWithdrawal": "10000000",
-      "dappDeposit": "10000000"
+      "dappRegistration": "2500000000"
       }
       """
-    When I send tranfer transaction with "minimum" keys
-    Then tokens should be sent to other account
+    When I initiate a tranfer transaction with "minimum" keys group
+    And the "minimum" required users send the signatures
+    Then the multisignature tranfer with minimum keys group should be successful
 
   Scenario: Transfer tokens using maximum keys group multisignature account
-    Given There is enough balance in "maximum" multisignature account
+    Given I have minimum balance in my account for transaction "<send>"
       """
       "fees": {
       "send": "10000000",
@@ -116,10 +104,9 @@ Feature: Register a multisignature account
       "secondSignature": "500000000",
       "delegate": "2500000000",
       "multisignature": "500000000",
-      "dappRegistration": "2500000000",
-      "dappWithdrawal": "10000000",
-      "dappDeposit": "10000000"
+      "dappRegistration": "2500000000"
       }
       """
-    When I send tranfer transaction with "maximum" keys
-    Then tokens should be sent to other account
+    When I initiate a tranfer transaction with "maximum" keys group
+    And the "maximum" required users send the signatures
+    Then the multisignature tranfer with minimum keys group should be successful

@@ -7,7 +7,7 @@ Feature: Register Second Signature on account
 
   Scenario: Register second signature
     Given I have a lisk account
-    And I have minimum balance in my account for registering second signature
+    And I have minimum balance in my account for transaction "<secondSignature>"
       """
       "fees": {
       "send": "10000000",
@@ -15,17 +15,15 @@ Feature: Register Second Signature on account
       "secondSignature": "500000000",
       "delegate": "2500000000",
       "multisignature": "500000000",
-      "dappRegistration": "2500000000",
-      "dappWithdrawal": "10000000",
-      "dappDeposit": "10000000"
+      "dappRegistration": "2500000000"
       }
       """
     When I register for second signature on my account
-    Then my account should be enabled with second signature
+    Then I have a account with second signature enabled
 
   Scenario: Transfer token to another account with second signature enabled
     Given I have a account with second signature enabled
-    And I have minimum balance in my account for transfer
+    And I have minimum balance in my account for transaction "<send>"
       """
       "fees": {
       "send": "10000000",
@@ -33,9 +31,7 @@ Feature: Register Second Signature on account
       "secondSignature": "500000000",
       "delegate": "2500000000",
       "multisignature": "500000000",
-      "dappRegistration": "2500000000",
-      "dappWithdrawal": "10000000",
-      "dappDeposit": "10000000"
+      "dappRegistration": "2500000000"
       }
       """
     When I transfer token to another account using second signature
@@ -43,7 +39,7 @@ Feature: Register Second Signature on account
 
   Scenario: Transfer token to self with second signature enabled
     Given I have a account with second signature enabled
-    And I have minimum balance in my account for transfer
+    And I have minimum balance in my account for transaction "<send>"
       """
       "fees": {
       "send": "10000000",
@@ -51,9 +47,7 @@ Feature: Register Second Signature on account
       "secondSignature": "500000000",
       "delegate": "2500000000",
       "multisignature": "500000000",
-      "dappRegistration": "2500000000",
-      "dappWithdrawal": "10000000",
-      "dappDeposit": "10000000"
+      "dappRegistration": "2500000000"
       }
       """
     When I transfer token to self using second signature

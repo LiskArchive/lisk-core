@@ -1,4 +1,4 @@
-@smoke @fast
+
 Feature: Node status
    In order to ensure if the node is running
    As a user

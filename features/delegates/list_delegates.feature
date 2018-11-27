@@ -8,19 +8,19 @@ Feature: List Delegates
 
   Scenario Outline: List delegates with params
     Given The network is moving
-    When I request for delegates list with "<params>" and "<sort>" field
+    When I request for delegates list with "<params>"
     Then I should get delegates according to params
 
     Examples:
-      | params          | values                                                                                                                                                              |
-      | address         |                                                                                                                                                                     |
-      | username        |                                                                                                                                                                     |
-      | publicKey       |                                                                                                                                                                     |
-      | secondPublicKey |                                                                                                                                                                     |
-      | search          |                                                                                                                                                                     |
-      | offset          |                                                                                                                                                                     |
-      | limit           |                                                                                                                                                                     |
-      | sort            | username:asc, username:desc, rank:asc, rank:desc, productivity:asc, productivity:desc, missedBlocks:asc, missedBlocks:desc, producedBlocks:asc, producedBlocks:desc |
+      | params                                                                                                                                                                   |
+      | address                                                                                                                                                                  |
+      | username                                                                                                                                                                 |
+      | publicKey                                                                                                                                                                |
+      | secondPublicKey                                                                                                                                                          |
+      | search                                                                                                                                                                   |
+      | offset                                                                                                                                                                   |
+      | limit                                                                                                                                                                    |
+      | sort=username:asc, username:desc, rank:asc, rank:desc, productivity:asc, productivity:desc, missedBlocks:asc, missedBlocks:desc, producedBlocks:asc, producedBlocks:desc |
 
 
   Scenario Outline: List of the next forgers in this delegate round

@@ -1,4 +1,4 @@
-@smoke @fast
+
 Feature: Create Lisk Account
 
   In order to use LSK coin

@@ -9,7 +9,7 @@ Feature: Cast Vote
 
   Scenario: vote for delegate
     Given I have a lisk account
-    And I have minimum balance in my account for casting vote
+    And I have minimum balance in my account for transaction "<vote>"
       """
       "fees": {
       "send": "10000000",
@@ -17,9 +17,7 @@ Feature: Cast Vote
       "secondSignature": "500000000",
       "delegate": "2500000000",
       "multisignature": "500000000",
-      "dappRegistration": "2500000000",
-      "dappWithdrawal": "10000000",
-      "dappDeposit": "10000000"
+      "dappRegistration": "2500000000"
       }
       """
     When I cast my vote for a delegate
@@ -27,7 +25,7 @@ Feature: Cast Vote
 
   Scenario: vote for myself
     Given I have a lisk account
-    And I have minimum balance in my account for casting vote
+    And I have minimum balance in my account for transaction "<vote>"
       """
       "fees": {
       "send": "10000000",
@@ -35,11 +33,9 @@ Feature: Cast Vote
       "secondSignature": "500000000",
       "delegate": "2500000000",
       "multisignature": "500000000",
-      "dappRegistration": "2500000000",
-      "dappWithdrawal": "10000000",
-      "dappDeposit": "10000000"
+      "dappRegistration": "2500000000"
       }
       """
-    Given I have registered as a delegate
+    Given I have a account registered as delegate
     When I cast my vote for myself
     Then I should received my vote
