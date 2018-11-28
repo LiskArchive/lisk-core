@@ -9,11 +9,11 @@ class APIHelper {
         this.nodes = nodes;
 
         const apiClients = () => {
-            const addresses = [...this.seed, ...this.nodes];
-            return addresses.map(address => {
-                const client = new elements.APIClient([address]);
+            const ips = [...this.seed, ...this.nodes];
+            return ips.map(ip => {
+                const client = new elements.APIClient([ip]);
                 return {
-                    address,
+                    ip,
                     client
                 }
             })
@@ -21,24 +21,14 @@ class APIHelper {
         this.clients = apiClients();
     }
 
-    static getClientByAddress (clients, address) {
-        const result = clients.filter(client => client.address === address)[0];
+    static getClientByIp(clients, ip) {
+        const result = clients.filter(client => client.ip === ip)[0];
         if (result && result.client) {
             return result.client;
         } else {
             // Role back to seed node
-            return clients.filter(client => client.address === config.seed)[0].client;
+            return clients.filter(client => client.ip === config.seed)[0].client;
         }
-    }
-
-    async getNodeStatus(address) {
-        const client = APIHelper.getClientByAddress(this.clients, address);
-        return await client.node.getStatus();
-    }
-
-    async getNodeConstants(address) {
-        const client = APIHelper.getClientByAddress(this.clients, address);
-        return await client.node.getConstants();
     }
 
     static createAccount() {
@@ -49,13 +39,113 @@ class APIHelper {
         return {
             passphrase,
             publicKey,
-            address,
+            ip,
         }
     }
 
-    async getAccount(address) {
-        const client = APIHelper.getClientByAddress(this.clients, address);
-        return  await client.accounts.get({ address, limit: 1 });
+    async getNodeStatus(ip) {
+        const client = APIHelper.getClientByIp(this.clients, ip);
+        return await client.node.getStatus();
+    }
+
+    async getNodeConstants(ip) {
+        const client = APIHelper.getClientByIp(this.clients, ip);
+        return await client.node.getConstants();
+    }
+
+    async getForgingStatus(ip) {
+        const client = APIHelper.getClientByIp(this.clients, ip);
+        return await client.node.getForgingStatus();
+    }
+
+    async updateForgingStatus(ip, params) {
+        const client = APIHelper.getClientByIp(this.clients, ip);
+        return await client.node.updateForgingStatus(params);
+    }
+
+    async updateForgingStatus(ip, params) {
+        const client = APIHelper.getClientByIp(this.clients, ip);
+        return await client.node.updateForgingStatus(params);
+    }
+
+    async getTransactionsByState(ip, state, params) {
+        const client = APIHelper.getClientByIp(this.clients, ip);
+        return await client.node.getTransactions(state, params);
+    }
+
+    async getPeers(ip, params) {
+        const client = APIHelper.getClientByIp(this.clients, ip);
+        return await client.peers.get(params);
+    }
+
+    async getAccount(ip, params) {
+        const client = APIHelper.getClientByIp(this.clients, ip);
+        return await client.accounts.get(params);
+    }
+
+    async getMultisignatureGroup(ip, address, params) {
+        const client = APIHelper.getClientByIp(this.clients, ip);
+        return await client.accounts.getMultisignatureGroup(address, params);
+    }
+
+    async getMultisignatureMemberships(ip, address, params) {
+        const client = APIHelper.getClientByIp(this.clients, ip);
+        return await client.accounts.getMultisignatureMemberships(address, params);
+    }
+
+    async getBlocks(ip, params) {
+        const client = APIHelper.getClientByIp(this.clients, ip);
+        return await client.blocks.get(params);
+    }
+
+    async getTransactions(ip, params) {
+        const client = APIHelper.getClientByIp(this.clients, ip);
+        return await client.transactions.get(params);
+    }
+
+    async broadcastTransactions(ip, params) {
+        const client = APIHelper.getClientByIp(this.clients, ip);
+        return await client.transactions.broadcast(params);
+    }
+
+    async broadcastSignatures(ip, params) {
+        const client = APIHelper.getClientByIp(this.clients, ip);
+        return await client.signatures.broadcast(params);
+    }
+
+    async getDelegates(ip, params) {
+        const client = APIHelper.getClientByIp(this.clients, ip);
+        return await client.delegates.get(params);
+    }
+
+    async getForgers(ip, params) {
+        const client = APIHelper.getClientByIp(this.clients, ip);
+        return await client.delegates.getForgers(params);
+    }
+
+    async getForgingStatistics(ip, address, params) {
+        const client = APIHelper.getClientByIp(this.clients, ip);
+        return await client.delegates.getForgingStatistics(address, params);
+    }
+
+    async getDelegates(ip, params) {
+        const client = APIHelper.getClientByIp(this.clients, ip);
+        return await client.delegates.get(params);
+    }
+
+    async getVotes(ip, params) {
+        const client = APIHelper.getClientByIp(this.clients, ip);
+        return await client.votes.get(params);
+    }
+
+    async getVoters(ip, params) {
+        const client = APIHelper.getClientByIp(this.clients, ip);
+        return await client.voters.get(params);
+    }
+
+    async getDapp(ip, params) {
+        const client = APIHelper.getClientByIp(this.clients, ip);
+        return await client.dapps.get(params);
     }
 }
 
