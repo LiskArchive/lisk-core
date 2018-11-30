@@ -1,16 +1,13 @@
-const APIClient = require('lisk-elements').APIClient;
+const expect = require('chai').expect;
 
-const { networkConfig, expect, apiHelper } = global.context;
+const I = actor();
 
-Given('I have list of clients', function () {
-    this.addresses = [...networkConfig.seed, ...networkConfig.nodes];
-    const validAddresses = this.addresses.filter(address => typeof address !== 'string');
-    expect(validAddresses).to.be.an('array').that.is.empty;
-    expect(apiHelper.clients).to.be.an('array');
-    apiHelper.clients.forEach(helperClient => {
-        expect(this.addresses).that.includes(helperClient.address);
-        expect(helperClient.client).to.be.an.instanceof(APIClient);
-    });
+Given('I have list of clients', async function () {
+    await I.haveClientAddresses()
+        .then(addresses => {
+            const inValidAddresses = addresses.filter(address => typeof address !== 'string');
+            expect(inValidAddresses).to.be.an('array').that.is.empty;
+        });
 });
 
 Given('The node is forging', function () {
@@ -19,6 +16,24 @@ Given('The node is forging', function () {
 
 Given('The network is moving', function () {
     return 'pending';
+});
+
+Given('{int} lisk accounts exists with minimum balance', async (count) => {
+    const amount = 0.1;
+    const transfers = []
+    const api = await I.call();
+    const accounts = new Array(count).fill(0).map(() => api.createAccount());
+
+    accounts.forEach(async (account) => {
+        const trx = await I.transfer(account.address, amount)
+        transfers.push(trx);
+    });
+
+    await I.waitForBlock(count);
+
+    transfers.forEach(async ({ id, recipientId }) => {
+        await I.validateTransfer(id, recipientId, amount)
+    })
 });
 
 Given('I have a lisk account', function () {

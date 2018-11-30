@@ -5,14 +5,14 @@ Feature: Create Lisk Account
   As a user
   I want to create lisk account
 
-  Scenario Outline: Create account
+  Scenario: Create account
     Given I have list of clients
     Given The node is forging
-    When "<user>" create a lisk account
-    And has a balance "<amount>"LSK in the account
-    Examples:
-      | user    | amount |
-      | sheldon | 1000   |
-      | raj     | 1000   |
-      | lenard  | 1000   |
-      | howard  | 1000   |
+    When I create a lisk account
+      | user    |
+      | sheldon |
+      | raj     |
+      | lenard  |
+      | howard  |
+    And transfer 100LSK to all account from genesis account
+    Then Validate if 100LSK was transfered was successful

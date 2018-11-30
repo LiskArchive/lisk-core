@@ -1,6 +1,10 @@
 {
   "output": "./output",
-  "helpers": {},
+  "helpers": {
+    "LiskUtil": {
+      "require": "./support/lisk_util.js"
+    }
+  },
   "include": {},
   "mocha": {},
   "bootstrap": false,
@@ -40,6 +44,6 @@
   },
   "tests": "",
   "timeout": 10000,
-  "require": ["setup.js"],
+  "require": [],
   "name": "lisk-core-qa-external"
 }

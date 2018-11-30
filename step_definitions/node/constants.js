@@ -1,6 +1,8 @@
+const expect = require('chai').expect;
 const Promise = require('bluebird');
+const lisk_schema = require('lisk-schema');
 
-const { lisk_schema, expect, apiHelper } = global.context;
+const I = actor();
 const { api_spec: { definitions: { NodeConstantsResponse, NodeConstants, Fees } } } = lisk_schema;
 
 let results = [];
@@ -9,7 +11,10 @@ NodeConstants.properties.fees = Fees;
 NodeConstantsResponse.properties.data = NodeConstants;
 
 When('I request for node constants', async function () {
-  results = await Promise.all(this.addresses.map(async address => await apiHelper.getNodeConstants(address)));
+  const addresses = await I.haveClientAddresses();
+  const api = await I.call();
+
+  results = await Promise.all(addresses.map(async address => await api.getNodeConstants(address)));
 });
 
 Then('I have the constants from all the nodes', async function () {
