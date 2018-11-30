@@ -1,4 +1,3 @@
-const expect = require('chai').expect;
 const Promise = require('bluebird');
 const lisk_schema = require('lisk-schema');
 

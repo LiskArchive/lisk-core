@@ -44,6 +44,6 @@
   },
   "tests": "",
   "timeout": 10000,
-  "require": [],
+  "require": ["chai/register-expect"],
   "name": "lisk-core-qa-external"
 }

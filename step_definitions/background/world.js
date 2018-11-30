@@ -1,5 +1,3 @@
-const expect = require('chai').expect;
-
 const I = actor();
 
 Given('I have list of clients', async function () {
