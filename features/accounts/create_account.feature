@@ -11,8 +11,5 @@ Feature: Create Lisk Account
     When I create a lisk account
       | user    |
       | sheldon |
-      | raj     |
-      | lenard  |
-      | howard  |
     And transfer 100LSK to all account from genesis account
     Then Validate if 100LSK was transfered was successful

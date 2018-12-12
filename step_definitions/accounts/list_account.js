@@ -29,17 +29,14 @@ Then('I should get my account details', async function () {
 
 When('I look for list of account with {string}', async function (params) {
   const api = await I.call();
-  const accountParams = splitBy(params, '=');
 
-  response = await from(api.getAccounts(accountParams));
+  response = await from(api.getAccounts(splitBy(params)));
   expect(response.error).to.deep.equal(null);
   await I.expectResponseToBeValid(response.result, 'AccountsResponse');
 });
 
 Then('I should get account details according to {string}', async function (params) {
-  const accountParams = splitBy(params, '=');
-
-  await I.expectAccountResultToMatchParams(response.result, accountParams);
+  await I.expectAccountResultToMatchParams(response.result, splitBy(params));
 });
 
 When('{string} requests {string}', async function (username, type) {

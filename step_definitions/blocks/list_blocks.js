@@ -1,19 +1,28 @@
-When('I request for blocks without any params', () => {
-  return 'pending';
+const { from, getFixtureUser, splitBy } = require('../../utils');
+
+const I = actor();
+let response;
+
+When('I request for blocks without any params', async () => {
+  const api = await I.call();
+
+  response = await from(api.getBlocks());
+  expect(response.error).to.deep.equal(null);
 });
 
-Then('I should get "10" blocks', () => {
-  return 'pending';
+Then('I should get list of blocks sorted by {string} in {string} order', async (field, order) => {
+  await I.expectResponseToBeValid(response.result, 'BlocksResponse');
+  await I.expectResponseToBeSortedBy(response.result, field, order);
+  await I.expectDefaultCount(response.result);
 });
 
-Then('Blocks should be sorted by height in descending order by default', () => {
-  return 'pending';
+When('I request for blocks with {string}', async (params) => {
+  const api = await I.call();
+
+  response = await from(api.getBlocks(splitBy(params)));
+  expect(response.error).to.deep.equal(null);
 });
 
-When('I request for blocks with {string}', (params) => {
-  return 'pending';
-});
-
-Then('I should get blocks according to params', () => {
-  return 'pending';
+Then('I should get blocks according to {string}', async (params) => {
+  await I.expectBlockResultToMatchParams(response.result, splitBy(params));
 });
