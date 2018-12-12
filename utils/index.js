@@ -11,12 +11,20 @@ const LISK = amount => String(BEDDOWS * amount);
 const getFixtureUser = (propertyName, value) =>
   ASGARD_FIXTURE.find(user => user[propertyName] === value);
 
-const splitBy = (value, separator) => {
+const splitBy = (value, separator = "=") => {
   const result = {};
 
   const [k, v] = value.split(separator);
   result[k] = v;
   return result;
+}
+
+const sortBy = (items, order) => {
+  const sortFactor = order.toLowerCase() === 'desc' ? -1 : 1;
+
+  return items.sort((a, b) => {
+    return (a - b) * sortFactor;
+  });
 }
 
 module.exports = {
@@ -27,4 +35,5 @@ module.exports = {
   getFixtureUser,
   from,
   splitBy,
+  sortBy,
 }

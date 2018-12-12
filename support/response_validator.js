@@ -1,6 +1,6 @@
 const lisk_commons = require('lisk-commons');
 const chai = require('chai');
-const { LISK, from } = require('../utils');
+const { LISK, from, sortBy } = require('../utils');
 const LiskUtil = require('./lisk_util');
 
 const Helper = codecept_helper;
@@ -81,10 +81,8 @@ class ResponseValidator extends Helper {
   }
 
   expectResponseToBeSortedBy(response, field, order) {
-    if (order.toLowerCase() === 'asc') {
-      return expect(response.data).to.be.ascendingBy(field);
-    }
-    return expect(response.data).to.be.descendingBy(field);
+    const result = response.data.map(item => item[field]);
+    expect(result).to.deep.equal(sortBy(result, order));
   }
 
   expectAccountResultToMatchParams(response, params) {
@@ -92,11 +90,24 @@ class ResponseValidator extends Helper {
     if (["limit", "sort", "offset", "username"].includes(k)) {
       this.handleOtherParams(response, k, v, params);
     } else {
-      expect(response.data[0][k]).to.deep.equal(v);
+      expect(response.data[0][k].toString()).to.deep.equal(v);
     }
   }
 
-  handleOtherParams(response, key, value, params) {
+  expectBlockResultToMatchParams(response, params) {
+    const [[k, v]] = Object.entries(params);
+    if (["limit", "sort", "offset", "blockId"].includes(k)) {
+      this.handleOtherParams(response, k, v, params);
+    } else {
+      expect(response.data[0][k].toString()).to.deep.equal(v);
+    }
+  }
+
+  expectDefaultCount(response) {
+    expect(response.data.length <= 10).to.be.true;
+  }
+
+  handleOtherParams(response, key, value) {
     switch (key) {
       case "username":
         expect(response.data[0].delegate.username).to.deep.equal(value);
@@ -113,6 +124,10 @@ class ResponseValidator extends Helper {
       case "sort":
         const [field, order] = value.split(':');
         this.expectResponseToBeSortedBy(response, field, order);
+        break;
+
+      case "blockId":
+        expect(response.data[0]["id"]).to.deep.equal(value);
         break;
     }
   }
