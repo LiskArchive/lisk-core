@@ -3,7 +3,6 @@ let transfers = [];
 
 When("I create a lisk account", async function (userTable) {
   const api = await I.call();
-
   userTable.rows.forEach(async (c, i) => {
     if (i < 1) {
       return; // skip a header of a table
@@ -24,17 +23,16 @@ Then(/transfer (\d+)LSK to all account from genesis account/, async function (am
   const accounts = Object.values(await I.getAllAccount());
 
   accounts.forEach(async (account) => {
-    const recipientId = account.address;
-
-    const trx = await I.transfer(recipientId, amount);
+    const trx = await I.haveAccountWithBalance(account.address, amount);
     transfers.push(trx);
   });
 });
 
 Then(/Validate if (\d+)LSK was transfered was successful/, async function (amount) {
-  await I.waitForBlock();
-
-  transfers.forEach(async ({ id, recipientId }) => {
-    await I.validateTransfer(id, recipientId, amount)
-  })
+  if(transfers.length > 0) {
+    await I.waitForBlock();
+    transfers.forEach(async ({ id, recipientId }) => {
+      await I.validateTransfer(id, recipientId, amount)
+    });
+  }
 })

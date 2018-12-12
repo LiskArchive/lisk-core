@@ -1,24 +1,18 @@
 const Promise = require('bluebird');
-const lisk_schema = require('lisk-schema');
 
 const I = actor();
-const { api_spec: { definitions: { NodeConstantsResponse, NodeConstants, Fees } } } = lisk_schema;
 
 let results = [];
 
-NodeConstants.properties.fees = Fees;
-NodeConstantsResponse.properties.data = NodeConstants;
-
 When('I request for node constants', async function () {
-  const addresses = await I.haveClientAddresses();
   const api = await I.call();
 
-  results = await Promise.all(addresses.map(async address => await api.getNodeConstants(address)));
+  results = await Promise.all([...api.seed, ...api.nodes].map(async address => await api.getNodeConstants(address)));
 });
 
 Then('I have the constants from all the nodes', async function () {
-  results.forEach(res => {
-    expect(res).to.be.jsonSchema(NodeConstantsResponse);
+  return results.forEach(async res => {
+    await I.expectResponseToBeValid(res, 'NodeConstantsResponse');
   });
 });
 
