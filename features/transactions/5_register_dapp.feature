@@ -8,7 +8,7 @@ Feature: Register dApp
     Given I have list of clients
 
   Scenario: dApp registration
-    Given I have a lisk account
+    Given "thor" has a lisk account with balance 100 LSK tokens
     And I have minimum balance in my account for transaction "<dappRegistration>"
       """
       "fees": {
@@ -24,7 +24,7 @@ Feature: Register dApp
     Then dApp "coral reef ICO" should be registered
 
   Scenario: dApp registration from second signature account
-    Given I have a account with second signature enabled
+    Given "loki" has a account with second signature
     And I have minimum balance in my account for transaction "<dappRegistration>"
       """
       "fees": {
@@ -40,7 +40,7 @@ Feature: Register dApp
     Then dApp "save tiger ICO" should be registered
 
   Scenario: dApp registration from multisignature account
-    Given I have a multisignature account
+    Given "heimdall" has a multisignature account with "thor", "odin"
     And I have minimum balance in my account for transaction "<dappRegistration>"
       """
       "fees": {

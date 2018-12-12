@@ -8,7 +8,7 @@ Feature: Register as a delegate
     Given I have list of clients
 
   Scenario: Register user account as delegate
-    Given I have a lisk account
+    Given "thor" has a lisk account with balance 100 LSK tokens
     And I have minimum balance in my account for transaction "<delegate>"
       """
       "fees": {
@@ -21,4 +21,4 @@ Feature: Register as a delegate
       }
       """
     When I register as a delegate
-    Then I have a account registered as delegate
+    Then "odin" has a account registered as delegate

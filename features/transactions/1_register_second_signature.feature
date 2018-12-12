@@ -6,7 +6,7 @@ Feature: Register Second Signature on account
     Given I have list of clients
 
   Scenario: Register second signature
-    Given I have a lisk account
+    Given "thor" has a lisk account with balance 100 LSK tokens
     And I have minimum balance in my account for transaction "<secondSignature>"
       """
       "fees": {
@@ -19,10 +19,10 @@ Feature: Register Second Signature on account
       }
       """
     When I register for second signature on my account
-    Then I have a account with second signature enabled
+    Then "loki" has a account with second signature
 
   Scenario: Transfer token to another account with second signature enabled
-    Given I have a account with second signature enabled
+    Given "loki" has a account with second signature
     And I have minimum balance in my account for transaction "<send>"
       """
       "fees": {
@@ -38,7 +38,7 @@ Feature: Register Second Signature on account
     Then the transfer should be successful
 
   Scenario: Transfer token to self with second signature enabled
-    Given I have a account with second signature enabled
+    Given "loki" has a account with second signature
     And I have minimum balance in my account for transaction "<send>"
       """
       "fees": {

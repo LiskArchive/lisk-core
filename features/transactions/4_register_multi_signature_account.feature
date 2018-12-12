@@ -8,7 +8,7 @@ Feature: Register a multisignature account
     Given I have list of clients
 
   Scenario: Register multisignature account for self
-    Given I have a lisk account
+    Given "thor" has a lisk account with balance 100 LSK tokens
     And I have minimum balance in my account for transaction "<multisignature>"
       """
       "fees": {
@@ -23,7 +23,7 @@ Feature: Register a multisignature account
     Then I should be able to register for multisignature account
 
   Scenario: Register multisignature account minimum keys group
-    Given I have a lisk account
+    Given "thor" has a lisk account with balance 100 LSK tokens
     And I have minimum balance in my account for transaction "<multisignature>"
       """
       "fees": {
@@ -47,7 +47,7 @@ Feature: Register a multisignature account
     And multisignature account should be created
 
   Scenario: Register multisignature account maximum keys group
-    Given I have a lisk account
+    Given "thor" has a lisk account with balance 100 LSK tokens
     And I have minimum balance in my account for transaction "<multisignature>"
       """
       "fees": {

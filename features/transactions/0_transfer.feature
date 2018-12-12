@@ -6,7 +6,7 @@ Feature: Transfer LSK
     Given I have list of clients
 
   Scenario: Transfer token to another account
-    Given I have a lisk account
+    Given "thor" has a lisk account with balance 100 LSK tokens
     And I have minimum balance in my account for transaction "<send>"
       """
       "fees": {
@@ -21,7 +21,7 @@ Feature: Transfer LSK
     Then I should be able to send tokens to other account
 
   Scenario: Transfer token to self
-    Given I have a lisk account
+    Given "thor" has a lisk account with balance 100 LSK tokens
     And I have minimum balance in my account for transaction "<send>"
       """
       "fees": {

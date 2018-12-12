@@ -1,8 +1,14 @@
-Feature: List Lisk Account
+Feature: Lisk Accounts
 
   As a user
   I want to see details for my account
   So that I can validate my balance and other details
+
+  Background: Accounts
+    Given "thor" has a lisk account with balance 100 LSK tokens
+    And "loki" has a account with second signature
+    And "odin" has a account registered as delegate
+    And "heimdall" has a multisignature account with "thor", "odin"
 
   Scenario: List accounts
     Given The network is moving
@@ -11,23 +17,25 @@ Feature: List Lisk Account
     When I search for a particular account "16313739661670634666L"
     Then I should get my account details
 
-  Scenario Outline: List accounts
-    When I look for list of accounts with "params" and "value"
-    Then I should get account details according to "params" and "value"
+  Scenario Outline: List account
+    When I look for list of account with "<params>"
+    Then I should get account details according to "<params>"
 
     Examples:
-      | params | value        |
-      | limit  | 2            |
-      | offset | 0            |
-      | sort   | balance:asc  |
-      | sort   | balance:desc |
+      | params                                                                           |
+      | address=7333160697601118486L                                                     |
+      | publicKey=6d013be60f6f402a56f43df88582759e2cd3c69f84fac6084d86230cfdd72c35       |
+      | secondPublicKey=af365443121487c4935a33cd632ea6e6308a0e9b2e488de38a6a2e5aca96e8eb |
+      | username=odin                                                                    |
+      | limit=100                                                                        |
+      | offset=2                                                                         |
+      | sort=balance:asc                                                                 |
+      | sort=balance:desc                                                                |
 
-  Scenario Outline: Searches for the specified account which is member of any multisignature groups.
-    Given I have the lisk accounts
-    When I make a request to "multisignature_groups" with my "address"
-    Then I should get account details associated with params
+  Scenario: Searches multisignature groups for a specific address .
+    When "heimdall" requests "multisignature_groups"
+    Then "heimdall" should get "multisignature_groups" account
 
-  Scenario Outline: List all members belonging to a particular multisignature group.
-    Given I have the lisk accounts
-    When I make a request to "multisignature_memberships" with my "address"
-    Then I should get account details associated with params
+  Scenario: List all members belonging to a particular multisignature group.
+    When "thor" and "odin" requests "multisignature_memberships" account
+    Then "thor" and "odin" should get "multisignature_memberships" account

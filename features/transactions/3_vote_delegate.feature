@@ -8,7 +8,7 @@ Feature: Cast Vote
     Given I have list of clients
 
   Scenario: vote for delegate
-    Given I have a lisk account
+    Given "thor" has a lisk account with balance 100 LSK tokens
     And I have minimum balance in my account for transaction "<vote>"
       """
       "fees": {
@@ -24,7 +24,7 @@ Feature: Cast Vote
     Then the delegate should received my vote
 
   Scenario: vote for myself
-    Given I have a lisk account
+    Given "thor" has a lisk account with balance 100 LSK tokens
     And I have minimum balance in my account for transaction "<vote>"
       """
       "fees": {
@@ -36,6 +36,6 @@ Feature: Cast Vote
       "dappRegistration": "2500000000"
       }
       """
-    Given I have a account registered as delegate
+    Given "odin" has a account registered as delegate
     When I cast my vote for myself
     Then I should received my vote

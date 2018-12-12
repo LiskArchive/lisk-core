@@ -10,7 +10,7 @@ Feature: Node transaction pool
 		Given The network is moving
 
 	Scenario Outline: Unprocessed, Unconfirmed and Unsigned transactions
-		Given I have a lisk account
+		Given "thor" has a lisk account with balance 100 LSK tokens
 		And I have minimum balance in my account for transaction "all"
 			"""
 			"fees": {
