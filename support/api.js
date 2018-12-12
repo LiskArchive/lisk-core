@@ -26,7 +26,7 @@ class API {
             return result.client;
         } else {
             // Role back to seed node
-            const { seed: [ ip ] } = config();
+            const { seed: [ip] } = config();
 
             return clients.filter(client => client.ip === ip)[0].client;
         }
@@ -84,9 +84,9 @@ class API {
         return client.accounts.get(params);
     }
 
-    async getMultisignatureGroup(address, params, ip) {
+    async getMultisignatureGroups(address, params = {}, ip) {
         const client = API.getClientByIp(this.clients, ip);
-        return client.accounts.getMultisignatureGroup(address, params);
+        return client.accounts.getMultisignatureGroups(address, params);
     }
 
     async getMultisignatureMemberships(address, params, ip) {
