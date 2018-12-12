@@ -15,7 +15,7 @@ const GENESIS_ACCOUNT = {
   key: 'elephant tree paris dragon chair galaxy',
 };
 
-const dummy_users = [
+const ASGARD_FIXTURE = [
   {
     username: 'odin',
     passphrase: 'rigid gossip paper must comic oval distance grace rug poverty violin fiction',
@@ -143,5 +143,5 @@ const dummy_users = [
 module.exports = {
   config,
   GENESIS_ACCOUNT,
-  dummy_users,
+  ASGARD_FIXTURE,
 }
