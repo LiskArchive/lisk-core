@@ -30,9 +30,10 @@
     "bluebird": "^3.5.3",
     "chai": "^4.2.0",
     "chai-json-schema": "^1.5.0",
+    "chai-sorted": "^0.2.0",
     "debug": "^4.1.0",
-    "lisk-elements": "=1.0.0",
-    "lisk-schema": "^1.0.0"
+    "lisk-commons": "^1.1.2",
+    "lisk-elements": "=1.0.0"
   },
   "devDependencies": {
     "allure": "0.0.0",

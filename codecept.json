@@ -1,8 +1,14 @@
 {
   "output": "./output",
   "helpers": {
+    "Hooks": {
+      "require": "./support/hooks.js"
+    },
     "LiskUtil": {
       "require": "./support/lisk_util.js"
+    },
+    "ResponseValidator": {
+      "require": "./support/response_validator.js"
     }
   },
   "include": {},
