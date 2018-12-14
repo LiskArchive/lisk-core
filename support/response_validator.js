@@ -1,6 +1,6 @@
 const lisk_commons = require('lisk-commons');
 const chai = require('chai');
-const { LISK, from, sortBy } = require('../utils');
+const { LISK, from, sortBy, flattern } = require('../utils');
 const LiskUtil = require('./lisk_util');
 
 const Helper = codecept_helper;
@@ -76,21 +76,25 @@ class ResponseValidator extends Helper {
     return expect(response).to.be.jsonSchema(schemaDefinition);
   }
 
-  expectResponseToBeSorted(response, params) {
-    expect(response.data, params).to.be.sorted(params);
-  }
-
   expectResponseToBeSortedBy(response, field, order) {
     const result = response.data.map(item => item[field]);
-    expect(result).to.deep.equal(sortBy(result, order));
+    if (result.length > 0 && !isNaN(result[0])) {
+      return expect(result).to.deep.equal(sortBy(result, order));
+    }
+
+    if (order.toLowerCase() === 'asc') {
+      return expect(result).to.be.ascending
+    }
+    return expect(result).to.be.descending
   }
 
   expectAccountResultToMatchParams(response, params) {
     const [[k, v]] = Object.entries(params);
-    if (["limit", "sort", "offset", "username"].includes(k)) {
+    if (["limit", "sort", "offset"].includes(k)) {
       this.handleOtherParams(response, k, v, params);
     } else {
-      expect(response.data[0][k].toString()).to.deep.equal(v);
+      const data = flattern(response.data[0]);
+      expect(data[k].toString()).to.deep.equal(v);
     }
   }
 
@@ -99,7 +103,18 @@ class ResponseValidator extends Helper {
     if (["limit", "sort", "offset", "blockId"].includes(k)) {
       this.handleOtherParams(response, k, v, params);
     } else {
-      expect(response.data[0][k].toString()).to.deep.equal(v);
+      const data = flattern(response.data[0]);
+      expect(data[k].toString()).to.deep.equal(v);
+    }
+  }
+
+  expectDelegatesToMatchParams(response, params) {
+    const [[k, v]] = Object.entries(params);
+    if (["limit", "sort", "offset", "search"].includes(k)) {
+      this.handleOtherParams(response, k, v, params);
+    } else {
+      const data = flattern(response.data[0]);
+      expect(data[k].toString()).to.deep.equal(v);
     }
   }
 
@@ -128,6 +143,12 @@ class ResponseValidator extends Helper {
 
       case "blockId":
         expect(response.data[0]["id"]).to.deep.equal(value);
+        break;
+
+      case "search":
+        response.data.forEach(element => {
+          // expect(element.username).to.match();
+        });
         break;
     }
   }
