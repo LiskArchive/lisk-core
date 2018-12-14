@@ -3,43 +3,48 @@ Feature: List Delegates
   As a user
   I want to see the list of users who are delegates
 
-  Background: Client list
-    Given I have list of clients
+  Background: Network
+    Given The network is moving
+    And The delegates are enabled to forge
 
   Scenario Outline: List delegates with params
-    Given The network is moving
     When I request for delegates list with "<params>"
-    Then I should get delegates according to params
+    Then I should get delegates according to "<params>"
 
     Examples:
-      | params                                                                                                                                                                   |
-      | address                                                                                                                                                                  |
-      | username                                                                                                                                                                 |
-      | publicKey                                                                                                                                                                |
-      | secondPublicKey                                                                                                                                                          |
-      | search                                                                                                                                                                   |
-      | offset                                                                                                                                                                   |
-      | limit                                                                                                                                                                    |
-      | sort=username:asc, username:desc, rank:asc, rank:desc, productivity:asc, productivity:desc, missedBlocks:asc, missedBlocks:desc, producedBlocks:asc, producedBlocks:desc |
+      | params                                                                     |
+      | address=8273455169423958419L                                               |
+      | username=genesis_1                                                         |
+      | publicKey=9d3058175acab969f41ad9b86f7a2926c74258670fe56b37c429c01fca9f2f0f |
+      | search=genesis_18                                                          |
+      | offset=3                                                                   |
+      | limit=20                                                                   |
+      | sort=username:asc                                                          |
+      | sort=username:desc                                                         |
+      | sort=rank:asc                                                              |
+      | sort=rank:desc                                                             |
+      | sort=productivity:asc                                                      |
+      | sort=productivity:desc                                                     |
+      | sort=missedBlocks:asc                                                      |
+      | sort=missedBlocks:desc                                                     |
+      | sort=producedBlocks:asc                                                    |
+      | sort=producedBlocks:desc                                                   |
 
 
   Scenario Outline: List of the next forgers in this delegate round
-    Given The network is moving
     When I request for forging delegates list with "<params>"
-    Then I should get delegates according to params
+    Then I should get next forging delegates list according to "<params>"
 
     Examples:
-      | params | values |
-      | offset | 0      |
-      | limit  | 10     |
+      | params    |
+      | offset=0  |
+      | limit=101 |
 
   Scenario Outline: Get delegates forging statistics
-    Given The network is moving
-    When I request for forging delegates statistics with "<params>"
+    When I request for forging delegates statistics "8273455169423958419L" with "<params>"
     Then I should get forging delegate statistics
 
     Examples:
-      | params        |
-      | address       |
-      | fromTimestamp |
-      | toTimestamp   |
+      | params                 |
+      | fromTimestamp=0        |
+      | toTimestamp=1525861914 |

@@ -11,6 +11,10 @@ Given('I have list of clients', async function () {
     expect(inValidAddresses).to.be.an('array').that.is.empty;
 });
 
+Given('The delegates are enabled to forge', async () => {
+
+});
+
 Given('The node is forging', async function () {
     return 'pending';
 });
