@@ -88,7 +88,7 @@ class ResponseValidator extends Helper {
     return expect(result).to.be.descending
   }
 
-  expectAccountResultToMatchParams(response, params) {
+  expectResultToMatchParams(response, params) {
     const [[k, v]] = Object.entries(params);
     if (["limit", "sort", "offset"].includes(k)) {
       this.handleOtherParams(response, k, v, params);

@@ -1,19 +1,34 @@
-When('I request for peers without any params', () => {
-  return 'pending';
+const { from, splitBy } = require('../../utils');
+
+const I = actor();
+let response;
+
+When('I request for peers without any params', async () => {
+  const api = await I.call();
+
+  response = await from(api.getPeers());
+  return expect(response.error).to.deep.equal(null);
 });
 
-Then('I should get list of {string} peers', (count) => {
-  return 'pending';
+Then('I should get list of peers', async () => {
+  await I.expectDefaultCount(response.result);
+  await I.expectResponseToBeValid(response.result, 'PeersResponse');
 });
 
-Then('Peers should be sorted by {string} in {string} order by default', (sortKey, order) => {
-  return 'pending';
+Then('Peers should be sorted by {string} in {string} order by default', async (sortKey, order) => {
+  await I.expectResponseToBeSortedBy(response.result, sortKey, order);
 });
 
-When('I request for peers with {string}', (params) => {
-  return 'pending';
+When('I request for peers with {string}', async (params) => {
+  const api = await I.call();
+
+  response = await from(api.getPeers());
+  return expect(response.error).to.deep.equal(null);
 });
 
-Then('I should get list of all the peers', () => {
-  return 'pending';
+Then('I should get list of peers according to {string}', async (params) => {
+  await I.expectResponseToBeValid(response.result, 'PeersResponse');
+  if (process.env.NETWORK && process.env.NETWORK !== 'development') {
+    await I.expectResultToMatchParams(response.result, splitBy(params));
+  }
 });

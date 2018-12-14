@@ -36,7 +36,7 @@ When('I look for list of account with {string}', async function (params) {
 });
 
 Then('I should get account details according to {string}', async function (params) {
-  await I.expectAccountResultToMatchParams(response.result, splitBy(params));
+  await I.expectResultToMatchParams(response.result, splitBy(params));
 });
 
 When('{string} requests {string}', async function (username, type) {
