@@ -31,7 +31,7 @@ Given('{int} lisk accounts exists with minimum balance', async (count) => {
     const randomAccounts = new Array(count).fill(0).map(() => api.createAccount());
 
     randomAccounts.forEach(async (account) => {
-        const trx = await I.transfer(account.address, amount)
+        const trx = await I.transfer({ recipientId: account.address, amount: LISK(amount) })
         transfers.push(trx);
     });
 

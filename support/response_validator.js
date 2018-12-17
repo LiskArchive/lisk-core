@@ -33,7 +33,7 @@ class ResponseValidator extends Helper {
 
     if (!account || !(account.balance >= LISK(balance))) {
       // take a diff and transfer only as much the balance required to be
-      await liskUtil.transfer(address, balance);
+      await liskUtil.transfer({ recipientId: address, amount: LISK(balance) });
       await liskUtil.waitForBlock();
     }
     return account;

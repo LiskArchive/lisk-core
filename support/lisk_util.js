@@ -129,22 +129,24 @@ class LiskUtil extends Helper {
 
   /**
    * Transfer tokens from one account to another
-   * @param {string} recipientId - The recipient address
-   * @param {string} amount - The amount sender wants to transfer to recipient
-   * @param {string} passphrase - The sender passphrase, default is genesis account
+   * @param {Object} transactionData - Transfer transaction data
+   * @param {string} transactionData.recipientId - The recipient address
+   * @param {string} transactionData.amount - The amount sender wants to transfer to recipient
+   * @param {string} transactionData.passphrase - The sender passphrase, default is genesis account
+   * @param {string} transactionData.secondPassphrase - The sender second passphrase
    * @returns {Object} transaction
    */
-  async transfer(recipientId, amount, passphrase = GENESIS_ACCOUNT.password) {
-    const trx = elements.transaction.transfer({
-      amount: LISK(amount),
-      recipientId,
-      passphrase,
-    });
+  async transfer(transactionData) {
+
+    const trx = elements.transaction.transfer(transactionData);
 
     const { result, error } = await from(this.broadcastAndValidateTransaction(trx));
     expect(error).to.deep.equal(null);
+    this.helpers['ResponseValidator'].expectResponseToBeValid(result, 'GeneralStatusResponse');
 
-    return result;
+    await this.waitForBlock();
+
+    return trx;
   }
 
   /**
@@ -263,7 +265,7 @@ class LiskUtil extends Helper {
       recipientId
     });
 
-    this.helpers['ResponseValidator'].expectResponseToBeValid(transaction, 'TransactionsResponse')
+    this.helpers['ResponseValidator'].expectResponseToBeValid(transaction, 'TransactionsResponse');
     expect(transaction.data[0].amount).to.deep.equal(LISK(amount));
   }
 }

@@ -7,30 +7,8 @@ Feature: Transfer LSK
 
   Scenario: Transfer token to another account
     Given "thor" has a lisk account with balance 100 LSK tokens
-    And I have minimum balance in my account for transaction "<send>"
-      """
-      "fees": {
-      "send": "10000000",
-      "vote": "100000000",
-      "secondSignature": "500000000",
-      "delegate": "2500000000",
-      "multisignature": "500000000",
-      "dappRegistration": "2500000000"
-      }
-      """
-    Then I should be able to send tokens to other account
+    Then "thor" should be able to send 1LSK tokens to "loki"
 
   Scenario: Transfer token to self
     Given "thor" has a lisk account with balance 100 LSK tokens
-    And I have minimum balance in my account for transaction "<send>"
-      """
-      "fees": {
-      "send": "10000000",
-      "vote": "100000000",
-      "secondSignature": "500000000",
-      "delegate": "2500000000",
-      "multisignature": "500000000",
-      "dappRegistration": "2500000000"
-      }
-      """
-    Then I should be able to transfer token to myself
+    Then "thor" should be able to send 1LSK tokens to himself

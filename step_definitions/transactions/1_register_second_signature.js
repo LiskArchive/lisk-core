@@ -1,19 +1,34 @@
-When('I register for second signature on my account', () => {
-  return 'pending';
+const { getFixtureUser, from, LISK } = require('../../utils');
+
+const I = actor();
+let response;
+
+When('{string} wants to transfer {int}LSK to {string}', async (sender, amount, recepient) => {
+  const user1 = getFixtureUser(sender);
+  const user2 = getFixtureUser(recepient);
+
+  response = await from(I.transfer({ recipientId: user2.address, amount: LISK(amount), passphrase: user1.passphrase }));
+  expect(response.error).to.deep.equal(null);
 });
 
-Then('I have a account with second signature enabled', () => {
-  return 'pending';
+Then('{string} should receive {int}LSK from {string}', async (recepient, amount, sender) => {
+  const user1 = getFixtureUser(sender);
+  const user2 = getFixtureUser(recepient);
+  const { id } = response.result;
+
+  await I.validateTransfer(id, user2.address, amount, user1.address);
 });
 
-When('I transfer token to another account using second signature', () => {
-  return 'pending';
+When('{string} transfers {int}LSK token to himself', async (sender, amount) => {
+  const { address, passphrase } = getFixtureUser(sender);
+
+  response = await from(I.transfer({ recipientId: address, amount: LISK(amount), passphrase: passphrase }));
+  expect(response.error).to.deep.equal(null);
 });
 
-When('I transfer token to self using second signature', () => {
-  return 'pending';
-});
+Then('{string} should receive {int}LSK in his account', async (sender, amount) => {
+  const { address } = getFixtureUser(sender);
+  const { id } = response.result;
 
-Then('the transfer should be successful', () => {
-  return 'pending';
+  await I.validateTransfer(id, address, amount, address);
 });
