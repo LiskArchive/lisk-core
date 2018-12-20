@@ -7,8 +7,8 @@
     "LiskUtil": {
       "require": "./support/lisk_util.js"
     },
-    "ResponseValidator": {
-      "require": "./support/response_validator.js"
+    "ValidateHelper": {
+      "require": "./support/validate_helper.js"
     }
   },
   "include": {},

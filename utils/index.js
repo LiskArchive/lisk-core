@@ -1,4 +1,4 @@
-const { ASGARD_FIXTURE } = require('../fixtures');
+const { ASGARD_FIXTURE, GENESIS_ACCOUNT } = require('../fixtures');
 const from = require('./from');
 
 const BLOCK_TIME = 10000;
@@ -12,11 +12,13 @@ const getFixtureUser = (propertyName, value) =>
   ASGARD_FIXTURE.find(user => user[propertyName] === value);
 
 const splitBy = (value, separator = "=") => {
-  const result = {};
-
-  const [k, v] = value.split(separator);
-  result[k] = v;
-  return result;
+  return value
+    .split("&")
+    .reduce((acc, curr) => {
+      const [k, v] = curr.split(separator);
+      acc[k] = v;
+      return acc;
+    }, {});
 }
 
 const sortBy = (items, order) => {
@@ -42,9 +44,12 @@ const flattern = obj => {
   )
 }
 
+const dappMultiAccountName = () => `dapp-multi${new Date().getTime()}`;
+
 module.exports = {
   BLOCK_TIME,
   TRS_PER_BLOCK,
+  GENESIS_ACCOUNT,
   BEDDOWS,
   LISK,
   getFixtureUser,
@@ -52,4 +57,5 @@ module.exports = {
   splitBy,
   sortBy,
   flattern,
+  dappMultiAccountName,
 }
