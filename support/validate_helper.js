@@ -10,12 +10,22 @@ chai.use(require('chai-json-schema'));
 chai.use(require("chai-sorted"));
 
 const expect = chai.expect;
+const otherFields = [
+  "limit",
+  "sort",
+  "offset",
+  "senderIdOrRecipientId",
+  "minAmount",
+  "maxAmount",
+  "fromTimestamp",
+  "toTimestamp"
+];
 
-class ResponseValidator extends Helper {
+class ValidateHelper extends Helper {
   async getSchemaDefinition(name) {
     const { result, error } = await from(lisk_commons.schema());
 
-    expect(error).to.deep.equal(null);
+    expect(error).to.be.null;
     return result.definitions[name];
   }
 
@@ -23,7 +33,7 @@ class ResponseValidator extends Helper {
     const { result, error } = await from(liskUtil.call().getAccounts(params));
     const { data: [account] } = result;
 
-    expect(error).to.deep.equal(null);
+    expect(error).to.be.null;
     this.expectResponseToBeValid(result, 'AccountsResponse');
     return account;
   }
@@ -76,8 +86,8 @@ class ResponseValidator extends Helper {
     return expect(response).to.be.jsonSchema(schemaDefinition);
   }
 
-  expectResponseToBeSortedBy(response, field, order) {
-    const result = response.data.map(item => item[field]);
+  expectResponseToBeSortedBy(data, field, order) {
+    const result = data.map(item => item[field]);
     if (result.length > 0 && !isNaN(result[0])) {
       return expect(result).to.deep.equal(sortBy(result, order));
     }
@@ -89,19 +99,21 @@ class ResponseValidator extends Helper {
   }
 
   expectResultToMatchParams(response, params) {
-    const [[k, v]] = Object.entries(params);
-    if (["limit", "sort", "offset"].includes(k)) {
-      this.handleOtherParams(response, k, v, params);
-    } else {
-      const data = flattern(response.data[0]);
-      expect(data[k].toString()).to.deep.equal(v);
-    }
+    Object.entries(params).forEach(item => {
+      const [k, v] = item;
+      if (otherFields.includes(k)) {
+        this.handleOtherParams(response, k, v);
+      } else {
+        const data = flattern(response.data[0]);
+        expect(data[k].toString()).to.deep.equal(v);
+      }
+    });
   }
 
   expectBlockResultToMatchParams(response, params) {
     const [[k, v]] = Object.entries(params);
     if (["limit", "sort", "offset", "blockId"].includes(k)) {
-      this.handleOtherParams(response, k, v, params);
+      this.handleOtherParams(response, k, v);
     } else {
       const data = flattern(response.data[0]);
       expect(data[k].toString()).to.deep.equal(v);
@@ -111,11 +123,40 @@ class ResponseValidator extends Helper {
   expectDelegatesToMatchParams(response, params) {
     const [[k, v]] = Object.entries(params);
     if (["limit", "sort", "offset", "search"].includes(k)) {
-      this.handleOtherParams(response, k, v, params);
+      this.handleOtherParams(response, k, v);
     } else {
       const data = flattern(response.data[0]);
       expect(data[k].toString()).to.deep.equal(v);
     }
+  }
+
+  expectMultisigAccountToHaveContracts(account, contracts) {
+    const addresses = account.data[0].members.map(m => m.address);
+    expect(contracts.every(c => addresses.includes(c.address))).to.deep.equal(true);
+  }
+
+  expectVotesResultToMatchParams(response, params) {
+    Object.entries(params).forEach(item => {
+      const [k, v] = item;
+      if (["sort"].includes(k)) {
+        const [field, order] = v.split(':');
+        this.expectResponseToBeSortedBy(response.data.votes, field, order)
+      } else if(k !== "limit") {
+        expect(response.data[k].toString()).to.deep.equal(v);
+      }
+    });
+  }
+
+  expectVotersResultToMatchParams(response, params) {
+    Object.entries(params).forEach(item => {
+      const [k, v] = item;
+      if (["sort"].includes(k)) {
+        const [field, order] = v.split(':');
+        this.expectResponseToBeSortedBy(response.data.voters, field, order)
+      } else if(k !== "limit") {
+        expect(response.data[k].toString()).to.deep.equal(v);
+      }
+    });
   }
 
   expectDefaultCount(response) {
@@ -138,7 +179,7 @@ class ResponseValidator extends Helper {
 
       case "sort":
         const [field, order] = value.split(':');
-        this.expectResponseToBeSortedBy(response, field, order);
+        this.expectResponseToBeSortedBy(response.data, field, order);
         break;
 
       case "blockId":
@@ -150,8 +191,31 @@ class ResponseValidator extends Helper {
           // expect(element.username).to.match();
         });
         break;
+      case "senderIdOrRecipientId":
+        const result = [response.data[0]["senderId"], response.data[0]["recipientId"]]
+        expect(result).to.include(value);
+      case "minAmount":
+      case "maxAmount":
+        response.data.forEach(t => {
+          if (key === "minAmount") {
+            expect(t.amount >= value).to.be.true;
+          } else {
+            expect(t.amount <= value).to.be.true;
+          }
+        });
+        break;
+      case "fromTimestamp":
+      case "toTimestamp":
+        response.data.forEach(t => {
+          if (key === "fromTimestamp") {
+            expect(t.timestamp >= value).to.be.true;
+          } else {
+            expect(t.timestamp <= value).to.be.true;
+          }
+        });
+        break;
     }
   }
 }
 
-module.exports = ResponseValidator;
+module.exports = ValidateHelper;

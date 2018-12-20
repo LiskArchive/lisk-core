@@ -83,28 +83,49 @@ class LiskUtil extends Helper {
   }
 
   /**
-   * Broadcast a transaction and validate response
-   * @param {Object} transaction - The transaction to be broadcasted
-   * @returns {Object} transaction
+   * create lisk account wallet
+   * @returns account object
    */
+  createAccount() {
+    const passphrase = elements.passphrase.Mnemonic.generateMnemonic();
+    const { publicKey } = elements.cryptography.getKeys(passphrase);
+    const address = elements.cryptography.getAddressFromPublicKey(publicKey);
+
+    return {
+      passphrase,
+      publicKey,
+      address,
+    }
+  }
+
   async broadcastAndValidateTransaction(transaction) {
     const { result, error } = await from(this.call().broadcastTransactions(transaction));
 
-    this.helpers['ResponseValidator'].expectResponseToBeValid(result, 'GeneralStatusResponse')
-    expect(error).to.deep.equal(null);
-    expect(result.data.message).to.deep.equal('Transaction(s) accepted');
-
-    return result;
+    expect(error).to.be.null;
+    this.helpers['ValidateHelper'].expectResponseToBeValid(result, 'GeneralStatusResponse')
   }
 
   async broadcastAndValidateSignature(signature) {
     const { result, error } = await from(this.call().broadcastSignatures(signature));
 
-    this.helpers['ResponseValidator'].expectResponseToBeValid(result, 'SignatureResponse')
-    expect(error).to.deep.equal(null);
+    expect(error).to.be.null;
+    this.helpers['ValidateHelper'].expectResponseToBeValid(result, 'SignatureResponse')
     expect(result.data.message).to.deep.equal('Signature Accepted');
+  }
 
-    return result;
+  /**
+   * Broadcast a transaction and validate response
+   * @param {Object} transaction - The transaction to be broadcasted
+   * @returns {Object} transaction
+   */
+  async broadcastAndValidateTransactionAndWait(transaction) {
+    await this.broadcastAndValidateTransaction(transaction);
+    await this.waitForBlock();
+  }
+
+  async broadcastAndValidateSignatureAndWait(signature) {
+    await this.broadcastAndValidateSignature(signature);
+    await this.waitForBlock();
   }
 
   /**
@@ -121,7 +142,7 @@ class LiskUtil extends Helper {
 
       return {
         transactionId: transaction.id,
-        publicKey: account.keyPair.publicKey,
+        publicKey: account.publicKey,
         signature,
       }
     })
@@ -129,24 +150,55 @@ class LiskUtil extends Helper {
 
   /**
    * Transfer tokens from one account to another
-   * @param {Object} transactionData - Transfer transaction data
-   * @param {string} transactionData.recipientId - The recipient address
-   * @param {string} transactionData.amount - The amount sender wants to transfer to recipient
-   * @param {string} transactionData.passphrase - The sender passphrase, default is genesis account
-   * @param {string} transactionData.secondPassphrase - The sender second passphrase
+   * @param {Object} account - account data
+   * @param {string} account.recipientId - The recipient address
+   * @param {string} account.amount - The amount sender wants to transfer to recipient
+   * @param {string} account.passphrase - The sender passphrase, default is genesis account
+   * @param {string} account.secondPassphrase - The sender second passphrase
    * @returns {Object} transaction
    */
-  async transfer(transactionData) {
+  async transfer(account) {
+    if (!account.passphrase) {
+      account.passphrase = GENESIS_ACCOUNT.password
+    }
 
-    const trx = elements.transaction.transfer(transactionData);
+    const trx = elements.transaction.transfer(account);
 
-    const { result, error } = await from(this.broadcastAndValidateTransaction(trx));
-    expect(error).to.deep.equal(null);
-    this.helpers['ResponseValidator'].expectResponseToBeValid(result, 'GeneralStatusResponse');
-
-    await this.waitForBlock();
+    await from(this.broadcastAndValidateTransactionAndWait(trx));
 
     return trx;
+  }
+
+  /**
+   * Multiple Transfers transaction from one account to another
+   * @param {Object} accounts - accounts data
+   * @param {string} accounts.recipientId - The recipient address
+   * @param {string} accounts.amount - The amount sender wants to transfer to recipient
+   * @param {string} accounts.passphrase - The sender passphrase, default is genesis account
+   * @param {string} accounts.secondPassphrase - The sender second passphrase
+   * @returns {Object} transaction
+   */
+  async transferToMultiple(accounts) {
+    const trxs = accounts.map(a => elements.transaction.transfer(a));
+
+    await from(Promise.all(trxs.map(t => this.broadcastAndValidateTransaction(t))));
+    await this.waitForBlock();
+
+    return trxs;
+  }
+
+  async sendSignaturesForMultisigTrx(transaction, contracts) {
+    const signatures = contracts.map(s => ({
+      transactionId: transaction.id,
+      publicKey: s.publicKey,
+      signature: elements.transaction.utils.multiSignTransaction(
+        transaction,
+        s.passphrase,
+      ),
+    }));
+
+    await Promise.all(signatures.map(s => this.broadcastAndValidateSignature(s)));
+    await this.waitForBlock();
   }
 
   /**
@@ -161,10 +213,9 @@ class LiskUtil extends Helper {
       secondPassphrase,
     });
 
-    const { result, error } = await from(this.broadcastAndValidateTransaction(trx));
-    expect(error).to.deep.equal(null);
+    await from(this.broadcastAndValidateTransactionAndWait(trx));
 
-    return result;
+    return trx;
   }
 
   /**
@@ -178,26 +229,45 @@ class LiskUtil extends Helper {
   async registerAsDelegate(params) {
     const trx = elements.transaction.registerDelegate(params);
 
-    const { result, error } = await from(this.broadcastAndValidateTransaction(trx));
-    expect(error).to.deep.equal(null);
+    await from(this.broadcastAndValidateTransactionAndWait(trx));
 
-    return result;
+    return trx;
   }
 
   /**
    * Cast votes to delegates
    * @param {Object} params - parameters to cast vote for delegate
+   * @param {Array} params.votes - list of publickeys for upvote
    * @param {string} params.passphrase - User account passphrase
    * @param {string} params.secondPassphrase - User account second passphrase
-   * @returns {Object} transaction
    */
   async castVotes(params) {
+    const { votes, passphrase } = params;
+    const isVoted = await this.checkIfVoteOrUnvoteCasted(votes, passphrase);
+
+    if (isVoted) {
+      return;
+    }
     const trx = elements.transaction.castVotes(params);
+    await from(this.broadcastAndValidateTransactionAndWait(trx));
+  }
 
-    const { result, error } = await from(this.broadcastAndValidateTransaction(trx));
-    expect(error).to.deep.equal(null);
+  /**
+   * Cast unvotes to delegates
+   * @param {Object} params - parameters to cast vote for delegate
+   * @param {Array} params.unvotes - list of publickeys for downvote
+   * @param {string} params.passphrase - User account passphrase
+   * @param {string} params.secondPassphrase - User account second passphrase
+   */
+  async castUnvotes(params) {
+    const { unvotes, passphrase } = params;
+    const isUnvoted = await this.checkIfVoteOrUnvoteCasted(unvotes, passphrase);
 
-    return result;
+    if (isUnvoted) {
+      return;
+    }
+    const trx = elements.transaction.castVotes(params);
+    await from(this.broadcastAndValidateTransactionAndWait(trx));
   }
 
   /**
@@ -211,44 +281,36 @@ class LiskUtil extends Helper {
    * @returns
    */
   async registerMultisignature(accounts, params) {
-    const requester = getFixtureUser('passphrase', params.passphrase);
-
-    const multiSigAccount = await from(this.call().getMultisignatureGroups(requester.address));
-
-    if (!multiSigAccount.result) {
-      const keysgroup = accounts.map(account => account.keyPair.publicKey);
-
-      const registerMultisignatureTrx = elements.transaction.registerMultisignature({ keysgroup, ...params });
-
-      const signatures = this.createSignatures(accounts, registerMultisignatureTrx);
-
-      const broadcastedTrx = await from(this.broadcastAndValidateTransaction(registerMultisignatureTrx));
-
-      expect(broadcastedTrx.error).to.deep.equal(null);
-
-      await this.waitForBlock();
-
-      signatures.forEach(async (signature) => {
-        const broadcastedSignature = await from(this.broadcastAndValidateSignature(signature));
-        expect(broadcastedSignature.error).to.deep.equal(null);
-      });
-
-      await this.waitForBlock();
-    }
-
-    return multiSigAccount.result;
+    const keysgroup = accounts.map(account => account.publicKey);
+    const registerMultisignatureTrx = elements.transaction.registerMultisignature({ keysgroup, ...params });
+    await this.waitForBlock();
+    const signatures = this.createSignatures(accounts, registerMultisignatureTrx);
+    await this.broadcastAndValidateTransactionAndWait(registerMultisignatureTrx);
+    await Promise.all(signatures.map(s => this.broadcastAndValidateSignature(s)));
+    await this.waitForBlock();
+    return registerMultisignatureTrx;
   }
 
   /**
    *
-   * @param {Object} params Parameters for registering dApp
-   * @param {string} params.passphrase Passphrase of the dApp registrar
-   * @param {Object} params.options Options for registering dApp
+   * @param {Object} data Parameters for registering dApp
+   * @param {string} data.passphrase Passphrase of the dApp registrar
+   * @param {string} data.secondPassphrase second passphrase of the dApp registrar
+   * @param {Object} data.options Options for registering dApp
    */
-  async registerDapp({ passphrase, options }) {
-    const dAppTrx = elements.transaction.createDapp({ passphrase, options });
+  async registerDapp(data) {
+    const dAppTrx = elements.transaction.createDapp(data);
 
-    await this.broadcastAndValidateTransaction(dAppTrx);
+    await this.broadcastAndValidateTransactionAndWait(dAppTrx);
+
+    return dAppTrx;
+  }
+
+  async checkIfdAppRegistered(name) {
+    const { result, error } = await from(this.call().getDapp({ name }));
+
+    expect(error).to.be.null;
+    return result.data.length && result.data[0].name === name;
   }
 
   /**
@@ -258,15 +320,47 @@ class LiskUtil extends Helper {
    * @param {string} amount - amount sent my sender to validate againt the transaction
    * @param {string} senderId - sender address, default is genesis account
    */
-  async validateTransfer(id, recipientId, amount, senderId = GENESIS_ACCOUNT.address) {
-    const transaction = await this.call().getTransactions({
+  async validateTransaction(id, recipientId, amount, senderId = GENESIS_ACCOUNT.address) {
+    const response = await from(this.call().getTransactions({
       id,
       senderId,
       recipientId
-    });
+    }));
 
-    this.helpers['ResponseValidator'].expectResponseToBeValid(transaction, 'TransactionsResponse');
-    expect(transaction.data[0].amount).to.deep.equal(LISK(amount));
+    expect(response.error).to.be.null;
+    this.helpers['ValidateHelper'].expectResponseToBeValid(response.result, 'TransactionsResponse');
+    return expect(response.result.data[0].amount).to.deep.equal(LISK(amount));
+  }
+
+  async checkIfVoteOrUnvoteCasted(votesOrUnvotes, passphrase) {
+    const { address } = getFixtureUser("passphrase", passphrase);
+    const { result, error } = await from(
+      this.call().getVoters({ address })
+    );
+
+    expect(error).to.be.null;
+    this.helpers["ValidateHelper"].expectResponseToBeValid(
+      result,
+      "VotersResponse"
+    );
+
+    const isVoted = result.data &&
+      result.data.voters &&
+      result.data.voters.some(v => votesOrUnvotes.includes(v.publicKey));
+
+    return isVoted;
+  }
+
+  async checkIfMultisigAccountExists(address, contracts) {
+    const { result, error } = await from(this.call().getMultisignatureGroups(address));
+
+    if (error && error.message === 'Status 404 : Multisignature account not found') {
+      return false;
+    } else if (result.data.length && result.data[0].members) {
+      const members = contracts.map(c => c.address);
+      return result.data[0].members.some(m => members.includes(m.address));
+    }
+    return false;
   }
 }
 

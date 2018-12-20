@@ -32,18 +32,6 @@ class API {
         }
     }
 
-    createAccount() {
-        const passphrase = elements.passphrase.Mnemonic.generateMnemonic();
-        const { publicKey } = elements.cryptography.getKeys(passphrase);
-        const address = elements.cryptography.getAddressFromPublicKey(publicKey);
-
-        return {
-            passphrase,
-            publicKey,
-            address,
-        }
-    }
-
     async getNodeStatus(ip) {
         const client = API.getClientByIp(this.clients, ip);
         return client.node.getStatus();
