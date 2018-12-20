@@ -1,43 +1,56 @@
-Then('I should be able to register for multisignature account', () => {
-  return 'pending';
+const { getFixtureUser, LISK, GENESIS_ACCOUNT, from } = require('../../utils');
+
+const I = actor();
+let multisigAccount;
+let params;
+let contracts;
+
+Then('{string}, {string} has a multisignature account with {string}', async (user1, user2, user3) => {
+  const signer1 = getFixtureUser('username', user1);
+  const signer2 = getFixtureUser('username', user2);
+  const api = await I.call();
+
+  multisigAccount = getFixtureUser('username', user3);
+  contracts = [signer1, signer2];
+
+  const account = await api.getMultisignatureGroups(multisigAccount.address);
+  await I.expectMultisigAccountToHaveContracts(account, contracts);
 });
 
-When('I have a {string} users with whom I want to setup multisignature account', (userCount) => {
-  return 'pending';
+Given('I have {int} lisk account with {int} LSK tokens', async (userCount, amount) => {
+  const wallets = new Array(userCount).fill(0);
+  contracts = await Promise.all(wallets.map(() => I.createAccount()));
+  const tranfers = contracts.map(a => ({ recipientId: a.address, amount: LISK(amount), passphrase: GENESIS_ACCOUNT.password }));
+
+  await I.transferToMultiple(tranfers)
+  multisigAccount = contracts.pop();
 });
 
-Then('I register for multisignature account with {string} keys group', (keysGroup) => {
-  return 'pending';
+When('I create a multisignature account with {int} accounts', async () => {
+  params = {
+    lifetime: 1,
+    minimum: 15,
+    maximum: 15,
+    passphrase: multisigAccount.passphrase,
+  };
+
+  await I.registerMultisignature(contracts, params);
 });
 
-When('the user {string}, {string}, {string} and {string} send the signature for confirmation', (sheldon, raj, lenard, howard) => {
-  return 'pending';
-});
+Then('I should be able to transact using multisignature account I created', async () => {
+  const api = await I.call();
+  const { address } = getFixtureUser('username', 'loki');
+  const { passphrase } = multisigAccount;
 
-When('I have a maximum of {string} users with whom I want to setup multisignature account', (userCount) => {
-  return 'pending';
-});
+  const transaction = await I.transfer({ recipientId: address, amount: LISK(1), passphrase });
 
-When('all the {string} users send the signature for confirmation', (userCount) => {
-  return 'pending';
-});
-
-When('I initiate a tranfer transaction with {string} keys group', (keysGroup) => {
-  return 'pending';
-});
-
-Then('the signature should be accepted', () => {
-  return 'pending';
-});
-
-Then('multisignature account should be created', () => {
-  return 'pending';
-});
-
-Then('the {string} required users send the signatures', (keysGroupSize) => {
-  return 'pending';
-});
-
-Then('the multisignature tranfer with minimum keys group should be successful', () => {
-  return 'pending';
+  await I.sendSignaturesForMultisigTrx(transaction, contracts);
+  const confirmedMultiSigTrx = await from(api.getTransactions({
+    id: transaction.id,
+    senderId: multisigAccount.address,
+    recipientId: address,
+  }));
+  expect(confirmedMultiSigTrx.error).to.be.null;
+  expect(confirmedMultiSigTrx.result.data[0].id).to.deep.equal(transaction.id);
+  expect(confirmedMultiSigTrx.result.data[0].signatures).to.have.lengthOf(contracts.length);
 });

@@ -11,6 +11,7 @@ chai.use(require("chai-sorted"));
 
 const expect = chai.expect;
 const otherFields = [
+  "username",
   "limit",
   "sort",
   "offset",

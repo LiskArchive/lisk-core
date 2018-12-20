@@ -1,5 +1,4 @@
-const { ASGARD_FIXTURE } = require('../../fixtures');
-const { LISK, getFixtureUser } = require('../../utils');
+const { LISK, getFixtureUser, from } = require('../../utils');
 
 const I = actor();
 
@@ -26,9 +25,8 @@ Given('The network is moving', async function () {
 Given('{int} lisk accounts exists with minimum balance', async (count) => {
     const amount = 0.1;
     const transfers = [];
-    const api = await I.call();
 
-    const randomAccounts = new Array(count).fill(0).map(() => api.createAccount());
+    const randomAccounts = new Array(count).fill(0).map(async () => await I.createAccount());
 
     randomAccounts.forEach(async (account) => {
         const trx = await I.transfer({ recipientId: account.address, amount: LISK(amount) })
@@ -37,9 +35,9 @@ Given('{int} lisk accounts exists with minimum balance', async (count) => {
 
     await I.waitForBlock(count);
 
-    transfers.forEach(async ({ id, recipientId }) => {
-        await I.validateTransfer(id, recipientId, amount)
-    })
+    transfers.forEach(async ({ id, recipientId }) =>
+        await I.validateTransaction(id, recipientId, amount)
+    )
 });
 
 Given('{string} has a lisk account with balance {int} LSK tokens', async function (userName, balance) {
@@ -57,18 +55,21 @@ Given('{string} has a account registered as delegate', async function (userName)
     await I.haveAccountRegisteredAsDelegate(username, address, passphrase, secondPassphrase);
 });
 
-Given('{string} has a multisignature account with {string}, {string}', async function (user1, user2, user3) {
-    const requester = { passphrase, secondPassphrase } = getFixtureUser('username', user1);
+Given('{string} creates a multisignature account with {string}, {string}', async function (user1, user2, user3) {
+    const { passphrase, address } = getFixtureUser('username', user1);
     const signer1 = getFixtureUser('username', user2);
     const signer2 = getFixtureUser('username', user3);
-    const keepers = [signer1, signer2];
+    const contracts = [signer1, signer2];
     const params = {
         lifetime: 1,
         minimum: 2,
         passphrase,
     };
 
-    await I.haveMultiSignatureAccount(requester, keepers, params);
+    const isExists = await I.checkIfMultisigAccountExists(address, contracts);
+    if (!isExists) {
+        await from(I.registerMultisignature(contracts, params));
+    }
 });
 
 Then('I have minimum balance in my account for transaction {string}', async function (transactionType, fees) {

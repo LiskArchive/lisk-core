@@ -7,7 +7,7 @@ When('I request for delegates list with {string}', async (params) => {
   const api = await I.call();
 
   response = await from(api.getDelegates(splitBy(params)));
-  expect(response.error).to.deep.equal(null);
+  expect(response.error).to.be.null;
 });
 
 Then('I should get delegates according to {string}', async (params) => {
@@ -19,7 +19,7 @@ When('I request for forging delegates list with {string}', async (params) => {
   const api = await I.call();
 
   response = await from(api.getForgers(splitBy(params)));
-  expect(response.error).to.deep.equal(null);
+  expect(response.error).to.be.null;
 });
 
 Then('I should get next forging delegates list according to {string}', async (params) => {
@@ -31,7 +31,7 @@ When('I request for forging delegates statistics {string} with {string}', async 
   const api = await I.call();
 
   response = await from(api.getForgingStatistics(address, splitBy(params)));
-  expect(response.error).to.deep.equal(null);
+  expect(response.error).to.be.null;
 });
 
 Then('I should get forging delegate statistics', async () => {

@@ -26,7 +26,7 @@ Feature: Lisk Accounts
 
     Examples:
       | params                                                                           |
-      | address=16313739661670634666L                                                     |
+      | address=16313739661670634666L                                                    |
       | publicKey=c094ebee7ec0c50ebee32918655e089f6e1a604b83bcaa760293c61e0f18ab6f       |
       | secondPublicKey=af365443121487c4935a33cd632ea6e6308a0e9b2e488de38a6a2e5aca96e8eb |
       | username=odin                                                                    |

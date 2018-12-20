@@ -8,7 +8,7 @@ When('{string} wants to transfer {int}LSK to {string}', async (sender, amount, r
   const user2 = getFixtureUser(recepient);
 
   response = await from(I.transfer({ recipientId: user2.address, amount: LISK(amount), passphrase: user1.passphrase }));
-  expect(response.error).to.deep.equal(null);
+  expect(response.error).to.be.null;
 });
 
 Then('{string} should receive {int}LSK from {string}', async (recepient, amount, sender) => {
@@ -16,19 +16,19 @@ Then('{string} should receive {int}LSK from {string}', async (recepient, amount,
   const user2 = getFixtureUser(recepient);
   const { id } = response.result;
 
-  await I.validateTransfer(id, user2.address, amount, user1.address);
+  await I.validateTransaction(id, user2.address, amount, user1.address);
 });
 
 When('{string} transfers {int}LSK token to himself', async (sender, amount) => {
   const { address, passphrase } = getFixtureUser(sender);
 
   response = await from(I.transfer({ recipientId: address, amount: LISK(amount), passphrase: passphrase }));
-  expect(response.error).to.deep.equal(null);
+  expect(response.error).to.be.null;
 });
 
 Then('{string} should receive {int}LSK in his account', async (sender, amount) => {
   const { address } = getFixtureUser(sender);
   const { id } = response.result;
 
-  await I.validateTransfer(id, address, amount, address);
+  await I.validateTransaction(id, address, amount, address);
 });

@@ -7,7 +7,7 @@ When('I request for peers without any params', async () => {
   const api = await I.call();
 
   response = await from(api.getPeers());
-  return expect(response.error).to.deep.equal(null);
+  return expect(response.error).to.be.null;
 });
 
 Then('I should get list of peers', async () => {
@@ -16,14 +16,14 @@ Then('I should get list of peers', async () => {
 });
 
 Then('Peers should be sorted by {string} in {string} order by default', async (sortKey, order) => {
-  await I.expectResponseToBeSortedBy(response.result, sortKey, order);
+  await I.expectResponseToBeSortedBy(response.result.data, sortKey, order);
 });
 
 When('I request for peers with {string}', async (params) => {
   const api = await I.call();
 
   response = await from(api.getPeers());
-  return expect(response.error).to.deep.equal(null);
+  return expect(response.error).to.be.null;
 });
 
 Then('I should get list of peers according to {string}', async (params) => {
