@@ -9,16 +9,5 @@ Feature: Register as a delegate
 
   Scenario: Register user account as delegate
     Given "thor" has a lisk account with balance 100 LSK tokens
-    And I have minimum balance in my account for transaction "<delegate>"
-      """
-      "fees": {
-      "send": "10000000",
-      "vote": "100000000",
-      "secondSignature": "500000000",
-      "delegate": "2500000000",
-      "multisignature": "500000000",
-      "dappRegistration": "2500000000"
-      }
-      """
-    When I register as a delegate
-    Then "odin" has a account registered as delegate
+    When "thor" register as a delegate
+    Then "thor" has a account registered as delegate

@@ -9,49 +9,17 @@ Feature: Register dApp
 
   Scenario: dApp registration
     Given "thor" has a lisk account with balance 100 LSK tokens
-    And I have minimum balance in my account for transaction "<dappRegistration>"
-      """
-      "fees": {
-      "send": "10000000",
-      "vote": "100000000",
-      "secondSignature": "500000000",
-      "delegate": "2500000000",
-      "multisignature": "500000000",
-      "dappRegistration": "2500000000"
-      }
-      """
-    When I register for dApp "coral reef ICO" from my account
+    When "thor" register for dApp "coral reef ICO"
     Then dApp "coral reef ICO" should be registered
 
   Scenario: dApp registration from second signature account
     Given "loki" has a account with second signature
-    And I have minimum balance in my account for transaction "<dappRegistration>"
-      """
-      "fees": {
-      "send": "10000000",
-      "vote": "100000000",
-      "secondSignature": "500000000",
-      "delegate": "2500000000",
-      "multisignature": "500000000",
-      "dappRegistration": "2500000000"
-      }
-      """
-    When I register for dApp "save tiger ICO" from my account
+    When "loki" uses second signature account to register for dApp "save tiger ICO"
     Then dApp "save tiger ICO" should be registered
 
   Scenario: dApp registration from multisignature account
-    Given "heimdall" has a multisignature account with "thor", "odin"
-    And I have minimum balance in my account for transaction "<dappRegistration>"
-      """
-      "fees": {
-      "send": "10000000",
-      "vote": "100000000",
-      "secondSignature": "500000000",
-      "delegate": "2500000000",
-      "multisignature": "500000000",
-      "dappRegistration": "2500000000"
-      }
-      """
-    When I register for dApp "smart grid ICO" from my account
+    Given "heimdall" creates a multisignature account with "thor", "odin"
+    When "heimdall" uses multi signature account to register for dApp "smart grid ICO"
+    When "thor", "odin" send signatures for dApp "smart grid ICO"
     Then dApp "smart grid ICO" should be registered
 

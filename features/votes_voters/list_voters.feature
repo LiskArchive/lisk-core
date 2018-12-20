@@ -4,19 +4,16 @@ Feature: List Voters
   I want to see list of voters who have voted me
 
   Background: Client list
-    Given I have list of clients
+    Given The network is moving
 
   Scenario Outline: List voters with params
-    Given The network is moving
     When I request for voters with "<params>"
-    Then I should get voters according to params
+    Then I should get voters according to "<params>"
 
     Examples:
-      | params                                                      |
-      | address                                                     |
-      | username                                                    |
-      | publicKey                                                   |
-      | secondPublicKey                                             |
-      | offset                                                      |
-      | limit                                                       |
-      | sort=username:asc, username:desc, balance:asc, balance:desc |
+      | params                                                                     |
+      | address=7333160697601118486L                                               |
+      | username=thor                                                              |
+      | publicKey=6d013be60f6f402a56f43df88582759e2cd3c69f84fac6084d86230cfdd72c35 |
+      | sort=balance:asc&address=7333160697601118486L                              |
+      | sort=balance:desc&address=7333160697601118486L                             |
