@@ -3,6 +3,8 @@
         "http://alphanet-seed-01.liskdev.net:4000"
     ],
     "nodes": [],
+    "httpPort": 4000,
+    "wsPort": 5000,
     "forging": {
         "defaultPassword": "elephant tree paris dragon chair galaxy",
         "delegates": [

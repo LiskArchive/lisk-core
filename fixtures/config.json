@@ -1,8 +1,10 @@
 {
     "seed": [
-        "http://localhost:4000"
+        "http://127.0.0.1:4000"
     ],
     "nodes": [],
+    "httpPort": 4000,
+    "wsPort": 5000,
     "forging": {
         "defaultPassword": "elephant tree paris dragon chair galaxy",
         "delegates": [

@@ -1,4 +1,4 @@
-const { LISK, getFixtureUser, from } = require('../../utils');
+const { BEDDOWS, getFixtureUser, from } = require('../../utils');
 
 const I = actor();
 
@@ -29,7 +29,7 @@ Given('{int} lisk accounts exists with minimum balance', async (count) => {
     const randomAccounts = new Array(count).fill(0).map(async () => await I.createAccount());
 
     randomAccounts.forEach(async (account) => {
-        const trx = await I.transfer({ recipientId: account.address, amount: LISK(amount) })
+        const trx = await I.transfer({ recipientId: account.address, amount: BEDDOWS(amount) })
         transfers.push(trx);
     });
 

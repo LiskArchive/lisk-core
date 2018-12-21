@@ -5,34 +5,13 @@ Feature: Node transaction pool
 	As a user I should be able to search for specific transactions by providing the appropriate parameters.
 
 	Background: Client list
-		Given I have list of clients
-		Given The node is forging
 		Given The network is moving
 
-	Scenario Outline: Unprocessed, Unconfirmed and Unsigned transactions
+	Scenario: Unprocessed, Unconfirmed and Unsigned transactions
 		Given "thor" has a lisk account with balance 100 LSK tokens
-		And I have minimum balance in my account for transaction "all"
-			"""
-			"fees": {
-			"send": "10000000",
-			"vote": "100000000",
-			"secondSignature": "500000000",
-			"delegate": "2500000000",
-			"multisignature": "500000000",
-			"dappRegistration": "2500000000"
-			}
-			"""
-		When I send "all types" transaction to network
-		And I request for transaction with "<params>"
-		Then I should get list of transactions in Unprocessed, Unconfirmed and Unsigned state
-
-		Examples:
-			| params          |
-			| id              |
-			| recipientId     |
-			| senderId        |
-			| senderPublicKey |
-			| type            |
-			| limit           |
-			| offset          |
-			| sort            |
+		When "thor" send 1 LSK token to 100 random accounts
+		Then I should get list of transactions in "unprocessed", "unconfirmed" queue
+		When "heimdall" sends 1 LSK token to a random account
+		Then I should get list of transactions in "unsigned" queue
+		When "thor" and "odin" sends the required signature
+		Then multisignature transaction should get confirmed

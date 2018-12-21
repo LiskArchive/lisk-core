@@ -1,4 +1,4 @@
-const { getFixtureUser, from, LISK } = require('../../utils');
+const { getFixtureUser, from, BEDDOWS } = require('../../utils');
 
 const I = actor();
 let response;
@@ -7,7 +7,7 @@ When('{string} wants to transfer {int}LSK to {string}', async (sender, amount, r
   const user1 = getFixtureUser(sender);
   const user2 = getFixtureUser(recepient);
 
-  response = await from(I.transfer({ recipientId: user2.address, amount: LISK(amount), passphrase: user1.passphrase }));
+  response = await from(I.transfer({ recipientId: user2.address, amount: BEDDOWS(amount), passphrase: user1.passphrase }));
   expect(response.error).to.be.null;
 });
 
@@ -22,7 +22,7 @@ Then('{string} should receive {int}LSK from {string}', async (recepient, amount,
 When('{string} transfers {int}LSK token to himself', async (sender, amount) => {
   const { address, passphrase } = getFixtureUser(sender);
 
-  response = await from(I.transfer({ recipientId: address, amount: LISK(amount), passphrase: passphrase }));
+  response = await from(I.transfer({ recipientId: address, amount: BEDDOWS(amount), passphrase: passphrase }));
   expect(response.error).to.be.null;
 });
 

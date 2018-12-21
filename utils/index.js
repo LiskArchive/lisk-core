@@ -1,12 +1,16 @@
+const elements = require('lisk-elements');
+
 const { ASGARD_FIXTURE, GENESIS_ACCOUNT } = require('../fixtures');
 const from = require('./from');
 
 const BLOCK_TIME = 10000;
 const TRS_PER_BLOCK = 25;
-// Beddows
-const BEDDOWS = 10 ** 8;
+
 // amount converted from lisk to beddows
-const LISK = amount => String(BEDDOWS * amount);
+const BEDDOWS = amount => elements.transaction.utils.convertLSKToBeddows(amount.toString());
+
+// amount converted from beddows to lisk
+const LISK = amount => elements.transaction.utils.convertBeddowsToLSK(amount.toString());
 
 const getFixtureUser = (propertyName, value) =>
   ASGARD_FIXTURE.find(user => user[propertyName] === value);

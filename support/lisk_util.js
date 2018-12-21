@@ -1,7 +1,7 @@
 const elements = require('lisk-elements');
 const API = require('./api.js');
 const { config, GENESIS_ACCOUNT, ASGARD_FIXTURE } = require('../fixtures');
-const { LISK, BLOCK_TIME, TRS_PER_BLOCK, from, getFixtureUser } = require('../utils');
+const { BEDDOWS, BLOCK_TIME, TRS_PER_BLOCK, from, getFixtureUser } = require('../utils');
 
 const networkConfig = config();
 const users = {};
@@ -282,11 +282,15 @@ class LiskUtil extends Helper {
    */
   async registerMultisignature(accounts, params) {
     const keysgroup = accounts.map(account => account.publicKey);
+
     const registerMultisignatureTrx = elements.transaction.registerMultisignature({ keysgroup, ...params });
-    await this.waitForBlock();
+
     const signatures = this.createSignatures(accounts, registerMultisignatureTrx);
+
     await this.broadcastAndValidateTransactionAndWait(registerMultisignatureTrx);
+
     await Promise.all(signatures.map(s => this.broadcastAndValidateSignature(s)));
+
     await this.waitForBlock();
     return registerMultisignatureTrx;
   }
@@ -329,7 +333,7 @@ class LiskUtil extends Helper {
 
     expect(response.error).to.be.null;
     this.helpers['ValidateHelper'].expectResponseToBeValid(response.result, 'TransactionsResponse');
-    return expect(response.result.data[0].amount).to.deep.equal(LISK(amount));
+    return expect(response.result.data[0].amount).to.deep.equal(BEDDOWS(amount));
   }
 
   async checkIfVoteOrUnvoteCasted(votesOrUnvotes, passphrase) {
@@ -361,6 +365,47 @@ class LiskUtil extends Helper {
       return result.data[0].members.some(m => members.includes(m.address));
     }
     return false;
+  }
+
+  /**
+   * returns count of transactions in queue
+   */
+  async getPendingTransactionCount() {
+    const { data: {
+      transactions: {
+        unconfirmed,
+        unprocessed,
+        unsigned,
+      } } } = await this.call().getNodeStatus();
+
+    return unconfirmed + unprocessed + unsigned;
+  }
+
+  async getAllPeers(limit, offset) {
+    const { result, error } = await from(this.call().getPeers({ limit, offset, }));
+
+    expect(error).to.be.null;
+
+    const count = Math.ceil(result.meta.count / limit) - 1;
+
+    const pagination = Array(count).fill().map((v, i) => (limit * (i + 1)));
+
+    let peerList = result.data;
+
+    await pagination.reduce(async (acc, curr) => {
+      const { result, error } = await from(this.call().getPeers({ limit, offset: curr, }));
+
+      expect(error).to.be.null;
+      acc.push(...result.data);
+      return acc;
+    }, peerList);
+
+    return peerList;
+  }
+
+  async getForgingDelegateNode(publicKey) {
+    const peers = await this.getAllPeers(100, 0);
+    const forgingStatus = await Promise.all(peers.map(p => this.call().getForgingStatus({ publicKey, }, p.ip)));
   }
 }
 

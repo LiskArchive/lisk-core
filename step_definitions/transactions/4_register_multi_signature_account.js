@@ -1,4 +1,4 @@
-const { getFixtureUser, LISK, GENESIS_ACCOUNT, from } = require('../../utils');
+const { getFixtureUser, BEDDOWS, GENESIS_ACCOUNT, from } = require('../../utils');
 
 const I = actor();
 let multisigAccount;
@@ -20,17 +20,17 @@ Then('{string}, {string} has a multisignature account with {string}', async (use
 Given('I have {int} lisk account with {int} LSK tokens', async (userCount, amount) => {
   const wallets = new Array(userCount).fill(0);
   contracts = await Promise.all(wallets.map(() => I.createAccount()));
-  const tranfers = contracts.map(a => ({ recipientId: a.address, amount: LISK(amount), passphrase: GENESIS_ACCOUNT.password }));
+  const tranfers = contracts.map(a => ({ recipientId: a.address, amount: BEDDOWS(amount), passphrase: GENESIS_ACCOUNT.password }));
 
   await I.transferToMultiple(tranfers)
   multisigAccount = contracts.pop();
 });
 
-When('I create a multisignature account with {int} accounts', async () => {
+When('I create a multisignature account with {int} accounts', async (count) => {
   params = {
     lifetime: 1,
-    minimum: 15,
-    maximum: 15,
+    minimum: count,
+    maximum: count,
     passphrase: multisigAccount.passphrase,
   };
 
@@ -42,7 +42,7 @@ Then('I should be able to transact using multisignature account I created', asyn
   const { address } = getFixtureUser('username', 'loki');
   const { passphrase } = multisigAccount;
 
-  const transaction = await I.transfer({ recipientId: address, amount: LISK(1), passphrase });
+  const transaction = await I.transfer({ recipientId: address, amount: BEDDOWS(1), passphrase });
 
   await I.sendSignaturesForMultisigTrx(transaction, contracts);
   const confirmedMultiSigTrx = await from(api.getTransactions({
@@ -50,6 +50,7 @@ Then('I should be able to transact using multisignature account I created', asyn
     senderId: multisigAccount.address,
     recipientId: address,
   }));
+
   expect(confirmedMultiSigTrx.error).to.be.null;
   expect(confirmedMultiSigTrx.result.data[0].id).to.deep.equal(transaction.id);
   expect(confirmedMultiSigTrx.result.data[0].signatures).to.have.lengthOf(contracts.length);

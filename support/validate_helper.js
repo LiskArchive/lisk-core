@@ -1,6 +1,6 @@
 const lisk_commons = require('lisk-commons');
 const chai = require('chai');
-const { LISK, from, sortBy, flattern } = require('../utils');
+const { LISK, BEDDOWS, from, sortBy, flattern } = require('../utils');
 const LiskUtil = require('./lisk_util');
 
 const Helper = codecept_helper;
@@ -42,10 +42,10 @@ class ValidateHelper extends Helper {
   async haveAccountWithBalance(address, balance) {
     const account = await this.haveAccount({ address });
 
-    if (!account || !(account.balance >= LISK(balance))) {
-      // take a diff and transfer only as much the balance required to be
-      await liskUtil.transfer({ recipientId: address, amount: LISK(balance) });
-      await liskUtil.waitForBlock();
+    if (!account || !(LISK(account.balance) >= balance)) {
+      balance = Math.ceil(balance - LISK(account.balance));
+
+      await liskUtil.transfer({ recipientId: address, amount: BEDDOWS(balance) });
     }
     return account;
   }
