@@ -21,117 +21,117 @@ class API {
         this.clients = apiClients();
     }
 
-    static getClientByAddress(clients, address) {
-        if (!address) {
+    static getClientByAddress(clients, ip_address) {
+        if (!ip_address) {
             const { seed: [ip] } = config();
             return clients.filter(client => client.ip === ip)[0].client;
         }
-        const ip = `http://${address}:${config().httpPort}`;
+        const ip = `http://${ip_address}:${config().httpPort}`;
         return clients.filter(client => client.ip === ip)[0].client;
     }
 
-    async getNodeStatus(address) {
-        const client = API.getClientByAddress(this.clients, address);
+    async getNodeStatus(ip_address) {
+        const client = API.getClientByAddress(this.clients, ip_address);
         return client.node.getStatus();
     }
 
-    async getNodeConstants(address) {
-        const client = API.getClientByAddress(this.clients, address);
+    async getNodeConstants(ip_address) {
+        const client = API.getClientByAddress(this.clients, ip_address);
         return client.node.getConstants();
     }
 
-    async getForgingStatus(params, address) {
-        const client = API.getClientByAddress(this.clients, address);
+    async getForgingStatus(params, ip_address) {
+        const client = API.getClientByAddress(this.clients, ip_address);
         return client.node.getForgingStatus(params);
     }
 
-    async updateForgingStatus(params, address) {
-        const client = API.getClientByAddress(this.clients, address);
+    async updateForgingStatus(params, ip_address) {
+        const client = API.getClientByAddress(this.clients, ip_address);
         return client.node.updateForgingStatus(params);
     }
 
-    async updateForgingStatus(params, address) {
-        const client = API.getClientByAddress(this.clients, address);
+    async updateForgingStatus(params, ip_address) {
+        const client = API.getClientByAddress(this.clients, ip_address);
         return client.node.updateForgingStatus(params);
     }
 
-    async getTransactionsByState(state, params, address) {
-        const client = API.getClientByAddress(this.clients, address);
+    async getTransactionsByState(state, params, ip_address) {
+        const client = API.getClientByAddress(this.clients, ip_address);
         return client.node.getTransactions(state, params);
     }
 
-    async getPeers(params, address) {
-        const client = API.getClientByAddress(this.clients, address);
+    async getPeers(params, ip_address) {
+        const client = API.getClientByAddress(this.clients, ip_address);
         return client.peers.get(params);
     }
 
-    async getAccounts(params, address) {
-        const client = API.getClientByAddress(this.clients, address);
+    async getAccounts(params, ip_address) {
+        const client = API.getClientByAddress(this.clients, ip_address);
         return client.accounts.get(params);
     }
 
-    async getMultisignatureGroups(address, params = {}, address) {
-        const client = API.getClientByAddress(this.clients, address);
+    async getMultisignatureGroups(address, params = {}, ip_address) {
+        const client = API.getClientByAddress(this.clients, ip_address);
         return client.accounts.getMultisignatureGroups(address, params);
     }
 
-    async getMultisignatureMemberships(address, params, address) {
-        const client = API.getClientByAddress(this.clients, address);
+    async getMultisignatureMemberships(address, params, ip_address) {
+        const client = API.getClientByAddress(this.clients, ip_address);
         return client.accounts.getMultisignatureMemberships(address, params);
     }
 
-    async getBlocks(params, address) {
-        const client = API.getClientByAddress(this.clients, address);
+    async getBlocks(params, ip_address) {
+        const client = API.getClientByAddress(this.clients, ip_address);
         return client.blocks.get(params);
     }
 
-    async getTransactions(params, address) {
-        const client = API.getClientByAddress(this.clients, address);
+    async getTransactions(params, ip_address) {
+        const client = API.getClientByAddress(this.clients, ip_address);
         return client.transactions.get(params);
     }
 
-    async broadcastTransactions(params, address) {
-        const client = API.getClientByAddress(this.clients, address);
+    async broadcastTransactions(params, ip_address) {
+        const client = API.getClientByAddress(this.clients, ip_address);
         return client.transactions.broadcast(params);
     }
 
-    async broadcastSignatures(params, address) {
-        const client = API.getClientByAddress(this.clients, address);
+    async broadcastSignatures(params, ip_address) {
+        const client = API.getClientByAddress(this.clients, ip_address);
         return client.signatures.broadcast(params);
     }
 
-    async getDelegates(params, address) {
-        const client = API.getClientByAddress(this.clients, address);
+    async getDelegates(params, ip_address) {
+        const client = API.getClientByAddress(this.clients, ip_address);
         return client.delegates.get(params);
     }
 
-    async getForgers(params, address) {
-        const client = API.getClientByAddress(this.clients, address);
+    async getForgers(params, ip_address) {
+        const client = API.getClientByAddress(this.clients, ip_address);
         return client.delegates.getForgers(params);
     }
 
-    async getForgingStatistics(address, params, address) {
-        const client = API.getClientByAddress(this.clients, address);
+    async getForgingStatistics(address, params, ip_address) {
+        const client = API.getClientByAddress(this.clients, ip_address);
         return client.delegates.getForgingStatistics(address, params);
     }
 
-    async getDelegates(params, address) {
-        const client = API.getClientByAddress(this.clients, address);
+    async getDelegates(params, ip_address) {
+        const client = API.getClientByAddress(this.clients, ip_address);
         return client.delegates.get(params);
     }
 
-    async getVotes(params, address) {
-        const client = API.getClientByAddress(this.clients, address);
+    async getVotes(params, ip_address) {
+        const client = API.getClientByAddress(this.clients, ip_address);
         return client.votes.get(params);
     }
 
-    async getVoters(params, address) {
-        const client = API.getClientByAddress(this.clients, address);
+    async getVoters(params, ip_address) {
+        const client = API.getClientByAddress(this.clients, ip_address);
         return client.voters.get(params);
     }
 
-    async getDapp(params, address) {
-        const client = API.getClientByAddress(this.clients, address);
+    async getDapp(params, ip_address) {
+        const client = API.getClientByAddress(this.clients, ip_address);
         return client.dapps.get(params);
     }
 }
