@@ -10,10 +10,8 @@ Feature: Enable Disable Forging
 
   Scenario: Disable forging
     Given The node is forging
-    When I disable forging
-    Then The node should not forge
+    When I disable forging the node should stop forging
 
   Scenario: Enable forging
     Given The node is not forging
-    When I enable forging
-    Then The node should forge
+    When I enable forging the node should start forging

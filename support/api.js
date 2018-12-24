@@ -3,17 +3,20 @@ const { config } = require('../fixtures');
 
 class API {
     constructor(config) {
-        const { seed, nodes } = config;
+        const { seed, nodes, httpPort } = config;
 
         this.seed = seed;
         this.nodes = nodes;
+        this.httpPort = httpPort;
 
         const apiClients = () => {
             const ips = [...this.seed, ...this.nodes];
             return ips.map(ip => {
-                const client = new elements.APIClient([ip]);
+                const url = `http://${ip}:${httpPort}`;
+                const client = new elements.APIClient([url]);
                 return {
                     ip,
+                    url,
                     client
                 }
             })
@@ -26,8 +29,7 @@ class API {
             const { seed: [ip] } = config();
             return clients.filter(client => client.ip === ip)[0].client;
         }
-        const ip = `http://${ip_address}:${config().httpPort}`;
-        return clients.filter(client => client.ip === ip)[0].client;
+        return clients.filter(client => client.ip === ip_address)[0].client;
     }
 
     async getNodeStatus(ip_address) {
@@ -43,11 +45,6 @@ class API {
     async getForgingStatus(params, ip_address) {
         const client = API.getClientByAddress(this.clients, ip_address);
         return client.node.getForgingStatus(params);
-    }
-
-    async updateForgingStatus(params, ip_address) {
-        const client = API.getClientByAddress(this.clients, ip_address);
-        return client.node.updateForgingStatus(params);
     }
 
     async updateForgingStatus(params, ip_address) {

@@ -17,7 +17,7 @@
   "teardown": null,
   "hooks": [],
   "gherkin": {
-    "features": "./features/node/enable_disable_forging.feature",
+    "features": "./features/**/*.feature",
     "steps": [
       "./step_definitions/background/world.js",
       "./step_definitions/accounts/create_account.js",

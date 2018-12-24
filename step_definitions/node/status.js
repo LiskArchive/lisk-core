@@ -1,6 +1,3 @@
-const Promise = require('bluebird');
-const { schema } = require('lisk-commons');
-
 const I = actor();
 
 let nodeStatus = [];

@@ -1,5 +1,3 @@
-const Promise = require('bluebird');
-
 const I = actor();
 
 let results = [];
@@ -7,7 +5,7 @@ let results = [];
 When('I request for node constants', async function () {
   const api = await I.call();
 
-  results = await Promise.all([...api.seed, ...api.nodes].map(async address => await api.getNodeConstants(address)));
+  results = await Promise.all([...api.seed, ...api.nodes].map(address => api.getNodeConstants(address)));
 });
 
 Then('I have the constants from all the nodes', async function () {

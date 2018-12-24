@@ -405,7 +405,16 @@ class LiskUtil extends Helper {
 
   async getForgingDelegateNode(publicKey) {
     const peers = await this.getAllPeers(100, 0);
-    const forgingStatus = await Promise.all(peers.map(p => this.call().getForgingStatus({ publicKey, }, p.ip)));
+    const forgingStatus = await Promise.all(peers.map(async p => {
+      const response = await from(this.call().getForgingStatus({ publicKey, }, p.ip));
+
+      if (response.result && response.result.data.length) {
+        return p.ip;
+      }
+      return;
+    }));
+
+    return forgingStatus.filter(n => n);
   }
 }
 

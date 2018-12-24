@@ -1,6 +1,6 @@
 {
     "seed": [
-        "http://alphanet-seed-01.liskdev.net:4000"
+        "alphanet-seed-01.liskdev.net"
     ],
     "nodes": [],
     "httpPort": 4000,
