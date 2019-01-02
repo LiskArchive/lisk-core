@@ -43,11 +43,13 @@ class ValidateHelper extends Helper {
     const account = await this.haveAccount({ address });
 
     if (!account || !(LISK(account.balance) >= balance)) {
-      balance = Math.ceil(balance - LISK(account.balance));
+      if(account) {
+        balance = Math.ceil(balance - LISK(account.balance));
+      }
 
       await liskUtil.transfer({ recipientId: address, amount: BEDDOWS(balance) });
     }
-    return account;
+    return await this.haveAccount({ address });
   }
 
   async haveAccountWithSecondSignature(address, passphrase, secondPassphrase) {
