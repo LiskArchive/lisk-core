@@ -12,8 +12,9 @@ const BEDDOWS = amount => elements.transaction.utils.convertLSKToBeddows(amount.
 // amount converted from beddows to lisk
 const LISK = amount => elements.transaction.utils.convertBeddowsToLSK(amount.toString());
 
-const getFixtureUser = (propertyName, value) =>
-  ASGARD_FIXTURE.find(user => user[propertyName] === value);
+const getFixtureUser = (propertyName, value) => {
+  return ASGARD_FIXTURE.find(user => user[propertyName] === value);
+}
 
 const splitBy = (value, separator = "=") => {
   return value
@@ -46,6 +47,22 @@ const flattern = obj => {
       );
     }(obj)
   )
+}
+
+/**
+ * Returns an array with arrays of the given size.
+ *
+ * @param myArray {Array} Array to split
+ * @param chunkSize {Integer} Size of every group
+ */
+const chunkArray = (myArray, chunk_size) => {
+  const results = [];
+
+  while (myArray.length) {
+    results.push(myArray.splice(0, chunk_size));
+  }
+
+  return results;
 }
 
 const dappMultiAccountName = () => `dapp-multi${new Date().getTime()}`;
@@ -81,6 +98,7 @@ module.exports = {
   splitBy,
   sortBy,
   flattern,
+  chunkArray,
   dappMultiAccountName,
   generateMnemonic,
   getKeys,

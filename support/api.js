@@ -1,5 +1,5 @@
 const elements = require('lisk-elements');
-const { config, getRandomIpAddress } = require('../fixtures');
+const { getRandomIpAddress } = require('../fixtures');
 
 class API {
     constructor(config) {
