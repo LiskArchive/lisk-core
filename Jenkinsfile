@@ -1,8 +1,10 @@
 pipeline {
-  agent { node { label 'lisk-core-qa-external' } }
+  agent { node { label 'lisk-core' } }
   stages {
     stage ('test') {
-      echo 'hello!!'
+      steps {
+        sh 'echo hello!!'
+      }
     }
   }
 }
