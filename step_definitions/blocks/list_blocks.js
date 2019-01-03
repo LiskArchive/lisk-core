@@ -1,4 +1,4 @@
-const { from, getFixtureUser, splitBy } = require('../../utils');
+const { from, splitBy } = require('../../utils');
 
 const I = actor();
 let response;

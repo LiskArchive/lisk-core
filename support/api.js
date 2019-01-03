@@ -1,5 +1,5 @@
 const elements = require('lisk-elements');
-const { config } = require('../fixtures');
+const { config, getRandomIpAddress } = require('../fixtures');
 
 class API {
     constructor(config) {
@@ -26,7 +26,7 @@ class API {
 
     static getClientByAddress(clients, ip_address) {
         if (!ip_address) {
-            const { seed: [ip] } = config();
+            const ip = getRandomIpAddress();
             return clients.filter(client => client.ip === ip)[0].client;
         }
         return clients.filter(client => client.ip === ip_address)[0].client;

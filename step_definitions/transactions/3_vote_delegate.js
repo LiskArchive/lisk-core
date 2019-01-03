@@ -7,6 +7,11 @@ When('{string} cast vote for a delegate {string}', async (sender, receiver) => {
   const { passphrase } = getFixtureUser('username', sender);
   const votes = [publicKey];
 
+  const isVoted = await I.checkIfVoteOrUnvoteCasted(votes, passphrase);
+
+  if (isVoted) {
+    return;
+  }
   await from(I.castVotes({ votes, passphrase }));
 });
 
@@ -14,6 +19,11 @@ When('{string} cast my vote for himself', async (userName) => {
   const { passphrase, publicKey } = getFixtureUser('username', userName);
   const votes = [publicKey];
 
+  const isVoted = await I.checkIfVoteOrUnvoteCasted(votes, passphrase);
+
+  if (isVoted) {
+    return;
+  }
   await from(I.castVotes({ votes, passphrase }));
 });
 

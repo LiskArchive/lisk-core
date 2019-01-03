@@ -2,9 +2,6 @@ Feature: Register Second Signature on account
 
   As a user I want to secure my account with second signature
 
-  Background: Client list
-    Given I have list of clients
-
   Scenario: Register second signature
     Given "loki" has a account with second signature
 

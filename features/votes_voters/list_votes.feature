@@ -3,9 +3,6 @@ Feature: List Votes
   As a delegate
   I want to see list of votes that I have casted
 
-  Background: Client list
-    Given The network is moving
-
   Scenario Outline: List votes with params
     When I request for votes with "<params>"
     Then I should get votes according to "<params>"

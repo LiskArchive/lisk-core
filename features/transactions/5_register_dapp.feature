@@ -4,9 +4,6 @@ Feature: Register dApp
   I want to register dApp
   So that I can conduct ICO on lisk
 
-  Background: Client list
-    Given I have list of clients
-
   Scenario: dApp registration
     Given "thor" has a lisk account with balance 100 LSK tokens
     When "thor" register for dApp "coral reef ICO"

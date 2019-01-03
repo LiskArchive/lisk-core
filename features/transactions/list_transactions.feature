@@ -3,16 +3,11 @@ Feature: List Transactions
   As a user
   I want to see list of transactions included in the blockchain
 
-  Background: Client list
-    Given I have list of clients
-
   Scenario: List transactions without params
-    Given The network is moving
     When I request for transactions without any params
     Then I should get list of 10 transactions sorted by field "height" and order "asc"
 
   Scenario Outline: List transactions with params
-    Given The network is moving
     When I request for transactions with "<params>"
     Then I should get transactions according to "<params>"
 

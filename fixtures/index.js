@@ -114,8 +114,15 @@ const ASGARD_FIXTURE = [
   },
 ];
 
+const getRandomIpAddress = () => {
+  const { seed, nodes } = config();
+  const AllNodes = [...seed, ...nodes];
+  return AllNodes[Math.floor(Math.random() * AllNodes.length)];
+}
+
 module.exports = {
   config,
   GENESIS_ACCOUNT,
   ASGARD_FIXTURE,
+  getRandomIpAddress,
 }

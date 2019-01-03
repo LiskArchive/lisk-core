@@ -11,15 +11,11 @@ Given('I have list of clients', async function () {
 });
 
 Given('The delegates are enabled to forge', async () => {
-
-});
-
-Given('The node is forging', async function () {
-    return 'pending';
+    await I.checkIfDelegatesAreForging();
 });
 
 Given('The network is moving', async function () {
-    return 'pending';
+    await I.checkIfNetworkIsMoving();
 });
 
 Given('{int} lisk accounts exists with minimum balance', async (count) => {
@@ -70,10 +66,6 @@ Given('{string} creates a multisignature account with {string}, {string}', async
     if (!isExists) {
         await from(I.registerMultisignature(contracts, params));
     }
-});
-
-Then('I have minimum balance in my account for transaction {string}', async function (transactionType, fees) {
-    return 'pending';
 });
 
 // TODO: Interface for user I to give different type of account

@@ -3,9 +3,6 @@ Feature: List Voters
   As a delegate
   I want to see list of voters who have voted me
 
-  Background: Client list
-    Given The network is moving
-
   Scenario Outline: List voters with params
     When I request for voters with "<params>"
     Then I should get voters according to "<params>"

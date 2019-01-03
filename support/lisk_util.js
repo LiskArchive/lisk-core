@@ -78,7 +78,7 @@ class LiskUtil extends Helper {
    * @param {number} transactionCount - total transactions sent, default 1
    */
   async waitForBlock(transactionCount = 25) {
-    const waitTime = (transactionCount / TRS_PER_BLOCK) * BLOCK_TIME;
+    const waitTime = Math.ceil(transactionCount / TRS_PER_BLOCK) * BLOCK_TIME;
     await this.wait(waitTime);
   }
 
@@ -116,16 +116,23 @@ class LiskUtil extends Helper {
   /**
    * Broadcast a transaction and validate response
    * @param {Object} transaction - The transaction to be broadcasted
+   * @param {Number} blocksToWait - Number of blocks to wait
    * @returns {Object} transaction
    */
-  async broadcastAndValidateTransactionAndWait(transaction) {
+  async broadcastAndValidateTransactionAndWait(transaction, blocksToWait = 1) {
     await this.broadcastAndValidateTransaction(transaction);
-    await this.waitForBlock();
+    await this.waitForBlock(blocksToWait);
   }
 
-  async broadcastAndValidateSignatureAndWait(signature) {
+  /**
+   * Broadcast a signature transaction and validate response
+   * @param {Object} signature - The signature transaction to be broadcasted
+   * @param {Number} blocksToWait - Number of blocks to wait
+   * @param {*} signature
+   */
+  async broadcastAndValidateSignatureAndWait(signature, count = 25) {
     await this.broadcastAndValidateSignature(signature);
-    await this.waitForBlock();
+    await this.waitForBlock(blocksToWait);
   }
 
   /**
@@ -155,16 +162,17 @@ class LiskUtil extends Helper {
    * @param {string} account.amount - The amount sender wants to transfer to recipient
    * @param {string} account.passphrase - The sender passphrase, default is genesis account
    * @param {string} account.secondPassphrase - The sender second passphrase
+   * @param {Number} blocksToWait - Number of blocks to wait
    * @returns {Object} transaction
    */
-  async transfer(account) {
+  async transfer(account, blocksToWait) {
     if (!account.passphrase) {
       account.passphrase = GENESIS_ACCOUNT.password
     }
 
     const trx = elements.transaction.transfer(account);
 
-    await from(this.broadcastAndValidateTransactionAndWait(trx));
+    await from(this.broadcastAndValidateTransactionAndWait(trx, blocksToWait));
 
     return trx;
   }
@@ -178,16 +186,20 @@ class LiskUtil extends Helper {
    * @param {string} accounts.secondPassphrase - The sender second passphrase
    * @returns {Object} transaction
    */
-  async transferToMultiple(accounts) {
-    const trxs = accounts.map(a => elements.transaction.transfer(a));
+  async transferToMultipleAccounts(accounts) {
+    const trxs = accounts.map(a => {
+      if (!a.passphrase) {
+        a.passphrase = GENESIS_ACCOUNT.password
+      }
+      return elements.transaction.transfer(a);
+    });
 
     await from(Promise.all(trxs.map(t => this.broadcastAndValidateTransaction(t))));
-    await this.waitForBlock();
 
     return trxs;
   }
 
-  async sendSignaturesForMultisigTrx(transaction, contracts) {
+  async sendSignaturesForMultisigTrx(transaction, contracts, blocksToWait) {
     const signatures = contracts.map(s => ({
       transactionId: transaction.id,
       publicKey: s.publicKey,
@@ -198,22 +210,23 @@ class LiskUtil extends Helper {
     }));
 
     await Promise.all(signatures.map(s => this.broadcastAndValidateSignature(s)));
-    await this.waitForBlock();
+    await this.waitForBlock(blocksToWait);
   }
 
   /**
    * Register second passphrase on an account
    * @param {string} passphrase - User account passphrase
    * @param {string} secondPassphrase - New secondPassphrase to register on account
+   * @param {Number} blocksToWait - Number of blocks to wait
    * @returns {Object} transaction
    */
-  async registerSecondPassphrase(passphrase, secondPassphrase) {
+  async registerSecondPassphrase(passphrase, secondPassphrase, blocksToWait) {
     const trx = elements.transaction.registerSecondPassphrase({
       passphrase,
       secondPassphrase,
     });
 
-    await from(this.broadcastAndValidateTransactionAndWait(trx));
+    await from(this.broadcastAndValidateTransactionAndWait(trx, blocksToWait));
 
     return trx;
   }
@@ -224,12 +237,13 @@ class LiskUtil extends Helper {
    * @param {string} params.username - Username for registering as delegate
    * @param {string} params.passphrase - User account passphrase
    * @param {string} params.secondPassphrase - User secondPassphrase
+   * @param {Number} blocksToWait - Number of blocks to wait
    * @returns {Object} transaction
    */
-  async registerAsDelegate(params) {
+  async registerAsDelegate(params, blocksToWait) {
     const trx = elements.transaction.registerDelegate(params);
 
-    await from(this.broadcastAndValidateTransactionAndWait(trx));
+    await from(this.broadcastAndValidateTransactionAndWait(trx, blocksToWait));
 
     return trx;
   }
@@ -240,16 +254,11 @@ class LiskUtil extends Helper {
    * @param {Array} params.votes - list of publickeys for upvote
    * @param {string} params.passphrase - User account passphrase
    * @param {string} params.secondPassphrase - User account second passphrase
+   * @param {Number} blocksToWait - Number of blocks to wait
    */
-  async castVotes(params) {
-    const { votes, passphrase } = params;
-    const isVoted = await this.checkIfVoteOrUnvoteCasted(votes, passphrase);
-
-    if (isVoted) {
-      return;
-    }
+  async castVotes(params, blocksToWait) {
     const trx = elements.transaction.castVotes(params);
-    await from(this.broadcastAndValidateTransactionAndWait(trx));
+    await from(this.broadcastAndValidateTransactionAndWait(trx, blocksToWait));
   }
 
   /**
@@ -258,16 +267,11 @@ class LiskUtil extends Helper {
    * @param {Array} params.unvotes - list of publickeys for downvote
    * @param {string} params.passphrase - User account passphrase
    * @param {string} params.secondPassphrase - User account second passphrase
+   * @param {Number} blocksToWait - Number of blocks to wait
    */
-  async castUnvotes(params) {
-    const { unvotes, passphrase } = params;
-    const isUnvoted = await this.checkIfVoteOrUnvoteCasted(unvotes, passphrase);
-
-    if (isUnvoted) {
-      return;
-    }
+  async castUnvotes(params, blocksToWait) {
     const trx = elements.transaction.castVotes(params);
-    await from(this.broadcastAndValidateTransactionAndWait(trx));
+    await from(this.broadcastAndValidateTransactionAndWait(trx, blocksToWait));
   }
 
   /**
@@ -278,20 +282,21 @@ class LiskUtil extends Helper {
    * @param {number} params.minimum - Minimum signatures required to confirm multisignature transaction
    * @param {string} params.passphrase - Passphrase of the multisignature account creator
    * @param {string} params.secondPassphrase - Second passphrase of the multisignature account creator
+   * @param {Number} blocksToWait - Number of blocks to wait
    * @returns
    */
-  async registerMultisignature(accounts, params) {
+  async registerMultisignature(accounts, params, blocksToWait) {
     const keysgroup = accounts.map(account => account.publicKey);
 
     const registerMultisignatureTrx = elements.transaction.registerMultisignature({ keysgroup, ...params });
 
     const signatures = this.createSignatures(accounts, registerMultisignatureTrx);
 
-    await this.broadcastAndValidateTransactionAndWait(registerMultisignatureTrx);
+    await this.broadcastAndValidateTransactionAndWait(registerMultisignatureTrx, blocksToWait);
 
     await Promise.all(signatures.map(s => this.broadcastAndValidateSignature(s)));
 
-    await this.waitForBlock();
+    await this.waitForBlock(blocksToWait);
     return registerMultisignatureTrx;
   }
 
@@ -301,11 +306,12 @@ class LiskUtil extends Helper {
    * @param {string} data.passphrase Passphrase of the dApp registrar
    * @param {string} data.secondPassphrase second passphrase of the dApp registrar
    * @param {Object} data.options Options for registering dApp
+   * @param {Number} blocksToWait - Number of blocks to wait
    */
-  async registerDapp(data) {
+  async registerDapp(data, blocksToWait) {
     const dAppTrx = elements.transaction.createDapp(data);
 
-    await this.broadcastAndValidateTransactionAndWait(dAppTrx);
+    await this.broadcastAndValidateTransactionAndWait(dAppTrx, blocksToWait);
 
     return dAppTrx;
   }
@@ -409,12 +415,46 @@ class LiskUtil extends Helper {
       const response = await from(this.call().getForgingStatus({ publicKey, }, p.ip));
 
       if (response.result && response.result.data.length) {
-        return p.ip;
+        return { ip: p.ip, publicKey };
       }
       return;
     }));
 
     return forgingStatus.filter(n => n);
+  }
+
+  async getAllNodeHeights() {
+    const peers = await this.getAllPeers(100, 0);
+
+    return await Promise.all(peers.map(async p => {
+      const response = await from(this.call().getNodeStatus(p.ip));
+
+      if (response.result && response.result.data) {
+        return response.result.data.height;
+      }
+      return;
+    }));
+  }
+
+  async checkIfNetworkIsMoving() {
+    let heights = await this.getAllNodeHeights();
+    const previous_height = Math.max(heights.filter(h => h));
+
+    await this.waitForBlock();
+
+    heights = await this.getAllNodeHeights();
+    const current_height = Math.max(heights.filter(h => h));
+
+    expect(current_height).to.be.above(previous_height);
+  }
+
+  async checkIfDelegatesAreForging() {
+    const { forging: { delegates } } = this.haveNetworkConfig();
+    const { publicKey } = delegates[0];
+    const node = await this.getForgingDelegateNode(publicKey);
+    const { result, error } = await from(this.call().getForgingStatus({ publicKey, }, node[0].ip));
+    expect(error).to.be.null;
+    expect(result.data[0].forging).to.deep.equal(true);
   }
 }
 

@@ -22,7 +22,9 @@ Given('I have {int} lisk account with {int} LSK tokens', async (userCount, amoun
   contracts = await Promise.all(wallets.map(() => I.createAccount()));
   const tranfers = contracts.map(a => ({ recipientId: a.address, amount: BEDDOWS(amount), passphrase: GENESIS_ACCOUNT.password }));
 
-  await I.transferToMultiple(tranfers)
+  await I.transferToMultipleAccounts(tranfers);
+  await I.waitForBlock();
+
   multisigAccount = contracts.pop();
 });
 

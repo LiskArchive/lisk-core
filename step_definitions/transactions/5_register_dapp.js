@@ -5,7 +5,6 @@ let options;
 let multiSigTrx;
 
 When('{string} register for dApp {string}', async (userName, dAppName) => {
-  const api = await I.call();
   const { passphrase } = getFixtureUser('username', userName);
   options = {
     name: dAppName,

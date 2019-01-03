@@ -5,11 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "npm-run-all features",
-    "features": "./node_modules/.bin/codeceptjs run --steps",
+    "features": "./node_modules/.bin/codeceptjs run --features",
+    "stress": "./node_modules/.bin/codeceptjs run --tests",
+    "report": "allure serve output",
     "snippets": "./node_modules/.bin/codeceptjs gherkin:snippets",
-    "tests": "./node_modules/.bin/codeceptjs run --tests",
-    "new_test": "./node_modules/.bin/codeceptjs gt",
-    "report": "allure serve output"
+    "new_test": "./node_modules/.bin/codeceptjs gt"
   },
   "repository": {
     "type": "git",

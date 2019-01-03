@@ -48,7 +48,7 @@
       "enabled": true
     }
   },
-  "tests": "",
+  "tests": "test/**/*_test.js",
   "timeout": 10000,
   "require": ["chai/register-expect"],
   "name": "lisk-core-qa-external"

@@ -14,7 +14,6 @@ Feature: Lisk Accounts
     And "heimdall" creates a multisignature account with "thor", "odin"
 
   Scenario: List accounts
-    Given The network is moving
     When I look for list of accounts without any params
     Then I should get list of accounts sorted by "balance" in "asc" order
     When I search for a particular account "16313739661670634666L"

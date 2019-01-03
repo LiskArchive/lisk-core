@@ -3,9 +3,6 @@ Feature: List blocks
   As a user
   I want to list blocks
 
-  Background: Network
-    Given The network is moving
-
   Scenario: List blocks without params
     When I request for blocks without any params
     Then I should get list of blocks sorted by "height" in "desc" order

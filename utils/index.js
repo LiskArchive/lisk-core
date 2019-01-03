@@ -50,6 +50,26 @@ const flattern = obj => {
 
 const dappMultiAccountName = () => `dapp-multi${new Date().getTime()}`;
 
+const generateMnemonic = () => elements.passphrase.Mnemonic.generateMnemonic();
+
+const getKeys = (passphrase) => elements.cryptography.getKeys(passphrase);
+
+const getAddressFromPublicKey = (publicKey) => elements.cryptography.getAddressFromPublicKey(publicKey);
+
+const createAccounts = (count) => {
+  return new Array(count).fill(0).map(() => {
+    const passphrase = generateMnemonic();
+    const { publicKey } = getKeys(passphrase);
+    const address = getAddressFromPublicKey(publicKey);
+
+    return {
+      passphrase,
+      publicKey,
+      address,
+    }
+  });
+};
+
 module.exports = {
   BLOCK_TIME,
   TRS_PER_BLOCK,
@@ -62,4 +82,8 @@ module.exports = {
   sortBy,
   flattern,
   dappMultiAccountName,
+  generateMnemonic,
+  getKeys,
+  getAddressFromPublicKey,
+  createAccounts,
 }
