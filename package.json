@@ -9,8 +9,8 @@
     "report": "allure serve output",
     "snippets": "./node_modules/.bin/codeceptjs gherkin:snippets",
     "new_test": "./node_modules/.bin/codeceptjs gt",
-    "tools:peer:list": "./node_modules/.bin/codeceptjs run --tests --grep @peer_list",
-    "tools:peer:config": "./node_modules/.bin/codeceptjs run --tests --grep @peer_config",
+    "tools:peers:list": "./node_modules/.bin/codeceptjs run --tests --grep @peers_list",
+    "tools:peers:config": "./node_modules/.bin/codeceptjs run --tests --grep @peers_config",
     "tools:delegates:enable": "./node_modules/.bin/codeceptjs run --tests --grep @delegates_enable",
     "tools:delegates:disable": "./node_modules/.bin/codeceptjs run --tests --grep @delegates_disable"
   },
