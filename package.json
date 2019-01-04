@@ -4,7 +4,6 @@
   "description": "Lisk core quality assurance",
   "main": "index.js",
   "scripts": {
-    "test": "npm-run-all features",
     "features": "./node_modules/.bin/codeceptjs run --features",
     "stress": "./node_modules/.bin/codeceptjs run --tests --grep \"@slow|@stress\"",
     "report": "allure serve output",
@@ -41,7 +40,6 @@
   },
   "devDependencies": {
     "allure": "0.0.0",
-    "codeceptjs": "^1.4.6",
-    "npm-run-all": "^4.1.3"
+    "codeceptjs": "^1.4.6"
   }
 }
