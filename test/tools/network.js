@@ -73,7 +73,7 @@ Scenario('Add peers to config @peer_config', async (I) => {
   const unionNodes = new Set([...configContent.nodes, ...configContent.seed, ...peers]);
 
   configContent.nodes.push(...unionNodes);
-  fs.writeFileSync('fixtures/config.json', JSON.stringify(configContent));
+  fs.writeFileSync(configPath, JSON.stringify(configContent));
   console.log('Updated config!!');
 });
 
