@@ -22,23 +22,25 @@ pipeline {
 		}
 		stage('Trigger core build') {
 			steps {
-				build job: 'devnet-build-private/development',
-				      parameters: [string(name: 'COMMITISH',
-				                   value: 'development'),
-				                   booleanParam(name: 'COMMITSHA', value: true),
-				                   booleanParam(name: 'USE_CACHE', value: true)]
+				script {
+					def b = build job: 'devnet-build-private/development',
+					        parameters: [string(name: 'COMMITISH',
+							     value: 'development'),
+							     booleanParam(name: 'COMMITSHA', value: true),
+							     booleanParam(name: 'USE_CACHE', value: true)]
+					env.LISK_VERSION = b.getBuildVariables().get('LISK_VERSION')
+				}
 			}
 		}
 		stage('Delpoy network') {
 			steps {
 				retry(5) {
 					ansiColor('xterm') {
-						// TODO: get lisk_version dynamically
 						ansibleTower credential: '', extraVars: """NEWRELIC_ENABLED: '${params.NEWRELIC_ENABLED}'
 devnet: ${params.NETWORK}
 do_nodes_per_region: ${params.NODES_PER_REGION}
 jenkins_ci: 'yes'
-lisk_version: 1.4.0-rc.0""", importTowerLogs: true, importWorkflowChildLogs: false, inventory: '', jobTags: '', jobTemplate: '46', jobType: 'run', limit: '', removeColor: false, skipJobTags: '', templateType: 'job', throwExceptionWhenFail: true, towerServer: 'tower', verbose: false
+lisk_version: ${env.LISK_VERSION}""", importTowerLogs: true, importWorkflowChildLogs: false, inventory: '', jobTags: '', jobTemplate: '46', jobType: 'run', limit: '', removeColor: false, skipJobTags: '', templateType: 'job', throwExceptionWhenFail: true, towerServer: 'tower', verbose: false
 					}
 				}
 			}
