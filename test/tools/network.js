@@ -62,7 +62,7 @@ const enableDisableDelegates = (api, isEnable) => {
 const checkIfAllPeersConnected = async (I) => {
   try {
     const allPeers = await I.getAllPeers(100, 0);
-    const expectPeerCount = process.env.NODES_PER_REGION * 10;
+    const expectPeerCount = process.env.NODES_PER_REGION * 10 - 1;
 
     console.log(`Number of peers connected in network: ${allPeers.length}, Expected peers: ${expectPeerCount}`);
 
