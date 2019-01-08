@@ -5,11 +5,13 @@ const {
   getKeys,
   generateMnemonic,
   createAccounts,
+  TRS_PER_BLOCK,
 } = require('../utils');
 
 const I = actor();
 const contractsByAddress = {};
 const STRESS_COUNT = parseInt(process.env.STRESS_COUNT) || 1000;
+const RATE_LIMIT = Math.ceil(STRESS_COUNT / TRS_PER_BLOCK);
 
 const getRandomNodeStatus = async () => {
   const api = await I.call();
@@ -28,6 +30,20 @@ const getPendingTrxCount = async () => {
   return unconfirmed + unprocessed + unsigned;
 };
 
+const waitForPendingTransaction = async (limit) => {
+  const pendingTrxCnt = await getPendingTrxCount();
+
+  console.log(`Pending Transactions: ${pendingTrxCnt}, RATE_LIMIT: ${limit}`);
+
+  while (pendingTrxCnt === 0 || limit <= 0) {
+    return true;
+  }
+
+  limit = limit - 1;
+  await I.waitForBlock(TRS_PER_BLOCK);
+  return await waitForPendingTransaction(limit);
+}
+
 const accounts = createAccounts(STRESS_COUNT);
 
 Feature('Stress network test');
@@ -40,13 +56,10 @@ Scenario('Transfer funds', async () => {
       amount: BEDDOWS(LSK_TOKEN),
     }
   });
-  const pendingTrxCnt = await getPendingTrxCount();
-
-  await I.waitForBlock(pendingTrxCnt);
 
   const transfer_transactions = await I.transferToMultipleAccounts(transferTrx);
 
-  await I.waitForBlock(STRESS_COUNT);
+  await waitForPendingTransaction(RATE_LIMIT);
 
   await Promise.all(transfer_transactions.map(trx => {
     I.validateTransaction(trx.id, trx.recipientId, LSK_TOKEN);
@@ -54,16 +67,12 @@ Scenario('Transfer funds', async () => {
 }).tag('@slow').tag('@stress');
 
 Scenario('Second passphrase on an account', async () => {
-  const pendingTrxCnt = await getPendingTrxCount();
-
-  await I.waitForBlock(pendingTrxCnt);
-
   await Promise.all(accounts.map(async (a) => {
     a.secondPassphrase = generateMnemonic();
     return await I.registerSecondPassphrase(a.passphrase, a.secondPassphrase, 0);
   }));
 
-  await I.waitForBlock(STRESS_COUNT);
+  await waitForPendingTransaction(RATE_LIMIT);
 
   await Promise.all(accounts.map(async a => {
     const { publicKey } = getKeys(a.secondPassphrase);
@@ -75,10 +84,6 @@ Scenario('Second passphrase on an account', async () => {
 }).tag('@slow').tag('@stress');
 
 Scenario('Delegate Registration', async () => {
-  const pendingTrxCnt = await getPendingTrxCount();
-
-  await I.waitForBlock(pendingTrxCnt);
-
   await Promise.all(accounts.map(async (a) => {
     a.username = crypto.randomBytes(9).toString('hex');
 
@@ -89,7 +94,7 @@ Scenario('Delegate Registration', async () => {
     }, 0);
   }));
 
-  await I.waitForBlock(STRESS_COUNT + 25);
+  await waitForPendingTransaction(RATE_LIMIT + RATE_LIMIT * 0.25);
 
   await Promise.all(accounts.map(async a => {
     const api = await I.call();
@@ -100,10 +105,6 @@ Scenario('Delegate Registration', async () => {
 }).tag('@slow').tag('@stress');
 
 Scenario('Cast vote', async () => {
-  const pendingTrxCnt = await getPendingTrxCount();
-
-  await I.waitForBlock(pendingTrxCnt);
-
   await Promise.all(accounts.map(async (a) => {
     return await I.castVotes({
       votes: [a.publicKey],
@@ -112,7 +113,7 @@ Scenario('Cast vote', async () => {
     }, 0);
   }));
 
-  await I.waitForBlock(STRESS_COUNT + 25);
+  await waitForPendingTransaction(RATE_LIMIT + RATE_LIMIT * 0.25);
 
   await Promise.all(accounts.map(async a => {
     const api = await I.call();
@@ -123,11 +124,7 @@ Scenario('Cast vote', async () => {
 }).tag('@slow').tag('@stress');
 
 Scenario('Register Multi-signature account', async () => {
-  const pendingTrxCnt = await getPendingTrxCount();
-
-  await I.waitForBlock(pendingTrxCnt);
-
-  const multiSignatureTrx = await Promise.all(accounts.map(async (a, index) => {
+  await Promise.all(accounts.map(async (a, index) => {
     const { passphrase, secondPassphrase, address } = a;
     const signer1 = accounts[(index + 1) % accounts.length];
     const signer2 = accounts[(index + 2) % accounts.length];
@@ -140,10 +137,10 @@ Scenario('Register Multi-signature account', async () => {
     };
     contractsByAddress[address] = contracts;
 
-    await I.registerMultisignature(contracts, params, 0);
+    return await I.registerMultisignature(contracts, params, 0);
   }));
 
-  await I.waitForBlock(multiSignatureTrx.length + 25);
+  await waitForPendingTransaction(RATE_LIMIT + RATE_LIMIT * 0.25);
 
   await Promise.all(accounts.map(async a => {
     const api = await I.call();
@@ -154,10 +151,6 @@ Scenario('Register Multi-signature account', async () => {
 }).tag('@slow').tag('@stress');
 
 Scenario('DApp registration', async () => {
-  const pendingTrxCnt = await getPendingTrxCount();
-
-  await I.waitForBlock(pendingTrxCnt);
-
   const dAppsTrxs = await Promise.all(accounts.map(async (a) => {
     const dAppName = crypto.randomBytes(5).toString('hex');
     const options = {
@@ -178,14 +171,12 @@ Scenario('DApp registration', async () => {
     }, 0);
   }));
 
-  await I.waitForBlock(STRESS_COUNT);
-
   await Promise.all(dAppsTrxs.map(async (trx) => {
     const address = getAddressFromPublicKey(trx.senderPublicKey);
     await I.sendSignaturesForMultisigTrx(trx, contractsByAddress[address], 0);
   }));
 
-  await I.waitForBlock(STRESS_COUNT + 25);
+  await waitForPendingTransaction(RATE_LIMIT + RATE_LIMIT * 0.25);
 
   await Promise.all(accounts.map(async a => {
     const api = await I.call();
