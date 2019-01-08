@@ -59,6 +59,22 @@ const enableDisableDelegates = (api, isEnable) => {
   }
 }
 
+const checkIfAllPeersConnected = async (I) => {
+  try {
+    const allPeers = await I.getAllPeers(100, 0);
+    const expectPeerCount = process.env.NODES_PER_REGION * 10;
+
+    console.log(`Number of peers connected in network: ${allPeers.length}, Expected peers: ${expectPeerCount}`);
+
+    while (allPeers.length >= expectPeerCount) {
+      return true;
+    }
+    return await checkIfAllPeersConnected(I);
+  } catch (error) {
+    return error;
+  }
+};
+
 Feature('Network tools');
 
 Scenario('Peer list @peers_list', async (I) => {
@@ -88,6 +104,10 @@ Scenario('Add peers to config @peers_config', async (I) => {
     console.error('Failed to add peers to config: ', error);
     process.exit(1);
   }
+});
+
+Scenario('Add peers to config @peers_connected', async (I) => {
+  await checkIfAllPeersConnected(I);
 });
 
 Scenario('Enable delegates @delegates_enable', async (I) => {

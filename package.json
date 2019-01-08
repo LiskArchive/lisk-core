@@ -11,6 +11,7 @@
     "new_test": "./node_modules/.bin/codeceptjs gt",
     "tools:peers:list": "./node_modules/.bin/codeceptjs run --tests --grep @peers_list",
     "tools:peers:config": "./node_modules/.bin/codeceptjs run --tests --grep @peers_config",
+    "tools:peers:connected": "./node_modules/.bin/codeceptjs run --tests --grep @peers_connected",
     "tools:delegates:enable": "./node_modules/.bin/codeceptjs run --tests --grep @delegates_enable",
     "tools:delegates:disable": "./node_modules/.bin/codeceptjs run --tests --grep @delegates_disable"
   },

@@ -40,11 +40,11 @@ When('I create a multisignature account with {int} accounts', async (count) => {
     passphrase: multisigAccount.passphrase,
   };
 
-  await I.registerMultisignature(contracts, params);
   const pendingTrx = await I.getPendingTransactionCount();
   if (pendingTrx > 0) {
     await I.waitForBlock(pendingTrx);
   }
+  await I.registerMultisignature(contracts, params);
 });
 
 Then('I should be able to transact using multisignature account I created', async () => {

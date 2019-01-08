@@ -6,3 +6,6 @@ node_modules/
 
 # Reports and logs
 output/
+
+#others
+.DS_Store

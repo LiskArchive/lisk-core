@@ -2,8 +2,9 @@
 
 properties([
 	parameters([
-		string(name: 'STRESS_COUNT', defaultValue: '1000', description: 'Number of transactions to create', ),
 		string(name: 'NETWORK', defaultValue: 'alphanet', description: 'To Run test against a network', ),
+		string(name: 'NODES_PER_REGION', defaultValue: '1', description: 'Number of nodes per region', ),
+		string(name: 'STRESS_COUNT', defaultValue: '1000', description: 'Number of transactions to create', ),
 		string(name: 'NEWRELIC_ENABLED', defaultValue: 'no', description: 'Enable NewRelic', ),
 	])
 ])
@@ -35,7 +36,7 @@ pipeline {
 						// TODO: get lisk_version dynamically
 						ansibleTower credential: '', extraVars: """NEWRELIC_ENABLED: '${params.NEWRELIC_ENABLED}'
 devnet: ${params.NETWORK}
-do_nodes_per_region: 1
+do_nodes_per_region: ${params.NODES_PER_REGION}
 jenkins_ci: 'yes'
 lisk_version: 1.4.0-rc.0""", importTowerLogs: true, importWorkflowChildLogs: false, inventory: '', jobTags: '', jobTemplate: '46', jobType: 'run', limit: '', removeColor: false, skipJobTags: '', templateType: 'job', throwExceptionWhenFail: true, towerServer: 'tower', verbose: false
 					}
@@ -46,6 +47,7 @@ lisk_version: 1.4.0-rc.0""", importTowerLogs: true, importWorkflowChildLogs: fal
 			steps {
 				nvm(getNodejsVersion()) {
 					sh '''
+					npm run tools:peers:connected
 					npm run tools:peers:config
 					npm run tools:delegates:enable
 					'''
