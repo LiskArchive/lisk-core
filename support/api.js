@@ -99,11 +99,6 @@ class API {
         return client.signatures.broadcast(params);
     }
 
-    async getDelegates(params, ip_address) {
-        const client = API.getClientByAddress(this.clients, ip_address);
-        return client.delegates.get(params);
-    }
-
     async getForgers(params, ip_address) {
         const client = API.getClientByAddress(this.clients, ip_address);
         return client.delegates.getForgers(params);

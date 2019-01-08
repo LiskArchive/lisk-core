@@ -9,7 +9,7 @@ const {
 
 const I = actor();
 const contractsByAddress = {};
-const STRESS_COUNT = process.env.STRESS_COUNT || 1000;
+const STRESS_COUNT = parseInt(process.env.STRESS_COUNT) || 1000;
 
 const getRandomNodeStatus = async () => {
   const api = await I.call();
