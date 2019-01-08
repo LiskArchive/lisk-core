@@ -23,13 +23,13 @@ pipeline {
 			steps {
 				// TODO: waiting for https://github.com/LiskHQ/lisk/pull/2693
 				// TODO: use devnet-build-private/development
-/*
-				build job: 'devnet-build-private/0.4.0',
+
+				build job: 'devnet-build-private/development',
 				      parameters: [string(name: 'COMMITISH',
 				                   value: 'development'),
 				                   booleanParam(name: 'COMMITSHA', value: true),
 				                   booleanParam(name: 'USE_CACHE', value: true)]
-*/
+
 				sh '/bin/true'
 			}
 		}

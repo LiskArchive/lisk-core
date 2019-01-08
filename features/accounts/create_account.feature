@@ -6,7 +6,6 @@ Feature: Create Lisk Account
   I want to create lisk account
 
   Scenario: Create account
-    Given I have list of clients
     Given The node is forging
     When I create a lisk account
       | user    |

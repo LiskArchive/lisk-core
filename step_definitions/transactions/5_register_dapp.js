@@ -73,7 +73,9 @@ When('{string}, {string} send signatures for dApp {string}', async (user1, user2
 Then('dApp {string} should be registered', async (name) => {
   const api = await I.call();
 
+  await I.waitForBlock();
   const dApp = await from(api.getDapp({ name }));
+
   expect(dApp.error).to.be.null;
   expect(dApp.result.data[0].name).to.deep.equal(name);
 });

@@ -409,18 +409,24 @@ class LiskUtil extends Helper {
     return peerList;
   }
 
-  async getForgingDelegateNode(publicKey) {
+  async getAllForgingNodes() {
     const peers = await this.getAllPeers(100, 0);
     const forgingStatus = await Promise.all(peers.map(async p => {
-      const response = await from(this.call().getForgingStatus({ publicKey, }, p.ip));
+      const { result, error } = await from(this.call().getForgingStatus({}, p.ip));
 
-      if (response.result && response.result.data.length) {
-        return { ip: p.ip, publicKey };
+      expect(error).to.be.null;
+      if (result && result.data.length) {
+        const forgingDelegates = result.data.filter(d => d.forging);
+        return { ip: p.ip, ...forgingDelegates[0] };
       }
       return;
     }));
-
     return forgingStatus.filter(n => n);
+  }
+
+  async getForgingDelegateNode(publicKey) {
+    const forgingNodes = await this.getAllForgingNodes();
+    return forgingNodes.filter(n => n.publicKey === publicKey && n.forging);
   }
 
   async getAllNodeHeights() {
@@ -449,12 +455,23 @@ class LiskUtil extends Helper {
   }
 
   async checkIfDelegatesAreForging() {
-    const { forging: { delegates } } = this.haveNetworkConfig();
-    const { publicKey } = delegates[0];
-    const node = await this.getForgingDelegateNode(publicKey);
-    const { result, error } = await from(this.call().getForgingStatus({ publicKey, }, node[0].ip));
+    const { result, error } = await from(this.getAllForgingNodes());
+
     expect(error).to.be.null;
-    expect(result.data[0].forging).to.deep.equal(true);
+    result.forEach(d => {
+      expect(d.forging).to.deep.equal(true);
+    });
+  }
+
+  async waitForTransactionToConfirm(id) {
+    const { result, error } = await from(this.call().getTransactions({ id }));
+
+    expect(error).to.be.null;
+    while (result.data.length) {
+      return result;
+    }
+    await this.waitForBlock();
+    return await this.waitForTransactionToConfirm(id);
   }
 }
 

@@ -120,9 +120,15 @@ const getRandomIpAddress = () => {
   return AllNodes[Math.floor(Math.random() * AllNodes.length)];
 }
 
+const seedNode = () => {
+  const { seed } = config();
+  return seed;
+}
+
 module.exports = {
   config,
   GENESIS_ACCOUNT,
   ASGARD_FIXTURE,
   getRandomIpAddress,
+  seedNode,
 }

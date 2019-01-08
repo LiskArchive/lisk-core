@@ -32,6 +32,11 @@ Then('delegate {string} should received vote from {string}', async (receiver, se
   const voter = getFixtureUser('username', sender);
   const api = await I.call();
 
+  const pendingTrx = await I.getPendingTransactionCount();
+  if (pendingTrx > 0) {
+    await I.waitForBlock(pendingTrx);
+  }
+
   const { result, error } = await from(
     api.getVoters({ address: delegate.address })
   );

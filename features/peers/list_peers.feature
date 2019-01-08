@@ -16,7 +16,6 @@ Feature: List Peers
       | params            |
       | httpPort=4000     |
       | wsPort=5000       |
-      | os=linux          |
       | state=2           |
       | sort=height:asc   |
       | sort=height:desc  |

@@ -23,7 +23,11 @@ Given('I have {int} lisk account with {int} LSK tokens', async (userCount, amoun
   const tranfers = contracts.map(a => ({ recipientId: a.address, amount: BEDDOWS(amount), passphrase: GENESIS_ACCOUNT.password }));
 
   await I.transferToMultipleAccounts(tranfers);
-  await I.waitForBlock();
+
+  const pendingTrx = await I.getPendingTransactionCount();
+  if (pendingTrx > 0) {
+    await I.waitForBlock(pendingTrx);
+  }
 
   multisigAccount = contracts.pop();
 });
@@ -37,6 +41,10 @@ When('I create a multisignature account with {int} accounts', async (count) => {
   };
 
   await I.registerMultisignature(contracts, params);
+  const pendingTrx = await I.getPendingTransactionCount();
+  if (pendingTrx > 0) {
+    await I.waitForBlock(pendingTrx);
+  }
 });
 
 Then('I should be able to transact using multisignature account I created', async () => {
@@ -47,13 +55,18 @@ Then('I should be able to transact using multisignature account I created', asyn
   const transaction = await I.transfer({ recipientId: address, amount: BEDDOWS(1), passphrase });
 
   await I.sendSignaturesForMultisigTrx(transaction, contracts);
-  const confirmedMultiSigTrx = await from(api.getTransactions({
+
+  await I.waitForTransactionToConfirm(transaction.id);
+
+  const { result, error } = await from(api.getTransactions({
     id: transaction.id,
     senderId: multisigAccount.address,
     recipientId: address,
   }));
 
-  expect(confirmedMultiSigTrx.error).to.be.null;
-  expect(confirmedMultiSigTrx.result.data[0].id).to.deep.equal(transaction.id);
-  expect(confirmedMultiSigTrx.result.data[0].signatures).to.have.lengthOf(contracts.length);
+  expect(error).to.be.null;
+  expect(result.data[0].id).to.deep.equal(transaction.id);
+  expect(result.data[0].senderId).to.deep.equal(multisigAccount.address);
+  expect(result.data[0].recipientId).to.deep.equal(address);
+  expect(result.data[0].signatures).to.have.lengthOf(contracts.length);
 });

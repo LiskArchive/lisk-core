@@ -8,6 +8,7 @@ When('{string} wants to transfer {int}LSK to {string}', async (sender, amount, r
   const user2 = getFixtureUser(recepient);
 
   response = await from(I.transfer({ recipientId: user2.address, amount: BEDDOWS(amount), passphrase: user1.passphrase }));
+  await I.waitForBlock();
   expect(response.error).to.be.null;
 });
 
@@ -23,6 +24,7 @@ When('{string} transfers {int}LSK token to himself', async (sender, amount) => {
   const { address, passphrase } = getFixtureUser(sender);
 
   response = await from(I.transfer({ recipientId: address, amount: BEDDOWS(amount), passphrase: passphrase }));
+  await I.waitForBlock();
   expect(response.error).to.be.null;
 });
 

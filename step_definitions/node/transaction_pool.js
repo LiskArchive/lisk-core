@@ -55,6 +55,8 @@ Then('I should get list of transactions in {string} queue', async (state) => {
   response = await from(api.getTransactionsByState(state));
   expect(response.error).to.be.null;
   await I.expectResponseToBeValid(response.result, 'TransactionsResponse');
+  const transactionCount = await I.getPendingTransactionCount();
+  await I.waitForBlock(transactionCount);
 });
 
 When('{string} and {string} sends the required signature', async (user1, user2) => {
@@ -72,7 +74,10 @@ When('{string} and {string} sends the required signature', async (user1, user2) 
 Then('multisignature transaction should get confirmed', async () => {
   const api = await I.call();
 
+  await I.waitForBlock();
   const { result, error } = await from(api.getTransactions({ id: multisignatureTrx.id }));
   expect(error).to.be.null;
-  expect(result.data[0].signatures).to.deep.equal(signatures.map(s => s.signature));
+  signatures.map(s => {
+    expect(result.data[0].signatures.includes(s.signature)).to.be.true;
+  });
 });

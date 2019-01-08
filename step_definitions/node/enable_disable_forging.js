@@ -7,9 +7,13 @@ const { forging: { defaultPassword, delegates: [{ publicKey }] } } = appConfig;
 let nodes;
 
 Given('The node is forging', async () => {
-  nodes = await I.getForgingDelegateNode(publicKey);
+  const { result, error } = await from(I.getAllForgingNodes());
+  nodes = result;
 
-  expect(nodes).to.have.lengthOf(1);
+  expect(error).to.be.null;
+  nodes.forEach(n => {
+    expect(n.forging).to.deep.equal(true);
+  });
 });
 
 When('I disable forging the node should stop forging', async () => {
