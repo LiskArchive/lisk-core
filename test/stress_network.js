@@ -21,7 +21,7 @@ const accounts = createAccounts(STRESS_COUNT);
 Feature('Stress network test');
 
 Scenario('Transfer funds', async () => {
-  output.print(`Running Stress Test, Transaction Type: ${TRS_TYPE.TRANSFER}`);
+  console.log(`Running Stress Test, Transaction Type: ${TRS_TYPE.TRANSFER}`);
 
   const LSK_TOKEN = 100;
   const transferTrx = accounts.map((a) => {
@@ -41,7 +41,7 @@ Scenario('Transfer funds', async () => {
 }).tag('@slow').tag('@stress');
 
 Scenario('Second passphrase on an account', async () => {
-  output.print(`Running Stress Test, Transaction Type: ${TRS_TYPE.SECOND_PASSPHRASE}`);
+  console.log(`Running Stress Test, Transaction Type: ${TRS_TYPE.SECOND_PASSPHRASE}`);
 
   await Promise.all(accounts.map(async (a) => {
     a.secondPassphrase = generateMnemonic();
@@ -60,7 +60,7 @@ Scenario('Second passphrase on an account', async () => {
 }).tag('@slow').tag('@stress');
 
 Scenario('Delegate Registration', async () => {
-  output.print(`Running Stress Test, Transaction Type: ${TRS_TYPE.DELEGATE_REGISTRATION}`);
+  console.log(`Running Stress Test, Transaction Type: ${TRS_TYPE.DELEGATE_REGISTRATION}`);
 
   await Promise.all(accounts.map(async (a) => {
     a.username = crypto.randomBytes(9).toString('hex');
@@ -83,7 +83,7 @@ Scenario('Delegate Registration', async () => {
 }).tag('@slow').tag('@stress');
 
 Scenario('Cast vote', async () => {
-  output.print(`Running Stress Test, Transaction Type: ${TRS_TYPE.VOTE}`);
+  console.log(`Running Stress Test, Transaction Type: ${TRS_TYPE.VOTE}`);
 
   await Promise.all(accounts.map(async (a) => {
     return await I.castVotes({
@@ -104,7 +104,7 @@ Scenario('Cast vote', async () => {
 }).tag('@slow').tag('@stress');
 
 Scenario('Register Multi-signature account', async () => {
-  output.print(`Running Stress Test, Transaction Type: ${TRS_TYPE.MULTI_SIGNATURE}`);
+  console.log(`Running Stress Test, Transaction Type: ${TRS_TYPE.MULTI_SIGNATURE}`);
 
   await Promise.all(accounts.map(async (a, index) => {
     const { passphrase, secondPassphrase, address } = a;
@@ -133,7 +133,7 @@ Scenario('Register Multi-signature account', async () => {
 }).tag('@slow').tag('@stress');
 
 Scenario('DApp registration', async () => {
-  output.print(`Running Stress Test, Transaction Type: ${TRS_TYPE.DAPP}`);
+  console.log(`Running Stress Test, Transaction Type: ${TRS_TYPE.DAPP}`);
 
   const dAppsTrxs = await Promise.all(accounts.map(async (a) => {
     const dAppName = crypto.randomBytes(5).toString('hex');

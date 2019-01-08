@@ -2,10 +2,9 @@
 
 properties([
 	parameters([
-		string(name: 'BRANCH_NAME', defaultValue: 'development', description: 'Lisk core branch name', ),
 		string(name: 'NETWORK', defaultValue: 'alphanet', description: 'To Run test against a network', ),
 		string(name: 'NODES_PER_REGION', defaultValue: '1', description: 'Number of nodes per region', ),
-		string(name: 'STRESS_COUNT', defaultValue: '500', description: 'Number of transactions to create', ), // Used by stage: Test Network Stress
+		string(name: 'STRESS_COUNT', defaultValue: '500', description: 'Number of transactions to create', ),
 		string(name: 'NEWRELIC_ENABLED', defaultValue: 'no', description: 'Enable NewRelic', ),
 	])
 ])
@@ -26,7 +25,7 @@ pipeline {
 				script {
 					def b = build job: 'devnet-build-private/development',
 					        parameters: [string(name: 'COMMITISH',
-							     value: """${params.BRANCH_NAME}"""),
+							     value: 'development'),
 							     booleanParam(name: 'COMMITSHA', value: true),
 							     booleanParam(name: 'USE_CACHE', value: true)]
 					env.LISK_VERSION = b.getBuildVariables().get('LISK_VERSION')

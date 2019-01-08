@@ -1,4 +1,3 @@
-const output = require('codeceptjs').output;
 const { getFixtureUser, BEDDOWS, GENESIS_ACCOUNT, from, TRS_PER_BLOCK } = require('../../utils');
 
 const I = actor();
@@ -34,7 +33,7 @@ Given('I have {int} lisk account with {int} LSK tokens', async (userCount, amoun
 
     multisigAccount = contracts.pop();
   } catch (error) {
-    output.error('TYPE_4_REGISTER_MULTI_SIGNATURE: ', error);
+    console.error('TYPE_4_REGISTER_MULTI_SIGNATURE: ', error);
   }
 });
 

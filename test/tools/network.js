@@ -70,7 +70,7 @@ const checkIfAllPeersConnected = async (I) => {
     const allPeers = await I.getAllPeers(100, 0);
     const expectPeerCount = process.env.NODES_PER_REGION * 10 - 1;
 
-    output.print(`Number of peers connected in network: ${allPeers.length}, Expected peers: ${expectPeerCount}`);
+    console.log(`Number of peers connected in network: ${allPeers.length}, Expected peers: ${expectPeerCount}`);
 
     while (allPeers.length >= expectPeerCount) {
       return true;
