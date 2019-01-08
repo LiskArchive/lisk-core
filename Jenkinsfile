@@ -21,16 +21,11 @@ pipeline {
 		}
 		stage('Trigger core build') {
 			steps {
-				// TODO: waiting for https://github.com/LiskHQ/lisk/pull/2693
-				// TODO: use devnet-build-private/development
-
 				build job: 'devnet-build-private/development',
 				      parameters: [string(name: 'COMMITISH',
 				                   value: 'development'),
 				                   booleanParam(name: 'COMMITSHA', value: true),
 				                   booleanParam(name: 'USE_CACHE', value: true)]
-
-				sh '/bin/true'
 			}
 		}
 		stage('Delpoy network') {
@@ -51,7 +46,7 @@ lisk_version: 1.4.0-rc.0""", importTowerLogs: true, importWorkflowChildLogs: fal
 			steps {
 				nvm(getNodejsVersion()) {
 					sh '''
-					npm run tools:peer:config
+					npm run tools:peers:config
 					npm run tools:delegates:enable
 					'''
 				}
