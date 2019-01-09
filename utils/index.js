@@ -5,6 +5,14 @@ const from = require('./from');
 
 const BLOCK_TIME = 10000;
 const TRS_PER_BLOCK = 25;
+const TRS_TYPE = {
+  TRANSFER: 0,
+  SECOND_PASSPHRASE: 1,
+  DELEGATE_REGISTRATION: 2,
+  VOTE: 3,
+  MULTI_SIGNATURE: 4,
+  DAPP: 5,
+}
 
 // amount converted from lisk to beddows
 const BEDDOWS = amount => elements.transaction.utils.convertLSKToBeddows(amount.toString());
@@ -93,6 +101,7 @@ module.exports = {
   GENESIS_ACCOUNT,
   BEDDOWS,
   LISK,
+  TRS_TYPE,
   getFixtureUser,
   from,
   splitBy,

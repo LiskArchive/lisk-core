@@ -4,7 +4,7 @@ Feature: Lisk Accounts
   I want to see details for my account
   So that I can validate my balance and other details
 
-  Background: Accounts
+  Scenario: Ensure required accounts
     Given "thor" has a lisk account with balance 100 LSK tokens
     Given "loki" has a lisk account with balance 100 LSK tokens
     And "loki" has a account with second signature

@@ -68,6 +68,8 @@ class LiskUtil extends Helper {
    * @returns {Promise}
    */
   async wait(ms) {
+    if (ms > 0)
+      console.log(`Timestamp: ${new Date().toISOString()}, waiting until... ${ms}(ms)`);
     return new Promise(r => setTimeout(() => {
       r()
     }, ms));
@@ -99,18 +101,24 @@ class LiskUtil extends Helper {
   }
 
   async broadcastAndValidateTransaction(transaction) {
-    const { result, error } = await from(this.call().broadcastTransactions(transaction));
+    const { seed: [ip] } = networkConfig;
+    const { result, error } = await from(this.call().broadcastTransactions(transaction, ip));
 
     expect(error).to.be.null;
-    this.helpers['ValidateHelper'].expectResponseToBeValid(result, 'GeneralStatusResponse')
+    this.helpers['ValidateHelper'].expectResponseToBeValid(result, 'GeneralStatusResponse');
   }
 
   async broadcastAndValidateSignature(signature) {
-    const { result, error } = await from(this.call().broadcastSignatures(signature));
+    const { seed: [ip] } = networkConfig;
+    const { result, error } = await from(this.call().broadcastSignatures(signature, ip));
 
-    expect(error).to.be.null;
-    this.helpers['ValidateHelper'].expectResponseToBeValid(result, 'SignatureResponse')
-    expect(result.data.message).to.deep.equal('Signature Accepted');
+    while (!error) {
+      expect(error).to.be.null;
+      this.helpers['ValidateHelper'].expectResponseToBeValid(result, 'SignatureResponse')
+      return expect(result.data.message).to.deep.equal('Signature Accepted');
+    }
+    await this.wait(5000);
+    await this.broadcastAndValidateSignature(signature);
   }
 
   /**
@@ -209,7 +217,7 @@ class LiskUtil extends Helper {
       ),
     }));
 
-    await Promise.all(signatures.map(s => this.broadcastAndValidateSignature(s)));
+    await Promise.all(signatures.map(async s => await this.broadcastAndValidateSignature(s)));
     await this.waitForBlock(blocksToWait);
   }
 
@@ -472,6 +480,32 @@ class LiskUtil extends Helper {
     }
     await this.waitForBlock();
     return await this.waitForTransactionToConfirm(id);
+  }
+
+  async getPendingTrxCount() {
+    const {
+      data: {
+        transactions: {
+          unconfirmed, unprocessed, unsigned
+        }
+      }
+    } = await this.call().getNodeStatus();
+
+    return unconfirmed + unprocessed + unsigned;
+  };
+
+  async waitForPendingTransaction(limit, trs_type) {
+    const pendingTrxCnt = await this.getPendingTrxCount();
+
+    console.log(`Timestamp: ${new Date().toISOString()}, Transaction Type: ${trs_type}, Pending Transactions: ${pendingTrxCnt}, RATE_LIMIT: ${limit}`);
+
+    while (pendingTrxCnt === 0 || limit <= 0) {
+      return true;
+    }
+
+    limit = limit - 1;
+    await this.waitForBlock(TRS_PER_BLOCK);
+    return await this.waitForPendingTransaction(limit, trs_type);
   }
 }
 

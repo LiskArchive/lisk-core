@@ -6,43 +6,13 @@ const {
   generateMnemonic,
   createAccounts,
   TRS_PER_BLOCK,
+  TRS_TYPE,
 } = require('../utils');
 
 const I = actor();
 const contractsByAddress = {};
 const STRESS_COUNT = parseInt(process.env.STRESS_COUNT) || 1000;
 const RATE_LIMIT = Math.ceil(STRESS_COUNT / TRS_PER_BLOCK);
-
-const getRandomNodeStatus = async () => {
-  const api = await I.call();
-  return api.getNodeStatus();
-}
-
-const getPendingTrxCount = async () => {
-  const {
-    data: {
-      transactions: {
-        unconfirmed, unprocessed, unsigned
-      }
-    }
-  } = await getRandomNodeStatus();
-
-  return unconfirmed + unprocessed + unsigned;
-};
-
-const waitForPendingTransaction = async (limit) => {
-  const pendingTrxCnt = await getPendingTrxCount();
-
-  console.log(`Pending Transactions: ${pendingTrxCnt}, RATE_LIMIT: ${limit}`);
-
-  while (pendingTrxCnt === 0 || limit <= 0) {
-    return true;
-  }
-
-  limit = limit - 1;
-  await I.waitForBlock(TRS_PER_BLOCK);
-  return await waitForPendingTransaction(limit);
-}
 
 const accounts = createAccounts(STRESS_COUNT);
 
@@ -59,7 +29,7 @@ Scenario('Transfer funds', async () => {
 
   const transfer_transactions = await I.transferToMultipleAccounts(transferTrx);
 
-  await waitForPendingTransaction(RATE_LIMIT);
+  await I.waitForPendingTransaction(RATE_LIMIT, TRS_TYPE.TRANSFER);
 
   await Promise.all(transfer_transactions.map(trx => {
     I.validateTransaction(trx.id, trx.recipientId, LSK_TOKEN);
@@ -72,7 +42,7 @@ Scenario('Second passphrase on an account', async () => {
     return await I.registerSecondPassphrase(a.passphrase, a.secondPassphrase, 0);
   }));
 
-  await waitForPendingTransaction(RATE_LIMIT);
+  await I.waitForPendingTransaction(RATE_LIMIT + RATE_LIMIT * 0.25, TRS_TYPE.SECOND_PASSPHRASE);
 
   await Promise.all(accounts.map(async a => {
     const { publicKey } = getKeys(a.secondPassphrase);
@@ -94,7 +64,7 @@ Scenario('Delegate Registration', async () => {
     }, 0);
   }));
 
-  await waitForPendingTransaction(RATE_LIMIT + RATE_LIMIT * 0.25);
+  await I.waitForPendingTransaction(RATE_LIMIT + RATE_LIMIT * 0.25, TRS_TYPE.DELEGATE_REGISTRATION);
 
   await Promise.all(accounts.map(async a => {
     const api = await I.call();
@@ -113,7 +83,7 @@ Scenario('Cast vote', async () => {
     }, 0);
   }));
 
-  await waitForPendingTransaction(RATE_LIMIT + RATE_LIMIT * 0.25);
+  await I.waitForPendingTransaction(RATE_LIMIT + RATE_LIMIT * 0.25, TRS_TYPE.VOTE);
 
   await Promise.all(accounts.map(async a => {
     const api = await I.call();
@@ -140,7 +110,7 @@ Scenario('Register Multi-signature account', async () => {
     return await I.registerMultisignature(contracts, params, 0);
   }));
 
-  await waitForPendingTransaction(RATE_LIMIT + RATE_LIMIT * 0.25);
+  await I.waitForPendingTransaction(RATE_LIMIT + RATE_LIMIT * 0.25, TRS_TYPE.MULTI_SIGNATURE);
 
   await Promise.all(accounts.map(async a => {
     const api = await I.call();
@@ -176,7 +146,7 @@ Scenario('DApp registration', async () => {
     await I.sendSignaturesForMultisigTrx(trx, contractsByAddress[address], 0);
   }));
 
-  await waitForPendingTransaction(RATE_LIMIT + RATE_LIMIT * 0.25);
+  await I.waitForPendingTransaction(RATE_LIMIT + RATE_LIMIT * 0.25, TRS_TYPE.DAPP);
 
   await Promise.all(accounts.map(async a => {
     const api = await I.call();

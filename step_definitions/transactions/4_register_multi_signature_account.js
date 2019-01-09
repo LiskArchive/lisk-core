@@ -20,14 +20,14 @@ Then('{string}, {string} has a multisignature account with {string}', async (use
 Given('I have {int} lisk account with {int} LSK tokens', async (userCount, amount) => {
   const wallets = new Array(userCount).fill(0);
   contracts = await Promise.all(wallets.map(() => I.createAccount()));
-  const tranfers = contracts.map(a => ({ recipientId: a.address, amount: BEDDOWS(amount), passphrase: GENESIS_ACCOUNT.password }));
+  const transfers = contracts.map(a => ({ recipientId: a.address, amount: BEDDOWS(amount), passphrase: GENESIS_ACCOUNT.password }));
 
-  await I.transferToMultipleAccounts(tranfers);
+  const trxs = await I.transferToMultipleAccounts(transfers);
+  await I.waitForBlock(trxs.length + 25);
 
-  const pendingTrx = await I.getPendingTransactionCount();
-  if (pendingTrx > 0) {
-    await I.waitForBlock(pendingTrx);
-  }
+  trxs.map(async (t) => {
+    return await I.validateTransaction(t.id, t.recipientId, amount, GENESIS_ACCOUNT.address);
+  });
 
   multisigAccount = contracts.pop();
 });
@@ -40,10 +40,6 @@ When('I create a multisignature account with {int} accounts', async (count) => {
     passphrase: multisigAccount.passphrase,
   };
 
-  const pendingTrx = await I.getPendingTransactionCount();
-  if (pendingTrx > 0) {
-    await I.waitForBlock(pendingTrx);
-  }
   await I.registerMultisignature(contracts, params);
 });
 
