@@ -112,13 +112,9 @@ class LiskUtil extends Helper {
     const { seed: [ip] } = networkConfig;
     const { result, error } = await from(this.call().broadcastSignatures(signature, ip));
 
-    while (!error) {
-      expect(error).to.be.null;
-      this.helpers['ValidateHelper'].expectResponseToBeValid(result, 'SignatureResponse')
-      return expect(result.data.message).to.deep.equal('Signature Accepted');
-    }
-    await this.wait(5000);
-    await this.broadcastAndValidateSignature(signature);
+    expect(error).to.be.null;
+    this.helpers['ValidateHelper'].expectResponseToBeValid(result, 'SignatureResponse')
+    return expect(result.data.message).to.deep.equal('Signature Accepted');
   }
 
   /**
