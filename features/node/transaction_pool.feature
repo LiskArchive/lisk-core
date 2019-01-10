@@ -6,7 +6,7 @@ Feature: Node transaction pool
 
 	Scenario: Unprocessed, Unconfirmed transactions
 		Given "thor" has a lisk account with balance 100 LSK tokens
-		When "thor" send 1 LSK token to 25 random accounts
+		When "thor" send 1 LSK token to 15 random accounts
 		Then I should get list of transactions in "unprocessed", "unconfirmed" queue
 
 	Scenario: Unsigned transactions

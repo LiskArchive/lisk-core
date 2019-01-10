@@ -75,13 +75,12 @@ class LiskUtil extends Helper {
 
   /**
    * wait until the network reaches the specific block height
-   * @param {number} transactionCount - block can process 25 transactions
+   * @param {number} numberOfBlocks - number of blocks to wait
    */
-  async waitForBlock(transactionCount = 25) {
-    if(transactionCount > 0) {
-      const extraBlocks = Math.ceil(transactionCount / TRS_PER_BLOCK);
+  async waitForBlock(numberOfBlocks = 1) {
+    if (numberOfBlocks > 0) {
       const { data: { height } } = await this.call().getNodeStatus();
-      return await this.waitUntilBlock(height + extraBlocks);
+      return await this.waitUntilBlock(height + numberOfBlocks);
     }
     return true;
   }
@@ -91,11 +90,24 @@ class LiskUtil extends Helper {
    * @param {number} expectedHeight - expected height to reach
    */
   async waitUntilBlock(expectedHeight) {
-    const { data: { height } } = await this.call().getNodeStatus();
+    const {
+      data: {
+        height,
+        transactions: {
+          confirmed,
+          unconfirmed,
+          unprocessed,
+          unsigned,
+        }
+      }
+    } = await this.call().getNodeStatus();
+    const pendingTrxCnt = unconfirmed + unprocessed + unsigned;
+
+    console.log(`Timestamp: ${new Date().toISOString()}, current height: ${height}, expected height: ${expectedHeight}, confirmed trxs: ${confirmed}, pending trxs: ${pendingTrxCnt}`);
+
     if (height >= expectedHeight) {
       return height;
     }
-    console.log(`Timestamp: ${new Date().toISOString()}, current height: ${height}, expected height: ${expectedHeight}`);
     await this.wait(BLOCK_TIME);
     await this.waitUntilBlock(expectedHeight);
   }
@@ -116,27 +128,44 @@ class LiskUtil extends Helper {
     }
   }
 
+  /**
+   * Broadcast a transaction to network and validate response
+   * @param {object} transaction transaction object
+   */
   async broadcastAndValidateTransaction(transaction) {
-    const { seed: [ip] } = networkConfig;
-    const { result, error } = await from(this.call().broadcastTransactions(transaction, ip));
+    try {
+      const { result, error } = await from(this.call().broadcastTransactions(transaction));
 
-    expect(error).to.be.null;
-    this.helpers['ValidateHelper'].expectResponseToBeValid(result, 'GeneralStatusResponse');
-  }
-
-  async broadcastAndValidateSignature(signature) {
-    const { seed: [ip] } = networkConfig;
-    const { result, error } = await from(this.call().broadcastSignatures(signature, ip));
-
-    expect(error).to.be.null;
-    this.helpers['ValidateHelper'].expectResponseToBeValid(result, 'SignatureResponse')
-    return expect(result.data.message).to.deep.equal('Signature Accepted');
+      expect(error).to.be.null;
+      this.helpers['ValidateHelper'].expectResponseToBeValid(result, 'GeneralStatusResponse');
+      expect(result.data.message).to.deep.equal('Transaction(s) accepted');
+      console.log(`successfully broadcasted transaction: ${transaction.id}`);
+    } catch (error) {
+      console.error(`Failed to broadcasted transaction: ${transaction.id}`, error);
+    }
   }
 
   /**
-   * Broadcast a transaction and validate response
+   * Broadcast a signature to network and validate response
+   * @param {object} transaction transaction object
+   */
+  async broadcastAndValidateSignature(signature) {
+    try {
+      const { result, error } = await from(this.call().broadcastSignatures(signature));
+
+      expect(error).to.be.null;
+      this.helpers['ValidateHelper'].expectResponseToBeValid(result, 'SignatureResponse')
+      expect(result.data.message).to.deep.equal('Signature Accepted');
+      console.log("successfully broadcasted signature for transaction: ", signature.transactionId);
+    } catch (error) {
+      console.error("Failed to broadcasted signature for transaction: ", signature.transactionId, error);
+    }
+  }
+
+  /**
+   * Broadcast a transaction, validate response and wait for a block to forge
    * @param {Object} transaction - The transaction to be broadcasted
-   * @param {Number} blocksToWait - Number of blocks to wait
+   * @param {Number} blocksToWait - Number of blocks to wait, default 1 block
    * @returns {Object} transaction
    */
   async broadcastAndValidateTransactionAndWait(transaction, blocksToWait = 1) {
@@ -145,12 +174,12 @@ class LiskUtil extends Helper {
   }
 
   /**
-   * Broadcast a signature transaction and validate response
+   * Broadcast a signature transaction, validate response and wait for a block to forge
    * @param {Object} signature - The signature transaction to be broadcasted
-   * @param {Number} blocksToWait - Number of blocks to wait
+   * @param {Number} blocksToWait - Number of blocks to wait, default 1 block
    * @param {*} signature
    */
-  async broadcastAndValidateSignatureAndWait(signature, count = 25) {
+  async broadcastAndValidateSignatureAndWait(signature, blocksToWait = 1) {
     await this.broadcastAndValidateSignature(signature);
     await this.waitForBlock(blocksToWait);
   }
@@ -219,6 +248,12 @@ class LiskUtil extends Helper {
     return trxs;
   }
 
+  /**
+   * Prepare signature for a given transaction with contracts and broadcast the signatures
+   * @param {object} transaction transaction corresponding to signatures
+   * @param {array} contracts signers required to approve the transaction
+   * @param {number} blocksToWait number of blocks to wait for the transaction to confirm
+   */
   async sendSignaturesForMultisigTrx(transaction, contracts, blocksToWait) {
     const signatures = contracts.map(s => ({
       transactionId: transaction.id,
@@ -381,6 +416,11 @@ class LiskUtil extends Helper {
     return isVoted;
   }
 
+  /**
+   * Check if the multisignature transaction confirmed in the network
+   * @param {string} address multisignature account address
+   * @param {array} contracts multisignature contracts
+   */
   async checkIfMultisigAccountExists(address, contracts) {
     const { result, error } = await from(this.call().getMultisignatureGroups(address));
 
@@ -407,6 +447,11 @@ class LiskUtil extends Helper {
     return unconfirmed + unprocessed + unsigned;
   }
 
+  /**
+   * Returns list if all the peers in the network, connected, disconnected and blocked
+   * @param {number} limit initial limit
+   * @param {number} offset initial offset
+   */
   async getAllPeers(limit, offset) {
     const { result, error } = await from(this.call().getPeers({ limit, offset, }));
 
@@ -429,6 +474,9 @@ class LiskUtil extends Helper {
     return peerList;
   }
 
+  /**
+   * Returns list of all the forging nodes with ip address and corresponding publickey
+   */
   async getAllForgingNodes() {
     const peers = await this.getAllPeers(100, 0);
     const forgingStatus = await Promise.all(peers.map(async p => {
@@ -444,11 +492,18 @@ class LiskUtil extends Helper {
     return forgingStatus.filter(n => n);
   }
 
+  /**
+   * Returns list of all the forging nodes for a given publickey
+   * @param {string} publicKey delegate account publickey
+   */
   async getForgingDelegateNode(publicKey) {
     const forgingNodes = await this.getAllForgingNodes();
     return forgingNodes.filter(n => n.publicKey === publicKey && n.forging);
   }
 
+  /**
+   * Returns the list of all the node heights
+   */
   async getAllNodeHeights() {
     const peers = await this.getAllPeers(100, 0);
 
@@ -462,6 +517,9 @@ class LiskUtil extends Helper {
     }));
   }
 
+  /**
+   * Validates if the network is moving every 10 seconds
+   */
   async checkIfNetworkIsMoving() {
     let heights = await this.getAllNodeHeights();
     const previous_height = Math.max(heights.filter(h => h));
@@ -474,6 +532,9 @@ class LiskUtil extends Helper {
     expect(current_height).to.be.above(previous_height);
   }
 
+  /**
+   * Validates if delegates are forging on nodes
+   */
   async checkIfDelegatesAreForging() {
     const { result, error } = await from(this.getAllForgingNodes());
 
@@ -483,41 +544,19 @@ class LiskUtil extends Helper {
     });
   }
 
+  /**
+   * Waits until the transaction is confirmed on the network
+   * @param {string} id transaction id
+   */
   async waitForTransactionToConfirm(id) {
     const { result, error } = await from(this.call().getTransactions({ id }));
 
     expect(error).to.be.null;
-    while (result.data.length) {
+    if (result.data.length) {
       return result;
     }
     await this.waitForBlock();
     return await this.waitForTransactionToConfirm(id);
-  }
-
-  async getPendingTrxCount() {
-    const {
-      data: {
-        transactions: {
-          unconfirmed, unprocessed, unsigned
-        }
-      }
-    } = await this.call().getNodeStatus();
-
-    return unconfirmed + unprocessed + unsigned;
-  };
-
-  async waitForPendingTransaction(limit, trs_type) {
-    const pendingTrxCnt = await this.getPendingTrxCount();
-
-    console.log(`Timestamp: ${new Date().toISOString()}, Transaction Type: ${trs_type}, Pending Transactions: ${pendingTrxCnt}, RATE_LIMIT: ${limit}`);
-
-    while (pendingTrxCnt === 0 || limit <= 0) {
-      return true;
-    }
-
-    limit = limit - 1;
-    await this.waitForBlock(TRS_PER_BLOCK);
-    return await this.waitForPendingTransaction(limit, trs_type);
   }
 }
 

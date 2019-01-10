@@ -4,7 +4,7 @@ properties([
 	parameters([
 		string(name: 'NETWORK', defaultValue: 'alphanet', description: 'To Run test against a network', ),
 		string(name: 'NODES_PER_REGION', defaultValue: '1', description: 'Number of nodes per region', ),
-		string(name: 'STRESS_COUNT', defaultValue: '1000', description: 'Number of transactions to create', ),
+		string(name: 'STRESS_COUNT', defaultValue: '500', description: 'Number of transactions to create', ),
 		string(name: 'NEWRELIC_ENABLED', defaultValue: 'no', description: 'Enable NewRelic', ),
 	])
 ])
@@ -60,7 +60,7 @@ lisk_version: ${env.LISK_VERSION}""", importTowerLogs: true, importWorkflowChild
 		}
 		stage('Test Scenarios') {
 			steps {
-				retry(3) {
+				retry(2) {
 					timestamps {
 						nvm(getNodejsVersion()) {
 							ansiColor('xterm') {
@@ -73,12 +73,10 @@ lisk_version: ${env.LISK_VERSION}""", importTowerLogs: true, importWorkflowChild
 		}
 		stage('Test Network Stress') {
 			steps {
-				retry(2) {
-					timestamps {
-						nvm(getNodejsVersion()) {
-							ansiColor('xterm') {
-								sh 'npm run stress'
-							}
+				timestamps {
+					nvm(getNodejsVersion()) {
+						ansiColor('xterm') {
+							sh 'npm run stress'
 						}
 					}
 				}

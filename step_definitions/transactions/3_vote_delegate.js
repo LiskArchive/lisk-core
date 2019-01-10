@@ -1,4 +1,4 @@
-const { getFixtureUser, from } = require('../../utils');
+const { getFixtureUser, from, TRS_PER_BLOCK } = require('../../utils');
 
 const I = actor();
 
@@ -34,7 +34,8 @@ Then('delegate {string} should received vote from {string}', async (receiver, se
 
   const pendingTrx = await I.getPendingTransactionCount();
   if (pendingTrx > 0) {
-    await I.waitForBlock(pendingTrx);
+    const NUMBER_OF_BLOCKS = Math.ceil(pendingTrx / TRS_PER_BLOCK);
+    await I.waitForBlock(NUMBER_OF_BLOCKS);
   }
 
   const { result, error } = await from(

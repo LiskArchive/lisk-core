@@ -1,4 +1,4 @@
-const { BEDDOWS, getFixtureUser, from } = require('../../utils');
+const { BEDDOWS, getFixtureUser, from, TRS_PER_BLOCK } = require('../../utils');
 
 const I = actor();
 
@@ -29,7 +29,8 @@ Given('{int} lisk accounts exists with minimum balance', async (count) => {
         transfers.push(trx);
     });
 
-    await I.waitForBlock(count);
+    const NUMBER_OF_BLOCKS = Math.ceil(count / TRS_PER_BLOCK);
+    await I.waitForBlock(NUMBER_OF_BLOCKS);
 
     transfers.forEach(async ({ id, recipientId }) =>
         await I.validateTransaction(id, recipientId, amount)
@@ -39,16 +40,19 @@ Given('{int} lisk accounts exists with minimum balance', async (count) => {
 Given('{string} has a lisk account with balance {int} LSK tokens', async function (userName, balance) {
     const { address } = getFixtureUser('username', userName);
     await I.haveAccountWithBalance(address, balance);
+    await I.waitForBlock();
 });
 
 Given('{string} has a account with second signature', async function (userName) {
     const { address, passphrase, secondPassphrase } = getFixtureUser('username', userName);
     await I.haveAccountWithSecondSignature(address, passphrase, secondPassphrase);
+    await I.waitForBlock();
 });
 
 Given('{string} has a account registered as delegate', async function (userName) {
     const { username, address, passphrase, secondPassphrase } = getFixtureUser('username', userName);
     await I.haveAccountRegisteredAsDelegate(username, address, passphrase, secondPassphrase);
+    await I.waitForBlock();
 });
 
 Given('{string} creates a multisignature account with {string}, {string}', async function (user1, user2, user3) {
@@ -65,6 +69,7 @@ Given('{string} creates a multisignature account with {string}, {string}', async
     const isExists = await I.checkIfMultisigAccountExists(address, contracts);
     if (!isExists) {
         await from(I.registerMultisignature(contracts, params));
+        await I.waitForBlock();
     }
 });
 

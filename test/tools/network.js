@@ -15,11 +15,12 @@ const getConfigPath = () => {
 }
 
 const enableDisableDelegates = (api, isEnable) => {
+  const enableOrDisable = isEnable ? "enable" : "disable";
+
   try {
     const configPath = getConfigPath();
     const configBuffer = fs.readFileSync(configPath);
     const configContent = JSON.parse(configBuffer);
-    const enableOrDisable = isEnable ? "enable" : "disable";
     const {
       nodes,
       forging: {
@@ -35,6 +36,10 @@ const enableDisableDelegates = (api, isEnable) => {
 
     const chunkSize = Math.ceil(delegates.length / nodes.length);
     const delegateList = chunkArray(delegates, chunkSize);
+
+    if(nodes.length > 101) {
+      nodes.splice(101);
+    }
 
     return nodes.map((ip_address, i) => {
       console.log(`${delegateList[i].length} delegates ${enableOrDisable}d to on node ===> ${ip_address}`, '\n');

@@ -1,4 +1,4 @@
-const { getFixtureUser, BEDDOWS, GENESIS_ACCOUNT, from } = require('../../utils');
+const { getFixtureUser, BEDDOWS, GENESIS_ACCOUNT, from, TRS_PER_BLOCK } = require('../../utils');
 
 const I = actor();
 let multisigAccount;
@@ -18,18 +18,23 @@ Then('{string}, {string} has a multisignature account with {string}', async (use
 });
 
 Given('I have {int} lisk account with {int} LSK tokens', async (userCount, amount) => {
-  const wallets = new Array(userCount).fill(0);
-  contracts = await Promise.all(wallets.map(() => I.createAccount()));
-  const transfers = contracts.map(a => ({ recipientId: a.address, amount: BEDDOWS(amount), passphrase: GENESIS_ACCOUNT.password }));
+  try {
+    const wallets = new Array(userCount).fill(0);
+    contracts = await Promise.all(wallets.map(() => I.createAccount()));
+    const transfers = contracts.map(a => ({ recipientId: a.address, amount: BEDDOWS(amount), passphrase: GENESIS_ACCOUNT.password }));
 
-  const trxs = await I.transferToMultipleAccounts(transfers);
-  await I.waitForBlock(trxs.length + 25);
+    const trxs = await I.transferToMultipleAccounts(transfers);
+    const NUMBER_OF_BLOCKS = Math.ceil(trxs.length / TRS_PER_BLOCK);
+    await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
 
-  trxs.map(async (t) => {
-    return await I.validateTransaction(t.id, t.recipientId, amount, GENESIS_ACCOUNT.address);
-  });
+    trxs.map(async (t) => {
+      return await I.validateTransaction(t.id, t.recipientId, amount, GENESIS_ACCOUNT.address);
+    });
 
-  multisigAccount = contracts.pop();
+    multisigAccount = contracts.pop();
+  } catch (error) {
+    console.error('TYPE_4_REGISTER_MULTI_SIGNATURE: ', error);
+  }
 });
 
 When('I create a multisignature account with {int} accounts', async (count) => {

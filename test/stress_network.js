@@ -5,20 +5,23 @@ const {
   getKeys,
   generateMnemonic,
   createAccounts,
-  TRS_PER_BLOCK,
   TRS_TYPE,
+  TRS_PER_BLOCK,
 } = require('../utils');
 
 const I = actor();
 const contractsByAddress = {};
 const STRESS_COUNT = parseInt(process.env.STRESS_COUNT) || 1000;
-const RATE_LIMIT = Math.ceil(STRESS_COUNT / TRS_PER_BLOCK);
+const NUMBER_OF_BLOCKS = Math.ceil(STRESS_COUNT / TRS_PER_BLOCK);
+const EXTRA_LIMIT = NUMBER_OF_BLOCKS + NUMBER_OF_BLOCKS * 0.25;
 
 const accounts = createAccounts(STRESS_COUNT);
 
 Feature('Stress network test');
 
 Scenario('Transfer funds', async () => {
+  console.log(`Running Stress Test, Transaction Type: ${TRS_TYPE.TRANSFER}`);
+
   const LSK_TOKEN = 100;
   const transferTrx = accounts.map((a) => {
     return {
@@ -29,7 +32,7 @@ Scenario('Transfer funds', async () => {
 
   const transfer_transactions = await I.transferToMultipleAccounts(transferTrx);
 
-  await I.waitForPendingTransaction(RATE_LIMIT, TRS_TYPE.TRANSFER);
+  await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
 
   await Promise.all(transfer_transactions.map(trx => {
     I.validateTransaction(trx.id, trx.recipientId, LSK_TOKEN);
@@ -37,12 +40,14 @@ Scenario('Transfer funds', async () => {
 }).tag('@slow').tag('@stress');
 
 Scenario('Second passphrase on an account', async () => {
+  console.log(`Running Stress Test, Transaction Type: ${TRS_TYPE.SECOND_PASSPHRASE}`);
+
   await Promise.all(accounts.map(async (a) => {
     a.secondPassphrase = generateMnemonic();
     return await I.registerSecondPassphrase(a.passphrase, a.secondPassphrase, 0);
   }));
 
-  await I.waitForPendingTransaction(RATE_LIMIT + RATE_LIMIT * 0.25, TRS_TYPE.SECOND_PASSPHRASE);
+  await I.waitForBlock(NUMBER_OF_BLOCKS + 5);
 
   await Promise.all(accounts.map(async a => {
     const { publicKey } = getKeys(a.secondPassphrase);
@@ -54,6 +59,8 @@ Scenario('Second passphrase on an account', async () => {
 }).tag('@slow').tag('@stress');
 
 Scenario('Delegate Registration', async () => {
+  console.log(`Running Stress Test, Transaction Type: ${TRS_TYPE.DELEGATE_REGISTRATION}`);
+
   await Promise.all(accounts.map(async (a) => {
     a.username = crypto.randomBytes(9).toString('hex');
 
@@ -64,7 +71,7 @@ Scenario('Delegate Registration', async () => {
     }, 0);
   }));
 
-  await I.waitForPendingTransaction(RATE_LIMIT + RATE_LIMIT * 0.25, TRS_TYPE.DELEGATE_REGISTRATION);
+  await I.waitForBlock(NUMBER_OF_BLOCKS + 5);
 
   await Promise.all(accounts.map(async a => {
     const api = await I.call();
@@ -75,6 +82,8 @@ Scenario('Delegate Registration', async () => {
 }).tag('@slow').tag('@stress');
 
 Scenario('Cast vote', async () => {
+  console.log(`Running Stress Test, Transaction Type: ${TRS_TYPE.VOTE}`);
+
   await Promise.all(accounts.map(async (a) => {
     return await I.castVotes({
       votes: [a.publicKey],
@@ -83,7 +92,7 @@ Scenario('Cast vote', async () => {
     }, 0);
   }));
 
-  await I.waitForPendingTransaction(RATE_LIMIT + RATE_LIMIT * 0.25, TRS_TYPE.VOTE);
+  await I.waitForBlock(NUMBER_OF_BLOCKS + 5);
 
   await Promise.all(accounts.map(async a => {
     const api = await I.call();
@@ -94,6 +103,8 @@ Scenario('Cast vote', async () => {
 }).tag('@slow').tag('@stress');
 
 Scenario('Register Multi-signature account', async () => {
+  console.log(`Running Stress Test, Transaction Type: ${TRS_TYPE.MULTI_SIGNATURE}`);
+
   await Promise.all(accounts.map(async (a, index) => {
     const { passphrase, secondPassphrase, address } = a;
     const signer1 = accounts[(index + 1) % accounts.length];
@@ -110,7 +121,7 @@ Scenario('Register Multi-signature account', async () => {
     return await I.registerMultisignature(contracts, params, 0);
   }));
 
-  await I.waitForPendingTransaction(RATE_LIMIT + RATE_LIMIT * 0.25, TRS_TYPE.MULTI_SIGNATURE);
+  await I.waitForBlock(EXTRA_LIMIT);
 
   await Promise.all(accounts.map(async a => {
     const api = await I.call();
@@ -121,6 +132,8 @@ Scenario('Register Multi-signature account', async () => {
 }).tag('@slow').tag('@stress');
 
 Scenario('DApp registration', async () => {
+  console.log(`Running Stress Test, Transaction Type: ${TRS_TYPE.DAPP}`);
+
   const dAppsTrxs = await Promise.all(accounts.map(async (a) => {
     const dAppName = crypto.randomBytes(5).toString('hex');
     const options = {
@@ -146,7 +159,7 @@ Scenario('DApp registration', async () => {
     await I.sendSignaturesForMultisigTrx(trx, contractsByAddress[address], 0);
   }));
 
-  await I.waitForPendingTransaction(RATE_LIMIT + RATE_LIMIT * 0.25, TRS_TYPE.DAPP);
+  await I.waitForBlock(EXTRA_LIMIT);
 
   await Promise.all(accounts.map(async a => {
     const api = await I.call();
