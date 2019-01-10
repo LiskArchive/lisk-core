@@ -41,3 +41,10 @@ Before running enable or disable, run peers config `npm run tools:peers:config`
 	Disable delegates for a given network.
 
 	Default network is `development` [fixtures/config.json](fixtures/config.json)
+
+### Stress testing
+
+- `NETWORK=alphanet STRESS_COUNT=1000 npm run stress`
+
+### Lisk protocol feature testing
+- `NETWORK=alphanet npm run features`

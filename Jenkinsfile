@@ -60,7 +60,7 @@ lisk_version: ${env.LISK_VERSION}""", importTowerLogs: true, importWorkflowChild
 		}
 		stage('Test Scenarios') {
 			steps {
-				retry(5) {
+				retry(3) {
 					timestamps {
 						nvm(getNodejsVersion()) {
 							ansiColor('xterm') {

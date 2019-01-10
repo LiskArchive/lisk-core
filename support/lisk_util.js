@@ -68,20 +68,36 @@ class LiskUtil extends Helper {
    * @returns {Promise}
    */
   async wait(ms) {
-    if (ms > 0)
-      console.log(`Timestamp: ${new Date().toISOString()}, waiting until... ${ms}(ms)`);
     return new Promise(r => setTimeout(() => {
       r()
     }, ms));
   }
 
   /**
-   *
-   * @param {number} transactionCount - total transactions sent, default 1
+   * wait until the network reaches the specific block height
+   * @param {number} transactionCount - block can process 25 transactions
    */
   async waitForBlock(transactionCount = 25) {
-    const waitTime = Math.ceil(transactionCount / TRS_PER_BLOCK) * BLOCK_TIME;
-    await this.wait(waitTime);
+    if(transactionCount > 0) {
+      const extraBlocks = Math.ceil(transactionCount / TRS_PER_BLOCK);
+      const { data: { height } } = await this.call().getNodeStatus();
+      return await this.waitUntilBlock(height + extraBlocks);
+    }
+    return true;
+  }
+
+  /**
+   * check node height and wait until it reaches the expected height
+   * @param {number} expectedHeight - expected height to reach
+   */
+  async waitUntilBlock(expectedHeight) {
+    const { data: { height } } = await this.call().getNodeStatus();
+    if (height >= expectedHeight) {
+      return height;
+    }
+    console.log(`Timestamp: ${new Date().toISOString()}, current height: ${height}, expected height: ${expectedHeight}`);
+    await this.wait(BLOCK_TIME);
+    await this.waitUntilBlock(expectedHeight);
   }
 
   /**
