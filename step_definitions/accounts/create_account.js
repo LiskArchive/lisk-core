@@ -1,3 +1,4 @@
+const output = require('codeceptjs').output;
 const I = actor();
 let transfers = [];
 
@@ -18,7 +19,7 @@ When("I create a lisk account", async function (userTable) {
       await I.addAccount(userName, account);
     });
   } catch (error) {
-    console.error(error);
+    output.error(error);
   }
 });
 
@@ -31,7 +32,7 @@ Then(/transfer (\d+)LSK to all account from genesis account/, async function (am
       transfers.push(trx);
     });
   } catch (error) {
-    console.error(error);
+    output.error(error);
   }
 });
 
@@ -44,6 +45,6 @@ Then(/Validate if (\d+)LSK was transfered was successful/, async function (amoun
       });
     }
   } catch (error) {
-    console.error(error);
+    output.error(error);
   }
 })

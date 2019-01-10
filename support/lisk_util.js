@@ -1,7 +1,8 @@
 const elements = require('lisk-elements');
+const output = require('codeceptjs').output;
 const API = require('./api.js');
 const { config, GENESIS_ACCOUNT, ASGARD_FIXTURE } = require('../fixtures');
-const { BEDDOWS, BLOCK_TIME, TRS_PER_BLOCK, from, getFixtureUser } = require('../utils');
+const { BEDDOWS, BLOCK_TIME, from, getFixtureUser } = require('../utils');
 
 const networkConfig = config();
 const users = {};
@@ -103,12 +104,14 @@ class LiskUtil extends Helper {
     } = await this.call().getNodeStatus();
     const pendingTrxCnt = unconfirmed + unprocessed + unsigned;
 
-    console.log(`Timestamp: ${new Date().toISOString()}, current height: ${height}, expected height: ${expectedHeight}, confirmed trxs: ${confirmed}, pending trxs: ${pendingTrxCnt}`);
+    output.print(`Timestamp: ${new Date().toISOString()}, current height: ${height}, expected height: ${expectedHeight}, confirmed trxs: ${confirmed}, pending trxs: ${pendingTrxCnt}`);
 
     if (height >= expectedHeight) {
       return height;
     }
-    await this.wait(BLOCK_TIME);
+    // Remove the buffer time when network is stable
+    const BUFFER_TIME = 2000;
+    await this.wait(BLOCK_TIME + BUFFER_TIME);
     await this.waitUntilBlock(expectedHeight);
   }
 
@@ -139,9 +142,9 @@ class LiskUtil extends Helper {
       expect(error).to.be.null;
       this.helpers['ValidateHelper'].expectResponseToBeValid(result, 'GeneralStatusResponse');
       expect(result.data.message).to.deep.equal('Transaction(s) accepted');
-      console.log(`successfully broadcasted transaction: ${transaction.id}`);
+      output.print(`successfully broadcasted transaction: ${transaction.id}`);
     } catch (error) {
-      console.error(`Failed to broadcasted transaction: ${transaction.id}`, error);
+      output.error(`Failed to broadcasted transaction: ${transaction.id}`, error);
     }
   }
 
@@ -156,9 +159,9 @@ class LiskUtil extends Helper {
       expect(error).to.be.null;
       this.helpers['ValidateHelper'].expectResponseToBeValid(result, 'SignatureResponse')
       expect(result.data.message).to.deep.equal('Signature Accepted');
-      console.log("successfully broadcasted signature for transaction: ", signature.transactionId);
+      output.print("successfully broadcasted signature for transaction: ", signature.transactionId);
     } catch (error) {
-      console.error("Failed to broadcasted signature for transaction: ", signature.transactionId, error);
+      output.error("Failed to broadcasted signature for transaction: ", signature.transactionId, error);
     }
   }
 

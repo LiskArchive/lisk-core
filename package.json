@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "features": "./node_modules/.bin/codeceptjs run --features",
+    "features:debug": "./node_modules/.bin/codeceptjs run --features --debug --verbose --grep '(?=.*)^(?!.*@stress)'",
     "stress": "./node_modules/.bin/codeceptjs run --tests --grep \"@slow|@stress\"",
     "report": "allure serve output",
     "snippets": "./node_modules/.bin/codeceptjs gherkin:snippets",
