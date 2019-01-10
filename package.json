@@ -1,0 +1,47 @@
+{
+  "name": "lisk-core-qa-external",
+  "version": "0.0.1",
+  "description": "Lisk core quality assurance",
+  "main": "index.js",
+  "scripts": {
+    "features": "./node_modules/.bin/codeceptjs run --features",
+    "features:debug": "./node_modules/.bin/codeceptjs run --features --debug --verbose --grep '(?=.*)^(?!.*@stress)'",
+    "stress": "./node_modules/.bin/codeceptjs run --tests --grep \"@slow|@stress\"",
+    "report": "allure serve output",
+    "snippets": "./node_modules/.bin/codeceptjs gherkin:snippets",
+    "new_test": "./node_modules/.bin/codeceptjs gt",
+    "tools:peers:list": "./node_modules/.bin/codeceptjs run --tests --grep @peers_list",
+    "tools:peers:config": "./node_modules/.bin/codeceptjs run --tests --grep @peers_config",
+    "tools:peers:connected": "./node_modules/.bin/codeceptjs run --tests --grep @peers_connected",
+    "tools:delegates:enable": "./node_modules/.bin/codeceptjs run --tests --grep @delegates_enable",
+    "tools:delegates:disable": "./node_modules/.bin/codeceptjs run --tests --grep @delegates_disable"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LiskHQ/lisk-core-qa-external.git"
+  },
+  "keywords": [
+    "qa",
+    "bdd",
+    "cucumber"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LiskHQ/lisk-core-qa-external/issues"
+  },
+  "homepage": "https://github.com/LiskHQ/lisk-core-qa-external#readme",
+  "dependencies": {
+    "bluebird": "^3.5.3",
+    "chai": "^4.2.0",
+    "chai-json-schema": "^1.5.0",
+    "chai-sorted": "^0.2.0",
+    "debug": "^4.1.0",
+    "lisk-commons": "^1.1.2",
+    "lisk-elements": "=1.0.0"
+  },
+  "devDependencies": {
+    "allure": "0.0.0",
+    "codeceptjs": "^1.4.6"
+  }
+}
