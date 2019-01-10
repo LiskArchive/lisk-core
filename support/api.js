@@ -43,7 +43,7 @@ class API {
             const client = API.getClientByAddress(this.clients, ip_address);
             return client.node.getStatus();
         } catch (error) {
-            console.error('Error while processing request', error);
+            output.error('Error while processing request', error);
             RETRY_LIMIT -= 1;
             await this.getNodeStatus(ip_address);
         }
@@ -54,7 +54,7 @@ class API {
             const client = API.getClientByAddress(this.clients, ip_address);
             return client.node.getConstants();
         } catch (error) {
-            console.error('Error while processing request', error);
+            output.error('Error while processing request', error);
             RETRY_LIMIT -= 1;
             await this.getNodeConstants(ip_address)
         }
@@ -65,7 +65,7 @@ class API {
             const client = API.getClientByAddress(this.clients, ip_address);
             return client.node.getForgingStatus(params);
         } catch (error) {
-            console.error('Error while processing request', error);
+            output.error('Error while processing request', error);
             RETRY_LIMIT -= 1;
             await this.getForgingStatus(params, ip_address)
         }
@@ -76,7 +76,7 @@ class API {
             const client = API.getClientByAddress(this.clients, ip_address);
             return client.node.updateForgingStatus(params);
         } catch (error) {
-            console.error('Error while processing request', error);
+            output.error('Error while processing request', error);
             RETRY_LIMIT -= 1;
             await this.updateForgingStatus(params, ip_address)
         }
@@ -87,7 +87,7 @@ class API {
             const client = API.getClientByAddress(this.clients, ip_address);
             return client.node.getTransactions(state, params);
         } catch (error) {
-            console.error('Error while processing request', error);
+            output.error('Error while processing request', error);
             RETRY_LIMIT -= 1;
             await this.getTransactionsByState(state, params, ip_address)
         }
@@ -98,7 +98,7 @@ class API {
             const client = API.getClientByAddress(this.clients, ip_address);
             return client.peers.get(params);
         } catch (error) {
-            console.error('Error while processing request', error);
+            output.error('Error while processing request', error);
             RETRY_LIMIT -= 1;
             await this.getPeers(params, ip_address)
         }
@@ -109,7 +109,7 @@ class API {
             const client = API.getClientByAddress(this.clients, ip_address);
             return client.accounts.get(params);
         } catch (error) {
-            console.error('Error while processing request', error);
+            output.error('Error while processing request', error);
             RETRY_LIMIT -= 1;
             await this.getAccounts(params, ip_address)
         }
@@ -120,7 +120,7 @@ class API {
             const client = API.getClientByAddress(this.clients, ip_address);
             return client.accounts.getMultisignatureGroups(address, params);
         } catch (error) {
-            console.error('Error while processing request', error);
+            output.error('Error while processing request', error);
             RETRY_LIMIT -= 1;
             await this.getMultisignatureGroups(address, params = {}, ip_address)
         }
@@ -131,7 +131,7 @@ class API {
             const client = API.getClientByAddress(this.clients, ip_address);
             return client.accounts.getMultisignatureMemberships(address, params);
         } catch (error) {
-            console.error('Error while processing request', error);
+            output.error('Error while processing request', error);
             RETRY_LIMIT -= 1;
             await this.getMultisignatureMemberships(address, params, ip_address)
         }
@@ -142,7 +142,7 @@ class API {
             const client = API.getClientByAddress(this.clients, ip_address);
             return client.blocks.get(params);
         } catch (error) {
-            console.error('Error while processing request', error);
+            output.error('Error while processing request', error);
             RETRY_LIMIT -= 1;
             await this.getBlocks(params, ip_address)
         }
@@ -153,7 +153,7 @@ class API {
             const client = API.getClientByAddress(this.clients, ip_address);
             return client.transactions.get(params);
         } catch (error) {
-            console.error('Error while processing request', error);
+            output.error('Error while processing request', error);
             RETRY_LIMIT -= 1;
             await this.getTransactions(params, ip_address)
         }
@@ -164,7 +164,7 @@ class API {
             const client = API.getClientByAddress(this.clients, ip_address);
             return client.transactions.broadcast(params);
         } catch (error) {
-            console.error('Error while processing request', error);
+            output.error('Error while processing request', error);
             RETRY_LIMIT -= 1;
             await this.broadcastTransactions(params, ip_address);
         }
@@ -175,7 +175,7 @@ class API {
             const client = API.getClientByAddress(this.clients, ip_address);
             return client.signatures.broadcast(params);
         } catch (error) {
-            console.error('Error while processing request', error);
+            output.error('Error while processing request', error);
             RETRY_LIMIT -= 1;
             await this.broadcastSignatures(params, ip_address);
         }
@@ -186,7 +186,7 @@ class API {
             const client = API.getClientByAddress(this.clients, ip_address);
             return client.delegates.getForgers(params);
         } catch (error) {
-            console.error('Error while processing request', error);
+            output.error('Error while processing request', error);
             RETRY_LIMIT -= 1;
             await this.getForgers(params, ip_address);
         }
@@ -197,7 +197,7 @@ class API {
             const client = API.getClientByAddress(this.clients, ip_address);
             return client.delegates.getForgingStatistics(address, params);
         } catch (error) {
-            console.error('Error while processing request', error);
+            output.error('Error while processing request', error);
             RETRY_LIMIT -= 1;
             await this.getForgingStatistics(address, params, ip_address)
         }
@@ -208,7 +208,7 @@ class API {
             const client = API.getClientByAddress(this.clients, ip_address);
             return client.delegates.get(params);
         } catch (error) {
-            console.error('Error while processing request', error);
+            output.error('Error while processing request', error);
             RETRY_LIMIT -= 1;
             await this.getDelegates(params, ip_address);
         }
@@ -219,7 +219,7 @@ class API {
             const client = API.getClientByAddress(this.clients, ip_address);
             return client.votes.get(params);
         } catch (error) {
-            console.error('Error while processing request', error);
+            output.error('Error while processing request', error);
             RETRY_LIMIT -= 1;
             await this.getVotes(params, ip_address);
         }
@@ -230,7 +230,7 @@ class API {
             const client = API.getClientByAddress(this.clients, ip_address);
             return client.voters.get(params);
         } catch (error) {
-            console.error('Error while processing request', error);
+            output.error('Error while processing request', error);
             RETRY_LIMIT -= 1;
             await this.getVoters(params, ip_address)
         }
@@ -241,7 +241,7 @@ class API {
             const client = API.getClientByAddress(this.clients, ip_address);
             return client.dapps.get(params);
         } catch (error) {
-            console.error('Error while processing request', error);
+            output.error('Error while processing request', error);
             RETRY_LIMIT -= 1;
             await this.getDapp(params, ip_address);
         }
