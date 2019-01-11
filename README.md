@@ -1,5 +1,8 @@
-
 # Lisk Core QA
+[![Build Status](https://jenkins.lisk.io/job/lisk-core-qa-external/job/master/2/badge/icon)](https://jenkins.lisk.io/job/lisk-core-qa-external/job/master/)
+[![dependencies Status](https://david-dm.org/LiskHQ/lisk-core-qa-external/status.svg)](https://david-dm.org/LiskHQ/lisk-core-qa-external)
+[![devDependencies Status](https://david-dm.org/LiskHQ/lisk-core-qa-external/dev-status.svg)](https://david-dm.org/LiskHQ/lisk-core-qa-external?type=dev)
+
 Quality Assurance of Lisk Network.
 
 The quality assurance ensures if the release candidates are
