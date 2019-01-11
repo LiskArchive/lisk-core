@@ -20,6 +20,7 @@
     "url": "https://github.com/LiskHQ/lisk-core-qa-external/issues"
   },
   "scripts": {
+    "format": "prettier --write \"**/*.{js,json,md}\"",
     "features": "./node_modules/.bin/codeceptjs run --features",
     "features:debug": "./node_modules/.bin/codeceptjs run --features --debug --verbose --grep '(?=.*)^(?!.*@stress)'",
     "stress": "./node_modules/.bin/codeceptjs run --tests --grep \"@slow|@stress\"",
@@ -43,6 +44,7 @@
   },
   "devDependencies": {
     "allure": "0.0.0",
-    "codeceptjs": "^2.0.3"
+    "codeceptjs": "^2.0.3",
+    "prettier": "^1.15.3"
   }
 }
