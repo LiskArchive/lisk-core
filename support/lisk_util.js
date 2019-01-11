@@ -1,8 +1,8 @@
-const elements = require('lisk-elements');
-const output = require('codeceptjs').output;
-const API = require('./api.js');
-const { config, GENESIS_ACCOUNT, ASGARD_FIXTURE } = require('../fixtures');
-const { BEDDOWS, BLOCK_TIME, from, getFixtureUser } = require('../utils');
+const elements = require("lisk-elements");
+const output = require("codeceptjs").output;
+const API = require("./api.js");
+const { config, GENESIS_ACCOUNT, ASGARD_FIXTURE } = require("../fixtures");
+const { BEDDOWS, BLOCK_TIME, from, getFixtureUser } = require("../utils");
 
 const networkConfig = config();
 const users = {};
@@ -69,9 +69,11 @@ class LiskUtil extends Helper {
    * @returns {Promise}
    */
   async wait(ms) {
-    return new Promise(r => setTimeout(() => {
-      r()
-    }, ms));
+    return new Promise(r =>
+      setTimeout(() => {
+        r();
+      }, ms)
+    );
   }
 
   /**
@@ -80,7 +82,9 @@ class LiskUtil extends Helper {
    */
   async waitForBlock(numberOfBlocks = 1) {
     if (numberOfBlocks > 0) {
-      const { data: { height } } = await this.call().getNodeStatus();
+      const {
+        data: { height }
+      } = await this.call().getNodeStatus();
       return await this.waitUntilBlock(height + numberOfBlocks);
     }
     return true;
@@ -94,17 +98,14 @@ class LiskUtil extends Helper {
     const {
       data: {
         height,
-        transactions: {
-          confirmed,
-          unconfirmed,
-          unprocessed,
-          unsigned,
-        }
+        transactions: { confirmed, unconfirmed, unprocessed, unsigned }
       }
     } = await this.call().getNodeStatus();
     const pendingTrxCnt = unconfirmed + unprocessed + unsigned;
 
-    output.print(`Timestamp: ${new Date().toISOString()}, current height: ${height}, expected height: ${expectedHeight}, confirmed trxs: ${confirmed}, pending trxs: ${pendingTrxCnt}`);
+    output.print(
+      `Timestamp: ${new Date().toISOString()}, current height: ${height}, expected height: ${expectedHeight}, confirmed trxs: ${confirmed}, pending trxs: ${pendingTrxCnt}`
+    );
 
     if (height >= expectedHeight) {
       return height;
@@ -127,8 +128,8 @@ class LiskUtil extends Helper {
     return {
       passphrase,
       publicKey,
-      address,
-    }
+      address
+    };
   }
 
   /**
@@ -137,14 +138,22 @@ class LiskUtil extends Helper {
    */
   async broadcastAndValidateTransaction(transaction) {
     try {
-      const { result, error } = await from(this.call().broadcastTransactions(transaction));
+      const { result, error } = await from(
+        this.call().broadcastTransactions(transaction)
+      );
 
       expect(error).to.be.null;
-      this.helpers['ValidateHelper'].expectResponseToBeValid(result, 'GeneralStatusResponse');
-      expect(result.data.message).to.deep.equal('Transaction(s) accepted');
+      this.helpers["ValidateHelper"].expectResponseToBeValid(
+        result,
+        "GeneralStatusResponse"
+      );
+      expect(result.data.message).to.deep.equal("Transaction(s) accepted");
       output.print(`successfully broadcasted transaction: ${transaction.id}`);
     } catch (error) {
-      output.error(`Failed to broadcasted transaction: ${transaction.id}`, error);
+      output.error(
+        `Failed to broadcasted transaction: ${transaction.id}`,
+        error
+      );
     }
   }
 
@@ -154,14 +163,26 @@ class LiskUtil extends Helper {
    */
   async broadcastAndValidateSignature(signature) {
     try {
-      const { result, error } = await from(this.call().broadcastSignatures(signature));
+      const { result, error } = await from(
+        this.call().broadcastSignatures(signature)
+      );
 
       expect(error).to.be.null;
-      this.helpers['ValidateHelper'].expectResponseToBeValid(result, 'SignatureResponse')
-      expect(result.data.message).to.deep.equal('Signature Accepted');
-      output.print("successfully broadcasted signature for transaction: ", signature.transactionId);
+      this.helpers["ValidateHelper"].expectResponseToBeValid(
+        result,
+        "SignatureResponse"
+      );
+      expect(result.data.message).to.deep.equal("Signature Accepted");
+      output.print(
+        "successfully broadcasted signature for transaction: ",
+        signature.transactionId
+      );
     } catch (error) {
-      output.error("Failed to broadcasted signature for transaction: ", signature.transactionId, error);
+      output.error(
+        "Failed to broadcasted signature for transaction: ",
+        signature.transactionId,
+        error
+      );
     }
   }
 
@@ -196,15 +217,15 @@ class LiskUtil extends Helper {
     return accounts.map(account => {
       const signature = elements.transaction.utils.multiSignTransaction(
         transaction,
-        account.passphrase,
+        account.passphrase
       );
 
       return {
         transactionId: transaction.id,
         publicKey: account.publicKey,
-        signature,
-      }
-    })
+        signature
+      };
+    });
   }
 
   /**
@@ -219,7 +240,7 @@ class LiskUtil extends Helper {
    */
   async transfer(account, blocksToWait) {
     if (!account.passphrase) {
-      account.passphrase = GENESIS_ACCOUNT.password
+      account.passphrase = GENESIS_ACCOUNT.password;
     }
 
     const trx = elements.transaction.transfer(account);
@@ -241,12 +262,14 @@ class LiskUtil extends Helper {
   async transferToMultipleAccounts(accounts) {
     const trxs = accounts.map(a => {
       if (!a.passphrase) {
-        a.passphrase = GENESIS_ACCOUNT.password
+        a.passphrase = GENESIS_ACCOUNT.password;
       }
       return elements.transaction.transfer(a);
     });
 
-    await from(Promise.all(trxs.map(t => this.broadcastAndValidateTransaction(t))));
+    await from(
+      Promise.all(trxs.map(t => this.broadcastAndValidateTransaction(t)))
+    );
 
     return trxs;
   }
@@ -263,11 +286,13 @@ class LiskUtil extends Helper {
       publicKey: s.publicKey,
       signature: elements.transaction.utils.multiSignTransaction(
         transaction,
-        s.passphrase,
-      ),
+        s.passphrase
+      )
     }));
 
-    await Promise.all(signatures.map(async s => await this.broadcastAndValidateSignature(s)));
+    await Promise.all(
+      signatures.map(async s => await this.broadcastAndValidateSignature(s))
+    );
     await this.waitForBlock(blocksToWait);
   }
 
@@ -281,7 +306,7 @@ class LiskUtil extends Helper {
   async registerSecondPassphrase(passphrase, secondPassphrase, blocksToWait) {
     const trx = elements.transaction.registerSecondPassphrase({
       passphrase,
-      secondPassphrase,
+      secondPassphrase
     });
 
     await from(this.broadcastAndValidateTransactionAndWait(trx, blocksToWait));
@@ -346,13 +371,23 @@ class LiskUtil extends Helper {
   async registerMultisignature(accounts, params, blocksToWait) {
     const keysgroup = accounts.map(account => account.publicKey);
 
-    const registerMultisignatureTrx = elements.transaction.registerMultisignature({ keysgroup, ...params });
+    const registerMultisignatureTrx = elements.transaction.registerMultisignature(
+      { keysgroup, ...params }
+    );
 
-    const signatures = this.createSignatures(accounts, registerMultisignatureTrx);
+    const signatures = this.createSignatures(
+      accounts,
+      registerMultisignatureTrx
+    );
 
-    await this.broadcastAndValidateTransactionAndWait(registerMultisignatureTrx, blocksToWait);
+    await this.broadcastAndValidateTransactionAndWait(
+      registerMultisignatureTrx,
+      blocksToWait
+    );
 
-    await Promise.all(signatures.map(s => this.broadcastAndValidateSignature(s)));
+    await Promise.all(
+      signatures.map(s => this.broadcastAndValidateSignature(s))
+    );
 
     await this.waitForBlock(blocksToWait);
     return registerMultisignatureTrx;
@@ -388,23 +423,33 @@ class LiskUtil extends Helper {
    * @param {string} amount - amount sent my sender to validate againt the transaction
    * @param {string} senderId - sender address, default is genesis account
    */
-  async validateTransaction(id, recipientId, amount, senderId = GENESIS_ACCOUNT.address) {
-    const response = await from(this.call().getTransactions({
-      id,
-      senderId,
-      recipientId
-    }));
+  async validateTransaction(
+    id,
+    recipientId,
+    amount,
+    senderId = GENESIS_ACCOUNT.address
+  ) {
+    const response = await from(
+      this.call().getTransactions({
+        id,
+        senderId,
+        recipientId
+      })
+    );
 
     expect(response.error).to.be.null;
-    this.helpers['ValidateHelper'].expectResponseToBeValid(response.result, 'TransactionsResponse');
-    return expect(response.result.data[0].amount).to.deep.equal(BEDDOWS(amount));
+    this.helpers["ValidateHelper"].expectResponseToBeValid(
+      response.result,
+      "TransactionsResponse"
+    );
+    return expect(response.result.data[0].amount).to.deep.equal(
+      BEDDOWS(amount)
+    );
   }
 
   async checkIfVoteOrUnvoteCasted(votesOrUnvotes, passphrase) {
     const { address } = getFixtureUser("passphrase", passphrase);
-    const { result, error } = await from(
-      this.call().getVoters({ address })
-    );
+    const { result, error } = await from(this.call().getVoters({ address }));
 
     expect(error).to.be.null;
     this.helpers["ValidateHelper"].expectResponseToBeValid(
@@ -412,7 +457,8 @@ class LiskUtil extends Helper {
       "VotersResponse"
     );
 
-    const isVoted = result.data &&
+    const isVoted =
+      result.data &&
       result.data.voters &&
       result.data.voters.some(v => votesOrUnvotes.includes(v.publicKey));
 
@@ -425,9 +471,14 @@ class LiskUtil extends Helper {
    * @param {array} contracts multisignature contracts
    */
   async checkIfMultisigAccountExists(address, contracts) {
-    const { result, error } = await from(this.call().getMultisignatureGroups(address));
+    const { result, error } = await from(
+      this.call().getMultisignatureGroups(address)
+    );
 
-    if (error && error.message === 'Status 404 : Multisignature account not found') {
+    if (
+      error &&
+      error.message === "Status 404 : Multisignature account not found"
+    ) {
       return false;
     } else if (result.data.length && result.data[0].members) {
       const members = contracts.map(c => c.address);
@@ -440,12 +491,11 @@ class LiskUtil extends Helper {
    * returns count of transactions in queue
    */
   async getPendingTransactionCount() {
-    const { data: {
-      transactions: {
-        unconfirmed,
-        unprocessed,
-        unsigned,
-      } } } = await this.call().getNodeStatus();
+    const {
+      data: {
+        transactions: { unconfirmed, unprocessed, unsigned }
+      }
+    } = await this.call().getNodeStatus();
 
     return unconfirmed + unprocessed + unsigned;
   }
@@ -456,18 +506,24 @@ class LiskUtil extends Helper {
    * @param {number} offset initial offset
    */
   async getAllPeers(limit, offset) {
-    const { result, error } = await from(this.call().getPeers({ limit, offset, }));
+    const { result, error } = await from(
+      this.call().getPeers({ limit, offset })
+    );
 
     expect(error).to.be.null;
 
     const count = Math.ceil(result.meta.count / limit) - 1;
 
-    const pagination = Array(count).fill().map((v, i) => (limit * (i + 1)));
+    const pagination = Array(count)
+      .fill()
+      .map((v, i) => limit * (i + 1));
 
     let peerList = result.data;
 
     await pagination.reduce(async (acc, curr) => {
-      const { result, error } = await from(this.call().getPeers({ limit, offset: curr, }));
+      const { result, error } = await from(
+        this.call().getPeers({ limit, offset: curr })
+      );
 
       expect(error).to.be.null;
       acc.push(...result.data);
@@ -482,16 +538,20 @@ class LiskUtil extends Helper {
    */
   async getAllForgingNodes() {
     const peers = await this.getAllPeers(100, 0);
-    const forgingStatus = await Promise.all(peers.map(async p => {
-      const { result, error } = await from(this.call().getForgingStatus({}, p.ip));
+    const forgingStatus = await Promise.all(
+      peers.map(async p => {
+        const { result, error } = await from(
+          this.call().getForgingStatus({}, p.ip)
+        );
 
-      expect(error).to.be.null;
-      if (result && result.data.length) {
-        const forgingDelegates = result.data.filter(d => d.forging);
-        return { ip: p.ip, ...forgingDelegates[0] };
-      }
-      return;
-    }));
+        expect(error).to.be.null;
+        if (result && result.data.length) {
+          const forgingDelegates = result.data.filter(d => d.forging);
+          return { ip: p.ip, ...forgingDelegates[0] };
+        }
+        return;
+      })
+    );
     return forgingStatus.filter(n => n);
   }
 
@@ -510,14 +570,16 @@ class LiskUtil extends Helper {
   async getAllNodeHeights() {
     const peers = await this.getAllPeers(100, 0);
 
-    return await Promise.all(peers.map(async p => {
-      const response = await from(this.call().getNodeStatus(p.ip));
+    return await Promise.all(
+      peers.map(async p => {
+        const response = await from(this.call().getNodeStatus(p.ip));
 
-      if (response.result && response.result.data) {
-        return response.result.data.height;
-      }
-      return;
-    }));
+        if (response.result && response.result.data) {
+          return response.result.data.height;
+        }
+        return;
+      })
+    );
   }
 
   /**
@@ -563,4 +625,4 @@ class LiskUtil extends Helper {
   }
 }
 
-module.exports = LiskUtil
+module.exports = LiskUtil;

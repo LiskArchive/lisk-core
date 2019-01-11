@@ -6,7 +6,7 @@
 const from = promise => {
   return promise
     .then(result => ({ result, error: null }))
-    .catch(error => ({ result: null, error }))
+    .catch(error => ({ result: null, error }));
 };
 
 module.exports = from;

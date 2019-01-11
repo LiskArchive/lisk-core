@@ -4,21 +4,17 @@ class Hooks extends Helper {
   /**
    * before all tests
    */
-  _init() {
-
-  }
+  _init() {}
 
   /**
    * before a test
    */
-  _before() {
-  }
+  _before() {}
 
   /**
    * after a test
    */
-  _after() {
-  }
+  _after() {}
 }
 
 module.exports = Hooks;

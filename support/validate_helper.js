@@ -1,12 +1,12 @@
-const lisk_commons = require('lisk-commons');
-const chai = require('chai');
-const { LISK, BEDDOWS, from, sortBy, flattern } = require('../utils');
-const LiskUtil = require('./lisk_util');
+const lisk_commons = require("lisk-commons");
+const chai = require("chai");
+const { LISK, BEDDOWS, from, sortBy, flattern } = require("../utils");
+const LiskUtil = require("./lisk_util");
 
 const Helper = codecept_helper;
 const liskUtil = new LiskUtil();
 
-chai.use(require('chai-json-schema'));
+chai.use(require("chai-json-schema"));
 chai.use(require("chai-sorted"));
 
 const expect = chai.expect;
@@ -32,10 +32,12 @@ class ValidateHelper extends Helper {
 
   async haveAccount(params) {
     const { result, error } = await from(liskUtil.call().getAccounts(params));
-    const { data: [account] } = result;
+    const {
+      data: [account]
+    } = result;
 
     expect(error).to.be.null;
-    this.expectResponseToBeValid(result, 'AccountsResponse');
+    this.expectResponseToBeValid(result, "AccountsResponse");
     return account;
   }
 
@@ -43,11 +45,14 @@ class ValidateHelper extends Helper {
     const account = await this.haveAccount({ address });
 
     if (!account || !(LISK(account.balance) >= balance)) {
-      if(account) {
+      if (account) {
         balance = Math.ceil(balance - LISK(account.balance));
       }
 
-      await liskUtil.transfer({ recipientId: address, amount: BEDDOWS(balance) });
+      await liskUtil.transfer({
+        recipientId: address,
+        amount: BEDDOWS(balance)
+      });
     }
     return await this.haveAccount({ address });
   }
@@ -56,7 +61,9 @@ class ValidateHelper extends Helper {
     const account = await this.haveAccountWithBalance(address, 100);
 
     if (account && account.secondPublicKey) {
-      expect(account.secondPublicKey).to.be.an('string').to.have.lengthOf(64);
+      expect(account.secondPublicKey)
+        .to.be.an("string")
+        .to.have.lengthOf(64);
     } else {
       await liskUtil.registerSecondPassphrase(passphrase, secondPassphrase);
       await liskUtil.waitForBlock();
@@ -64,11 +71,16 @@ class ValidateHelper extends Helper {
     return account;
   }
 
-  async haveAccountRegisteredAsDelegate(username, address, passphrase, secondPassphrase) {
+  async haveAccountRegisteredAsDelegate(
+    username,
+    address,
+    passphrase,
+    secondPassphrase
+  ) {
     const account = await this.haveAccountWithBalance(address, 100);
 
     if (account && account.delegate) {
-      this.expectResponseToBeValid(account.delegate, 'Delegate');
+      this.expectResponseToBeValid(account.delegate, "Delegate");
     } else {
       await liskUtil.registerAsDelegate({ username, passphrase });
       await liskUtil.waitForBlock();
@@ -95,10 +107,10 @@ class ValidateHelper extends Helper {
       return expect(result).to.deep.equal(sortBy(result, order));
     }
 
-    if (order.toLowerCase() === 'asc') {
-      return expect(result).to.be.ascending
+    if (order.toLowerCase() === "asc") {
+      return expect(result).to.be.ascending;
     }
-    return expect(result).to.be.descending
+    return expect(result).to.be.descending;
   }
 
   expectResultToMatchParams(response, params) {
@@ -135,16 +147,18 @@ class ValidateHelper extends Helper {
 
   expectMultisigAccountToHaveContracts(account, contracts) {
     const addresses = account.data[0].members.map(m => m.address);
-    expect(contracts.every(c => addresses.includes(c.address))).to.deep.equal(true);
+    expect(contracts.every(c => addresses.includes(c.address))).to.deep.equal(
+      true
+    );
   }
 
   expectVotesResultToMatchParams(response, params) {
     Object.entries(params).forEach(item => {
       const [k, v] = item;
       if (["sort"].includes(k)) {
-        const [field, order] = v.split(':');
-        this.expectResponseToBeSortedBy(response.data.votes, field, order)
-      } else if(k !== "limit") {
+        const [field, order] = v.split(":");
+        this.expectResponseToBeSortedBy(response.data.votes, field, order);
+      } else if (k !== "limit") {
         expect(response.data[k].toString()).to.deep.equal(v);
       }
     });
@@ -154,9 +168,9 @@ class ValidateHelper extends Helper {
     Object.entries(params).forEach(item => {
       const [k, v] = item;
       if (["sort"].includes(k)) {
-        const [field, order] = v.split(':');
-        this.expectResponseToBeSortedBy(response.data.voters, field, order)
-      } else if(k !== "limit") {
+        const [field, order] = v.split(":");
+        this.expectResponseToBeSortedBy(response.data.voters, field, order);
+      } else if (k !== "limit") {
         expect(response.data[k].toString()).to.deep.equal(v);
       }
     });
@@ -181,7 +195,7 @@ class ValidateHelper extends Helper {
         break;
 
       case "sort":
-        const [field, order] = value.split(':');
+        const [field, order] = value.split(":");
         this.expectResponseToBeSortedBy(response.data, field, order);
         break;
 
@@ -195,7 +209,10 @@ class ValidateHelper extends Helper {
         });
         break;
       case "senderIdOrRecipientId":
-        const result = [response.data[0]["senderId"], response.data[0]["recipientId"]]
+        const result = [
+          response.data[0]["senderId"],
+          response.data[0]["recipientId"]
+        ];
         expect(result).to.include(value);
       case "minAmount":
       case "maxAmount":

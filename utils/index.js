@@ -1,7 +1,7 @@
-const elements = require('lisk-elements');
+const elements = require("lisk-elements");
 
-const { ASGARD_FIXTURE, GENESIS_ACCOUNT } = require('../fixtures');
-const from = require('./from');
+const { ASGARD_FIXTURE, GENESIS_ACCOUNT } = require("../fixtures");
+const from = require("./from");
 
 const BLOCK_TIME = 10000;
 const TRS_PER_BLOCK = 25;
@@ -11,51 +11,49 @@ const TRS_TYPE = {
   DELEGATE_REGISTRATION: 2,
   VOTE: 3,
   MULTI_SIGNATURE: 4,
-  DAPP: 5,
-}
+  DAPP: 5
+};
 
 // amount converted from lisk to beddows
-const BEDDOWS = amount => elements.transaction.utils.convertLSKToBeddows(amount.toString());
+const BEDDOWS = amount =>
+  elements.transaction.utils.convertLSKToBeddows(amount.toString());
 
 // amount converted from beddows to lisk
-const LISK = amount => elements.transaction.utils.convertBeddowsToLSK(amount.toString());
+const LISK = amount =>
+  elements.transaction.utils.convertBeddowsToLSK(amount.toString());
 
 const getFixtureUser = (propertyName, value) => {
   return ASGARD_FIXTURE.find(user => user[propertyName] === value);
-}
+};
 
 const splitBy = (value, separator = "=") => {
-  return value
-    .split("&")
-    .reduce((acc, curr) => {
-      const [k, v] = curr.split(separator);
-      acc[k] = v;
-      return acc;
-    }, {});
-}
+  return value.split("&").reduce((acc, curr) => {
+    const [k, v] = curr.split(separator);
+    acc[k] = v;
+    return acc;
+  }, {});
+};
 
 const sortBy = (items, order) => {
-  const sortFactor = order.toLowerCase() === 'desc' ? -1 : 1;
+  const sortFactor = order.toLowerCase() === "desc" ? -1 : 1;
 
   return items.sort((a, b) => {
     return (a - b) * sortFactor;
   });
-}
+};
 
 const flattern = obj => {
   return Object.assign(
     {},
-    ...function _flatten(o) {
-      return [].concat(...Object.keys(o)
-        .map(k =>
-          typeof o[k] === 'object' ?
-            _flatten(o[k]) :
-            ({ [k]: o[k] })
+    ...(function _flatten(o) {
+      return [].concat(
+        ...Object.keys(o).map(k =>
+          typeof o[k] === "object" ? _flatten(o[k]) : { [k]: o[k] }
         )
       );
-    }(obj)
-  )
-}
+    })(obj)
+  );
+};
 
 /**
  * Returns an array with arrays of the given size.
@@ -71,17 +69,18 @@ const chunkArray = (myArray, chunk_size) => {
   }
 
   return results;
-}
+};
 
 const dappMultiAccountName = () => `dapp-multi${new Date().getTime()}`;
 
 const generateMnemonic = () => elements.passphrase.Mnemonic.generateMnemonic();
 
-const getKeys = (passphrase) => elements.cryptography.getKeys(passphrase);
+const getKeys = passphrase => elements.cryptography.getKeys(passphrase);
 
-const getAddressFromPublicKey = (publicKey) => elements.cryptography.getAddressFromPublicKey(publicKey);
+const getAddressFromPublicKey = publicKey =>
+  elements.cryptography.getAddressFromPublicKey(publicKey);
 
-const createAccounts = (count) => {
+const createAccounts = count => {
   return new Array(count).fill(0).map(() => {
     const passphrase = generateMnemonic();
     const { publicKey } = getKeys(passphrase);
@@ -90,8 +89,8 @@ const createAccounts = (count) => {
     return {
       passphrase,
       publicKey,
-      address,
-    }
+      address
+    };
   });
 };
 
@@ -112,5 +111,5 @@ module.exports = {
   generateMnemonic,
   getKeys,
   getAddressFromPublicKey,
-  createAccounts,
-}
+  createAccounts
+};
