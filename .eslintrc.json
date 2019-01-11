@@ -1,0 +1,94 @@
+{
+	"extends": ["lisk-base"],
+	"plugins": ["mocha", "chai-expect", "codeceptjs"],
+	"env": {
+		"codeceptjs/codeceptjs": true
+	},
+	"globals": {
+		"expect": true,
+		"Background": true,
+		"Given": true,
+		"When": true,
+		"Then": true,
+		"Feature": true,
+		"Scenario": true,
+		"codecept_helper": true
+	},
+	"rules": {
+		"camelcase": "off",
+		"chai-expect/missing-assertion": "error",
+		"chai-expect/no-inner-compare": "error",
+		"class-methods-use-this": ["off"],
+		"new-cap": [
+			"error",
+			{
+				"capIsNewExceptions": [
+					"Scenario",
+					"Feature",
+					"Given",
+					"When",
+					"Then",
+					"And",
+					"BEDDOWS",
+					"LISK",
+					"ASGARD_FIXTURE"
+				]
+			}
+		],
+		"comma-dangle": [
+			"error",
+			{
+				"arrays": "always-multiline",
+				"objects": "always-multiline",
+				"imports": "always-multiline",
+				"exports": "always-multiline",
+				"functions": "never"
+			}
+		],
+		"func-names": "off",
+		"max-len": "off",
+		"no-new": "off",
+		"no-param-reassign": "off",
+		"no-plusplus": "off",
+		"no-underscore-dangle": "off",
+		"no-unused-expressions": "off",
+		"no-use-before-define": "off",
+		"prefer-destructuring": "off",
+		"radix": "off",
+		"require-jsdoc": [
+			"error",
+			{
+				"require": {
+					"FunctionDeclaration": false,
+					"MethodDefinition": false,
+					"ClassDeclaration": false,
+					"ArrowFunctionExpression": false,
+					"FunctionExpression": false
+				}
+			}
+		],
+		"strict": "off",
+		"callback-return": "error",
+		"generator-star-spacing": [
+			"error",
+			{
+				"before": false,
+				"after": false
+			}
+		],
+		"global-require": "off",
+		"no-console": [
+			"error",
+			{
+				"allow": ["trace", "error", "info", "warn"]
+			}
+		],
+		"no-restricted-properties": "off",
+		"no-template-curly-in-string": "off",
+		"no-throw-literal": "off",
+		"space-before-function-paren": "off",
+		"wrap-iife": "off",
+		"implicit-arrow-linebreak": "off",
+		"operator-linebreak": "off"
+	}
+}

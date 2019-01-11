@@ -1,66 +1,66 @@
-const { from } = require("../../utils");
-const { config } = require("../../fixtures");
+const { from } = require('../../utils');
+const { config } = require('../../fixtures');
 
 const I = actor();
 const appConfig = config();
 const {
-  forging: {
-    defaultPassword,
-    delegates: [{ publicKey }]
-  }
+	forging: {
+		defaultPassword,
+		delegates: [{ publicKey }],
+	},
 } = appConfig;
 let nodes;
 
-Given("The node is forging", async () => {
-  const { result, error } = await from(I.getAllForgingNodes());
-  nodes = result;
+Given('The node is forging', async () => {
+	const { result, error } = await from(I.getAllForgingNodes());
+	nodes = result;
 
-  expect(error).to.be.null;
-  nodes.forEach(n => {
-    expect(n.forging).to.deep.equal(true);
-  });
+	expect(error).to.be.null;
+	nodes.forEach(n => {
+		expect(n.forging).to.deep.equal(true);
+	});
 });
 
-When("I disable forging the node should stop forging", async () => {
-  const api = await I.call();
-  const params = {
-    forging: false,
-    password: defaultPassword,
-    publicKey: publicKey
-  };
+When('I disable forging the node should stop forging', async () => {
+	const api = await I.call();
+	const params = {
+		forging: false,
+		password: defaultPassword,
+		publicKey,
+	};
 
-  const { result, error } = await from(
-    api.updateForgingStatus(params, nodes[0].ip)
-  );
+	const { result, error } = await from(
+		api.updateForgingStatus(params, nodes[0].ip)
+	);
 
-  expect(error).to.be.null;
-  expect(result.data[0].forging).to.deep.equal(false);
+	expect(error).to.be.null;
+	expect(result.data[0].forging).to.deep.equal(false);
 });
 
-Given("The node is not forging", async () => {
-  const api = await I.call();
+Given('The node is not forging', async () => {
+	const api = await I.call();
 
-  const { result, error } = await from(
-    api.getForgingStatus({ publicKey }, nodes[0].ip)
-  );
+	const { result, error } = await from(
+		api.getForgingStatus({ publicKey }, nodes[0].ip)
+	);
 
-  expect(error).to.be.null;
-  expect(result.data[0].forging).to.deep.equal(false);
+	expect(error).to.be.null;
+	expect(result.data[0].forging).to.deep.equal(false);
 });
 
-When("I enable forging the node should start forging", async () => {
-  const api = await I.call();
+When('I enable forging the node should start forging', async () => {
+	const api = await I.call();
 
-  const params = {
-    forging: true,
-    password: defaultPassword,
-    publicKey: publicKey
-  };
+	const params = {
+		forging: true,
+		password: defaultPassword,
+		publicKey,
+	};
 
-  const { result, error } = await from(
-    api.updateForgingStatus(params, nodes[0].ip)
-  );
+	const { result, error } = await from(
+		api.updateForgingStatus(params, nodes[0].ip)
+	);
 
-  expect(error).to.be.null;
-  expect(result.data[0].forging).to.deep.equal(true);
+	expect(error).to.be.null;
+	expect(result.data[0].forging).to.deep.equal(true);
 });

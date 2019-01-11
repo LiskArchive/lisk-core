@@ -1,14 +1,14 @@
-const output = require("codeceptjs").output;
-const crypto = require("crypto");
+const output = require('codeceptjs').output;
+const crypto = require('crypto');
 const {
-  BEDDOWS,
-  getAddressFromPublicKey,
-  getKeys,
-  generateMnemonic,
-  createAccounts,
-  TRS_TYPE,
-  TRS_PER_BLOCK
-} = require("../utils");
+	BEDDOWS,
+	getAddressFromPublicKey,
+	getKeys,
+	generateMnemonic,
+	createAccounts,
+	TRS_TYPE,
+	TRS_PER_BLOCK,
+} = require('../utils');
 
 const I = actor();
 const contractsByAddress = {};
@@ -18,214 +18,208 @@ const EXTRA_LIMIT = NUMBER_OF_BLOCKS + NUMBER_OF_BLOCKS * 0.25;
 
 const accounts = createAccounts(STRESS_COUNT);
 
-Feature("Stress network test");
+Feature('Stress network test');
 
-Scenario("Transfer funds", async () => {
-  output.print(`Running Stress Test, Transaction Type: ${TRS_TYPE.TRANSFER}`);
+Scenario('Transfer funds', async () => {
+	output.print(`Running Stress Test, Transaction Type: ${TRS_TYPE.TRANSFER}`);
 
-  const LSK_TOKEN = 100;
-  const transferTrx = accounts.map(a => {
-    return {
-      recipientId: a.address,
-      amount: BEDDOWS(LSK_TOKEN)
-    };
-  });
+	const LSK_TOKEN = 100;
+	const transferTrx = accounts.map(a => ({
+		recipientId: a.address,
+		amount: BEDDOWS(LSK_TOKEN),
+	}));
 
-  const transfer_transactions = await I.transferToMultipleAccounts(transferTrx);
+	const transfer_transactions = await I.transferToMultipleAccounts(transferTrx);
 
-  await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
+	await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
 
-  await Promise.all(
-    transfer_transactions.map(trx => {
-      I.validateTransaction(trx.id, trx.recipientId, LSK_TOKEN);
-    })
-  );
+	await Promise.all(
+		transfer_transactions.map(trx =>
+			I.validateTransaction(trx.id, trx.recipientId, LSK_TOKEN)
+		)
+	);
 })
-  .tag("@slow")
-  .tag("@stress");
+	.tag('@slow')
+	.tag('@stress');
 
-Scenario("Second passphrase on an account", async () => {
-  output.print(
-    `Running Stress Test, Transaction Type: ${TRS_TYPE.SECOND_PASSPHRASE}`
-  );
+Scenario('Second passphrase on an account', async () => {
+	output.print(
+		`Running Stress Test, Transaction Type: ${TRS_TYPE.SECOND_PASSPHRASE}`
+	);
 
-  await Promise.all(
-    accounts.map(async a => {
-      a.secondPassphrase = generateMnemonic();
-      return await I.registerSecondPassphrase(
-        a.passphrase,
-        a.secondPassphrase,
-        0
-      );
-    })
-  );
+	await Promise.all(
+		accounts.map(async a => {
+			a.secondPassphrase = generateMnemonic();
+			await I.registerSecondPassphrase(a.passphrase, a.secondPassphrase, 0);
+		})
+	);
 
-  await I.waitForBlock(NUMBER_OF_BLOCKS + 5);
+	await I.waitForBlock(NUMBER_OF_BLOCKS + 5);
 
-  await Promise.all(
-    accounts.map(async a => {
-      const { publicKey } = getKeys(a.secondPassphrase);
-      const api = await I.call();
+	await Promise.all(
+		accounts.map(async a => {
+			const { publicKey } = getKeys(a.secondPassphrase);
+			const api = await I.call();
 
-      const account = await api.getAccounts({ address: a.address });
-      expect(account.data[0].secondPublicKey).to.deep.equal(publicKey);
-    })
-  );
+			const account = await api.getAccounts({ address: a.address });
+			expect(account.data[0].secondPublicKey).to.deep.equal(publicKey);
+		})
+	);
 })
-  .tag("@slow")
-  .tag("@stress");
+	.tag('@slow')
+	.tag('@stress');
 
-Scenario("Delegate Registration", async () => {
-  output.print(
-    `Running Stress Test, Transaction Type: ${TRS_TYPE.DELEGATE_REGISTRATION}`
-  );
+Scenario('Delegate Registration', async () => {
+	output.print(
+		`Running Stress Test, Transaction Type: ${TRS_TYPE.DELEGATE_REGISTRATION}`
+	);
 
-  await Promise.all(
-    accounts.map(async a => {
-      a.username = crypto.randomBytes(9).toString("hex");
+	await Promise.all(
+		accounts.map(async a => {
+			a.username = crypto.randomBytes(9).toString('hex');
 
-      return await I.registerAsDelegate(
-        {
-          username: a.username,
-          passphrase: a.passphrase,
-          secondPassphrase: a.secondPassphrase
-        },
-        0
-      );
-    })
-  );
+			await I.registerAsDelegate(
+				{
+					username: a.username,
+					passphrase: a.passphrase,
+					secondPassphrase: a.secondPassphrase,
+				},
+				0
+			);
+		})
+	);
 
-  await I.waitForBlock(NUMBER_OF_BLOCKS + 5);
+	await I.waitForBlock(NUMBER_OF_BLOCKS + 5);
 
-  await Promise.all(
-    accounts.map(async a => {
-      const api = await I.call();
+	await Promise.all(
+		accounts.map(async a => {
+			const api = await I.call();
 
-      const account = await api.getDelegates({ address: a.address });
-      expect(account.data[0].username).to.deep.equal(a.username);
-    })
-  );
+			const account = await api.getDelegates({ address: a.address });
+			expect(account.data[0].username).to.deep.equal(a.username);
+		})
+	);
 })
-  .tag("@slow")
-  .tag("@stress");
+	.tag('@slow')
+	.tag('@stress');
 
-Scenario("Cast vote", async () => {
-  output.print(`Running Stress Test, Transaction Type: ${TRS_TYPE.VOTE}`);
+Scenario('Cast vote', async () => {
+	output.print(`Running Stress Test, Transaction Type: ${TRS_TYPE.VOTE}`);
 
-  await Promise.all(
-    accounts.map(async a => {
-      return await I.castVotes(
-        {
-          votes: [a.publicKey],
-          passphrase: a.passphrase,
-          secondPassphrase: a.secondPassphrase
-        },
-        0
-      );
-    })
-  );
+	await Promise.all(
+		accounts.map(a =>
+			I.castVotes(
+				{
+					votes: [a.publicKey],
+					passphrase: a.passphrase,
+					secondPassphrase: a.secondPassphrase,
+				},
+				0
+			)
+		)
+	);
 
-  await I.waitForBlock(NUMBER_OF_BLOCKS + 5);
+	await I.waitForBlock(NUMBER_OF_BLOCKS + 5);
 
-  await Promise.all(
-    accounts.map(async a => {
-      const api = await I.call();
+	await Promise.all(
+		accounts.map(async a => {
+			const api = await I.call();
 
-      const account = await api.getVoters({ address: a.address });
-      expect(
-        account.data.voters.some(v => v.address === a.address)
-      ).to.deep.equal(true);
-    })
-  );
+			const account = await api.getVoters({ address: a.address });
+			expect(
+				account.data.voters.some(v => v.address === a.address)
+			).to.deep.equal(true);
+		})
+	);
 })
-  .tag("@slow")
-  .tag("@stress");
+	.tag('@slow')
+	.tag('@stress');
 
-Scenario("Register Multi-signature account", async () => {
-  output.print(
-    `Running Stress Test, Transaction Type: ${TRS_TYPE.MULTI_SIGNATURE}`
-  );
+Scenario('Register Multi-signature account', async () => {
+	output.print(
+		`Running Stress Test, Transaction Type: ${TRS_TYPE.MULTI_SIGNATURE}`
+	);
 
-  await Promise.all(
-    accounts.map(async (a, index) => {
-      const { passphrase, secondPassphrase, address } = a;
-      const signer1 = accounts[(index + 1) % accounts.length];
-      const signer2 = accounts[(index + 2) % accounts.length];
-      const contracts = [signer1, signer2];
-      const params = {
-        lifetime: 1,
-        minimum: 2,
-        passphrase,
-        secondPassphrase
-      };
-      contractsByAddress[address] = contracts;
+	await Promise.all(
+		accounts.map(async (a, index) => {
+			const { passphrase, secondPassphrase, address } = a;
+			const signer1 = accounts[(index + 1) % accounts.length];
+			const signer2 = accounts[(index + 2) % accounts.length];
+			const contracts = [signer1, signer2];
+			const params = {
+				lifetime: 1,
+				minimum: 2,
+				passphrase,
+				secondPassphrase,
+			};
+			contractsByAddress[address] = contracts;
 
-      return await I.registerMultisignature(contracts, params, 0);
-    })
-  );
+			await I.registerMultisignature(contracts, params, 0);
+		})
+	);
 
-  await I.waitForBlock(EXTRA_LIMIT);
+	await I.waitForBlock(EXTRA_LIMIT);
 
-  await Promise.all(
-    accounts.map(async a => {
-      const api = await I.call();
+	await Promise.all(
+		accounts.map(async a => {
+			const api = await I.call();
 
-      const account = await api.getMultisignatureGroups(a.address);
-      await I.expectMultisigAccountToHaveContracts(
-        account,
-        contractsByAddress[a.address]
-      );
-    })
-  );
+			const account = await api.getMultisignatureGroups(a.address);
+			await I.expectMultisigAccountToHaveContracts(
+				account,
+				contractsByAddress[a.address]
+			);
+		})
+	);
 })
-  .tag("@slow")
-  .tag("@stress");
+	.tag('@slow')
+	.tag('@stress');
 
-Scenario("DApp registration", async () => {
-  output.print(`Running Stress Test, Transaction Type: ${TRS_TYPE.DAPP}`);
+Scenario('DApp registration', async () => {
+	output.print(`Running Stress Test, Transaction Type: ${TRS_TYPE.DAPP}`);
 
-  const dAppsTrxs = await Promise.all(
-    accounts.map(async a => {
-      const dAppName = crypto.randomBytes(5).toString("hex");
-      const options = {
-        name: dAppName,
-        category: 1,
-        description: `dApp for ${dAppName}`,
-        tags: "2",
-        type: 0,
-        link: `https://github.com/blocksafe/SDK-notice/dapp-multi-${dAppName}/master.zip`,
-        icon: `http://www.blocksafefoundation.com/dapp-multi-${dAppName}/header.jpg`
-      };
+	const dAppsTrxs = await Promise.all(
+		accounts.map(async a => {
+			const dAppName = crypto.randomBytes(5).toString('hex');
+			const options = {
+				name: dAppName,
+				category: 1,
+				description: `dApp for ${dAppName}`,
+				tags: '2',
+				type: 0,
+				link: `https://github.com/blocksafe/SDK-notice/dapp-multi-${dAppName}/master.zip`,
+				icon: `http://www.blocksafefoundation.com/dapp-multi-${dAppName}/header.jpg`,
+			};
 
-      a.dAppName = dAppName;
-      return await I.registerDapp(
-        {
-          passphrase: a.passphrase,
-          secondPassphrase: a.secondPassphrase,
-          options
-        },
-        0
-      );
-    })
-  );
+			a.dAppName = dAppName;
+			await I.registerDapp(
+				{
+					passphrase: a.passphrase,
+					secondPassphrase: a.secondPassphrase,
+					options,
+				},
+				0
+			);
+		})
+	);
 
-  await Promise.all(
-    dAppsTrxs.map(async trx => {
-      const address = getAddressFromPublicKey(trx.senderPublicKey);
-      await I.sendSignaturesForMultisigTrx(trx, contractsByAddress[address], 0);
-    })
-  );
+	await Promise.all(
+		dAppsTrxs.map(async trx => {
+			const address = getAddressFromPublicKey(trx.senderPublicKey);
+			await I.sendSignaturesForMultisigTrx(trx, contractsByAddress[address], 0);
+		})
+	);
 
-  await I.waitForBlock(EXTRA_LIMIT);
+	await I.waitForBlock(EXTRA_LIMIT);
 
-  await Promise.all(
-    accounts.map(async a => {
-      const api = await I.call();
+	await Promise.all(
+		accounts.map(async a => {
+			const api = await I.call();
 
-      const account = await api.getDapp({ name: a.dAppName });
-      expect(account.data[0].name).to.deep.equal(a.dAppName);
-    })
-  );
+			const account = await api.getDapp({ name: a.dAppName });
+			expect(account.data[0].name).to.deep.equal(a.dAppName);
+		})
+	);
 })
-  .tag("@slow")
-  .tag("@stress");
+	.tag('@slow')
+	.tag('@stress');
