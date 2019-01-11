@@ -2,23 +2,7 @@
   "name": "lisk-core-qa-external",
   "version": "0.0.1",
   "description": "Lisk core quality assurance",
-  "author": "Lisk Foundation <admin@lisk.io>, lightcurve GmbH <admin@lightcurve.io>",
-  "license": "GPL-3.0",
-  "keywords": [
-    "qa",
-    "bdd",
-    "cucumber",
-    "lisk",
-    "blockchain"
-  ],
-  "homepage": "https://github.com/LiskHQ/lisk-core-qa-external#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/LiskHQ/lisk-core-qa-external.git"
-  },
-  "bugs": {
-    "url": "https://github.com/LiskHQ/lisk-core-qa-external/issues"
-  },
+  "main": "index.js",
   "scripts": {
     "format": "prettier --write \"**/*.{js,json,md}\"",
     "features": "./node_modules/.bin/codeceptjs run --features",
@@ -33,6 +17,21 @@
     "tools:delegates:enable": "./node_modules/.bin/codeceptjs run --tests --grep @delegates_enable",
     "tools:delegates:disable": "./node_modules/.bin/codeceptjs run --tests --grep @delegates_disable"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LiskHQ/lisk-core-qa-external.git"
+  },
+  "keywords": [
+    "qa",
+    "bdd",
+    "cucumber"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LiskHQ/lisk-core-qa-external/issues"
+  },
+  "homepage": "https://github.com/LiskHQ/lisk-core-qa-external#readme",
   "dependencies": {
     "bluebird": "^3.5.3",
     "chai": "^4.2.0",
@@ -40,10 +39,10 @@
     "chai-sorted": "^0.2.0",
     "debug": "^4.1.0",
     "lisk-commons": "^1.1.2",
-    "lisk-elements": "=2.0.0"
+    "lisk-elements": "=1.0.0"
   },
   "devDependencies": {
     "allure": "0.0.0",
-    "codeceptjs": "^2.0.3"
+    "codeceptjs": "^1.4.6"
   }
 }
