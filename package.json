@@ -33,7 +33,9 @@
     "tools:peers:config": "./node_modules/.bin/codeceptjs run --tests --grep @peers_config",
     "tools:peers:connected": "./node_modules/.bin/codeceptjs run --tests --grep @peers_connected",
     "tools:delegates:enable": "./node_modules/.bin/codeceptjs run --tests --grep @delegates_enable",
-    "tools:delegates:disable": "./node_modules/.bin/codeceptjs run --tests --grep @delegates_disable"
+    "tools:delegates:disable": "./node_modules/.bin/codeceptjs run --tests --grep @delegates_disable",
+    "precommit": "lint-staged && npm run lint && npm run format",
+    "prepush": "npm run lint"
   },
   "dependencies": {
     "bluebird": "^3.5.3",
@@ -54,6 +56,7 @@
     "eslint-plugin-codeceptjs": "^0.4.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-mocha": "^5.2.1",
+    "lint-staged": "^8.1.0",
     "prettier": "^1.15.3"
   }
 }
