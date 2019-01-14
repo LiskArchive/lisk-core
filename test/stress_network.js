@@ -192,7 +192,7 @@ Scenario('DApp registration', async () => {
 			};
 
 			a.dAppName = dAppName;
-			await I.registerDapp(
+			const dApp = await I.registerDapp(
 				{
 					passphrase: a.passphrase,
 					secondPassphrase: a.secondPassphrase,
@@ -200,6 +200,7 @@ Scenario('DApp registration', async () => {
 				},
 				0
 			);
+			return dApp;
 		})
 	);
 

@@ -8,6 +8,7 @@ const liskUtil = new LiskUtil();
 
 chai.use(require('chai-json-schema'));
 chai.use(require('chai-sorted'));
+chai.use(require('chai-bignumber')());
 
 const expect = chai.expect;
 const otherFields = [
@@ -77,6 +78,9 @@ class ValidateHelper extends Helper {
 		if (account && account.delegate) {
 			this.expectResponseToBeValid(account.delegate, 'Delegate');
 		} else {
+			if (account && account.secondPublicKey) {
+				delete params.secondPassphrase;
+			}
 			await liskUtil.registerAsDelegate(params);
 			await liskUtil.waitForBlock();
 		}
@@ -201,7 +205,8 @@ class ValidateHelper extends Helper {
 
 			case 'search': {
 				response.data.forEach(element => {
-					expect(element.username).to.match(`/${value}/`);
+					const pattern = new RegExp(value);
+					expect(element.username).to.match(pattern);
 				});
 				break;
 			}
@@ -217,9 +222,9 @@ class ValidateHelper extends Helper {
 			case 'maxAmount':
 				response.data.forEach(t => {
 					if (key === 'minAmount') {
-						expect(t.amount).to.be.at.least(value);
+						expect(t.amount).to.be.bignumber.at.least(value);
 					} else {
-						expect(t.amount).to.be.at.most(value);
+						expect(t.amount).to.be.bignumber.at.most(value);
 					}
 				});
 				break;
@@ -227,9 +232,9 @@ class ValidateHelper extends Helper {
 			case 'toTimestamp':
 				response.data.forEach(t => {
 					if (key === 'fromTimestamp') {
-						expect(t.timestamp).to.be.at.least(value);
+						expect(t.timestamp).to.be.bignumber.at.least(value);
 					} else {
-						expect(t.timestamp).to.be.at.most(value);
+						expect(t.timestamp).to.be.bignumber.at.most(value);
 					}
 				});
 				break;

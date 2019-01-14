@@ -61,7 +61,7 @@ Given('{string} has a account with second signature', async userName => {
 });
 
 Given('{string} has a account registered as delegate', async userName => {
-	const { username, address, passphrase, secondPassphrase } = getFixtureUser(
+	const { username, address, passphrase } = getFixtureUser(
 		'username',
 		userName
 	);
@@ -69,7 +69,6 @@ Given('{string} has a account registered as delegate', async userName => {
 		username,
 		address,
 		passphrase,
-		secondPassphrase,
 	});
 	await I.waitForBlock();
 });

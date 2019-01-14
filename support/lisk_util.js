@@ -149,7 +149,6 @@ class LiskUtil extends Helper {
 				'GeneralStatusResponse'
 			);
 			expect(result.data.message).to.deep.equal('Transaction(s) accepted');
-			output.print(`successfully broadcasted transaction: ${transaction.id}`);
 		} catch (error) {
 			output.error(`Failed to broadcast transaction: ${transaction.id}`);
 			console.error(error);
@@ -172,10 +171,6 @@ class LiskUtil extends Helper {
 				'SignatureResponse'
 			);
 			expect(result.data.message).to.deep.equal('Signature Accepted');
-			output.print(
-				'successfully broadcasted signature for transaction: ',
-				signature.transactionId
-			);
 		} catch (error) {
 			output.error(
 				'Failed to broadcast signature for transaction: ',
