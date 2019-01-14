@@ -474,16 +474,15 @@ class LiskUtil extends Helper {
 			this.call().getMultisignatureGroups(address)
 		);
 
-		if (
-			error &&
-			error.message === 'Status 404 : Multisignature account not found'
-		) {
+		if (error && error.message === 'Multisignature account not found') {
+			output.print(error.message);
 			return false;
 		}
-		if (result.data.length && result.data[0].members) {
+		if (result.data && result.data.length && result.data[0].members) {
 			const members = contracts.map(c => c.address);
 			return result.data[0].members.some(m => members.includes(m.address));
 		}
+		output.print(error);
 		return false;
 	}
 
