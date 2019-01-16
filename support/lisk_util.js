@@ -4,7 +4,6 @@ const API = require('./api.js');
 const { config, GENESIS_ACCOUNT, ASGARD_FIXTURE } = require('../fixtures');
 const { BEDDOWS, BLOCK_TIME, from, getFixtureUser } = require('../utils');
 
-const networkConfig = config();
 const users = {};
 
 /* eslint camelcase: ["error", {allow: ["codecept_helper"]}] */
@@ -15,7 +14,7 @@ class LiskUtil extends Helper {
 	 *
 	 * @param {Array} list of ip addresses
 	 */
-	call(apiConfig = networkConfig) {
+	call(apiConfig = config) {
 		return new API(apiConfig);
 	}
 
@@ -23,7 +22,7 @@ class LiskUtil extends Helper {
 	 * returns network config object
 	 */
 	haveNetworkConfig() {
-		return networkConfig;
+		return config;
 	}
 
 	/**

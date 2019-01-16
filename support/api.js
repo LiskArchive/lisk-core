@@ -4,14 +4,14 @@ const { seedNode } = require('../fixtures');
 
 class API {
 	constructor(config) {
-		const { seed, nodes, httpPort } = config;
+		const { peers, httpPort } = config;
 
-		this.seed = seed;
-		this.nodes = nodes;
+		this.seed = seedNode;
+		this.peers = peers;
 		this.httpPort = httpPort;
 
 		const apiClients = () => {
-			const ips = [...this.seed, ...this.nodes];
+			const ips = [this.seed, ...this.peers];
 			return ips.map(ip => {
 				const url = `http://${ip}:${httpPort}`;
 				const client = new elements.APIClient([url]);
@@ -26,17 +26,16 @@ class API {
 	}
 
 	static getClientByAddress(clients, ipAddress) {
-		const seedIp = seedNode()[0];
 		if (ipAddress) {
 			const clientList = clients.filter(client => client.ip === ipAddress)[0];
 			return clientList
 				? clientList.client
-				: clients.filter(client => client.ip === seedIp)[0].client;
+				: clients.filter(client => client.ip === seedNode)[0].client;
 		}
 		// TODO: The network is not stable with propagation and broadcasting
 		// once its stable need to uncomment get random ip
 		// const ip = getRandomIpAddress();
-		return clients.filter(client => client.ip === seedIp)[0].client;
+		return clients.filter(client => client.ip === seedNode)[0].client;
 	}
 
 	async getNodeStatus(ipAddress) {

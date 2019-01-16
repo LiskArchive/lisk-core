@@ -1,6 +1,6 @@
 const elements = require('lisk-elements');
 
-const { ASGARD_FIXTURE, GENESIS_ACCOUNT } = require('../fixtures');
+const { ASGARD_FIXTURE, GENESIS_ACCOUNT, config } = require('../fixtures');
 const from = require('./from');
 
 const BLOCK_TIME = 10000;
@@ -89,6 +89,7 @@ const createAccounts = count =>
 	});
 
 module.exports = {
+	config,
 	BLOCK_TIME,
 	TRS_PER_BLOCK,
 	GENESIS_ACCOUNT,

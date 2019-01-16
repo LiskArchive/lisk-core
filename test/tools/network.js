@@ -1,130 +1,123 @@
 const output = require('codeceptjs').output;
 const fs = require('fs');
 const path = require('path');
-const { from, chunkArray } = require('../../utils');
+const { from, chunkArray, config } = require('../../utils');
 
-const env = process.env.NETWORK || 'development';
+const I = actor();
+const configPath = () => path.resolve(__dirname, '../../fixtures/config.json');
 
-const getConfigPath = () => {
-	let configPath;
-	if (env === 'development') {
-		configPath = '../../fixtures/config.json';
-	} else {
-		configPath = `../../fixtures/${env}/config.json`;
+const splitDelegatesByPeers = (delegates, peers) => {
+	if (peers.length) {
+		output.print(
+			'\n',
+			'***********Please run npm run tools:peers:config to generate peer list*************',
+			'\n'
+		);
+		process.exit(1);
 	}
-	return path.resolve(__dirname, configPath);
+
+	if (peers.length > 101) {
+		peers.splice(101);
+	}
+
+	const chunkSize = Math.ceil(delegates.length / peers.length);
+	const delegateList = chunkArray(delegates, chunkSize);
+	return delegateList;
+};
+
+const updateForgingStatus = async ({ ipAddress, delegateList, isEnable, defaultPassword }) => {
+	const api = await I.call();
+	return delegateList.map(async delegate => {
+		const params = {
+			forging: isEnable,
+			password: defaultPassword,
+			publicKey: delegate.publicKey,
+		};
+
+		const { result, error } = await from(
+			api.updateForgingStatus(params, ipAddress)
+		);
+		expect(error).to.be.null;
+		expect(result.data[0].forging).to.deep.equal(isEnable);
+	});
 };
 
 const enableDisableDelegates = (api, isEnable) => {
 	const enableOrDisable = isEnable ? 'enable' : 'disable';
-	let delegateList = [];
 
 	try {
-		const configPath = getConfigPath();
-		const configBuffer = fs.readFileSync(configPath);
-		const configContent = JSON.parse(configBuffer);
 		const {
-			nodes,
+			peers,
 			forging: { defaultPassword, delegates },
-		} = configContent;
+		} = config;
 
-		if (nodes.length === 0) {
-			output.print(
-				'\n',
-				'***********Please run npm run tools:peers:config to add nodes to list*************',
-				'\n'
-			);
-			process.exit(1);
-		}
+		const peerDelegateList = splitDelegatesByPeers(delegates, peers);
 
-		const chunkSize = Math.ceil(delegates.length / nodes.length);
-		delegateList = chunkArray(delegates, chunkSize);
+		peerDelegateList.forEach((ipAddress, i) => {
+			const delegateList = peerDelegateList[i];
 
-		if (nodes.length > 101) {
-			nodes.splice(101);
-		}
-
-		return nodes.map((ipAddress, i) => {
 			output.print(
 				`${
-					delegateList[i].length
+				delegateList[i].length
 				} delegates ${enableOrDisable}d to on node ===> ${ipAddress}`,
 				'\n'
 			);
 
-			return delegateList[i].map(async delegate => {
-				const params = {
-					forging: isEnable,
-					password: defaultPassword,
-					publicKey: delegate.publicKey,
-				};
-
-				output.print(
-					`${enableOrDisable}ing delegate publicKey ===> ${
-						delegate.publicKey
-					} on node ===> ${ipAddress}`
-				);
-
-				const { result, error } = await from(
-					api.updateForgingStatus(params, ipAddress)
-				);
-				expect(error).to.be.null;
-				expect(result.data[0].forging).to.deep.equal(isEnable);
+			return updateForgingStatus({
+				api,
+				ipAddress,
+				delegateList,
+				isEnable,
+				defaultPassword,
 			});
 		});
 	} catch (error) {
 		output.error(`Failed to ${enableOrDisable} forging due to error: `, error);
 		process.exit(1);
 	}
-	return delegateList;
 };
 
-const checkIfAllPeersConnected = async I => {
-	try {
-		const allPeers = await I.getAllPeers(100, 0);
-		const expectPeerCount = process.env.NODES_PER_REGION * 10 - 1;
+const checkIfAllPeersConnected = async () => {
+	const allPeers = await I.getAllPeers(100, 0);
+	const expectPeerCount = process.env.NODES_PER_REGION * 10 - 1;
 
-		output.print(
-			`Number of peers connected in network: ${
-				allPeers.length
-			}, Expected peers: ${expectPeerCount}`
-		);
+	output.print(
+		`Number of peers connected in network: ${
+		allPeers.length
+		}, Expected peers: ${expectPeerCount}`
+	);
 
-		while (allPeers.length >= expectPeerCount) {
-			return true;
-		}
-		return await checkIfAllPeersConnected(I);
-	} catch (error) {
-		return error;
+	while (allPeers.length >= expectPeerCount) {
+		return true;
 	}
+	return checkIfAllPeersConnected();
 };
 
 Feature('Network tools');
 
-Scenario('Peer list @peers_list', async I => {
+Scenario('Peer list @peers_list', async () => {
 	try {
 		const allPeers = await I.getAllPeers(100, 0);
 		output.print('Peers config list: ', JSON.stringify(allPeers, null, '\t'));
 	} catch (error) {
-		output.error('Failed to get peers list: ', error);
+		output.print('Failed to get peers list: ');
+		output.error(error);
 		process.exit(1);
 	}
 });
 
-Scenario('Add peers to config @peers_config', async I => {
+Scenario('Add peers to config @peers_config', async () => {
 	try {
-		const configPath = getConfigPath();
-		const configBuffer = fs.readFileSync(configPath);
+		const configBuffer = fs.readFileSync(configPath());
 		const configContent = JSON.parse(configBuffer);
 		const allPeers = await I.getAllPeers(100, 0);
 		const requiredPeers = allPeers.slice(0, 101).map(p => p.ip);
 		const unionNodes = new Set([
-			...configContent.nodes,
-			...configContent.seed,
+			...configContent.peers,
 			...requiredPeers,
 		]);
 
-		configContent.nodes.push(...unionNodes);
+		configContent.peers.push(...unionNodes);
 		fs.writeFileSync(configPath, JSON.stringify(configContent));
 
 		output.print(
@@ -137,16 +130,14 @@ Scenario('Add peers to config @peers_config', async I => {
 	}
 });
 
-Scenario('Add peers to config @peers_connected', async I => {
-	await checkIfAllPeersConnected(I);
+Scenario('Add peers to config @peers_connected', async () => {
+	await checkIfAllPeersConnected();
 });
 
-Scenario('Enable delegates @delegates_enable', async I => {
-	const api = await I.call();
-	enableDisableDelegates(api, true);
+Scenario('Enable delegates @delegates_enable', async () => {
+	enableDisableDelegates(true);
 });
 
-Scenario('Disable delegates @delegates_disable', async I => {
-	const api = await I.call();
-	enableDisableDelegates(api, false);
+Scenario('Disable delegates @delegates_disable', async () => {
+	enableDisableDelegates(false);
 });
