@@ -7,6 +7,7 @@ const { BEDDOWS, BLOCK_TIME, from, getFixtureUser } = require('../utils');
 const networkConfig = config();
 const users = {};
 
+/* eslint camelcase: ["error", {allow: ["codecept_helper"]}] */
 const Helper = codecept_helper;
 
 class LiskUtil extends Helper {
@@ -579,14 +580,14 @@ class LiskUtil extends Helper {
 	 */
 	async checkIfNetworkIsMoving() {
 		let heights = await this.getAllNodeHeights();
-		const previous_height = Math.max(heights.filter(h => h));
+		const previousHeight = Math.max(heights.filter(h => h));
 
 		await this.waitForBlock();
 
 		heights = await this.getAllNodeHeights();
-		const current_height = Math.max(heights.filter(h => h));
+		const currentHeight = Math.max(heights.filter(h => h));
 
-		expect(current_height).to.be.above(previous_height);
+		expect(currentHeight).to.be.above(previousHeight);
 	}
 
 	/**

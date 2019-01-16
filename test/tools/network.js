@@ -44,11 +44,11 @@ const enableDisableDelegates = (api, isEnable) => {
 			nodes.splice(101);
 		}
 
-		return nodes.map((ip_address, i) => {
+		return nodes.map((ipAddress, i) => {
 			output.print(
 				`${
 					delegateList[i].length
-				} delegates ${enableOrDisable}d to on node ===> ${ip_address}`,
+				} delegates ${enableOrDisable}d to on node ===> ${ipAddress}`,
 				'\n'
 			);
 
@@ -62,11 +62,11 @@ const enableDisableDelegates = (api, isEnable) => {
 				output.print(
 					`${enableOrDisable}ing delegate publicKey ===> ${
 						delegate.publicKey
-					} on node ===> ${ip_address}`
+					} on node ===> ${ipAddress}`
 				);
 
 				const { result, error } = await from(
-					api.updateForgingStatus(params, ip_address)
+					api.updateForgingStatus(params, ipAddress)
 				);
 				expect(error).to.be.null;
 				expect(result.data[0].forging).to.deep.equal(isEnable);

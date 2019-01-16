@@ -29,12 +29,12 @@ Scenario('Transfer funds', async () => {
 		amount: BEDDOWS(LSK_TOKEN),
 	}));
 
-	const transfer_transactions = await I.transferToMultipleAccounts(transferTrx);
+	const transferTransactions = await I.transferToMultipleAccounts(transferTrx);
 
 	await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
 
 	await Promise.all(
-		transfer_transactions.map(trx =>
+		transferTransactions.map(trx =>
 			I.validateTransaction(trx.id, trx.recipientId, LSK_TOKEN)
 		)
 	);
