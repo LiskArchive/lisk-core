@@ -15,10 +15,10 @@
 		"codecept_helper": true
 	},
 	"rules": {
-		"camelcase": "off",
+		"camelcase": "error",
 		"chai-expect/missing-assertion": "error",
 		"chai-expect/no-inner-compare": "error",
-		"class-methods-use-this": ["off"],
+		"class-methods-use-this": "off",
 		"new-cap": [
 			"error",
 			{
@@ -55,18 +55,6 @@
 		"no-use-before-define": "off",
 		"prefer-destructuring": "off",
 		"radix": "off",
-		"require-jsdoc": [
-			"error",
-			{
-				"require": {
-					"FunctionDeclaration": false,
-					"MethodDefinition": false,
-					"ClassDeclaration": false,
-					"ArrowFunctionExpression": false,
-					"FunctionExpression": false
-				}
-			}
-		],
 		"strict": "off",
 		"callback-return": "error",
 		"generator-star-spacing": [
@@ -77,12 +65,7 @@
 			}
 		],
 		"global-require": "off",
-		"no-console": [
-			"error",
-			{
-				"allow": ["trace", "error", "info", "warn"]
-			}
-		],
+		"no-console": ["error"],
 		"no-restricted-properties": "off",
 		"no-template-curly-in-string": "off",
 		"no-throw-literal": "off",
