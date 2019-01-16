@@ -4,7 +4,7 @@ const I = actor();
 
 Given('I have list of clients', async () => {
 	const api = await I.call();
-	const addresses = [...api.seed, ...api.nodes];
+	const addresses = [api.seed, ...api.peers];
 	const inValidAddresses = addresses.filter(
 		address => typeof address !== 'string'
 	);

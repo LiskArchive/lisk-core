@@ -1,8 +1,9 @@
-const lisk_commons = require('lisk-commons');
+const liskCommons = require('lisk-commons');
 const chai = require('chai');
 const { LISK, BEDDOWS, from, sortBy, flattern } = require('../utils');
 const LiskUtil = require('./lisk_util');
 
+/* eslint camelcase: ["error", {allow: ["codecept_helper"]}] */
 const Helper = codecept_helper;
 const liskUtil = new LiskUtil();
 
@@ -25,7 +26,7 @@ const otherFields = [
 
 class ValidateHelper extends Helper {
 	async getSchemaDefinition(name) {
-		const { result, error } = await from(lisk_commons.schema());
+		const { result, error } = await from(liskCommons.schema());
 
 		expect(error).to.be.null;
 		return result.definitions[name];

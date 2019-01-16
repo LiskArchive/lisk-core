@@ -1,6 +1,6 @@
 const elements = require('lisk-elements');
 
-const { ASGARD_FIXTURE, GENESIS_ACCOUNT } = require('../fixtures');
+const { ASGARD_FIXTURE, GENESIS_ACCOUNT, config } = require('../fixtures');
 const from = require('./from');
 
 const BLOCK_TIME = 10000;
@@ -56,11 +56,11 @@ const flattern = obj =>
  * @param myArray {Array} Array to split
  * @param chunkSize {Integer} Size of every group
  */
-const chunkArray = (myArray, chunk_size) => {
+const chunkArray = (myArray, chunkSize) => {
 	const results = [];
 
 	while (myArray.length) {
-		results.push(myArray.splice(0, chunk_size));
+		results.push(myArray.splice(0, chunkSize));
 	}
 
 	return results;
@@ -89,6 +89,7 @@ const createAccounts = count =>
 	});
 
 module.exports = {
+	config,
 	BLOCK_TIME,
 	TRS_PER_BLOCK,
 	GENESIS_ACCOUNT,

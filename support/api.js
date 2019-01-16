@@ -4,14 +4,14 @@ const { seedNode } = require('../fixtures');
 
 class API {
 	constructor(config) {
-		const { seed, nodes, httpPort } = config;
+		const { peers, httpPort } = config;
 
-		this.seed = seed;
-		this.nodes = nodes;
+		this.seed = seedNode;
+		this.peers = peers;
 		this.httpPort = httpPort;
 
 		const apiClients = () => {
-			const ips = [...this.seed, ...this.nodes];
+			const ips = [this.seed, ...this.peers];
 			return ips.map(ip => {
 				const url = `http://${ip}:${httpPort}`;
 				const client = new elements.APIClient([url]);
@@ -25,225 +25,224 @@ class API {
 		this.clients = apiClients();
 	}
 
-	static getClientByAddress(clients, ip_address) {
-		const seedIp = seedNode()[0];
-		if (ip_address) {
-			const clientList = clients.filter(client => client.ip === ip_address)[0];
+	static getClientByAddress(clients, ipAddress) {
+		if (ipAddress) {
+			const clientList = clients.filter(client => client.ip === ipAddress)[0];
 			return clientList
 				? clientList.client
-				: clients.filter(client => client.ip === seedIp)[0].client;
+				: clients.filter(client => client.ip === seedNode)[0].client;
 		}
 		// TODO: The network is not stable with propagation and broadcasting
 		// once its stable need to uncomment get random ip
 		// const ip = getRandomIpAddress();
-		return clients.filter(client => client.ip === seedIp)[0].client;
+		return clients.filter(client => client.ip === seedNode)[0].client;
 	}
 
-	async getNodeStatus(ip_address) {
+	async getNodeStatus(ipAddress) {
 		try {
-			const client = API.getClientByAddress(this.clients, ip_address);
+			const client = API.getClientByAddress(this.clients, ipAddress);
 			return client.node.getStatus();
 		} catch (error) {
 			output.error('Error while processing request', error);
-			await this.getNodeStatus(ip_address);
+			await this.getNodeStatus(ipAddress);
 		}
 		return true;
 	}
 
-	async getNodeConstants(ip_address) {
+	async getNodeConstants(ipAddress) {
 		try {
-			const client = API.getClientByAddress(this.clients, ip_address);
+			const client = API.getClientByAddress(this.clients, ipAddress);
 			return client.node.getConstants();
 		} catch (error) {
 			output.error('Error while processing request', error);
-			await this.getNodeConstants(ip_address);
+			await this.getNodeConstants(ipAddress);
 		}
 		return true;
 	}
 
-	async getForgingStatus(params, ip_address) {
+	async getForgingStatus(params, ipAddress) {
 		try {
-			const client = API.getClientByAddress(this.clients, ip_address);
+			const client = API.getClientByAddress(this.clients, ipAddress);
 			return client.node.getForgingStatus(params);
 		} catch (error) {
 			output.error('Error while processing request', error);
-			await this.getForgingStatus(params, ip_address);
+			await this.getForgingStatus(params, ipAddress);
 		}
 		return true;
 	}
 
-	async updateForgingStatus(params, ip_address) {
+	async updateForgingStatus(params, ipAddress) {
 		try {
-			const client = API.getClientByAddress(this.clients, ip_address);
+			const client = API.getClientByAddress(this.clients, ipAddress);
 			return client.node.updateForgingStatus(params);
 		} catch (error) {
 			output.error('Error while processing request', error);
-			await this.updateForgingStatus(params, ip_address);
+			await this.updateForgingStatus(params, ipAddress);
 		}
 		return true;
 	}
 
-	async getTransactionsByState(state, params, ip_address) {
+	async getTransactionsByState(state, params, ipAddress) {
 		try {
-			const client = API.getClientByAddress(this.clients, ip_address);
+			const client = API.getClientByAddress(this.clients, ipAddress);
 			return client.node.getTransactions(state, params);
 		} catch (error) {
 			output.error('Error while processing request', error);
-			await this.getTransactionsByState(state, params, ip_address);
+			await this.getTransactionsByState(state, params, ipAddress);
 		}
 		return true;
 	}
 
-	async getPeers(params, ip_address) {
+	async getPeers(params, ipAddress) {
 		try {
-			const client = API.getClientByAddress(this.clients, ip_address);
+			const client = API.getClientByAddress(this.clients, ipAddress);
 			return client.peers.get(params);
 		} catch (error) {
 			output.error('Error while processing request', error);
-			await this.getPeers(params, ip_address);
+			await this.getPeers(params, ipAddress);
 		}
 		return true;
 	}
 
-	async getAccounts(params, ip_address) {
+	async getAccounts(params, ipAddress) {
 		try {
-			const client = API.getClientByAddress(this.clients, ip_address);
+			const client = API.getClientByAddress(this.clients, ipAddress);
 			return client.accounts.get(params);
 		} catch (error) {
 			output.error('Error while processing request', error);
-			await this.getAccounts(params, ip_address);
+			await this.getAccounts(params, ipAddress);
 		}
 		return true;
 	}
 
-	async getMultisignatureGroups(address, params = {}, ip_address) {
+	async getMultisignatureGroups(address, params = {}, ipAddress) {
 		try {
-			const client = API.getClientByAddress(this.clients, ip_address);
+			const client = API.getClientByAddress(this.clients, ipAddress);
 			return client.accounts.getMultisignatureGroups(address, params);
 		} catch (error) {
 			output.error('Error while processing request', error);
-			await this.getMultisignatureGroups(address, (params = {}), ip_address);
+			await this.getMultisignatureGroups(address, (params = {}), ipAddress);
 		}
 		return true;
 	}
 
-	async getMultisignatureMemberships(address, params, ip_address) {
+	async getMultisignatureMemberships(address, params, ipAddress) {
 		try {
-			const client = API.getClientByAddress(this.clients, ip_address);
+			const client = API.getClientByAddress(this.clients, ipAddress);
 			return client.accounts.getMultisignatureMemberships(address, params);
 		} catch (error) {
 			output.error('Error while processing request', error);
-			await this.getMultisignatureMemberships(address, params, ip_address);
+			await this.getMultisignatureMemberships(address, params, ipAddress);
 		}
 		return true;
 	}
 
-	async getBlocks(params, ip_address) {
+	async getBlocks(params, ipAddress) {
 		try {
-			const client = API.getClientByAddress(this.clients, ip_address);
+			const client = API.getClientByAddress(this.clients, ipAddress);
 			return client.blocks.get(params);
 		} catch (error) {
 			output.error('Error while processing request', error);
-			await this.getBlocks(params, ip_address);
+			await this.getBlocks(params, ipAddress);
 		}
 		return true;
 	}
 
-	async getTransactions(params, ip_address) {
+	async getTransactions(params, ipAddress) {
 		try {
-			const client = API.getClientByAddress(this.clients, ip_address);
+			const client = API.getClientByAddress(this.clients, ipAddress);
 			return client.transactions.get(params);
 		} catch (error) {
 			output.error('Error while processing request', error);
-			await this.getTransactions(params, ip_address);
+			await this.getTransactions(params, ipAddress);
 		}
 		return true;
 	}
 
-	async broadcastTransactions(params, ip_address) {
+	async broadcastTransactions(params, ipAddress) {
 		try {
-			const client = API.getClientByAddress(this.clients, ip_address);
+			const client = API.getClientByAddress(this.clients, ipAddress);
 			return client.transactions.broadcast(params);
 		} catch (error) {
 			output.error('Error while processing request', error);
-			await this.broadcastTransactions(params, ip_address);
+			await this.broadcastTransactions(params, ipAddress);
 		}
 		return true;
 	}
 
-	async broadcastSignatures(params, ip_address) {
+	async broadcastSignatures(params, ipAddress) {
 		try {
-			const client = API.getClientByAddress(this.clients, ip_address);
+			const client = API.getClientByAddress(this.clients, ipAddress);
 			return client.signatures.broadcast(params);
 		} catch (error) {
 			output.error('Error while processing request', error);
-			await this.broadcastSignatures(params, ip_address);
+			await this.broadcastSignatures(params, ipAddress);
 		}
 		return true;
 	}
 
-	async getForgers(params, ip_address) {
+	async getForgers(params, ipAddress) {
 		try {
-			const client = API.getClientByAddress(this.clients, ip_address);
+			const client = API.getClientByAddress(this.clients, ipAddress);
 			return client.delegates.getForgers(params);
 		} catch (error) {
 			output.error('Error while processing request', error);
-			await this.getForgers(params, ip_address);
+			await this.getForgers(params, ipAddress);
 		}
 		return true;
 	}
 
-	async getForgingStatistics(address, params, ip_address) {
+	async getForgingStatistics(address, params, ipAddress) {
 		try {
-			const client = API.getClientByAddress(this.clients, ip_address);
+			const client = API.getClientByAddress(this.clients, ipAddress);
 			return client.delegates.getForgingStatistics(address, params);
 		} catch (error) {
 			output.error('Error while processing request', error);
-			await this.getForgingStatistics(address, params, ip_address);
+			await this.getForgingStatistics(address, params, ipAddress);
 		}
 		return true;
 	}
 
-	async getDelegates(params, ip_address) {
+	async getDelegates(params, ipAddress) {
 		try {
-			const client = API.getClientByAddress(this.clients, ip_address);
+			const client = API.getClientByAddress(this.clients, ipAddress);
 			return client.delegates.get(params);
 		} catch (error) {
 			output.error('Error while processing request', error);
-			await this.getDelegates(params, ip_address);
+			await this.getDelegates(params, ipAddress);
 		}
 		return true;
 	}
 
-	async getVotes(params, ip_address) {
+	async getVotes(params, ipAddress) {
 		try {
-			const client = API.getClientByAddress(this.clients, ip_address);
+			const client = API.getClientByAddress(this.clients, ipAddress);
 			return client.votes.get(params);
 		} catch (error) {
 			output.error('Error while processing request', error);
-			await this.getVotes(params, ip_address);
+			await this.getVotes(params, ipAddress);
 		}
 		return true;
 	}
 
-	async getVoters(params, ip_address) {
+	async getVoters(params, ipAddress) {
 		try {
-			const client = API.getClientByAddress(this.clients, ip_address);
+			const client = API.getClientByAddress(this.clients, ipAddress);
 			return client.voters.get(params);
 		} catch (error) {
 			output.error('Error while processing request', error);
-			await this.getVoters(params, ip_address);
+			await this.getVoters(params, ipAddress);
 		}
 		return true;
 	}
 
-	async getDapp(params, ip_address) {
+	async getDapp(params, ipAddress) {
 		try {
-			const client = API.getClientByAddress(this.clients, ip_address);
+			const client = API.getClientByAddress(this.clients, ipAddress);
 			return client.dapps.get(params);
 		} catch (error) {
 			output.error('Error while processing request', error);
-			await this.getDapp(params, ip_address);
+			await this.getDapp(params, ipAddress);
 		}
 		return true;
 	}

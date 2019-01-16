@@ -1,14 +1,12 @@
-const { from } = require('../../utils');
-const { config } = require('../../fixtures');
+const { from, config } = require('../../utils');
 
 const I = actor();
-const appConfig = config();
 const {
 	forging: {
 		defaultPassword,
 		delegates: [{ publicKey }],
 	},
-} = appConfig;
+} = config;
 let nodes;
 
 Given('The node is forging', async () => {
