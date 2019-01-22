@@ -15,7 +15,7 @@
 		"codecept_helper": true
 	},
 	"rules": {
-		"camelcase": "error",
+		"camelcase": "off",
 		"chai-expect/missing-assertion": "error",
 		"chai-expect/no-inner-compare": "error",
 		"class-methods-use-this": "off",
@@ -29,8 +29,8 @@
 					"When",
 					"Then",
 					"And",
-					"BEDDOWS",
-					"LISK",
+					"TO_BEDDOWS",
+					"TO_LISK",
 					"ASGARD_FIXTURE"
 				]
 			}

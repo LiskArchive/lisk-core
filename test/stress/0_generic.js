@@ -1,32 +1,36 @@
 const output = require('codeceptjs').output;
 const crypto = require('crypto');
 const {
-	BEDDOWS,
+	TO_BEDDOWS,
 	getAddressFromPublicKey,
 	getKeys,
 	generateMnemonic,
 	createAccounts,
 	TRS_TYPE,
 	TRS_PER_BLOCK,
-} = require('../utils');
+} = require('../../utils');
 
 const I = actor();
 const contractsByAddress = {};
-const STRESS_COUNT = parseInt(process.env.STRESS_COUNT) || 1000;
+const STRESS_COUNT = parseInt(process.env.STRESS_COUNT) || 25;
 const NUMBER_OF_BLOCKS = Math.ceil(STRESS_COUNT / TRS_PER_BLOCK);
 const EXTRA_LIMIT = NUMBER_OF_BLOCKS + NUMBER_OF_BLOCKS * 0.25;
 
 const accounts = createAccounts(STRESS_COUNT);
 
-Feature('Stress network test');
+Feature('Generic stress test');
 
 Scenario('Transfer funds', async () => {
-	output.print(`Running Stress Test, Transaction Type: ${TRS_TYPE.TRANSFER}`);
+	output.print(
+		`==========Running Stress Test, Transaction Type: ${
+			TRS_TYPE.TRANSFER
+		}==========`
+	);
 
 	const LSK_TOKEN = 100;
 	const transferTrx = accounts.map(a => ({
 		recipientId: a.address,
-		amount: BEDDOWS(LSK_TOKEN),
+		amount: TO_BEDDOWS(LSK_TOKEN),
 	}));
 
 	const transferTransactions = await I.transferToMultipleAccounts(transferTrx);
@@ -44,7 +48,9 @@ Scenario('Transfer funds', async () => {
 
 Scenario('Second passphrase on an account', async () => {
 	output.print(
-		`Running Stress Test, Transaction Type: ${TRS_TYPE.SECOND_PASSPHRASE}`
+		`==========Running Stress Test, Transaction Type: ${
+			TRS_TYPE.SECOND_PASSPHRASE
+		}==========`
 	);
 
 	await Promise.all(
@@ -71,7 +77,9 @@ Scenario('Second passphrase on an account', async () => {
 
 Scenario('Delegate Registration', async () => {
 	output.print(
-		`Running Stress Test, Transaction Type: ${TRS_TYPE.DELEGATE_REGISTRATION}`
+		`==========Running Stress Test, Transaction Type: ${
+			TRS_TYPE.DELEGATE_REGISTRATION
+		}==========`
 	);
 
 	await Promise.all(
@@ -104,7 +112,11 @@ Scenario('Delegate Registration', async () => {
 	.tag('@stress');
 
 Scenario('Cast vote', async () => {
-	output.print(`Running Stress Test, Transaction Type: ${TRS_TYPE.VOTE}`);
+	output.print(
+		`==========Running Stress Test, Transaction Type: ${
+			TRS_TYPE.VOTE
+		}==========`
+	);
 
 	await Promise.all(
 		accounts.map(a =>
@@ -137,7 +149,9 @@ Scenario('Cast vote', async () => {
 
 Scenario('Register Multi-signature account', async () => {
 	output.print(
-		`Running Stress Test, Transaction Type: ${TRS_TYPE.MULTI_SIGNATURE}`
+		`==========Running Stress Test, Transaction Type: ${
+			TRS_TYPE.MULTI_SIGNATURE
+		}==========`
 	);
 
 	await Promise.all(
@@ -176,7 +190,11 @@ Scenario('Register Multi-signature account', async () => {
 	.tag('@stress');
 
 Scenario('DApp registration', async () => {
-	output.print(`Running Stress Test, Transaction Type: ${TRS_TYPE.DAPP}`);
+	output.print(
+		`==========Running Stress Test, Transaction Type: ${
+			TRS_TYPE.DAPP
+		}==========`
+	);
 
 	const dAppsTrxs = await Promise.all(
 		accounts.map(async a => {

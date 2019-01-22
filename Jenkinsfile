@@ -25,8 +25,8 @@ pipeline {
 			steps {
 				script {
 					def b = build job: 'devnet-build-private/development',
-					        parameters: [
-									 string(name: 'COMMITISH', value: "${params.BRANCH_NAME}"),
+					        parameters: [string(name: 'COMMITISH',
+							     value: """${params.BRANCH_NAME}"""),
 							     booleanParam(name: 'COMMITSHA', value: true),
 							     booleanParam(name: 'USE_CACHE', value: true)]
 					env.LISK_VERSION = b.getBuildVariables().get('LISK_VERSION')
@@ -37,17 +37,11 @@ pipeline {
 			steps {
 				retry(5) {
 					ansiColor('xterm') {
-						ansibleTower credential: '',
-							extraVars: """NEWRELIC_ENABLED: '${params.NEWRELIC_ENABLED}'
-								devnet: ${params.NETWORK}
-								do_nodes_per_region: ${params.NODES_PER_REGION}
-								jenkins_ci: 'yes'
-								lisk_version: ${env.LISK_VERSION}""",
-							importTowerLogs: true,
-							importWorkflowChildLogs: false,
-							inventory: '',jobTags: '', jobTemplate: '46', jobType: 'run',
-							limit: '', removeColor: false, skipJobTags: '', templateType: 'job',
-							throwExceptionWhenFail: true, towerServer: 'tower', verbose: false
+						ansibleTower credential: '', extraVars: """NEWRELIC_ENABLED: '${params.NEWRELIC_ENABLED}'
+devnet: ${params.NETWORK}
+do_nodes_per_region: ${params.NODES_PER_REGION}
+jenkins_ci: 'yes'
+lisk_version: ${env.LISK_VERSION}""", importTowerLogs: true, importWorkflowChildLogs: false, inventory: '', jobTags: '', jobTemplate: '46', jobType: 'run', limit: '', removeColor: false, skipJobTags: '', templateType: 'job', throwExceptionWhenFail: true, towerServer: 'tower', verbose: false
 					}
 				}
 			}
@@ -83,7 +77,8 @@ pipeline {
 				timestamps {
 					nvm(getNodejsVersion()) {
 						ansiColor('xterm') {
-							sh 'npm run stress'
+							sh 'npm run stress:generic'
+							sh 'npm run stress:diversified'
 						}
 					}
 				}

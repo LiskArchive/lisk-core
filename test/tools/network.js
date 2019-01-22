@@ -7,7 +7,7 @@ const I = actor();
 const configPath = () => path.resolve(__dirname, '../../fixtures/config.json');
 
 const splitDelegatesByPeers = (delegates, peers) => {
-	if (peers.length) {
+	if (peers.length === 0) {
 		output.print(
 			'\n',
 			'***********Please run npm run tools:peers:config to generate peer list*************',
@@ -25,7 +25,12 @@ const splitDelegatesByPeers = (delegates, peers) => {
 	return delegateList;
 };
 
-const updateForgingStatus = async ({ ipAddress, delegateList, isEnable, defaultPassword }) => {
+const updateForgingStatus = async ({
+	ipAddress,
+	delegateList,
+	isEnable,
+	defaultPassword,
+}) => {
 	const api = await I.call();
 	return delegateList.map(async delegate => {
 		const params = {
@@ -42,7 +47,7 @@ const updateForgingStatus = async ({ ipAddress, delegateList, isEnable, defaultP
 	});
 };
 
-const enableDisableDelegates = (api, isEnable) => {
+const enableDisableDelegates = isEnable => {
 	const enableOrDisable = isEnable ? 'enable' : 'disable';
 
 	try {
@@ -53,18 +58,17 @@ const enableDisableDelegates = (api, isEnable) => {
 
 		const peerDelegateList = splitDelegatesByPeers(delegates, peers);
 
-		peerDelegateList.forEach((ipAddress, i) => {
+		peers.forEach((ipAddress, i) => {
 			const delegateList = peerDelegateList[i];
 
 			output.print(
 				`${
-				delegateList[i].length
+					delegateList.length
 				} delegates ${enableOrDisable}d to on node ===> ${ipAddress}`,
 				'\n'
 			);
 
 			return updateForgingStatus({
-				api,
 				ipAddress,
 				delegateList,
 				isEnable,
@@ -83,7 +87,7 @@ const checkIfAllPeersConnected = async () => {
 
 	output.print(
 		`Number of peers connected in network: ${
-		allPeers.length
+			allPeers.length
 		}, Expected peers: ${expectPeerCount}`
 	);
 
@@ -108,24 +112,23 @@ Scenario('Peer list @peers_list', async () => {
 
 Scenario('Add peers to config @peers_config', async () => {
 	try {
-		const configBuffer = fs.readFileSync(configPath());
+		const config_path = configPath();
+		const configBuffer = fs.readFileSync(config_path);
 		const configContent = JSON.parse(configBuffer);
 		const allPeers = await I.getAllPeers(100, 0);
 		const requiredPeers = allPeers.slice(0, 101).map(p => p.ip);
-		const unionNodes = new Set([
-			...configContent.peers,
-			...requiredPeers,
-		]);
+		const unionNodes = new Set([...configContent.peers, ...requiredPeers]);
 
 		configContent.peers.push(...unionNodes);
-		fs.writeFileSync(configPath, JSON.stringify(configContent));
+		fs.writeFileSync(config_path, JSON.stringify(configContent));
 
 		output.print(
 			`Updated ${requiredPeers.length} peers to config file: ${configPath}`,
 			JSON.stringify(requiredPeers, null, '\t')
 		);
 	} catch (error) {
-		output.error('Failed to add peers to config: ', error);
+		output.print('Failed to add peers to config: ');
+		output.error(error);
 		process.exit(1);
 	}
 });

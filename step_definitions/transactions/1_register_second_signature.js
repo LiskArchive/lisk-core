@@ -1,4 +1,4 @@
-const { getFixtureUser, from, BEDDOWS } = require('../../utils');
+const { getFixtureUser, from, TO_BEDDOWS } = require('../../utils');
 
 const I = actor();
 let response;
@@ -12,7 +12,7 @@ When(
 		response = await from(
 			I.transfer({
 				recipientId: user2.address,
-				amount: BEDDOWS(amount),
+				amount: TO_BEDDOWS(amount),
 				passphrase: user1.passphrase,
 			})
 		);
@@ -38,7 +38,7 @@ When('{string} transfers {int}LSK token to himself', async (sender, amount) => {
 	response = await from(
 		I.transfer({
 			recipientId: address,
-			amount: BEDDOWS(amount),
+			amount: TO_BEDDOWS(amount),
 			passphrase,
 		})
 	);

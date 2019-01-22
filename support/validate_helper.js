@@ -1,6 +1,6 @@
 const liskCommons = require('lisk-commons');
 const chai = require('chai');
-const { LISK, BEDDOWS, from, sortBy, flattern } = require('../utils');
+const { TO_LISK, TO_BEDDOWS, from, sortBy, flattern } = require('../utils');
 const LiskUtil = require('./lisk_util');
 
 /* eslint camelcase: ["error", {allow: ["codecept_helper"]}] */
@@ -46,14 +46,14 @@ class ValidateHelper extends Helper {
 	async haveAccountWithBalance(address, balance) {
 		const account = await this.haveAccount({ address });
 
-		if (!account || !(LISK(account.balance) >= balance)) {
+		if (!account || !(TO_LISK(account.balance) >= balance)) {
 			if (account) {
-				balance = Math.ceil(balance - LISK(account.balance));
+				balance = Math.ceil(balance - TO_LISK(account.balance));
 			}
 
 			await liskUtil.transfer({
 				recipientId: address,
-				amount: BEDDOWS(balance),
+				amount: TO_BEDDOWS(balance),
 			});
 		}
 		await this.haveAccount({ address });

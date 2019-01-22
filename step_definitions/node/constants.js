@@ -1,3 +1,5 @@
+const { constants } = require('lisk-elements').transaction;
+
 const I = actor();
 
 let results = [];
@@ -18,8 +20,9 @@ Then('I have the constants from all the nodes', async () =>
 
 Then('should have a valid epoch time', () => {
 	results.forEach(res => {
-		// TODO: Need to get epoch value from lisk constants for strict compare
-		expect(res.data.epoch).to.deep.equal('2016-05-24T17:00:00.000Z');
+		expect(new Date(res.data.epoch)).to.deep.equal(
+			new Date(constants.EPOCH_TIME)
+		);
 	});
 });
 
