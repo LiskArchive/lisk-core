@@ -1,7 +1,7 @@
 const output = require('codeceptjs').output;
 const {
 	getFixtureUser,
-	BEDDOWS,
+	TO_BEDDOWS,
 	GENESIS_ACCOUNT,
 	from,
 	TRS_PER_BLOCK,
@@ -35,7 +35,7 @@ Given(
 			contracts = await Promise.all(wallets.map(() => I.createAccount()));
 			const transfers = contracts.map(a => ({
 				recipientId: a.address,
-				amount: BEDDOWS(amount),
+				amount: TO_BEDDOWS(amount),
 				passphrase: GENESIS_ACCOUNT.password,
 			}));
 
@@ -79,7 +79,7 @@ Then(
 
 		const transaction = await I.transfer({
 			recipientId: address,
-			amount: BEDDOWS(1),
+			amount: TO_BEDDOWS(1),
 			passphrase,
 		});
 

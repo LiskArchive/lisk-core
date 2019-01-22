@@ -32,10 +32,11 @@ class API {
 				? clientList.client
 				: clients.filter(client => client.ip === seedNode)[0].client;
 		}
-		// TODO: The network is not stable with propagation and broadcasting
-		// once its stable need to uncomment get random ip
-		// const ip = getRandomIpAddress();
-		return clients.filter(client => client.ip === seedNode)[0].client;
+		// TODO: until the network is stablized and
+		// broadcasting works as expected we have to use seednode
+		// const ip = getRandomIpAddress() || seedNode;
+		const ip = seedNode;
+		return clients.filter(client => client.ip === ip)[0].client;
 	}
 
 	async getNodeStatus(ipAddress) {
@@ -164,7 +165,8 @@ class API {
 			const client = API.getClientByAddress(this.clients, ipAddress);
 			return client.transactions.broadcast(params);
 		} catch (error) {
-			output.error('Error while processing request', error);
+			output.print('Error while processing request');
+			output.error(error);
 			await this.broadcastTransactions(params, ipAddress);
 		}
 		return true;

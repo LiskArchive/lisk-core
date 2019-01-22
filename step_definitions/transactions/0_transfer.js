@@ -1,4 +1,4 @@
-const { getFixtureUser, BEDDOWS } = require('../../utils');
+const { getFixtureUser, TO_BEDDOWS } = require('../../utils');
 
 const I = actor();
 
@@ -10,7 +10,7 @@ Then(
 
 		const transfer = await I.transfer({
 			recipientId: recipient.address,
-			amount: BEDDOWS(amount),
+			amount: TO_BEDDOWS(amount),
 			passphrase: sender.passphrase,
 		});
 		await I.waitForBlock();
@@ -30,7 +30,7 @@ Then(
 
 		const transfer = await I.transfer({
 			recipientId: address,
-			amount: BEDDOWS(amount),
+			amount: TO_BEDDOWS(amount),
 			passphrase,
 		});
 		await I.waitForBlock();

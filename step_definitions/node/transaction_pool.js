@@ -1,5 +1,5 @@
 const elements = require('lisk-elements');
-const { getFixtureUser, from, BEDDOWS } = require('../../utils');
+const { getFixtureUser, from, TO_BEDDOWS } = require('../../utils');
 
 const I = actor();
 let response;
@@ -15,7 +15,7 @@ When(
 
 		const transfers = randomAccounts.map(a => ({
 			recipientId: a.address,
-			amount: BEDDOWS(amount),
+			amount: TO_BEDDOWS(amount),
 			passphrase,
 		}));
 
@@ -52,7 +52,7 @@ When(
 
 		multisignatureTrx = elements.transaction.transfer({
 			recipientId: address,
-			amount: BEDDOWS(amount),
+			amount: TO_BEDDOWS(amount),
 			passphrase,
 		});
 

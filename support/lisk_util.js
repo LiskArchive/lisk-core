@@ -2,7 +2,7 @@ const elements = require('lisk-elements');
 const output = require('codeceptjs').output;
 const API = require('./api.js');
 const { config, GENESIS_ACCOUNT, ASGARD_FIXTURE } = require('../fixtures');
-const { BEDDOWS, BLOCK_TIME, from, getFixtureUser } = require('../utils');
+const { TO_BEDDOWS, BLOCK_TIME, from, getFixtureUser } = require('../utils');
 
 const users = {};
 
@@ -347,7 +347,7 @@ class LiskUtil extends Helper {
 	 * @param {Number} blocksToWait - Number of blocks to wait
 	 */
 	async castUnvotes(params, blocksToWait) {
-		const trx = elements.transaction.castVotes(params);
+		const trx = elements.transaction.castUnvotes(params);
 		await from(this.broadcastAndValidateTransactionAndWait(trx, blocksToWait));
 	}
 
@@ -437,7 +437,7 @@ class LiskUtil extends Helper {
 			'TransactionsResponse'
 		);
 		return expect(response.result.data[0].amount).to.deep.equal(
-			BEDDOWS(amount)
+			TO_BEDDOWS(amount)
 		);
 	}
 

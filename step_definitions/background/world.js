@@ -1,4 +1,9 @@
-const { BEDDOWS, getFixtureUser, from, TRS_PER_BLOCK } = require('../../utils');
+const {
+	TO_BEDDOWS,
+	getFixtureUser,
+	from,
+	TRS_PER_BLOCK,
+} = require('../../utils');
 
 const I = actor();
 
@@ -29,7 +34,7 @@ Given('{int} lisk accounts exists with minimum balance', async count => {
 	randomAccounts.forEach(async account => {
 		const trx = await I.transfer({
 			recipientId: account.address,
-			amount: BEDDOWS(amount),
+			amount: TO_BEDDOWS(amount),
 		});
 		transfers.push(trx);
 	});
@@ -93,6 +98,3 @@ Given(
 		}
 	}
 );
-
-// TODO: Interface for user I to give different type of account
-// A<T>

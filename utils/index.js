@@ -1,10 +1,13 @@
-const elements = require('lisk-elements');
-
-const { ASGARD_FIXTURE, GENESIS_ACCOUNT, config } = require('../fixtures');
 const from = require('./from');
+const liskTransactions = require('./lisk_transactions');
+const { ASGARD_FIXTURE, GENESIS_ACCOUNT, config } = require('../fixtures');
 
 const BLOCK_TIME = 10000;
+
 const TRS_PER_BLOCK = 25;
+
+const TRS_POOL_LIMIT = 1000;
+
 const TRS_TYPE = {
 	TRANSFER: 0,
 	SECOND_PASSPHRASE: 1,
@@ -13,14 +16,6 @@ const TRS_TYPE = {
 	MULTI_SIGNATURE: 4,
 	DAPP: 5,
 };
-
-// amount converted from lisk to beddows
-const BEDDOWS = amount =>
-	elements.transaction.utils.convertLSKToBeddows(amount.toString());
-
-// amount converted from beddows to lisk
-const LISK = amount =>
-	elements.transaction.utils.convertBeddowsToLSK(amount.toString());
 
 const getFixtureUser = (propertyName, value) =>
 	ASGARD_FIXTURE.find(user => user[propertyName] === value);
@@ -66,45 +61,18 @@ const chunkArray = (myArray, chunkSize) => {
 	return results;
 };
 
-const dappMultiAccountName = () => `dapp-multi${new Date().getTime()}`;
-
-const generateMnemonic = () => elements.passphrase.Mnemonic.generateMnemonic();
-
-const getKeys = passphrase => elements.cryptography.getKeys(passphrase);
-
-const getAddressFromPublicKey = publicKey =>
-	elements.cryptography.getAddressFromPublicKey(publicKey);
-
-const createAccounts = count =>
-	new Array(count).fill(0).map(() => {
-		const passphrase = generateMnemonic();
-		const { publicKey } = getKeys(passphrase);
-		const address = getAddressFromPublicKey(publicKey);
-
-		return {
-			passphrase,
-			publicKey,
-			address,
-		};
-	});
-
 module.exports = {
 	config,
 	BLOCK_TIME,
 	TRS_PER_BLOCK,
 	GENESIS_ACCOUNT,
-	BEDDOWS,
-	LISK,
 	TRS_TYPE,
+	TRS_POOL_LIMIT,
 	getFixtureUser,
 	from,
 	splitBy,
 	sortBy,
 	flattern,
 	chunkArray,
-	dappMultiAccountName,
-	generateMnemonic,
-	getKeys,
-	getAddressFromPublicKey,
-	createAccounts,
+	...liskTransactions,
 };
