@@ -12,7 +12,7 @@ const {
 
 const I = actor();
 const contractsByAddress = {};
-const STRESS_COUNT = parseInt(process.env.STRESS_COUNT) || 1;
+const STRESS_COUNT = parseInt(process.env.STRESS_COUNT) || 25;
 const NUMBER_OF_BLOCKS = Math.ceil(STRESS_COUNT / TRS_PER_BLOCK);
 const EXTRA_LIMIT = NUMBER_OF_BLOCKS + NUMBER_OF_BLOCKS * 0.25;
 
