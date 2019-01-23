@@ -58,7 +58,8 @@ Scenario('Transfer funds', async () => {
 		)
 	);
 	output.print('validating transfers successful!');
-}).tag('@slow')
+})
+	.tag('@slow')
 	.tag('@diversified');
 
 Scenario('Enable Second passphrase', async () => {
@@ -85,7 +86,8 @@ Scenario('Enable Second passphrase', async () => {
 		})
 	);
 	output.print('validating second passphrase account successful!');
-}).tag('@slow')
+})
+	.tag('@slow')
 	.tag('@diversified');
 
 Scenario('Create delegates', async () => {
@@ -121,7 +123,8 @@ Scenario('Create delegates', async () => {
 	);
 	output.print('validating delegates successful!');
 	all_trxs = {};
-}).tag('@slow')
+})
+	.tag('@slow')
 	.tag('@diversified');
 
 Scenario('Create vote, multi-signature, and dApp transactions', async () => {
@@ -146,7 +149,8 @@ Scenario('Create vote, multi-signature, and dApp transactions', async () => {
 	all_trxs.dapp_trxs = utils.dappRegistration(accounts);
 
 	all_trxs.dapp_spp_trxs = utils.dappRegistration(accounts_with_spp);
-}).tag('@slow')
+})
+	.tag('@slow')
 	.tag('@diversified');
 
 Scenario(
@@ -159,7 +163,8 @@ Scenario(
 
 		await I.waitForBlock(NUMBER_OF_BLOCKS);
 	}
-).tag('@slow')
+)
+	.tag('@slow')
 	.tag('@diversified');
 
 Scenario('Validate transaction confirmation', async () => {
@@ -180,5 +185,6 @@ Scenario('Validate transaction confirmation', async () => {
 		})
 	);
 	output.print('validating delegates successful!');
-}).tag('@slow')
+})
+	.tag('@slow')
 	.tag('@diversified');

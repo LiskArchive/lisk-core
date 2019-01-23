@@ -2,6 +2,7 @@ const output = require('codeceptjs').output;
 const fs = require('fs');
 const path = require('path');
 const { from, chunkArray, config } = require('../../utils');
+const { seedNode } = require('../../fixtures');
 
 const I = actor();
 const configPath = () => path.resolve(__dirname, '../../fixtures/config.json');
@@ -32,6 +33,7 @@ const updateForgingStatus = async ({
 	defaultPassword,
 }) => {
 	const api = await I.call();
+
 	return delegateList.map(async delegate => {
 		const params = {
 			forging: isEnable,
@@ -39,11 +41,14 @@ const updateForgingStatus = async ({
 			publicKey: delegate.publicKey,
 		};
 
-		const { result, error } = await from(
-			api.updateForgingStatus(params, ipAddress)
-		);
-		expect(error).to.be.null;
-		expect(result.data[0].forging).to.deep.equal(isEnable);
+		let res;
+		try {
+			res = await from(api.updateForgingStatus(params, ipAddress));
+			expect(res.error).to.be.null;
+			expect(res.result.data[0].forging).to.deep.equal(isEnable);
+		} catch (err) {
+			output.error(res.error, err);
+		}
 	});
 };
 
@@ -76,7 +81,8 @@ const enableDisableDelegates = isEnable => {
 			});
 		});
 	} catch (error) {
-		output.error(`Failed to ${enableOrDisable} forging due to error: `, error);
+		output.error(`Failed to ${enableOrDisable} forging due to error: `);
+		output.error(error);
 		process.exit(1);
 	}
 };
@@ -117,14 +123,14 @@ Scenario('Add peers to config @peers_config', async () => {
 		const configContent = JSON.parse(configBuffer);
 		const allPeers = await I.getAllPeers(100, 0);
 		const requiredPeers = allPeers.slice(0, 101).map(p => p.ip);
-		const unionNodes = new Set([...configContent.peers, ...requiredPeers]);
+		const unionNodes = new Set([...configContent.peers, ...requiredPeers, seedNode]);
 
 		configContent.peers.push(...unionNodes);
 		fs.writeFileSync(config_path, JSON.stringify(configContent));
 
 		output.print(
-			`Updated ${requiredPeers.length} peers to config file: ${configPath}`,
-			JSON.stringify(requiredPeers, null, '\t')
+			`Updated ${unionNodes.length} peers to config file: ${config_path}`,
+			JSON.stringify(unionNodes, null, '\t')
 		);
 	} catch (error) {
 		output.print('Failed to add peers to config: ');

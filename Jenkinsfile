@@ -48,25 +48,21 @@ lisk_version: ${env.LISK_VERSION}""", importTowerLogs: true, importWorkflowChild
 		}
 		stage('Generate peer config and enable forging') {
 			steps {
-				retry(5) {
-					nvm(getNodejsVersion()) {
-						sh '''
-						npm run tools:peers:connected
-						npm run tools:peers:config
-						npm run tools:delegates:enable
-						'''
-					}
+				nvm(getNodejsVersion()) {
+					sh '''
+					npm run tools:peers:connected
+					npm run tools:peers:config
+					npm run tools:delegates:enable
+					'''
 				}
 			}
 		}
 		stage('Test Scenarios') {
 			steps {
-				retry(2) {
-					timestamps {
-						nvm(getNodejsVersion()) {
-							ansiColor('xterm') {
-								sh 'npm run features'
-							}
+				timestamps {
+					nvm(getNodejsVersion()) {
+						ansiColor('xterm') {
+							sh 'npm run features'
 						}
 					}
 				}

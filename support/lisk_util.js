@@ -1,7 +1,12 @@
 const elements = require('lisk-elements');
 const output = require('codeceptjs').output;
 const API = require('./api.js');
-const { config, GENESIS_ACCOUNT, ASGARD_FIXTURE } = require('../fixtures');
+const {
+	config,
+	GENESIS_ACCOUNT,
+	ASGARD_FIXTURE,
+	seedNode,
+} = require('../fixtures');
 const { TO_BEDDOWS, BLOCK_TIME, from, getFixtureUser } = require('../utils');
 
 const users = {};
@@ -138,21 +143,21 @@ class LiskUtil extends Helper {
 	 * @param {object} transaction transaction object
 	 */
 	async broadcastAndValidateTransaction(transaction) {
-		try {
-			const { result, error } = await from(
-				this.call().broadcastTransactions(transaction)
-			);
+		const { result, error } = await from(
+			this.call().broadcastTransactions(transaction)
+		);
 
-			expect(error).to.be.null;
-			this.helpers.ValidateHelper.expectResponseToBeValid(
-				result,
-				'GeneralStatusResponse'
-			);
-			expect(result.data.message).to.deep.equal('Transaction(s) accepted');
-		} catch (error) {
-			output.error(`Failed to broadcast transaction: ${transaction.id}`);
-			console.error(error);
+		if (error) {
+			output.print(`Failed to broadcast transaction: ${transaction.id}`);
+			output.error(error);
+			return;
 		}
+		expect(error).to.be.null;
+		this.helpers.ValidateHelper.expectResponseToBeValid(
+			result,
+			'GeneralStatusResponse'
+		);
+		expect(result.data.message).to.deep.equal('Transaction(s) accepted');
 	}
 
 	/**
@@ -160,24 +165,24 @@ class LiskUtil extends Helper {
 	 * @param {object} transaction transaction object
 	 */
 	async broadcastAndValidateSignature(signature) {
-		try {
-			const { result, error } = await from(
-				this.call().broadcastSignatures(signature)
-			);
+		const { result, error } = await from(
+			this.call().broadcastSignatures(signature)
+		);
 
-			expect(error).to.be.null;
-			this.helpers.ValidateHelper.expectResponseToBeValid(
-				result,
-				'SignatureResponse'
-			);
-			expect(result.data.message).to.deep.equal('Signature Accepted');
-		} catch (error) {
-			output.error(
+		if (error) {
+			output.print(
 				'Failed to broadcast signature for transaction: ',
 				signature.transactionId
 			);
-			console.error(error);
+			output.error(error);
+			return;
 		}
+		expect(error).to.be.null;
+		this.helpers.ValidateHelper.expectResponseToBeValid(
+			result,
+			'SignatureResponse'
+		);
+		expect(result.data.message).to.deep.equal('Signature Accepted');
 	}
 
 	/**
@@ -501,6 +506,10 @@ class LiskUtil extends Helper {
 	 */
 	async getAllPeers(limit, offset) {
 		const peerResult = await from(this.call().getPeers({ limit, offset }));
+
+		if (!process.env.NETWORK || process.env.NETWORK === 'development') {
+			return [seedNode];
+		}
 
 		expect(peerResult.error).to.be.null;
 
