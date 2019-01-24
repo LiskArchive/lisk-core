@@ -1,3 +1,5 @@
+const dns = require('dns');
+const output = require('codeceptjs').output;
 const from = require('./from');
 const liskTransactions = require('./lisk_transactions');
 const { ASGARD_FIXTURE, GENESIS_ACCOUNT, config } = require('../fixtures');
@@ -61,6 +63,20 @@ const chunkArray = (myArray, chunkSize) => {
 	return results;
 };
 
+const getIpByDns = async dnsName => {
+	const result = new Promise((res, rej) => {
+		dns.lookup(dnsName, (err, address) => {
+			if (err) {
+				rej(err);
+				output.print(err);
+			}
+			res(address);
+		});
+	});
+	const address = await result;
+	return address;
+};
+
 module.exports = {
 	config,
 	BLOCK_TIME,
@@ -75,4 +91,5 @@ module.exports = {
 	flattern,
 	chunkArray,
 	...liskTransactions,
+	getIpByDns,
 };
