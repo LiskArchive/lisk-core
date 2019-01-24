@@ -123,8 +123,9 @@ Scenario('Add peers to config @peers_config', async () => {
 		const configContent = JSON.parse(configBuffer);
 		const allPeers = await I.getAllPeers(100, 0);
 		const requiredPeers = allPeers.slice(0, 101).map(p => p.ip);
-		const unionNodes = new Set([...configContent.peers, ...requiredPeers, seedNode]);
+		const unionNodes = new Set([seedNode, ...configContent.peers, ...requiredPeers]);
 
+		configContent.peers = [];
 		configContent.peers.push(...unionNodes);
 		fs.writeFileSync(config_path, JSON.stringify(configContent));
 

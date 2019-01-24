@@ -62,7 +62,7 @@ lisk_version: ${env.LISK_VERSION}""", importTowerLogs: true, importWorkflowChild
 				timestamps {
 					nvm(getNodejsVersion()) {
 						ansiColor('xterm') {
-							sh 'npm run features'
+							sh 'npm run features || true'
 						}
 					}
 				}
@@ -73,7 +73,7 @@ lisk_version: ${env.LISK_VERSION}""", importTowerLogs: true, importWorkflowChild
 				timestamps {
 					nvm(getNodejsVersion()) {
 						ansiColor('xterm') {
-							sh 'npm run stress:generic'
+							sh 'npm run stress:generic || true'
 							sh 'npm run stress:diversified'
 						}
 					}
