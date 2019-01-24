@@ -8,7 +8,7 @@ When('I request for node constants', async () => {
 	const api = await I.call();
 
 	results = await Promise.all(
-		[api.seed, ...api.peers].map(address => api.getNodeConstants(address))
+		api.peers.map(address => api.getNodeConstants(address))
 	);
 });
 

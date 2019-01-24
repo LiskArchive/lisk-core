@@ -1,7 +1,7 @@
 const output = require('codeceptjs').output;
 const fs = require('fs');
 const path = require('path');
-const { from, chunkArray, config } = require('../../utils');
+const { from, chunkArray, config, getIpByDns } = require('../../utils');
 const { seedNode } = require('../../fixtures');
 
 const I = actor();
@@ -68,7 +68,7 @@ const enableDisableDelegates = isEnable => {
 
 			output.print(
 				`${
-					delegateList.length
+				delegateList.length
 				} delegates ${enableOrDisable}d to on node ===> ${ipAddress}`,
 				'\n'
 			);
@@ -93,7 +93,7 @@ const checkIfAllPeersConnected = async () => {
 
 	output.print(
 		`Number of peers connected in network: ${
-			allPeers.length
+		allPeers.length
 		}, Expected peers: ${expectPeerCount}`
 	);
 
@@ -103,9 +103,28 @@ const checkIfAllPeersConnected = async () => {
 	return checkIfAllPeersConnected();
 };
 
+const getConfigContent = () => {
+	const config_path = configPath();
+	const configBuffer = fs.readFileSync(config_path);
+	return JSON.parse(configBuffer);
+};
+
+const updateConfigContent = configContent => {
+	const config_path = configPath();
+	fs.writeFileSync(config_path, JSON.stringify(configContent));
+	output.print(JSON.stringify(configContent.peers, null, '\t'));
+	output.print(`Updated ${configContent.peers.length} peers to config file: ${config_path}`);
+};
+
+const mergePeers = (seedAddress, configContentPeers, allPeers) => {
+	const peers = allPeers.map(p => p.ip);
+	const uniquePeers = new Set([seedAddress, ...configContentPeers, ...peers]);
+	return [...uniquePeers].slice(0, 101).map(p => p);
+};
+
 Feature('Network tools');
 
-Scenario('Peer list @peers_list', async () => {
+Scenario('List peers', async () => {
 	try {
 		const allPeers = await I.getAllPeers(100, 0);
 		output.print('Peers config list: ', JSON.stringify(allPeers, null, '\t'));
@@ -114,39 +133,48 @@ Scenario('Peer list @peers_list', async () => {
 		output.error(error);
 		process.exit(1);
 	}
-});
+})
+	.tag('@peers_list');
 
-Scenario('Add peers to config @peers_config', async () => {
+Scenario('Add seed node to config', async () => {
+	const seedAddress = await getIpByDns(seedNode);
+	const configContent = getConfigContent();
+
+	configContent.peers = []; // To avoid duplication first remove everything
+	configContent.peers.push(seedAddress);
+	updateConfigContent(configContent);
+})
+	.tag('@seed_node');
+
+Scenario('Add network peers to config', async () => {
 	try {
-		const config_path = configPath();
-		const configBuffer = fs.readFileSync(config_path);
-		const configContent = JSON.parse(configBuffer);
 		const allPeers = await I.getAllPeers(100, 0);
-		const requiredPeers = allPeers.slice(0, 101).map(p => p.ip);
-		const unionNodes = new Set([...configContent.peers, ...requiredPeers, seedNode]);
+		const configContent = getConfigContent();
+		const seedAddress = await getIpByDns(seedNode);
+		const uniquePeers = mergePeers(seedAddress, configContent.peers, allPeers);
 
-		configContent.peers.push(...unionNodes);
-		fs.writeFileSync(config_path, JSON.stringify(configContent));
-
-		output.print(
-			`Updated ${unionNodes.length} peers to config file: ${config_path}`,
-			JSON.stringify(unionNodes, null, '\t')
-		);
+		configContent.peers = []; // To avoid duplication first remove everything
+		configContent.peers.push(...uniquePeers);
+		updateConfigContent(configContent);
 	} catch (error) {
 		output.print('Failed to add peers to config: ');
 		output.error(error);
 		process.exit(1);
 	}
-});
+})
+	.tag('@network_nodes');
 
-Scenario('Add peers to config @peers_connected', async () => {
+Scenario('Check if peers are connected', async () => {
 	await checkIfAllPeersConnected();
-});
+})
+	.tag('@peers_connected');
 
-Scenario('Enable delegates @delegates_enable', async () => {
+Scenario('Enable delegates', async () => {
 	enableDisableDelegates(true);
-});
+})
+	.tag('@delegates_enable');
 
-Scenario('Disable delegates @delegates_disable', async () => {
+Scenario('Disable delegates', async () => {
 	enableDisableDelegates(false);
-});
+})
+	.tag('@delegates_disable');

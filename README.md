@@ -19,41 +19,132 @@ The quality assurance ensures if the release candidates are
 
   - Newly introduced features for a particular release to be covered with new feature scenarios.
 
-- QA Release
-  - For every release run through this checklist [scenarios](docs/qa_round_template.md).
+## Checklist
+* For every release run through this [checklist](docs/qa_round_template.md).
 
-## Tools
+This document details how to install Lisk Core Qa External from source.
+If you have satisfied the requirements from the Pre-Installation section, you can jumpt directly to the next section [Installation Steps](#installation).
 
-### Peers
+## Index
 
-- `NETWORK=alphanet npm run tools:peers:list`
+* [Pre-Installation](#pre-installation)
+  * [Git](#git)
+  * [Node.JS](#nodejs)
+* [Installation](#installation)
+* [Managing-Lisk-Core-Qa-External](#managing-lisk-core-qa-external)
+  * [Single-Node](#single-node)
+    * [Add-peers-to-config-Single-Node](#add-peers-to-config-single-node)
+  * [Network-Mode](#network-mode)
+    * [Add-peers-to-config-Network-Mode](#add-peers-to-config-network-mode)
+  * [Enable-delegates](#enable-delegates)
+  * [Running-Lisk-Core-Protocol-Features-Tests](#running-lisk-core-protocol-features-tests)
+  * [Running-Generic-Stress-Test](#running-generic-stress-test)
+  * [Running-Diversified-Stress-Test](#running-diversified-stress-test)
+  * [Running-Reports](#running-reports)
 
-    List all the peers from the network.
+## Pre-Installation
 
-- `NETWORK=alphanet npm run tools:peers:config`
+The next section details the prerequisites to install Lisk Core Qa External from source.
 
-    List all the peers from the network and write it network config file.
+### System Install
 
-### Delegates
+### [Git](https://github.com/git/git)
 
-Before running enable or disable, run peers config `npm run tools:peers:config`
+Used for cloning and updating Lisk Core Qa External
 
-- `NETWORK=alphanet npm run tools:delegates:enable`
+* Ubuntu:
 
-		Enable delegates for a given network.
+```
+sudo apt-get install -y git
+```
 
-		Default network is `development` [fixtures/config.json](fixtures/config.json)
+* MacOS 10.12-10.13 (Sierra/High Sierra):
 
-- `NETWORK=alphanet npm run tools:delegates:disable`
+```
+brew install git
+```
 
-		Disable delegates for a given network.
+### [Node.js](https://nodejs.org/)
 
-		Default network is `development` [fixtures/config.json](fixtures/config.json)
+Node.js serves as the underlying engine for code execution.
 
-### Stress testing
+Install System wide via package manager:
 
-- `NETWORK=alphanet STRESS_COUNT=1000 npm run stress`
+* Ubuntu:
 
-### Lisk protocol feature testing
+```
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt-get install -y nodejs
+```
 
-- `NETWORK=alphanet npm run features`
+* MacOS 10.12-10.13 (Sierra/High Sierra):
+
+```
+brew install node@10.14.1
+```
+
+## Installation
+
+Clone the Lisk Core repository using Git and initialize the modules.
+
+```
+git clone https://github.com/LiskHQ/lisk-core-qa-external.git
+cd lisk-core-qa-external
+git checkout master
+npm i
+```
+
+## Managing-Lisk-Core-Qa-External
+
+### Single-Node
+To run tests against single node setup [Lisk Core](https://lisk.io/documentation/lisk-core/setup/source), once you have the Lisk Core up and running.
+
+#### Add-peers-to-config-Single-Node
+In order to run network test in single node add peer to [config](fixtures/config.json)
+
+If Lisk Core is running on localhost `127.0.0.1` then add the ip to peers section like below or if it is running inside docker or any other ip please include the same in peers section.
+
+Example:
+```
+"peers": ["127.0.0.1"]
+```
+
+### Network-Mode
+To run tests against network mode, start multiple [Lisk Core](https://lisk.io/documentation/lisk-core/setup/source) and configure peers list in  [Lisk Core Default Config](https://github.com/LiskHQ/lisk/blob/e81cb2af687b2e3a4f3bd8e159d44c4750e42166/config/default/config.json#L62) for peer discovery, once you have the Lisk Core Network up and running.
+
+#### Add-peers-to-config-Network-Mode
+In order to run network test in Network mode add all the peers to [config](fixtures/config.json)
+
+Example:
+```
+"peers": ["102.248.2.33", "101.248.1.21"]
+```
+
+### Enable-delegates
+Once the peers config is updated in (Single/Network Mode) Enable delegates for forging
+
+`Note: If the IP address is external, ensure the address is accessible for api to enable forging`
+```
+npm run tools:delegates:enable
+```
+
+### Running-Lisk-Core-Protocol-Features-Tests
+```
+npm run features
+```
+
+### Running-Generic-Stress-Test
+`Note: Transaction pool limit is 1000 so STRESS_COUNT is limited to 1000.`
+```
+STRESS_COUNT=1000 npm run stress:generic
+```
+
+### Running-Diversified-Stress-Test
+```
+npm run stress:diversified
+```
+
+### Running-Reports
+```
+npm run report
+```

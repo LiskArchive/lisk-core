@@ -67,7 +67,7 @@ Scenario('Second passphrase on an account', async () => {
 			const { publicKey } = getKeys(a.secondPassphrase);
 			const api = await I.call();
 
-			const account = await api.getAccounts({ address: a.address });
+			const account = await api.getAccounts({ publicKey: a.publicKey });
 			expect(account.data[0].secondPublicKey).to.deep.equal(publicKey);
 		})
 	);
@@ -103,7 +103,7 @@ Scenario('Delegate Registration', async () => {
 		accounts.map(async a => {
 			const api = await I.call();
 
-			const account = await api.getDelegates({ address: a.address });
+			const account = await api.getDelegates({ publicKey: a.publicKey });
 			expect(account.data[0].username).to.deep.equal(a.username);
 		})
 	);
@@ -137,7 +137,7 @@ Scenario('Cast vote', async () => {
 		accounts.map(async a => {
 			const api = await I.call();
 
-			const account = await api.getVoters({ address: a.address });
+			const account = await api.getVoters({ publicKey: a.publicKey });
 			expect(
 				account.data.voters.some(v => v.address === a.address)
 			).to.deep.equal(true);
