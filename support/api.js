@@ -22,7 +22,7 @@ class API {
 		});
 	}
 
-	async getClientByAddress(ipAddress) {
+	getClientByAddress(ipAddress) {
 		if (ipAddress) {
 			const clientList = this.clients.filter(client => client.ip === ipAddress)[0];
 			return clientList
@@ -36,7 +36,7 @@ class API {
 
 	async getNodeStatus(ipAddress) {
 		try {
-			const client = await this.getClientByAddress(ipAddress);
+			const client = this.getClientByAddress(ipAddress);
 			return client.node.getStatus();
 		} catch (error) {
 			output.print('API.getNodeStatus: Error while processing request');
@@ -48,7 +48,7 @@ class API {
 
 	async getNodeConstants(ipAddress) {
 		try {
-			const client = await this.getClientByAddress(ipAddress);
+			const client = this.getClientByAddress(ipAddress);
 			return client.node.getConstants();
 		} catch (error) {
 			output.print('API.getNodeConstants: Error while processing request');
@@ -60,7 +60,7 @@ class API {
 
 	async getForgingStatus(params, ipAddress) {
 		try {
-			const client = await this.getClientByAddress(ipAddress);
+			const client = this.getClientByAddress(ipAddress);
 			return client.node.getForgingStatus(params);
 		} catch (error) {
 			output.print('API.getForgingStatus: Error while processing request');
@@ -72,7 +72,7 @@ class API {
 
 	async updateForgingStatus(params, ipAddress) {
 		try {
-			const client = await this.getClientByAddress(ipAddress);
+			const client = this.getClientByAddress(ipAddress);
 			return client.node.updateForgingStatus(params);
 		} catch (error) {
 			output.print('API.updateForgingStatus: Error while processing request');
@@ -84,7 +84,7 @@ class API {
 
 	async getTransactionsByState(state, params, ipAddress) {
 		try {
-			const client = await this.getClientByAddress(ipAddress);
+			const client = this.getClientByAddress(ipAddress);
 			return client.node.getTransactions(state, params);
 		} catch (error) {
 			output.print('API.getTransactionsByState: Error while processing request');
@@ -96,7 +96,7 @@ class API {
 
 	async getPeers(params, ipAddress) {
 		try {
-			const client = await this.getClientByAddress(ipAddress);
+			const client = this.getClientByAddress(ipAddress);
 			return client.peers.get(params);
 		} catch (error) {
 			output.print('API.getPeers: Error while processing request');
@@ -108,7 +108,7 @@ class API {
 
 	async getAccounts(params, ipAddress) {
 		try {
-			const client = await this.getClientByAddress(ipAddress);
+			const client = this.getClientByAddress(ipAddress);
 			return client.accounts.get(params);
 		} catch (error) {
 			output.print('API.getAccounts: Error while processing request');
@@ -120,7 +120,7 @@ class API {
 
 	async getMultisignatureGroups(address, params = {}, ipAddress) {
 		try {
-			const client = await this.getClientByAddress(ipAddress);
+			const client = this.getClientByAddress(ipAddress);
 			return client.accounts.getMultisignatureGroups(address, params);
 		} catch (error) {
 			output.print('API.getMultisignatureGroups: Error while processing request');
@@ -132,7 +132,7 @@ class API {
 
 	async getMultisignatureMemberships(address, params, ipAddress) {
 		try {
-			const client = await this.getClientByAddress(ipAddress);
+			const client = this.getClientByAddress(ipAddress);
 			return client.accounts.getMultisignatureMemberships(address, params);
 		} catch (error) {
 			output.print('API.getMultisignatureMemberships: Error while processing request');
@@ -144,7 +144,7 @@ class API {
 
 	async getBlocks(params, ipAddress) {
 		try {
-			const client = await this.getClientByAddress(ipAddress);
+			const client = this.getClientByAddress(ipAddress);
 			return client.blocks.get(params);
 		} catch (error) {
 			output.print('API.getBlocks: Error while processing request');
@@ -156,7 +156,7 @@ class API {
 
 	async getTransactions(params, ipAddress) {
 		try {
-			const client = await this.getClientByAddress(ipAddress);
+			const client = this.getClientByAddress(ipAddress);
 			return client.transactions.get(params);
 		} catch (error) {
 			output.print('API.getTransactions: Error while processing request');
@@ -168,7 +168,7 @@ class API {
 
 	async broadcastTransactions(params, ipAddress) {
 		try {
-			const client = await this.getClientByAddress(ipAddress);
+			const client = this.getClientByAddress(ipAddress);
 			return client.transactions.broadcast(params);
 		} catch (error) {
 			output.print('API.broadcastTransactions: Error while processing request');
@@ -180,7 +180,7 @@ class API {
 
 	async broadcastSignatures(params, ipAddress) {
 		try {
-			const client = await this.getClientByAddress(ipAddress);
+			const client = this.getClientByAddress(ipAddress);
 			return client.signatures.broadcast(params);
 		} catch (error) {
 			output.print('API.broadcastSignatures: Error while processing request');
@@ -192,7 +192,7 @@ class API {
 
 	async getForgers(params, ipAddress) {
 		try {
-			const client = await this.getClientByAddress(ipAddress);
+			const client = this.getClientByAddress(ipAddress);
 			return client.delegates.getForgers(params);
 		} catch (error) {
 			output.print('API.getForgers: Error while processing request');
@@ -204,7 +204,7 @@ class API {
 
 	async getForgingStatistics(address, params, ipAddress) {
 		try {
-			const client = await this.getClientByAddress(ipAddress);
+			const client = this.getClientByAddress(ipAddress);
 			return client.delegates.getForgingStatistics(address, params);
 		} catch (error) {
 			output.print('API.getForgingStatistics: Error while processing request');
@@ -216,7 +216,7 @@ class API {
 
 	async getDelegates(params, ipAddress) {
 		try {
-			const client = await this.getClientByAddress(ipAddress);
+			const client = this.getClientByAddress(ipAddress);
 			return client.delegates.get(params);
 		} catch (error) {
 			output.print('API.getDelegates: Error while processing request');
@@ -228,7 +228,7 @@ class API {
 
 	async getVotes(params, ipAddress) {
 		try {
-			const client = await this.getClientByAddress(ipAddress);
+			const client = this.getClientByAddress(ipAddress);
 			return client.votes.get(params);
 		} catch (error) {
 			output.print('API.getVotes: Error while processing request');
@@ -240,7 +240,7 @@ class API {
 
 	async getVoters(params, ipAddress) {
 		try {
-			const client = await this.getClientByAddress(ipAddress);
+			const client = this.getClientByAddress(ipAddress);
 			return client.voters.get(params);
 		} catch (error) {
 			output.print('API.getVoters: Error while processing request');
@@ -252,7 +252,7 @@ class API {
 
 	async getDapp(params, ipAddress) {
 		try {
-			const client = await this.getClientByAddress(ipAddress);
+			const client = this.getClientByAddress(ipAddress);
 			return client.dapps.get(params);
 		} catch (error) {
 			output.print('API.getDapp: Error while processing request');

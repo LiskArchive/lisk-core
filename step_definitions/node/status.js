@@ -6,7 +6,7 @@ When('I request for node status', async () => {
 	const api = await I.call();
 
 	nodeStatus = await Promise.all(
-		[api.seed, ...api.peers].map(address => api.getNodeStatus(address))
+		api.peers.map(address => api.getNodeStatus(address))
 	);
 });
 

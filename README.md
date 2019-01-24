@@ -33,9 +33,9 @@ If you have satisfied the requirements from the Pre-Installation section, you ca
 * [Installation](#installation)
 * [Managing-Lisk-Core-Qa-External](#managing-lisk-core-qa-external)
   * [Single-Node](#single-node)
-    * [Add-peers-to-config-(Single-Node)](#add-peers-to-config-(single-node))
+    * [Add-peers-to-config-Single-Node](#add-peers-to-config-single-node)
   * [Network-Mode](#network-mode)
-    * [Add-peers-to-config-(Network-Mode)](#add-peers-to-config-(network-mode))
+    * [Add-peers-to-config-Network-Mode](#add-peers-to-config-network-mode)
   * [Enable-delegates](#enable-delegates)
   * [Running-Lisk-Core-Protocol-Features-Tests](#running-lisk-core-protocol-features-tests)
   * [Running-Generic-Stress-Test](#running-generic-stress-test)
@@ -99,7 +99,7 @@ npm i
 ### Single-Node
 To run tests against single node setup [Lisk Core](https://lisk.io/documentation/lisk-core/setup/source), once you have the Lisk Core up and running.
 
-#### Add-peers-to-config-(Single-Node)
+#### Add-peers-to-config-Single-Node
 In order to run network test in single node add peer to [config](fixtures/config.json)
 
 If Lisk Core is running on localhost `127.0.0.1` then add the ip to peers section like below or if it is running inside docker or any other ip please include the same in peers section.
@@ -112,7 +112,7 @@ Example:
 ### Network-Mode
 To run tests against network mode, start multiple [Lisk Core](https://lisk.io/documentation/lisk-core/setup/source) and configure peers list in  [Lisk Core Default Config](https://github.com/LiskHQ/lisk/blob/e81cb2af687b2e3a4f3bd8e159d44c4750e42166/config/default/config.json#L62) for peer discovery, once you have the Lisk Core Network up and running.
 
-#### Add-peers-to-config-(Network-Mode)
+#### Add-peers-to-config-Network-Mode
 In order to run network test in Network mode add all the peers to [config](fixtures/config.json)
 
 Example:
