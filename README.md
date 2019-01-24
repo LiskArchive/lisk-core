@@ -31,16 +31,16 @@ If you have satisfied the requirements from the Pre-Installation section, you ca
   * [Git](#git)
   * [Node.JS](#nodejs)
 * [Installation](#installation)
-* [Managing Lisk Core Qa External](#Managing-Lisk-Core-Qa-External)
-  * [Single Node](#Single-Node)
-    * [Add peers to config (Single Node)](#Add-peers-to-config-(Single-Node))
-  * [Network Mode](#Network-Mode)
-    * [Add peers to config (Network Mode)](#Add-peers-to-config-(Network-Mode))
-  * [Enable delegates](#Enable-delegates)
-  * [Running Lisk Core Protocol Features Tests](#Running-Lisk-Core-Protocol-Features-Tests)
-  * [Running Generic Stress Test (Maximum limit 1000)](#Running-Generic-Stress-Test-(Maximum-limit-1000))
-  * [Running Diversified Stress Test](#Running-Diversified-Stress-Test)
-  * [Running Reports](#Running-Reports)
+* [Managing-Lisk-Core-Qa-External](#managing-lisk-core-qa-external)
+  * [Single-Node](#single-node)
+    * [Add-peers-to-config-(Single-Node)](#add-peers-to-config-(single-node))
+  * [Network-Mode](#network-mode)
+    * [Add-peers-to-config-(Network-Mode)](#add-peers-to-config-(network-mode))
+  * [Enable-delegates](#enable-delegates)
+  * [Running-Lisk-Core-Protocol-Features-Tests](#running-lisk-core-protocol-features-tests)
+  * [Running-Generic-Stress-Test](#running-generic-stress-test)
+  * [Running-Diversified-Stress-Test](#running-diversified-stress-test)
+  * [Running-Reports](#running-reports)
 
 ## Pre-Installation
 
@@ -94,12 +94,12 @@ git checkout master
 npm i
 ```
 
-## Managing Lisk Core Qa External
+## Managing-Lisk-Core-Qa-External
 
-### Single Node
+### Single-Node
 To run tests against single node setup [Lisk Core](https://lisk.io/documentation/lisk-core/setup/source), once you have the Lisk Core up and running.
 
-#### Add peers to config (Single Node)
+#### Add-peers-to-config-(Single-Node)
 In order to run network test in single node add peer to [config](fixtures/config.json)
 
 If Lisk Core is running on localhost `127.0.0.1` then add the ip to peers section like below or if it is running inside docker or any other ip please include the same in peers section.
@@ -109,10 +109,10 @@ Example:
 "peers": ["127.0.0.1"]
 ```
 
-### Network Mode
+### Network-Mode
 To run tests against network mode, start multiple [Lisk Core](https://lisk.io/documentation/lisk-core/setup/source) and configure peers list in  [Lisk Core Default Config](https://github.com/LiskHQ/lisk/blob/e81cb2af687b2e3a4f3bd8e159d44c4750e42166/config/default/config.json#L62) for peer discovery, once you have the Lisk Core Network up and running.
 
-#### Add peers to config (Network Mode)
+#### Add-peers-to-config-(Network-Mode)
 In order to run network test in Network mode add all the peers to [config](fixtures/config.json)
 
 Example:
@@ -120,30 +120,31 @@ Example:
 "peers": ["102.248.2.33", "101.248.1.21"]
 ```
 
-### Enable delegates
+### Enable-delegates
 Once the peers config is updated in (Single/Network Mode) Enable delegates for forging
 
-Note: If the IP address is external, ensure the address is accessible for api to enable forging
+`Note: If the IP address is external, ensure the address is accessible for api to enable forging`
 ```
 npm run tools:delegates:enable
 ```
 
-### Running Lisk Core Protocol Features Tests
+### Running-Lisk-Core-Protocol-Features-Tests
 ```
 npm run features
 ```
 
-### Running Generic Stress Test (Maximum limit 1000)
+### Running-Generic-Stress-Test
+`Note: Transaction pool limit is 1000 so STRESS_COUNT is limited to 1000.`
 ```
 STRESS_COUNT=1000 npm run stress:generic
 ```
 
-### Running Diversified Stress Test
+### Running-Diversified-Stress-Test
 ```
-STRESS_COUNT=1000 npm run stress:diversified
+npm run stress:diversified
 ```
 
-### Running Reports
+### Running-Reports
 ```
 npm run report
 ```
