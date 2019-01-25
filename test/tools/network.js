@@ -1,127 +1,180 @@
 const output = require('codeceptjs').output;
 const fs = require('fs');
 const path = require('path');
-const { from, chunkArray } = require('../../utils');
+const { from, chunkArray, config, getIpByDns } = require('../../utils');
+const { seedNode } = require('../../fixtures');
 
-const env = process.env.NETWORK || 'development';
+const I = actor();
+const configPath = () => path.resolve(__dirname, '../../fixtures/config.json');
 
-const getConfigPath = () => {
-  let configPath;
-  if (env === 'development') {
-    configPath = '../../fixtures/config.json';
-  } else {
-    configPath = `../../fixtures/${env}/config.json`;
-  }
-  return path.resolve(__dirname, configPath);
-}
+const splitDelegatesByPeers = (delegates, peers) => {
+	if (peers.length === 0) {
+		output.print(
+			'\n',
+			'***********Please run npm run tools:peers:config to generate peer list*************',
+			'\n'
+		);
+		process.exit(1);
+	}
 
-const enableDisableDelegates = (api, isEnable) => {
-  const enableOrDisable = isEnable ? "enable" : "disable";
+	if (peers.length > 101) {
+		peers.splice(101);
+	}
 
-  try {
-    const configPath = getConfigPath();
-    const configBuffer = fs.readFileSync(configPath);
-    const configContent = JSON.parse(configBuffer);
-    const {
-      nodes,
-      forging: {
-        defaultPassword,
-        delegates,
-      }
-    } = configContent;
+	const chunkSize = Math.ceil(delegates.length / peers.length);
+	const delegateList = chunkArray(delegates, chunkSize);
+	return delegateList;
+};
 
-    if (nodes.length === 0) {
-      output.print('\n', '***********Please run npm run tools:peers:config to add nodes to list*************', '\n');
-      process.exit(1);
-    }
+const updateForgingStatus = async ({
+	ipAddress,
+	delegateList,
+	isEnable,
+	defaultPassword,
+}) => {
+	const api = await I.call();
 
-    const chunkSize = Math.ceil(delegates.length / nodes.length);
-    const delegateList = chunkArray(delegates, chunkSize);
+	return delegateList.map(async delegate => {
+		const params = {
+			forging: isEnable,
+			password: defaultPassword,
+			publicKey: delegate.publicKey,
+		};
 
-    if(nodes.length > 101) {
-      nodes.splice(101);
-    }
+		let res;
+		try {
+			res = await from(api.updateForgingStatus(params, ipAddress));
+			expect(res.error).to.be.null;
+			expect(res.result.data[0].forging).to.deep.equal(isEnable);
+		} catch (err) {
+			output.error(res.error, err);
+		}
+	});
+};
 
-    return nodes.map((ip_address, i) => {
-      output.print(`${delegateList[i].length} delegates ${enableOrDisable}d to on node ===> ${ip_address}`, '\n');
+const enableDisableDelegates = isEnable => {
+	const enableOrDisable = isEnable ? 'enable' : 'disable';
 
-      return delegateList[i].map(async (delegate) => {
-        const params = {
-          "forging": isEnable,
-          "password": defaultPassword,
-          "publicKey": delegate.publicKey,
-        };
+	try {
+		const {
+			peers,
+			forging: { defaultPassword, delegates },
+		} = config;
 
-        output.print(`${enableOrDisable}ing delegate publicKey ===> ${delegate.publicKey} on node ===> ${ip_address}`);
+		const peerDelegateList = splitDelegatesByPeers(delegates, peers);
 
-        const { result, error } = await from(api.updateForgingStatus(params, ip_address));
-        expect(error).to.be.null;
-        expect(result.data[0].forging).to.deep.equal(isEnable);
-      });
-    });
-  } catch (error) {
-    output.error(`Failed to ${enableOrDisable} forging due to error: `, error);
-    process.exit(1);
-  }
-}
+		peers.forEach((ipAddress, i) => {
+			const delegateList = peerDelegateList[i];
 
-const checkIfAllPeersConnected = async (I) => {
-  try {
-    const allPeers = await I.getAllPeers(100, 0);
-    const expectPeerCount = process.env.NODES_PER_REGION * 10 - 1;
+			output.print(
+				`${
+				delegateList.length
+				} delegates ${enableOrDisable}d to on node ===> ${ipAddress}`,
+				'\n'
+			);
 
-    output.print(`Number of peers connected in network: ${allPeers.length}, Expected peers: ${expectPeerCount}`);
+			return updateForgingStatus({
+				ipAddress,
+				delegateList,
+				isEnable,
+				defaultPassword,
+			});
+		});
+	} catch (error) {
+		output.error(`Failed to ${enableOrDisable} forging due to error: `);
+		output.error(error);
+		process.exit(1);
+	}
+};
 
-    while (allPeers.length >= expectPeerCount) {
-      return true;
-    }
-    return await checkIfAllPeersConnected(I);
-  } catch (error) {
-    return error;
-  }
+const checkIfAllPeersConnected = async () => {
+	const allPeers = await I.getAllPeers(100, 0);
+	const expectPeerCount = process.env.NODES_PER_REGION * 10 - 1;
+
+	output.print(
+		`Number of peers connected in network: ${
+		allPeers.length
+		}, Expected peers: ${expectPeerCount}`
+	);
+
+	while (allPeers.length >= expectPeerCount) {
+		return true;
+	}
+	return checkIfAllPeersConnected();
+};
+
+const getConfigContent = () => {
+	const config_path = configPath();
+	const configBuffer = fs.readFileSync(config_path);
+	return JSON.parse(configBuffer);
+};
+
+const updateConfigContent = configContent => {
+	const config_path = configPath();
+	fs.writeFileSync(config_path, JSON.stringify(configContent));
+	output.print(JSON.stringify(configContent.peers, null, '\t'));
+	output.print(`Updated ${configContent.peers.length} peers to config file: ${config_path}`);
+};
+
+const mergePeers = (seedAddress, configContentPeers, allPeers) => {
+	const peers = allPeers.map(p => p.ip);
+	const uniquePeers = new Set([seedAddress, ...configContentPeers, ...peers]);
+	return [...uniquePeers].slice(0, 101).map(p => p);
 };
 
 Feature('Network tools');
 
-Scenario('Peer list @peers_list', async (I) => {
-  try {
-    const allPeers = await I.getAllPeers(100, 0);
-    output.print('Peers config list: ', JSON.stringify(allPeers, null, '\t'));
-  } catch (error) {
-    output.error('Failed to get peers list: ', error);
-    process.exit(1);
-  }
-});
+Scenario('List peers', async () => {
+	try {
+		const allPeers = await I.getAllPeers(100, 0);
+		output.print('Peers config list: ', JSON.stringify(allPeers, null, '\t'));
+	} catch (error) {
+		output.print('Failed to get peers list: ');
+		output.error(error);
+		process.exit(1);
+	}
+})
+	.tag('@peers_list');
 
-Scenario('Add peers to config @peers_config', async (I) => {
-  try {
-    const configPath = getConfigPath();
-    const configBuffer = fs.readFileSync(configPath);
-    const configContent = JSON.parse(configBuffer);
-    const allPeers = await I.getAllPeers(100, 0);
-    const requiredPeers = allPeers.slice(0, 101).map(p => p.ip);
-    const unionNodes = new Set([...configContent.nodes, ...configContent.seed, ...requiredPeers]);
+Scenario('Add seed node to config', async () => {
+	const seedAddress = await getIpByDns(seedNode);
+	const configContent = getConfigContent();
 
-    configContent.nodes.push(...unionNodes);
-    fs.writeFileSync(configPath, JSON.stringify(configContent));
+	configContent.peers = []; // To avoid duplication first remove everything
+	configContent.peers.push(seedAddress);
+	updateConfigContent(configContent);
+})
+	.tag('@seed_node');
 
-    output.print(`Updated ${requiredPeers.length} peers to config file: ${configPath}`, JSON.stringify(requiredPeers, null, '\t'));
-  } catch (error) {
-    output.error('Failed to add peers to config: ', error);
-    process.exit(1);
-  }
-});
+Scenario('Add network peers to config', async () => {
+	try {
+		const allPeers = await I.getAllPeers(100, 0);
+		const configContent = getConfigContent();
+		const seedAddress = await getIpByDns(seedNode);
+		const uniquePeers = mergePeers(seedAddress, configContent.peers, allPeers);
 
-Scenario('Add peers to config @peers_connected', async (I) => {
-  await checkIfAllPeersConnected(I);
-});
+		configContent.peers = []; // To avoid duplication first remove everything
+		configContent.peers.push(...uniquePeers);
+		updateConfigContent(configContent);
+	} catch (error) {
+		output.print('Failed to add peers to config: ');
+		output.error(error);
+		process.exit(1);
+	}
+})
+	.tag('@network_nodes');
 
-Scenario('Enable delegates @delegates_enable', async (I) => {
-  const api = await I.call();
-  enableDisableDelegates(api, true);
-});
+Scenario('Check if peers are connected', async () => {
+	await checkIfAllPeersConnected();
+})
+	.tag('@peers_connected');
 
-Scenario('Disable delegates @delegates_disable', async (I) => {
-  const api = await I.call();
-  enableDisableDelegates(api, false);
-});
+Scenario('Enable delegates', async () => {
+	enableDisableDelegates(true);
+})
+	.tag('@delegates_enable');
+
+Scenario('Disable delegates', async () => {
+	enableDisableDelegates(false);
+})
+	.tag('@delegates_disable');
