@@ -33,7 +33,7 @@ pipeline {
 				}
 			}
 		}
-		stage('Delpoy network') {
+		stage('Deploy network') {
 			steps {
 				retry(5) {
 					ansiColor('xterm') {
