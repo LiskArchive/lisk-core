@@ -92,7 +92,7 @@ lisk_version: ${env.LISK_VERSION}""", importTowerLogs: true, importWorkflowChild
 				templateType: 'workflow',
 				jobTemplate: '60',  // devnet-archive-logs-workflow
 				jobType: 'run',
-				extraVars: 'devnet: ${params.NETWORK}',
+				extraVars: "devnet: ${params.NETWORK}",
 				throwExceptionWhenFail: false,
 				verbose: false
 		}
