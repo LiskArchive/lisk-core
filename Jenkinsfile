@@ -86,6 +86,16 @@ lisk_version: ${env.LISK_VERSION}""", importTowerLogs: true, importWorkflowChild
 		always {
 			allure includeProperties: false, jdk: '', results: [[path: 'output']]
 		}
+		failure {
+			ansibleTower \
+				towerServer: 'tower',
+				templateType: 'workflow',
+				jobTemplate: '60',  // devnet-archive-logs-workflow
+				jobType: 'run',
+				extraVars: 'devnet: ${params.NETWORK}',
+				throwExceptionWhenFail: false,
+				verbose: false
+		}
 		cleanup {
 			ansiColor('xterm') {
 				ansibleTower credential: '',
