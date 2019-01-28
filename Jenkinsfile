@@ -51,8 +51,8 @@ lisk_version: ${env.LISK_VERSION}""", importTowerLogs: true, importWorkflowChild
 				nvm(getNodejsVersion()) {
 					sh '''
 					npm run tools:peers:seed:node
-					npm run tools:peers:connected
 					npm run tools:peers:network:nodes
+					npm run tools:peers:connected
 					npm run tools:delegates:enable
 					'''
 				}
