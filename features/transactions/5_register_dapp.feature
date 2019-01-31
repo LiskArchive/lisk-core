@@ -10,11 +10,14 @@ Feature: Register dApp
     Then dApp "coral reef ICO" should be registered
 
   Scenario: dApp registration from second signature account
+    Given "loki" has a lisk account with balance 100 LSK tokens
     Given "loki" has a account with second signature
     When "loki" uses second signature account to register for dApp "save tiger ICO"
     Then dApp "save tiger ICO" should be registered
 
   Scenario: dApp registration from multisignature account
+    Given "heimdall" has a lisk account with balance 100 LSK tokens
+    Given "odin" has a lisk account with balance 100 LSK tokens
     Given "heimdall" creates a multisignature account with "thor", "odin"
     When "heimdall" uses multi signature account to register for dApp "smart grid ICO"
     When "thor", "odin" send signatures for dApp "smart grid ICO"

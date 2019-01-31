@@ -7,7 +7,7 @@ const {
 	ASGARD_FIXTURE,
 	seedNode,
 } = require('../fixtures');
-const { TO_BEDDOWS, BLOCK_TIME, from, getFixtureUser } = require('../utils');
+const { TO_BEDDOWS, BLOCK_TIME, from } = require('../utils');
 
 const users = {};
 
@@ -446,8 +446,7 @@ class LiskUtil extends Helper {
 		);
 	}
 
-	async checkIfVoteOrUnvoteCasted(votesOrUnvotes, passphrase) {
-		const { address } = getFixtureUser('passphrase', passphrase);
+	async checkIfVoteOrUnvoteCasted(votesOrUnvotes, address) {
 		const { result, error } = await from(this.call().getVoters({ address }));
 
 		expect(error).to.be.null;

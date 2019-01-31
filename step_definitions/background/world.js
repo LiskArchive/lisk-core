@@ -51,7 +51,6 @@ Given(
 	async (userName, balance) => {
 		const { address } = getFixtureUser('username', userName);
 		await I.haveAccountWithBalance(address, balance);
-		await I.waitForBlock();
 	}
 );
 
@@ -61,7 +60,6 @@ Given('{string} has a account with second signature', async userName => {
 		userName
 	);
 	await I.haveAccountWithSecondSignature(address, passphrase, secondPassphrase);
-	await I.waitForBlock();
 });
 
 Given('{string} has a account registered as delegate', async userName => {
@@ -74,7 +72,6 @@ Given('{string} has a account registered as delegate', async userName => {
 		address,
 		passphrase,
 	});
-	await I.waitForBlock();
 });
 
 Given(
@@ -93,7 +90,6 @@ Given(
 		const isExists = await I.checkIfMultisigAccountExists(address, contracts);
 		if (!isExists) {
 			await from(I.registerMultisignature(contracts, params));
-			await I.waitForBlock();
 		}
 	}
 );

@@ -68,7 +68,7 @@ const enableDisableDelegates = isEnable => {
 
 			output.print(
 				`${
-				delegateList.length
+					delegateList.length
 				} delegates ${enableOrDisable}d to on node ===> ${ipAddress}`,
 				'\n'
 			);
@@ -93,7 +93,7 @@ const checkIfAllPeersConnected = async () => {
 
 	output.print(
 		`Number of peers connected in network: ${
-		allPeers.length
+			allPeers.length
 		}, Expected peers: ${expectPeerCount}`
 	);
 
@@ -113,7 +113,9 @@ const updateConfigContent = configContent => {
 	const config_path = configPath();
 	fs.writeFileSync(config_path, JSON.stringify(configContent));
 	output.print(JSON.stringify(configContent.peers, null, '\t'));
-	output.print(`Updated ${configContent.peers.length} peers to config file: ${config_path}`);
+	output.print(
+		`Updated ${configContent.peers.length} peers to config file: ${config_path}`
+	);
 };
 
 const mergePeers = (seedAddress, configContentPeers, allPeers) => {
@@ -133,8 +135,7 @@ Scenario('List peers', async () => {
 		output.error(error);
 		process.exit(1);
 	}
-})
-	.tag('@peers_list');
+}).tag('@peers_list');
 
 Scenario('Add seed node to config', async () => {
 	const seedAddress = await getIpByDns(seedNode);
@@ -143,8 +144,7 @@ Scenario('Add seed node to config', async () => {
 	configContent.peers = []; // To avoid duplication first remove everything
 	configContent.peers.push(seedAddress);
 	updateConfigContent(configContent);
-})
-	.tag('@seed_node');
+}).tag('@seed_node');
 
 Scenario('Add network peers to config', async () => {
 	try {
@@ -161,20 +161,16 @@ Scenario('Add network peers to config', async () => {
 		output.error(error);
 		process.exit(1);
 	}
-})
-	.tag('@network_nodes');
+}).tag('@network_nodes');
 
 Scenario('Check if peers are connected', async () => {
 	await checkIfAllPeersConnected();
-})
-	.tag('@peers_connected');
+}).tag('@peers_connected');
 
 Scenario('Enable delegates', async () => {
 	enableDisableDelegates(true);
-})
-	.tag('@delegates_enable');
+}).tag('@delegates_enable');
 
 Scenario('Disable delegates', async () => {
 	enableDisableDelegates(false);
-})
-	.tag('@delegates_disable');
+}).tag('@delegates_disable');

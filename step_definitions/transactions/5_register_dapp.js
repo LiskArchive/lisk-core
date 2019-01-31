@@ -85,7 +85,6 @@ When(
 Then('dApp {string} should be registered', async name => {
 	const api = await I.call();
 
-	await I.waitForBlock();
 	const dApp = await from(api.getDapp({ name }));
 
 	expect(dApp.error).to.be.null;

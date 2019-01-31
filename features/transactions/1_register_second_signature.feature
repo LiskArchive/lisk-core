@@ -3,6 +3,7 @@ Feature: Register Second Signature on account
   As a user I want to secure my account with second signature
 
   Scenario: Register second signature
+    Given "loki" has a lisk account with balance 100 LSK tokens
     Given "loki" has a account with second signature
 
   Scenario: Transfer token to another account with second signature enabled
