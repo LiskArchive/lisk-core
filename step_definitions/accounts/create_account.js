@@ -19,10 +19,12 @@ When('I create a lisk account', async () => {
 });
 
 Then(/transfer (\d+)LSK to account from genesis account/, async amount => {
-	await I.transfer({
+	const trx = await I.transfer({
 		recipientId: account.address,
 		amount: TO_BEDDOWS(amount),
 	});
+
+	await I.waitForTransactionToConfirm(trx.id);
 });
 
 Then(/lisk account should be created with balance (\d+)LSK/, async amount => {

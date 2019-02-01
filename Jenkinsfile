@@ -68,10 +68,12 @@ lisk_version: ${env.LISK_VERSION}""",
 		}
 		stage('Test Scenarios') {
 			steps {
-				timestamps {
-					nvm(getNodejsVersion()) {
-						ansiColor('xterm') {
-							sh 'npm run features || true'
+				retry(2) {
+					timestamps {
+						nvm(getNodejsVersion()) {
+							ansiColor('xterm') {
+								sh 'npm run features || true'
+							}
 						}
 					}
 				}

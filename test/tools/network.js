@@ -46,8 +46,19 @@ const updateForgingStatus = async ({
 			res = await from(api.updateForgingStatus(params, ipAddress));
 			expect(res.error).to.be.null;
 			expect(res.result.data[0].forging).to.deep.equal(isEnable);
+			output.print(
+				`Delegate with publicKey: ${
+					delegate.publicKey
+				}, forging: ${isEnable} on node: ${ipAddress}`
+			);
 		} catch (err) {
-			output.error(res.error, err);
+			output.error(res.error);
+			output.error(err);
+			output.print(
+				`Failed to set forging: ${isEnable} for delegate with publicKey: ${
+					delegate.publicKey
+				}, on node: ${ipAddress}`
+			);
 		}
 	});
 };
@@ -121,7 +132,7 @@ const updateConfigContent = configContent => {
 const mergePeers = (seedAddress, configContentPeers, allPeers) => {
 	const peers = allPeers.map(p => p.ip);
 	const uniquePeers = new Set([seedAddress, ...configContentPeers, ...peers]);
-	return [...uniquePeers].slice(0, 101).map(p => p);
+	return [...uniquePeers].slice(0, 101).filter(p => p);
 };
 
 Feature('Network tools');

@@ -11,6 +11,7 @@ Feature: Node transaction pool
 
 	Scenario: Unsigned transactions
 		Given "heimdall" has a lisk account with balance 100 LSK tokens
+		And "heimdall" creates a multisignature account with "thor", "odin"
 		When "heimdall" sends 1 LSK token to a random account
 		Then I should get list of transactions in "unsigned" queue
 		When "thor" and "odin" sends the required signature
