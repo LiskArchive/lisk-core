@@ -107,6 +107,7 @@ Scenario('Create delegates', async () => {
 	const NUMBER_OF_BLOCKS = Math.ceil(
 		getAllTransactionCount() / utils.TRS_PER_BLOCK
 	);
+
 	await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
 
 	const trxs = getAllTransactions();
