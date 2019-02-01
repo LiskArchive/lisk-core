@@ -33,15 +33,23 @@ pipeline {
 				}
 			}
 		}
-		stage('Delpoy network') {
+		stage('Deploy network') {
 			steps {
 				retry(5) {
 					ansiColor('xterm') {
-						ansibleTower credential: '', extraVars: """NEWRELIC_ENABLED: '${params.NEWRELIC_ENABLED}'
+						ansibleTower \
+							towerServer: 'tower2',
+							templateType: 'job',
+							jobTemplate: '14',  // devnet-deploy
+							jobType: 'run',
+							extraVars: """NEWRELIC_ENABLED: '${params.NEWRELIC_ENABLED}'
 devnet: ${params.NETWORK}
 do_nodes_per_region: ${params.NODES_PER_REGION}
 jenkins_ci: 'yes'
-lisk_version: ${env.LISK_VERSION}""", importTowerLogs: true, importWorkflowChildLogs: false, inventory: '', jobTags: '', jobTemplate: '46', jobType: 'run', limit: '', removeColor: false, skipJobTags: '', templateType: 'job', throwExceptionWhenFail: true, towerServer: 'tower', verbose: false
+lisk_version: ${env.LISK_VERSION}""",
+							importTowerLogs: true,
+							throwExceptionWhenFail: true,
+							verbose: false
 					}
 				}
 			}
@@ -51,8 +59,8 @@ lisk_version: ${env.LISK_VERSION}""", importTowerLogs: true, importWorkflowChild
 				nvm(getNodejsVersion()) {
 					sh '''
 					npm run tools:peers:seed:node
-					npm run tools:peers:connected
 					npm run tools:peers:network:nodes
+					npm run tools:peers:connected
 					npm run tools:delegates:enable
 					'''
 				}
@@ -86,24 +94,25 @@ lisk_version: ${env.LISK_VERSION}""", importTowerLogs: true, importWorkflowChild
 		always {
 			allure includeProperties: false, jdk: '', results: [[path: 'output']]
 		}
+		failure {
+			ansibleTower \
+				towerServer: 'tower2',
+				templateType: 'job',
+				jobTemplate: '16',  // devnet-archive-logs
+				jobType: 'run',
+				extraVars: "devnet: ${params.NETWORK}",
+				throwExceptionWhenFail: false,
+				verbose: false
+		}
 		cleanup {
-			ansiColor('xterm') {
-				ansibleTower credential: '',
-					extraVars: "do_tag: ${params.NETWORK}_node",
-					importTowerLogs: true,
-					importWorkflowChildLogs: false,
-					inventory: '',
-					jobTags: '',
-					jobTemplate: '47',
-					jobType: 'run',
-					limit: '',
-					removeColor: false,
-					skipJobTags: '',
-					templateType: 'job',
-					throwExceptionWhenFail: true,
-					towerServer: 'tower',
-					verbose: false
-			}
+			ansibleTower \
+				towerServer: 'tower2',
+				templateType: 'job',
+				jobTemplate: '15',  // do-destroy-tag
+				jobType: 'run',
+				extraVars: "do_tag: ${params.NETWORK}_node",
+				throwExceptionWhenFail: false,
+				verbose: false
 		}
 	}
 }
