@@ -113,11 +113,14 @@ class LiskUtil extends Helper {
 		);
 
 		if (height >= expectedHeight) {
+			// Remove the buffer time when network is stable
+			if (unconfirmed + unprocessed >= 0) {
+				await this.wait(BLOCK_TIME);
+			}
 			return height;
 		}
-		// Remove the buffer time when network is stable
-		const BUFFER_TIME = 2000;
-		await this.wait(BLOCK_TIME + BUFFER_TIME);
+
+		await this.wait(BLOCK_TIME);
 		await this.waitUntilBlock(expectedHeight);
 		return true;
 	}

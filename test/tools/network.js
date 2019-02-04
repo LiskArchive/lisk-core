@@ -111,6 +111,7 @@ const checkIfAllPeersConnected = async () => {
 	while (allPeers.length >= expectPeerCount) {
 		return true;
 	}
+	await I.wait(5000);
 	return checkIfAllPeersConnected();
 };
 
