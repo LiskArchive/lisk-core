@@ -60,7 +60,7 @@ class ValidateHelper extends Helper {
 	}
 
 	async haveAccountWithSecondSignature(address, passphrase, secondPassphrase) {
-		const account = await this.haveAccountWithBalance(address, 100);
+		const account = await this.haveAccount({ address });
 
 		if (account && account.secondPublicKey) {
 			expect(account.secondPublicKey)
@@ -68,13 +68,12 @@ class ValidateHelper extends Helper {
 				.to.have.lengthOf(64);
 		} else {
 			await liskUtil.registerSecondPassphrase(passphrase, secondPassphrase);
-			await liskUtil.waitForBlock();
 		}
 		return account;
 	}
 
 	async haveAccountRegisteredAsDelegate(params) {
-		const account = await this.haveAccountWithBalance(params.address, 100);
+		const account = await this.haveAccount({ address: params.address });
 
 		if (account && account.delegate) {
 			this.expectResponseToBeValid(account.delegate, 'Delegate');
@@ -83,7 +82,6 @@ class ValidateHelper extends Helper {
 				delete params.secondPassphrase;
 			}
 			await liskUtil.registerAsDelegate(params);
-			await liskUtil.waitForBlock();
 		}
 		return account;
 	}

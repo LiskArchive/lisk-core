@@ -46,8 +46,19 @@ const updateForgingStatus = async ({
 			res = await from(api.updateForgingStatus(params, ipAddress));
 			expect(res.error).to.be.null;
 			expect(res.result.data[0].forging).to.deep.equal(isEnable);
+			output.print(
+				`Delegate with publicKey: ${
+					delegate.publicKey
+				}, forging: ${isEnable} on node: ${ipAddress}`
+			);
 		} catch (err) {
-			output.error(res.error, err);
+			output.error(res.error);
+			output.error(err);
+			output.print(
+				`Failed to set forging: ${isEnable} for delegate with publicKey: ${
+					delegate.publicKey
+				}, on node: ${ipAddress}`
+			);
 		}
 	});
 };
@@ -68,7 +79,7 @@ const enableDisableDelegates = isEnable => {
 
 			output.print(
 				`${
-				delegateList.length
+					delegateList.length
 				} delegates ${enableOrDisable}d to on node ===> ${ipAddress}`,
 				'\n'
 			);
@@ -93,13 +104,14 @@ const checkIfAllPeersConnected = async () => {
 
 	output.print(
 		`Number of peers connected in network: ${
-		allPeers.length
+			allPeers.length
 		}, Expected peers: ${expectPeerCount}`
 	);
 
 	while (allPeers.length >= expectPeerCount) {
 		return true;
 	}
+	await I.wait(5000);
 	return checkIfAllPeersConnected();
 };
 
@@ -113,13 +125,15 @@ const updateConfigContent = configContent => {
 	const config_path = configPath();
 	fs.writeFileSync(config_path, JSON.stringify(configContent));
 	output.print(JSON.stringify(configContent.peers, null, '\t'));
-	output.print(`Updated ${configContent.peers.length} peers to config file: ${config_path}`);
+	output.print(
+		`Updated ${configContent.peers.length} peers to config file: ${config_path}`
+	);
 };
 
 const mergePeers = (seedAddress, configContentPeers, allPeers) => {
 	const peers = allPeers.map(p => p.ip);
 	const uniquePeers = new Set([seedAddress, ...configContentPeers, ...peers]);
-	return [...uniquePeers].slice(0, 101).map(p => p);
+	return [...uniquePeers].slice(0, 101).filter(p => p);
 };
 
 Feature('Network tools');
@@ -133,8 +147,7 @@ Scenario('List peers', async () => {
 		output.error(error);
 		process.exit(1);
 	}
-})
-	.tag('@peers_list');
+}).tag('@peers_list');
 
 Scenario('Add seed node to config', async () => {
 	const seedAddress = await getIpByDns(seedNode);
@@ -143,8 +156,7 @@ Scenario('Add seed node to config', async () => {
 	configContent.peers = []; // To avoid duplication first remove everything
 	configContent.peers.push(seedAddress);
 	updateConfigContent(configContent);
-})
-	.tag('@seed_node');
+}).tag('@seed_node');
 
 Scenario('Add network peers to config', async () => {
 	try {
@@ -161,20 +173,16 @@ Scenario('Add network peers to config', async () => {
 		output.error(error);
 		process.exit(1);
 	}
-})
-	.tag('@network_nodes');
+}).tag('@network_nodes');
 
 Scenario('Check if peers are connected', async () => {
 	await checkIfAllPeersConnected();
-})
-	.tag('@peers_connected');
+}).tag('@peers_connected');
 
 Scenario('Enable delegates', async () => {
 	enableDisableDelegates(true);
-})
-	.tag('@delegates_enable');
+}).tag('@delegates_enable');
 
 Scenario('Disable delegates', async () => {
 	enableDisableDelegates(false);
-})
-	.tag('@delegates_disable');
+}).tag('@delegates_disable');

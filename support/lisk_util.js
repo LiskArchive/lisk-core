@@ -7,7 +7,7 @@ const {
 	ASGARD_FIXTURE,
 	seedNode,
 } = require('../fixtures');
-const { TO_BEDDOWS, BLOCK_TIME, from, getFixtureUser } = require('../utils');
+const { TO_BEDDOWS, BLOCK_TIME, from } = require('../utils');
 
 const users = {};
 
@@ -113,11 +113,14 @@ class LiskUtil extends Helper {
 		);
 
 		if (height >= expectedHeight) {
+			// Remove the buffer time when network is stable
+			if (unconfirmed + unprocessed >= 0) {
+				await this.wait(BLOCK_TIME);
+			}
 			return height;
 		}
-		// Remove the buffer time when network is stable
-		const BUFFER_TIME = 2000;
-		await this.wait(BLOCK_TIME + BUFFER_TIME);
+
+		await this.wait(BLOCK_TIME);
 		await this.waitUntilBlock(expectedHeight);
 		return true;
 	}
@@ -446,8 +449,7 @@ class LiskUtil extends Helper {
 		);
 	}
 
-	async checkIfVoteOrUnvoteCasted(votesOrUnvotes, passphrase) {
-		const { address } = getFixtureUser('passphrase', passphrase);
+	async checkIfVoteOrUnvoteCasted(votesOrUnvotes, address) {
 		const { result, error } = await from(this.call().getVoters({ address }));
 
 		expect(error).to.be.null;

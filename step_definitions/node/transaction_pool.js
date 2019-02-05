@@ -1,5 +1,10 @@
 const elements = require('lisk-elements');
-const { getFixtureUser, from, TO_BEDDOWS } = require('../../utils');
+const {
+	getFixtureUser,
+	from,
+	TO_BEDDOWS,
+	TRS_PER_BLOCK,
+} = require('../../utils');
 
 const I = actor();
 let response;
@@ -41,6 +46,9 @@ Then(
 		response = await from(api.getTransactionsByState(state2));
 		expect(response.error).to.be.null;
 		await I.expectResponseToBeValid(response.result, 'TransactionsResponse');
+
+		const pendingTrxCount = await I.getPendingTransactionCount();
+		await I.waitForBlock(Math.ceil(pendingTrxCount / TRS_PER_BLOCK));
 	}
 );
 
@@ -77,7 +85,6 @@ When(
 
 		signatures = await I.createSignatures(contracts, multisignatureTrx);
 
-		await I.wait(10000);
 		await Promise.all(signatures.map(s => I.broadcastAndValidateSignature(s)));
 		await I.waitForTransactionToConfirm(multisignatureTrx.id);
 	}

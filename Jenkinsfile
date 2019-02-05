@@ -68,10 +68,12 @@ lisk_version: ${env.LISK_VERSION}""",
 		}
 		stage('Test Scenarios') {
 			steps {
-				timestamps {
-					nvm(getNodejsVersion()) {
-						ansiColor('xterm') {
-							sh 'npm run features || true'
+				retry(2) {
+					timestamps {
+						nvm(getNodejsVersion()) {
+							ansiColor('xterm') {
+								sh 'npm run features || true'
+							}
 						}
 					}
 				}
@@ -108,7 +110,7 @@ lisk_version: ${env.LISK_VERSION}""",
 			ansibleTower \
 				towerServer: 'tower2',
 				templateType: 'job',
-				jobTemplate: '13',  // do-destroy-tag
+				jobTemplate: '15',  // do-destroy-tag
 				jobType: 'run',
 				extraVars: "do_tag: ${params.NETWORK}_node",
 				throwExceptionWhenFail: false,
