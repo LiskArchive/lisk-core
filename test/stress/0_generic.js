@@ -14,7 +14,7 @@ const I = actor();
 const contractsByAddress = {};
 const STRESS_COUNT = parseInt(process.env.STRESS_COUNT) || 25;
 const NUMBER_OF_BLOCKS = Math.ceil(STRESS_COUNT / TRS_PER_BLOCK);
-const EXTRA_LIMIT = NUMBER_OF_BLOCKS + NUMBER_OF_BLOCKS * 0.25;
+const EXTRA_LIMIT = Math.ceil(NUMBER_OF_BLOCKS + NUMBER_OF_BLOCKS * 0.15);
 
 const accounts = createAccounts(STRESS_COUNT);
 
@@ -60,7 +60,7 @@ Scenario('Second passphrase on an account', async () => {
 		})
 	);
 
-	await I.waitForBlock(NUMBER_OF_BLOCKS + 5);
+	await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
 
 	await Promise.all(
 		accounts.map(async a => {
@@ -97,7 +97,7 @@ Scenario('Delegate Registration', async () => {
 		})
 	);
 
-	await I.waitForBlock(NUMBER_OF_BLOCKS + 5);
+	await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
 
 	await Promise.all(
 		accounts.map(async a => {
@@ -131,7 +131,7 @@ Scenario('Cast vote', async () => {
 		)
 	);
 
-	await I.waitForBlock(NUMBER_OF_BLOCKS + 5);
+	await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
 
 	await Promise.all(
 		accounts.map(async a => {

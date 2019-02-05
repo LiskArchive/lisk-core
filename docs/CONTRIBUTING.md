@@ -38,13 +38,13 @@ carefully before committing your code to one of the repositories.
 Lisk is an open-source decentralized project, there are many ways and platforms
 to get help. These are some of them:
 
-* [Discuss and Ask on Reddit](https://www.reddit.com/r/Lisk/)
-* [Lisk FAQ](https://docs.lisk.io/docs/faq)
+- [Discuss and Ask on Reddit](https://www.reddit.com/r/Lisk/)
+- [Lisk FAQ](https://docs.lisk.io/docs/faq)
 
 If you prefer to chat with LiskHQ and other developers directly:
 
-* [Join the LiskHQ Gitter](https://gitter.im/LiskHQ/lisk)
-* Even though Gitter is a chat service, sometimes it takes several hours for
+- [Join the LiskHQ Gitter](https://gitter.im/LiskHQ/lisk)
+- Even though Gitter is a chat service, sometimes it takes several hours for
   community members to respond &mdash; please be patient!
 
 ## How Can I Contribute?
@@ -117,11 +117,11 @@ helps us resolve issues faster.
 
 #### Before Submitting A Bug Report
 
-* **Check the [FAQs](https://docs.lisk.io/docs/faq)** for a list of common
+- **Check the [FAQs](https://docs.lisk.io/docs/faq)** for a list of common
   questions and problems.
-* **Determine
+- **Determine
   [which repository the problem should be reported in](https://github.com/LiskHQ)**.
-* **Perform a
+- **Perform a
   [cursory search](https://github.com/search?utf8=%E2%9C%93&q=+is%3Aissue+org%3ALiskHQ&type=)**
   to see if the problem has already been reported. If it has **and the issue is
   still open**, add a comment to the existing issue instead of opening a new
@@ -137,38 +137,38 @@ information by filling in [the template](ISSUE_TEMPLATE.md).
 Explain the problem and include additional details to help maintainers reproduce
 the problem:
 
-* **Use a clear and descriptive title** for the issue to identify the problem.
-* **Describe the exact steps which reproduce the problem** in as many details as
+- **Use a clear and descriptive title** for the issue to identify the problem.
+- **Describe the exact steps which reproduce the problem** in as many details as
   possible. When listing steps, **don’t just say what you did, but explain how
   you did it**. **Make sure to erase sensitive information from the
   configuration or details you are passing - NEVER SHARE YOUR SECRET PASSPHRASES
   OR PRIVATE KEYS**.
-* **Provide specific examples to demonstrate the steps**. Include links to files
+- **Provide specific examples to demonstrate the steps**. Include links to files
   or GitHub projects, or copy/pasteable snippets, which you use in those
   examples. If you’re providing snippets in the issue, use
   [Markdown code blocks](https://help.github.com/articles/markdown-basics/#multiple-lines).
-* **Describe the behavior you observed after following the steps** and point out
+- **Describe the behavior you observed after following the steps** and point out
   what exactly is the problem with that behavior.
-* **Explain which behavior you expected to see instead and why.**
-* **Include screenshots and animated GIFs** which show you following the
+- **Explain which behavior you expected to see instead and why.**
+- **Include screenshots and animated GIFs** which show you following the
   described steps and clearly demonstrate the problem. You can use
   [this tool](http://www.cockos.com/licecap/) to record GIFs on macOS and
   Windows, and [this tool](https://github.com/colinkeenan/silentcast) or
   [this tool](https://github.com/GNOME/byzanz) on Linux.
-* **If the problem wasn’t triggered by a specific action**, describe what you
+- **If the problem wasn’t triggered by a specific action**, describe what you
   were doing before the problem happened and share more information using the
   guidelines below.
 
 Provide more context by answering these questions:
 
-* **Did the problem start happening recently** (e.g. after updating to a new
+- **Did the problem start happening recently** (e.g. after updating to a new
   version of Lisk Core Qa External, Lisk or any other repository) or was this always a
   problem?
-* If the problem started happening recently, **can you reproduce the problem in
+- If the problem started happening recently, **can you reproduce the problem in
   an older version of Lisk Core Qa External?** What’s the most recent version in which
   the problem doesn’t happen? You can download older versions of Lisk Core Qa External
   from [the releases page](https://github.com/LiskHQ/lisk-core-qa-external).
-* **Can you reliably reproduce the issue?** If not, provide details about how
+- **Can you reliably reproduce the issue?** If not, provide details about how
   often the problem happens and under which conditions it normally happens.
 
 ### Suggesting Enhancements
@@ -191,30 +191,30 @@ determined [which repository](https://github.com/LiskHQ) your enhancement
 suggestion is related to, create an issue on that repository and provide the
 following information:
 
-* **Use a clear and descriptive title** for the issue to identify the
+- **Use a clear and descriptive title** for the issue to identify the
   suggestion.
-* **Provide a step-by-step description of the suggested enhancement** in as many
+- **Provide a step-by-step description of the suggested enhancement** in as many
   details as possible.
-* **Provide specific examples to demonstrate the steps**. Include copy/pasteable
+- **Provide specific examples to demonstrate the steps**. Include copy/pasteable
   snippets which you use in those examples, as
   [Markdown code blocks](https://help.github.com/articles/markdown-basics/#multiple-lines).
-* **Describe the current behavior** and **explain which behavior you expected to
+- **Describe the current behavior** and **explain which behavior you expected to
   see instead** and why.
-* **Include screenshots and animated GIFs** which help you demonstrate the steps
+- **Include screenshots and animated GIFs** which help you demonstrate the steps
   or point out the part of Lisk Core Qa External which the suggestion is related to. You
   can use [this tool](http://www.cockos.com/licecap/) to record GIFs on macOS
   and Windows, and [this tool](https://github.com/colinkeenan/silentcast) or
   [this tool](https://github.com/GNOME/byzanz) on Linux.
-* **Specify the name and version of the OS you’re using.**
+- **Specify the name and version of the OS you’re using.**
 
 ## Styleguides
 
 ### Git Commit Messages
 
-* Use the present tense ("Add feature" not "Added feature")
-* Use the imperative mood ("Move cursor to..." not "Moves cursor to...")
-* Limit the first line to 72 characters or less
-* Reference issues and pull requests liberally after the first line
+- Use the present tense ("Add feature" not "Added feature")
+- Use the imperative mood ("Move cursor to..." not "Moves cursor to...")
+- Limit the first line to 72 characters or less
+- Reference issues and pull requests liberally after the first line
 
 ### JavaScript Styleguide
 

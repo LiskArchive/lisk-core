@@ -24,10 +24,10 @@ class API {
 
 	getClientByAddress(ipAddress) {
 		if (ipAddress) {
-			const clientList = this.clients.filter(client => client.ip === ipAddress)[0];
-			return clientList
-				? clientList.client
-				: this.clients[0].client;
+			const clientList = this.clients.filter(
+				client => client.ip === ipAddress
+			)[0];
+			return clientList ? clientList.client : this.clients[0].client;
 		}
 		// TODO: until the network is stablized and
 		// broadcasting works as expected we have to use seednode
@@ -87,7 +87,9 @@ class API {
 			const client = this.getClientByAddress(ipAddress);
 			return client.node.getTransactions(state, params);
 		} catch (error) {
-			output.print('API.getTransactionsByState: Error while processing request');
+			output.print(
+				'API.getTransactionsByState: Error while processing request'
+			);
 			output.error(error);
 			await this.getTransactionsByState(state, params, ipAddress);
 		}
@@ -123,7 +125,9 @@ class API {
 			const client = this.getClientByAddress(ipAddress);
 			return client.accounts.getMultisignatureGroups(address, params);
 		} catch (error) {
-			output.print('API.getMultisignatureGroups: Error while processing request');
+			output.print(
+				'API.getMultisignatureGroups: Error while processing request'
+			);
 			output.error(error);
 			await this.getMultisignatureGroups(address, (params = {}), ipAddress);
 		}
@@ -135,7 +139,9 @@ class API {
 			const client = this.getClientByAddress(ipAddress);
 			return client.accounts.getMultisignatureMemberships(address, params);
 		} catch (error) {
-			output.print('API.getMultisignatureMemberships: Error while processing request');
+			output.print(
+				'API.getMultisignatureMemberships: Error while processing request'
+			);
 			output.error(error);
 			await this.getMultisignatureMemberships(address, params, ipAddress);
 		}

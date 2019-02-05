@@ -3,11 +3,11 @@ const { getFixtureUser, from, TRS_PER_BLOCK } = require('../../utils');
 const I = actor();
 
 When('{string} cast vote for a delegate {string}', async (sender, receiver) => {
-	const { publicKey } = getFixtureUser('username', receiver);
+	const { address, publicKey } = getFixtureUser('username', receiver);
 	const { passphrase } = getFixtureUser('username', sender);
 	const votes = [publicKey];
 
-	const isVoted = await I.checkIfVoteOrUnvoteCasted(votes, passphrase);
+	const isVoted = await I.checkIfVoteOrUnvoteCasted(votes, address);
 
 	if (isVoted) {
 		return;
@@ -16,10 +16,13 @@ When('{string} cast vote for a delegate {string}', async (sender, receiver) => {
 });
 
 When('{string} cast my vote for himself', async userName => {
-	const { passphrase, publicKey } = getFixtureUser('username', userName);
+	const { passphrase, address, publicKey } = getFixtureUser(
+		'username',
+		userName
+	);
 	const votes = [publicKey];
 
-	const isVoted = await I.checkIfVoteOrUnvoteCasted(votes, passphrase);
+	const isVoted = await I.checkIfVoteOrUnvoteCasted(votes, address);
 
 	if (isVoted) {
 		return;
