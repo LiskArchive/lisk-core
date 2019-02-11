@@ -13,7 +13,7 @@ The quality assurance ensures if the release candidates are
 
 - **Efficient**
 
-  - Stress test are performed agianst the network with every transaction type ensures the network is stable and reliable under heavy load, it also determines the throughput consistancy.
+  - Stress test are performed against the network with every transaction type ensures the network is stable and reliable under heavy load, it also determines the throughput consistency.
 
 - **Improved**
 
@@ -23,7 +23,7 @@ The quality assurance ensures if the release candidates are
 * For every release run through this [checklist](docs/qa_round_template.md).
 
 This document details how to install Lisk Core Qa External from source.
-If you have satisfied the requirements from the Pre-Installation section, you can jumpt directly to the next section [Installation Steps](#installation).
+If you have satisfied the requirements from the Pre-Installation section, you can jump directly to the next section [Installation Steps](#installation).
 
 ## Index
 
