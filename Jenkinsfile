@@ -42,7 +42,7 @@ pipeline {
 							templateType: 'job',
 							jobTemplate: '14',  // devnet-deploy
 							jobType: 'run',
-							extraVars: """NEWRELIC_ENABLED: '${params.NEWRELIC_ENABLED}'
+							extraVars: """newrelic_enabled: '${params.NEWRELIC_ENABLED}'
 devnet: ${params.NETWORK}
 do_nodes_per_region: ${params.NODES_PER_REGION}
 jenkins_ci: 'yes'
