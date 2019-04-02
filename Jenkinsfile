@@ -106,7 +106,7 @@ lisk_version: ${env.LISK_VERSION}""",
 				throwExceptionWhenFail: false,
 				verbose: false
 
-			liskSlackSend('danger', "Build ${build_info} failed (<${env.BUILD_URL}/console|console>, <${env.BUILD_URL}/changes|changes>)", 'lisk-ci-core')
+			liskSlackSend('danger', "Build failed (<${env.BUILD_URL}/console|console>, <${env.BUILD_URL}/changes|changes>)", 'lisk-ci-core')
 		}
 		cleanup {
 			ansibleTower \
