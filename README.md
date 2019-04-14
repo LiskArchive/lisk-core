@@ -552,7 +552,7 @@ name of the network you started. e.g. `lisk-mainnet`, `lisk-testnet`.
 
 ## Contributors
 
-https://github.com/LiskHQ/lisk/graphs/contributors
+https://github.com/LiskHQ/lisk-core/graphs/contributors
 
 ## License
 
