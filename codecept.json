@@ -1,0 +1,52 @@
+{
+	"output": "./output",
+	"helpers": {
+		"LiskUtil": {
+			"require": "./support/lisk_util.js"
+		},
+		"ValidateHelper": {
+			"require": "./support/validate_helper.js"
+		}
+	},
+	"include": {},
+	"mocha": {},
+	"bootstrap": false,
+	"teardown": null,
+	"hooks": [],
+	"gherkin": {
+		"features": "./features/**/*.feature",
+		"steps": [
+			"./step_definitions/background/world.js",
+			"./step_definitions/accounts/create_account.js",
+			"./step_definitions/accounts/list_account.js",
+			"./step_definitions/blocks/list_blocks.js",
+			"./step_definitions/delegates/list_delegates.js",
+			"./step_definitions/node/status.js",
+			"./step_definitions/node/constants.js",
+			"./step_definitions/node/enable_disable_forging.js",
+			"./step_definitions/node/transaction_pool.js",
+			"./step_definitions/peers/list_peers.js",
+			"./step_definitions/transactions/0_transfer.js",
+			"./step_definitions/transactions/1_register_second_signature.js",
+			"./step_definitions/transactions/2_register_delegate.js",
+			"./step_definitions/transactions/3_vote_delegate.js",
+			"./step_definitions/transactions/4_register_multi_signature_account.js",
+			"./step_definitions/transactions/5_register_dapp.js",
+			"./step_definitions/transactions/list_transactions.js",
+			"./step_definitions/votes_voters/list_votes.js",
+			"./step_definitions/votes_voters/list_voters.js"
+		]
+	},
+	"plugins": {
+		"screenshotOnFail": {
+			"enabled": true
+		},
+		"allure": {
+			"enabled": true
+		}
+	},
+	"tests": "test/**/*.js",
+	"timeout": 10000,
+	"require": ["chai/register-expect"],
+	"name": "lisk-core-qa-external"
+}
