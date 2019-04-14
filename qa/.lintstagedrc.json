@@ -1,4 +1,4 @@
 {
-	"*.js": ["prettier --write", "eslint", "git add"],
+	"*.js": ["eslint", "prettier --write", "git add"],
 	"*.{json,md}": ["prettier --write", "git add"]
 }

@@ -1,8 +1,8 @@
-# Contributing to Lisk Core Qa External
+# Contributing to Lisk Core
 
 First off, thanks for taking the time to contribute! :raised_hands:
 
-The following is a set of guidelines for contributing to Lisk Core Qa External, which
+The following is a set of guidelines for contributing to Lisk Core, which
 are hosted in the [LiskHQ Organization](https://github.com/LiskHQ) on GitHub.
 These are mostly guidelines, not rules. Use your best judgment, and feel free to
 propose changes to this document in a pull request.
@@ -10,6 +10,8 @@ propose changes to this document in a pull request.
 #### Table Of Contents
 
 1. [Code of Conduct](#code-of-conduct)
+
+1. [Help! I don’t want to read this whole thing, I just have one question. :mag_right:](#help!-i-dont-want-to-read-this-whole-thing-i-just-have-a-question)
 
 1. [How Can I Contribute?](#how-can-i-contribute)
 
@@ -20,6 +22,7 @@ propose changes to this document in a pull request.
 1. [Styleguides](#styleguides)
    1. [Git Commit Messages](#git-commit-messages)
    1. [JavaScript Styleguide](#javascript-styleguide)
+   1. [Code Documentation Styleguide](#code-documentation-styleguide)
 
 ## Code of Conduct
 
@@ -38,13 +41,13 @@ carefully before committing your code to one of the repositories.
 Lisk is an open-source decentralized project, there are many ways and platforms
 to get help. These are some of them:
 
-- [Discuss and Ask on Reddit](https://www.reddit.com/r/Lisk/)
-- [Lisk FAQ](https://docs.lisk.io/docs/faq)
+* [Discuss and Ask on Reddit](https://www.reddit.com/r/Lisk/)
+* [Lisk FAQ](https://docs.lisk.io/docs/faq)
 
 If you prefer to chat with LiskHQ and other developers directly:
 
-- [Join the LiskHQ Gitter](https://gitter.im/LiskHQ/lisk)
-- Even though Gitter is a chat service, sometimes it takes several hours for
+* [Join the LiskHQ Gitter](https://gitter.im/LiskHQ/lisk)
+* Even though Gitter is a chat service, sometimes it takes several hours for
   community members to respond &mdash; please be patient!
 
 ## How Can I Contribute?
@@ -98,7 +101,7 @@ _Before_ submitting a pull request, please make sure the following is done:
 
 ### Reporting Bugs
 
-This section guides you through submitting a bug report for Lisk Core Qa External.
+This section guides you through submitting a bug report for Lisk Core.
 Following these guidelines helps maintainers and the community understand your
 report :pencil:, reproduce the behavior :computer: :computer:, and find related
 reports :mag_right:.
@@ -117,11 +120,11 @@ helps us resolve issues faster.
 
 #### Before Submitting A Bug Report
 
-- **Check the [FAQs](https://docs.lisk.io/docs/faq)** for a list of common
+* **Check the [FAQs](https://docs.lisk.io/docs/faq)** for a list of common
   questions and problems.
-- **Determine
+* **Determine
   [which repository the problem should be reported in](https://github.com/LiskHQ)**.
-- **Perform a
+* **Perform a
   [cursory search](https://github.com/search?utf8=%E2%9C%93&q=+is%3Aissue+org%3ALiskHQ&type=)**
   to see if the problem has already been reported. If it has **and the issue is
   still open**, add a comment to the existing issue instead of opening a new
@@ -137,44 +140,44 @@ information by filling in [the template](ISSUE_TEMPLATE.md).
 Explain the problem and include additional details to help maintainers reproduce
 the problem:
 
-- **Use a clear and descriptive title** for the issue to identify the problem.
-- **Describe the exact steps which reproduce the problem** in as many details as
+* **Use a clear and descriptive title** for the issue to identify the problem.
+* **Describe the exact steps which reproduce the problem** in as many details as
   possible. When listing steps, **don’t just say what you did, but explain how
   you did it**. **Make sure to erase sensitive information from the
   configuration or details you are passing - NEVER SHARE YOUR SECRET PASSPHRASES
   OR PRIVATE KEYS**.
-- **Provide specific examples to demonstrate the steps**. Include links to files
+* **Provide specific examples to demonstrate the steps**. Include links to files
   or GitHub projects, or copy/pasteable snippets, which you use in those
   examples. If you’re providing snippets in the issue, use
   [Markdown code blocks](https://help.github.com/articles/markdown-basics/#multiple-lines).
-- **Describe the behavior you observed after following the steps** and point out
+* **Describe the behavior you observed after following the steps** and point out
   what exactly is the problem with that behavior.
-- **Explain which behavior you expected to see instead and why.**
-- **Include screenshots and animated GIFs** which show you following the
+* **Explain which behavior you expected to see instead and why.**
+* **Include screenshots and animated GIFs** which show you following the
   described steps and clearly demonstrate the problem. You can use
   [this tool](http://www.cockos.com/licecap/) to record GIFs on macOS and
   Windows, and [this tool](https://github.com/colinkeenan/silentcast) or
   [this tool](https://github.com/GNOME/byzanz) on Linux.
-- **If the problem wasn’t triggered by a specific action**, describe what you
+* **If the problem wasn’t triggered by a specific action**, describe what you
   were doing before the problem happened and share more information using the
   guidelines below.
 
 Provide more context by answering these questions:
 
-- **Did the problem start happening recently** (e.g. after updating to a new
-  version of Lisk Core Qa External, Lisk or any other repository) or was this always a
+* **Did the problem start happening recently** (e.g. after updating to a new
+  version of Lisk Core, Lisk or any other repository) or was this always a
   problem?
-- If the problem started happening recently, **can you reproduce the problem in
-  an older version of Lisk Core Qa External?** What’s the most recent version in which
-  the problem doesn’t happen? You can download older versions of Lisk Core Qa External
-  from [the releases page](https://github.com/LiskHQ/lisk-core-qa-external).
-- **Can you reliably reproduce the issue?** If not, provide details about how
+* If the problem started happening recently, **can you reproduce the problem in
+  an older version of Lisk Core?** What’s the most recent version in which
+  the problem doesn’t happen? You can download older versions of Lisk Core
+  from [the releases page](https://github.com/LiskHQ/Lisk Core/releases).
+* **Can you reliably reproduce the issue?** If not, provide details about how
   often the problem happens and under which conditions it normally happens.
 
 ### Suggesting Enhancements
 
 This section guides you through submitting an enhancement suggestion for
-Lisk Core Qa External, including completely new features and minor improvements to
+Lisk Core, including completely new features and minor improvements to
 existing functionality. Following these guidelines helps maintainers and the
 community understand your suggestion :pencil: and find related suggestions
 :mag_right:.
@@ -191,30 +194,49 @@ determined [which repository](https://github.com/LiskHQ) your enhancement
 suggestion is related to, create an issue on that repository and provide the
 following information:
 
-- **Use a clear and descriptive title** for the issue to identify the
+* **Use a clear and descriptive title** for the issue to identify the
   suggestion.
-- **Provide a step-by-step description of the suggested enhancement** in as many
+* **Provide a step-by-step description of the suggested enhancement** in as many
   details as possible.
-- **Provide specific examples to demonstrate the steps**. Include copy/pasteable
+* **Provide specific examples to demonstrate the steps**. Include copy/pasteable
   snippets which you use in those examples, as
   [Markdown code blocks](https://help.github.com/articles/markdown-basics/#multiple-lines).
-- **Describe the current behavior** and **explain which behavior you expected to
+* **Describe the current behavior** and **explain which behavior you expected to
   see instead** and why.
-- **Include screenshots and animated GIFs** which help you demonstrate the steps
-  or point out the part of Lisk Core Qa External which the suggestion is related to. You
+* **Include screenshots and animated GIFs** which help you demonstrate the steps
+  or point out the part of Lisk Core which the suggestion is related to. You
   can use [this tool](http://www.cockos.com/licecap/) to record GIFs on macOS
   and Windows, and [this tool](https://github.com/colinkeenan/silentcast) or
   [this tool](https://github.com/GNOME/byzanz) on Linux.
-- **Specify the name and version of the OS you’re using.**
+* **Explain why this enhancement would be useful** to most Lisk and
+  Lisk Core users.
+* **Specify which version of Lisk and Lisk Core you’re using.**
+* **Specify the name and version of the OS you’re using.**
 
 ## Styleguides
 
 ### Git Commit Messages
 
-- Use the present tense ("Add feature" not "Added feature")
-- Use the imperative mood ("Move cursor to..." not "Moves cursor to...")
-- Limit the first line to 72 characters or less
-- Reference issues and pull requests liberally after the first line
+* Use the present tense ("Add feature" not "Added feature")
+* Use the imperative mood ("Move cursor to..." not "Moves cursor to...")
+* Limit the first line to 72 characters or less
+* Reference issues and pull requests liberally after the first line
+* Consider starting the commit message with an applicable emoji:
+  * :seedling: `:seedling:` when adding a new feature
+  * :bug: `:bug:` when fixing a bug
+  * :books: `:books:` when adding or updating documentation
+  * :nail_care: `:nail_care:` when making changes to code style (e.g. lint settings)
+  * :recycle: `:recycle:` when refactoring code
+  * :fire: `:fire:` when removing code or files (including dependencies)
+  * :racehorse: `:racehorse:` when improving performance
+  * :white_check_mark: `:white_check_mark:` when adding or updating tests
+  * :construction_worker: `:construction_worker:` when updating the build process
+  * :bowtie: `:bowtie:` when updating CI
+  * :house: `:house:` when performing chores
+  * :new: `:new:` when adding a new dependency
+  * :arrow_up: `:arrow_up:` when upgrading a dependency
+  * :arrow_down: `:arrow_down:` when downgrading a dependency
+  * :back: `:back:` when reverting changes
 
 ### JavaScript Styleguide
 
@@ -223,6 +245,51 @@ On Lisk we are using [Prettier](https://prettier.io/) and
 [Airbnb’s](https://github.com/airbnb/javascript) style settings and expresses
 some opinions not covered by Prettier’s formatting concerns. You can get more
 details here: https://github.com/LiskHQ/eslint-config-lisk-base
+
+### Code Documentation Styleguide
+
+For code documentation, we use [JSDoc](http://usejsdoc.org/).
+With JSDoc you can generate a static HTML documentation site.
+To build the documentation site, run the following command:
+
+```
+npm run docs:build
+```
+
+To host the documentation site (e.g. for easy access via a browser), use the following command:
+
+```
+npm run docs:serve
+```
+
+If you add or change code, please always provide or update the corresponding code documentation.
+
+**Always mandatory:** A general description of what the code is doing.
+If tags follow, leave a blank line between the description and the tags.
+
+**Tags to use:**
+
+| Tag          | When to use                                                                             |
+| ------------ | --------------------------------------------------------------------------------------- |
+| `@class`     | Describes the constructor of a class.                                                   |
+| `@event`     | Describes an event, that the app is listening to.                                       |
+| `@example`   | If convenient, provide an example.                                                      |
+| `@func`      | Only if JSDoc does not recognize the code as a function, but it is one.                 |
+| `@link`      | Adds internal or external inline links.                                                 |
+| `@memberof`  | Describes child-parent hierarchies. Usable for code tagged as `@class` or `@namespace`. |
+| `@module`    | When a module is exported and it is not a `@class`.                                     |
+| `@namespace` | Describes a parent folder or object.                                                    |
+| `@param`     | **Required** for each parameter of a function.                                          |
+| `@private`   | For private functions.                                                                  |
+| `@property`  | Describes the property of an object.                                                    |
+| `@requires`  | Describes the modules required by a class or module.                                    |
+| `@returns`   | **Required** for all functions with an explicit return statement.                       |
+| `@see`       | Adds additional information, e.g. about the parent.                                     |
+| `@throws`    | When an error can be thrown.                                                            |
+| `@todo`      | If there are open todos for the following code.                                         |
+| `@typedef`   | For defining custom types to be used in other JSDoc blocks.                             |
+
+For examples please have a look in the existing code.
 
 ---
 
