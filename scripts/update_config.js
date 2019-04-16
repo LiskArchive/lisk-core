@@ -16,7 +16,8 @@
  * 		node scripts/update_config.js ../lisk-backup/config.json ./config/mainnet/config.json
  *
  * 	Reference:
- * 		A user manual can be found on documentation site under /documentation/lisk-core/upgrade/upgrade-configurations
+ * 		A user manual can be found on documentation site under
+ * 		/documentation/lisk-core/upgrade/upgrade-configurations
  */
 
 const fs = require('fs');
