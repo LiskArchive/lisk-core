@@ -75,9 +75,9 @@ src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image/finished: \
 		src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image/redis
 	touch $@
 
-src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image: ../lisk-$(LISK_VERSION).tgz src/postgresql-$(POSTGRES_VERSION)-$(POSTGRES_ARCH)-binaries.$(POSTGRES_EXT) src/postgresql-$(POSTGRES_VERSION)-$(POSTGRES_ARCH)-binaries.$(POSTGRES_EXT).sha256sum
+src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image: ../lisk-core-$(LISK_VERSION).tgz src/postgresql-$(POSTGRES_VERSION)-$(POSTGRES_ARCH)-binaries.$(POSTGRES_EXT) src/postgresql-$(POSTGRES_VERSION)-$(POSTGRES_ARCH)-binaries.$(POSTGRES_EXT).sha256sum
 	rm -rf src/package
-	tar xfm ../lisk-$(LISK_VERSION).tgz --directory=src
+	tar xfm ../lisk-core-$(LISK_VERSION).tgz --directory=src
 	cd src/ && sha256sum --check postgresql-$(POSTGRES_VERSION)-$(POSTGRES_ARCH)-binaries.$(POSTGRES_EXT).sha256sum
 	tar xfm src/postgresql-$(POSTGRES_VERSION)-$(POSTGRES_ARCH)-binaries.$(POSTGRES_EXT) \
 	  --exclude=doc --exclude=include --exclude="pgAdmin 4*" --exclude=stackbuilder \
@@ -168,11 +168,11 @@ src/node-v$(NODEJS_VERSION)_SHASUMS256.txt:
 src/node-v$(NODEJS_VERSION)_SHASUMS256.txt.sig:
 	$(DOWNLOAD) https://nodejs.org/dist/v$(NODEJS_VERSION)/SHASUMS256.txt.sig --output-document=$@
 
-../lisk-$(LISK_VERSION).tgz: ../npm-shrinkwrap.json src/node-v$(NODEJS_VERSION)-$(NODEJS_ARCH)
+../lisk-core-$(LISK_VERSION).tgz: ../npm-shrinkwrap.json src/node-v$(NODEJS_VERSION)-$(NODEJS_ARCH)
 	cd ../ && PATH="${PWD}/src/node-v$(NODEJS_VERSION)-$(NODEJS_ARCH)/bin:${PATH}" npm pack
 
-src/lisk-$(LISK_VERSION).tgz: ../lisk-$(LISK_VERSION).tgz
-	$(CP) -f ../lisk-$(LISK_VERSION).tgz $@
+src/lisk-core-$(LISK_VERSION).tgz: ../lisk-core-$(LISK_VERSION).tgz
+	$(CP) -f ../lisk-core-$(LISK_VERSION).tgz $@
 
 src/redis-$(REDIS_VERSION)/src/redis-%: src/redis-$(REDIS_VERSION)
 	cd src/redis-$(REDIS_VERSION)/ && make && make check
@@ -200,4 +200,4 @@ clean:
 
 .PHONY: mrproper
 mrproper: clean
-	rm -rf src/* ../npm-shrinkwrap.json ../lisk-$(LISK_VERSION).tgz
+	rm -rf src/* ../npm-shrinkwrap.json ../lisk-core-$(LISK_VERSION).tgz
