@@ -10,6 +10,7 @@ metadata:
     helm.sh/chart: {{ include "lisk-core.chart" . }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  serviceName: "{{ .Release.Name }}-lisk-core"
   {{- if .Values.persistence.enable }}
   volumeClaimTemplates:
     - metadata:
@@ -77,6 +78,14 @@ spec:
               value: "{{ .Values.lisk.httpPort }}"
             - name: LISK_API_PUBLIC
               value: "{{ .Values.lisk.api.public }}"
+            {{- if .Values.redis.enabled }}
+            - name: LISK_CACHE_ENABLED
+              value: "true"
+            - name: LISK_REDIS_HOST
+              value: "localhost"
+            - name: LISK_REDIS_PORT
+              value: "6379"
+            {{- end }}
           command:
             - "/home/lisk/wait-for-it.sh"
             - "-t"
@@ -107,4 +116,12 @@ spec:
               value: {{ .Values.lisk.network }}
             - name: POSTGRES_PASSWORD
               value: {{ .Values.lisk.database.password }}
-
+        {{- if .Values.redis.enabled }}
+        - name: redis
+          image: {{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}
+          imagePullPolicy: {{ .Values.postgresql.image.pullPolicy }}
+        {{- end }}
+      {{- if .Values.affinity }}
+      affinity:
+{{ toYaml .Values.affinity | indent 8}}
+      {{- end }}
