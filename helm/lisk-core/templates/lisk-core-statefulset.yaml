@@ -11,7 +11,7 @@ metadata:
 spec:
   replicas: {{ .Values.replicaCount }}
   serviceName: "{{ .Release.Name }}-lisk-core"
-  {{- if .Values.persistence.enable }}
+  {{- if .Values.postgresql.persistence.enable }}
   volumeClaimTemplates:
     - metadata:
         name: data
@@ -19,7 +19,7 @@ spec:
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
-            storage: {{ .Values.persistence.storage }}
+            storage: {{ .Values.postgresql.persistence.storage }}
   {{- end }}
   updateStrategy:
     type: RollingUpdate
@@ -61,6 +61,8 @@ spec:
       containers:
         - name: lisk
           image: {{ .Values.lisk.image.repository }}:{{ .Values.lisk.image.tag }}
+          resources:
+{{ toYaml .Values.lisk.resources | indent 12 }}
           env:
             - name: LISK_DB_USER
               value: {{ .Values.lisk.database.user }}
@@ -102,6 +104,8 @@ spec:
         - name: database
           image: {{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}
           imagePullPolicy: {{ .Values.postgresql.image.pullPolicy }}
+          resources:
+{{ toYaml .Values.postgresql.resources | indent 12 }}
           volumeMounts:
             - name: initdb
               mountPath: /docker-entrypoint-initdb.d
@@ -120,8 +124,18 @@ spec:
         - name: redis
           image: {{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}
           imagePullPolicy: {{ .Values.postgresql.image.pullPolicy }}
+          resources:
+{{ toYaml .Values.redis.resources | indent 12 }}
         {{- end }}
       {{- if .Values.affinity }}
       affinity:
 {{ toYaml .Values.affinity | indent 8}}
+      {{- end }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8}}
+      {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations:
+{{ toYaml .Values.tolerations | indent 8}}
       {{- end }}

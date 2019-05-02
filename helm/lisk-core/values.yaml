@@ -2,14 +2,9 @@
 replicaCount: 1
 
 # This is for database (postgresql) container and can be expanded
-persistence:
-  enable: true
-  storage: 10Gi
 
 nameOverride: ""
 fullnameOverride: ""
-
-resources: {}
 
 nodeSelector: {}
 
@@ -32,12 +27,29 @@ lisk:
     repository: lisk/core
     tag: 1.6.0
     pullPolicy: IfNotPresent
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "200m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
 
 postgresql:
+  persistence:
+    enable: true
+    storage: 10Gi
   image:
     repository: postgres
     tag: 10-alpine
     pullPolicy: IfNotPresent
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "500m"
+    limits:
+      memory: "1536Mi"
+      cpu: "1000m"
 
 redis:
   enabled: true
@@ -45,3 +57,10 @@ redis:
     repository: redis
     tag: 5-alpine
     pullPolicy: IfNotPresent
+  resources:
+    requests:
+      memory: "8Mi"
+      cpu: "50m"
+    limits:
+      memory: "16Mi"
+      cpu: "100m"
