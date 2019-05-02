@@ -16,8 +16,7 @@
  * 		node scripts/update_config.js ../lisk-backup/config.json ./config/mainnet/config.json
  *
  * 	Reference:
- * 		A user manual can be found on documentation site under
- * 		/documentation/lisk-core/upgrade/upgrade-configurations
+ * 		A user manual can be found on documentation site under /documentation/lisk-core/upgrade/upgrade-configurations
  */
 
 const fs = require('fs');
@@ -25,6 +24,7 @@ const path = require('path');
 const readline = require('readline');
 const _ = require('lodash');
 const program = require('commander');
+const { configurator } = require('lisk-framework');
 const {
 	stringifyEncryptedPassphrase,
 	getPrivateAndPublicKeyFromPassphrase,
@@ -36,7 +36,6 @@ const JSONHistory = require('./json_history');
 const packageJSON = require('../package.json');
 
 const rootPath = path.resolve(path.dirname(__filename), '../../../../../');
-const loadJSONFile = filePath => JSON.parse(fs.readFileSync(filePath), 'utf8');
 const loadJSONFileIfExists = filePath => {
 	if (fs.existsSync(filePath)) {
 		return JSON.parse(fs.readFileSync(filePath), 'utf8');
@@ -79,9 +78,15 @@ if (typeof network === 'undefined') {
 
 // TODO: Default config is not accessible this way right now
 // 	Will be fixed with https://github.com/LiskHQ/lisk/issues/3171
-const defaultConfig = loadJSONFile(
-	path.resolve(rootPath, 'config/default/config.json')
-);
+const appConfig = {
+	app: {
+		version: packageJSON.version,
+		minVersion: packageJSON.lisk.minVersion,
+		protocolVersion: packageJSON.lisk.protocolVersion,
+	},
+};
+configurator.loadConfig(appConfig);
+const defaultConfig = configurator.getConfig();
 
 const networkConfig = loadJSONFileIfExists(
 	path.resolve(rootPath, `config/${network}/config.json`)
@@ -252,7 +257,7 @@ history.version('1.2.0-rc.x', version => {
 	});
 });
 
-history.version('1.6.0-rc.0', version => {
+history.version('2.0.0-rc.0', version => {
 	version.change('add structure for logger component', config =>
 		moveKeys(
 			config,
@@ -287,11 +292,29 @@ history.version('1.6.0-rc.0', version => {
 		config = moveElement(config, 'forging', 'modules.chain.forging');
 		config = moveElement(config, 'syncing', 'modules.chain.syncing');
 		config = moveElement(config, 'loading', 'modules.chain.loading');
+		return config;
+	});
 
-		// Future network module
-		config = moveElement(config, 'peers', 'modules.chain.network');
-		config = moveElement(config, 'wsPort', 'modules.chain.network.wsPort');
-		config = moveElement(config, 'address', 'modules.chain.network.address');
+	version.change('add structure for network module', config => {
+		config = moveElement(config, 'peers.list', 'modules.network.seedPeers');
+		config = moveElement(
+			config,
+			'peers.access.blackList',
+			'modules.network.blacklistedPeers'
+		);
+		config = moveElement(
+			config,
+			'peers.options.timeout',
+			'modules.network.connectTimeout'
+		);
+		config = moveElement(
+			config,
+			'peers.options.wsEngine',
+			'modules.network.wsEngine'
+		);
+		config = moveElement(config, 'wsPort', 'modules.network.wsPort');
+		config = moveElement(config, 'address', 'modules.network.address');
+		delete config.peers;
 		return config;
 	});
 
