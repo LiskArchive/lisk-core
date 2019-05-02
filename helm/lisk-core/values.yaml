@@ -64,3 +64,6 @@ redis:
     limits:
       memory: "16Mi"
       cpu: "100m"
+  config:
+    maxclients: 8
+    tcpbacklog: 128

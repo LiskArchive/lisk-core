@@ -124,6 +124,17 @@ spec:
         - name: redis
           image: {{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}
           imagePullPolicy: {{ .Values.postgresql.image.pullPolicy }}
+          args:
+            - "--maxclients"
+            - "{{ .Values.redis.config.maxclients }}"
+            - "--tcp-backlog"
+            - "{{ .Values.redis.config.tcpbacklog }}"
+            - "--maxmemory-policy"
+            - "allkeys-lru"
+            - "--maxmemory"
+            - "{{ lower .Values.redis.resources.limits.memory |replace "i" "b"}}"
+            - "--save"
+            - ""
           resources:
 {{ toYaml .Values.redis.resources | indent 12 }}
         {{- end }}
