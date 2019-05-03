@@ -39,17 +39,17 @@ fi
 PM2_CONFIG="$PWD/etc/pm2-lisk.json"
 PM2_APP=$( get_lisk_app_name "$PM2_CONFIG" )
 
-LISK_LOGS=$( get_config '.config.components.logger.logFileName' )
+LISK_LOGS=$( get_config '.components.logger.logFileName' )
 
 LOGS_DIR="$PWD/logs"
 
 MINIMAL_DB_SNAPSHOT="$(pwd)/var/db/blockchain.db.gz"
 # Allocates variables for use later, reusable for changing pm2 config.
 config() {
-	DB_NAME=$( get_config '.config.components.storage.database' )
-	DB_PORT=$( get_config '.config.components.storage.port' )
-	DB_USER=$( get_config '.config.components.storage.user' )
-	DB_PASS=$( get_config '.config.components.storage.password' )
+	DB_NAME=$( get_config '.components.storage.database' )
+	DB_PORT=$( get_config '.components.storage.port' )
+	DB_USER=$( get_config '.components.storage.user' )
+	DB_PASS=$( get_config '.components.storage.password' )
 	DB_DATA="$PWD/pgsql/data"
 	DB_LOG_FILE="$LOGS_DIR/pgsql.log"
 	DB_SNAPSHOT="blockchain.db.gz"
@@ -58,9 +58,9 @@ config() {
 	REDIS_CONFIG="$PWD/etc/redis.conf"
 	REDIS_BIN="$PWD/bin/redis-server"
 	REDIS_CLI="$PWD/bin/redis-cli"
-	REDIS_ENABLED=$( get_config '.config.components.cache.enabled' )
-	REDIS_PORT=$( get_config '.config.components.cache.port' )
-	REDIS_PASSWORD=$( get_config '.config.components.cache.password' )
+	REDIS_ENABLED=$( get_config '.components.cache.enabled' )
+	REDIS_PORT=$( get_config '.components.cache.port' )
+	REDIS_PASSWORD=$( get_config '.components.cache.password' )
 	REDIS_PID="$PWD/redis/redis_6380.pid"
 }
 
