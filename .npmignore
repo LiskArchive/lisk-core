@@ -7,8 +7,12 @@ logs/*
 package/
 pids/*
 release/
+tmp/
 tasks/
+src/
 test/
 Jenkins*
 *.sh
 *.tgz
+tsconfig.json
+tslint.json

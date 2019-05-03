@@ -65,9 +65,7 @@ src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image/finished: \
 		src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image/bin/redis-cli \
 		src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image/bin/redis-server \
 		src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image/etc/pm2-lisk.json \
-		src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image/etc/pm2-snapshot.json \
 		src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image/etc/redis.conf \
-		src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image/etc/snapshot.json \
 		src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image/var/db/blockchain.db.gz \
 		| \
 		src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image \
