@@ -10,7 +10,8 @@ metadata:
     helm.sh/chart: {{ include "lisk-core.chart" . }}
 spec:
   replicas: {{ .Values.replicaCount }}
-  {{- if .Values.persistence.enable }}
+  serviceName: "{{ .Release.Name }}-lisk-core"
+  {{- if .Values.postgresql.persistence.enable }}
   volumeClaimTemplates:
     - metadata:
         name: data
@@ -18,7 +19,7 @@ spec:
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
-            storage: {{ .Values.persistence.storage }}
+            storage: {{ .Values.postgresql.persistence.storage }}
   {{- end }}
   updateStrategy:
     type: RollingUpdate
@@ -60,6 +61,8 @@ spec:
       containers:
         - name: lisk
           image: {{ .Values.lisk.image.repository }}:{{ .Values.lisk.image.tag }}
+          resources:
+{{ toYaml .Values.lisk.resources | indent 12 }}
           env:
             - name: LISK_DB_USER
               value: {{ .Values.lisk.database.user }}
@@ -77,6 +80,14 @@ spec:
               value: "{{ .Values.lisk.httpPort }}"
             - name: LISK_API_PUBLIC
               value: "{{ .Values.lisk.api.public }}"
+            {{- if .Values.redis.enabled }}
+            - name: LISK_CACHE_ENABLED
+              value: "true"
+            - name: LISK_REDIS_HOST
+              value: "localhost"
+            - name: LISK_REDIS_PORT
+              value: "6379"
+            {{- end }}
           command:
             - "/home/lisk/wait-for-it.sh"
             - "-t"
@@ -93,6 +104,8 @@ spec:
         - name: database
           image: {{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}
           imagePullPolicy: {{ .Values.postgresql.image.pullPolicy }}
+          resources:
+{{ toYaml .Values.postgresql.resources | indent 12 }}
           volumeMounts:
             - name: initdb
               mountPath: /docker-entrypoint-initdb.d
@@ -107,4 +120,33 @@ spec:
               value: {{ .Values.lisk.network }}
             - name: POSTGRES_PASSWORD
               value: {{ .Values.lisk.database.password }}
-
+        {{- if .Values.redis.enabled }}
+        - name: redis
+          image: {{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}
+          imagePullPolicy: {{ .Values.postgresql.image.pullPolicy }}
+          args:
+            - "--maxclients"
+            - "{{ .Values.redis.config.maxclients }}"
+            - "--tcp-backlog"
+            - "{{ .Values.redis.config.tcpbacklog }}"
+            - "--maxmemory-policy"
+            - "allkeys-lru"
+            - "--maxmemory"
+            - "{{ lower .Values.redis.resources.limits.memory |replace "i" "b"}}"
+            - "--save"
+            - ""
+          resources:
+{{ toYaml .Values.redis.resources | indent 12 }}
+        {{- end }}
+      {{- if .Values.affinity }}
+      affinity:
+{{ toYaml .Values.affinity | indent 8}}
+      {{- end }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8}}
+      {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations:
+{{ toYaml .Values.tolerations | indent 8}}
+      {{- end }}

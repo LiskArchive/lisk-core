@@ -36,3 +36,16 @@ lisk:
 Install with:
 
 `helm install --name lisk-core . -f override.yaml`
+
+### Example with (anti)affinity
+This having this on the values file will create 2 lisk-core replicas, each one running on a different node.
+```
+replicas: 2
+affinity:
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      - topologyKey: "kubernetes.io/hostname"
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/name: lisk-core
+```
