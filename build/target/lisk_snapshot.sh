@@ -59,7 +59,7 @@ bash lisk.sh start_node >/dev/null
 
 # The dump file produced by pg_dump does not contain the statistics used by the optimizer to make query planning decisions.
 #vacuumdb --analyze --full lisk_snapshot
-psql --dbname=lisk_snapshot --command='TRUNCATE peers, mem_accounts2u_delegates, mem_accounts2u_multisignatures;' >/dev/null
+psql --dbname=lisk_snapshot --command='TRUNCATE peers;' >/dev/null
 
 HEIGHT=$( psql --dbname=lisk_snapshot --tuples-only --command='SELECT height FROM blocks ORDER BY height DESC LIMIT 1;' |xargs)
 OUTPUT_FILE="${OUTPUT_DIRECTORY}/${SOURCE_DATABASE}_backup-${HEIGHT}.gz"
