@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # LiskHQ/lisk-scripts/shared.sh
-# Copyright (C) 2017 Lisk Foundation
+# Copyright (C) 2019 Lisk Foundation
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -39,14 +39,8 @@ function get_lisk_custom_config() {
 LISK_CUSTOM_CONFIG=$( get_lisk_custom_config "$LISK_PATH/etc/pm2-lisk.json" )
 
 function get_config() {
-# use first of: custom configuration file, network configuration file or default configuration file
 	local KEY=$1
-	VALUE=$( jq --raw-output "$KEY" "$LISK_CUSTOM_CONFIG" )
-	if [ -z "$VALUE" ] || [ "$VALUE" = "null" ]; then
-		VALUE=$( jq --raw-output "$KEY" "$(pwd)/config/$LISK_NETWORK/config.json" )
-	fi
-	if [ -z "$VALUE" ] || [ "$VALUE" = "null" ]; then
-		VALUE=$( jq --raw-output "$KEY" "$(pwd)/config/default/config.json" )
-	fi
+	# this is slow
+	VALUE=$( node scripts/generate_config.js --config "$LISK_CUSTOM_CONFIG" |jq --raw-output "$KEY" )
 	echo "$VALUE"
 }

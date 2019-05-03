@@ -37,11 +37,9 @@ IFS=$'\n\t'
 cd "$( cd -P -- "$(dirname -- "$0")" && pwd -P )" || exit 2
 # shellcheck source=env.sh
 source "$( pwd )/env.sh"
-# shellcheck source=shared.sh
-source "$( pwd )/shared.sh"
 
 OUTPUT_DIRECTORY="${OUTPUT_DIRECTORY:-$PWD/backups}"
-SOURCE_DATABASE=$( get_config '.db.database' )
+SOURCE_DATABASE=$( node scripts/generate_config.js |jq --raw-output '.config.components.storage.database' )
 
 mkdir -p "$OUTPUT_DIRECTORY"
 
