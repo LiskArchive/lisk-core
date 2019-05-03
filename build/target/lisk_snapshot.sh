@@ -3,7 +3,7 @@ set -euo pipefail
 IFS=$'\n\t'
 #
 # LiskHQ/lisk-scripts/lisk_snaphot.sh
-# Copyright (C) 2017 Lisk Foundation
+# Copyright (C) 2019 Lisk Foundation
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,19 +19,27 @@ IFS=$'\n\t'
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-# It is you responsibility to ensure that this script does not get
+# lisk_snapshot.sh creates a blockchain snapshot by stopping the application,
+# making a copy of its database, cleaning and dumping/gzip'ing it.
+#
+# The output directory can be changed by setting the OUTPUT_DIRECTORY
+# environement variable, for example:
+# ~> OUTPUT_DIRECTORY=/srv/backups ./lisk_snapshot.sh
+#
+# It is your responsibility to ensure that this script does not get
 # started more that once at a time; this can be achieved with e.g.:
 # ~> flock --exclusive --nonblock lisk_snapshot.lock ./lisk_snapshot.sh
-# TODO: delete old snapshots?
+#
+# Periodically deleting old snapshot files is highly recommended;
+# this can be achieved with a command like the following:
+# ~> find backups/ -type f -ctime 14 -delete
 
 cd "$( cd -P -- "$(dirname -- "$0")" && pwd -P )" || exit 2
 # shellcheck source=env.sh
 source "$( pwd )/env.sh"
-# shellcheck source=shared.sh
-source "$( pwd )/shared.sh"
 
-OUTPUT_DIRECTORY="$PWD/backups"
-SOURCE_DATABASE=$( get_config '.db.database' )
+OUTPUT_DIRECTORY="${OUTPUT_DIRECTORY:-$PWD/backups}"
+SOURCE_DATABASE=$( node scripts/generate_config.js |jq --raw-output '.config.components.storage.database' )
 
 mkdir -p "$OUTPUT_DIRECTORY"
 
@@ -51,7 +59,7 @@ bash lisk.sh start_node >/dev/null
 
 # The dump file produced by pg_dump does not contain the statistics used by the optimizer to make query planning decisions.
 #vacuumdb --analyze --full lisk_snapshot
-psql --dbname=lisk_snapshot --command='TRUNCATE peers, mem_accounts2u_delegates, mem_accounts2u_multisignatures;' >/dev/null
+psql --dbname=lisk_snapshot --command='TRUNCATE peers;' >/dev/null
 
 HEIGHT=$( psql --dbname=lisk_snapshot --tuples-only --command='SELECT height FROM blocks ORDER BY height DESC LIMIT 1;' |xargs)
 OUTPUT_FILE="${OUTPUT_DIRECTORY}/${SOURCE_DATABASE}_backup-${HEIGHT}.gz"
