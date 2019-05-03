@@ -86,7 +86,7 @@ const appConfig = {
 	},
 };
 configurator.loadConfig(appConfig);
-const defaultConfig = configurator.getConfig();
+const defaultConfig = configurator.getConfig({}, { failOnInvalidArg: false });
 
 const networkConfig = loadJSONFileIfExists(
 	path.resolve(rootPath, `config/${network}/config.json`)
@@ -434,5 +434,6 @@ history.migrate(
 			console.info('\n\n------------ OUTPUT -------------');
 			console.info(JSON.stringify(customConfig, null, '\t'));
 		}
+		process.exit(0);
 	}
 );
