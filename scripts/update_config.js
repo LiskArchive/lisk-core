@@ -257,7 +257,7 @@ history.version('1.2.0-rc.x', version => {
 	});
 });
 
-history.version('2.0.0-rc.0', version => {
+history.version('2.0.0-alpha.0', version => {
 	version.change('add structure for logger component', config =>
 		moveKeys(
 			config,
