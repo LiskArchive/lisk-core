@@ -21,7 +21,7 @@ const splitDelegatesByPeers = (delegates, peers) => {
 		peers.splice(101);
 	}
 
-	const chunkSize = Math.ceil(delegates.length / peers.length);
+	const chunkSize = Math.floor(delegates.length / peers.length);
 	const delegateList = chunkArray(delegates, chunkSize);
 	return delegateList;
 };
