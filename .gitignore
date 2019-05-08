@@ -47,3 +47,6 @@ config.local.json
 
 # Helm charts dependencies
 helm/**/charts/*tgz
+
+# Build Directory
+dist
