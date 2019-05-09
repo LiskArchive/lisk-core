@@ -18,14 +18,8 @@ If you have satisfied the requirements from the Pre-Installation section, you ca
 
 ## Index
 
-* [Pre-Installation](#pre-installation)
-  * [Create lisk user](#create-new-user-lisk)
-  * [Tool Chain Components](#tool-chain-components)
-  * [Git](#git)
-  * [Node.JS](#nodejs)
-  * [PostgreSQL](#postgresql)
-  * [Redis (optional)](#redis-optional)
 * [Installation](#installation)
+    * [Dependencies](#dependencies)
 * [Managing Lisk](#tool)
 * [Configuring Lisk](#configuring-lisk)
   * [Structure](#structure)
@@ -40,246 +34,24 @@ If you have satisfied the requirements from the Pre-Installation section, you ca
 * [Performance Monitoring](#performance-monitoring)
 * [License](#license)
 
-## Pre-Installation
-
-The next section details the prerequisites to install Lisk Core from source using the different tagged releases.
-
-### System Install
-
-#### Create new user `lisk`
-
-* Ubuntu:
-
-```
-sudo adduser lisk
-```
-
-Note: The lisk user itself does not need any sudo rights to run Lisk Core.
-
-#### Tool chain components
-
-Used for compiling dependencies.
-
-* Ubuntu:
-
-```
-sudo apt-get update
-sudo apt-get install -y python build-essential curl automake autoconf libtool ntp
-```
-
-* MacOS 10.12-10.14 (Sierra/High Sierra/Mojave)::
-
-Make sure that you have both [XCode](https://developer.apple.com/xcode/) and [Homebrew](https://brew.sh/) installed on your machine.
-
-Update homebrew and install dependencies:
-
-```
-brew update
-brew doctor
-brew install curl automake autoconf libtool
-```
-
-### [Git](https://github.com/git/git)
-
-Used for cloning and updating Lisk
-
-* Ubuntu:
-
-```
-sudo apt-get install -y git
-```
-
-* MacOS 10.12-10.14 (Sierra/High Sierra/Mojave)::
-
-```
-brew install git
-```
-
-### [Node.js](https://nodejs.org/)
-
-Node.js serves as the underlying engine for code execution.
-
-Install System-wide via package manager:
-
-* Ubuntu:
-
-```
-curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
-sudo apt-get install -y nodejs
-```
-
-* MacOS 10.12-10.14 (Sierra/High Sierra/Mojave)::
-
-```
-brew install node@10.15.3
-```
-
-#### Check correct version
-
-Especially when installing on Ubuntu, check if you have a compatible node version running:
-
-```
-node -v
-```
-
-Compare with [package.json](https://github.com/LiskHQ/lisk/blob/development/package.json#L19)
-
-Best practice to manage node version is to install a node version manager like `nvm` or `n`.
-
-##### [nvm](https://github.com/creationix/nvm) (recommended)
-
-1. Login as lisk user, that has been created in the first step:
-
-```
-su - lisk
-```
-
-2. Install nvm following these [instructions](https://github.com/creationix/nvm#installation)
-3. Install the correct version of Node.js using nvm:
-
-```
-nvm install 10.15.3
-```
-
-For the following steps, log out from the 'lisk' user again with `CTRL+D`, and continue with your user with sudo rights.
-
-### PostgreSQL:
-
-* Ubuntu:
-
-Firstly, download and install postgreSQL 10:
-
-```
-sudo apt-get purge -y postgres* # remove all already installed postgres versions
-sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-sudo apt install wget ca-certificates
-wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-sudo apt update
-sudo apt install postgresql-10
-```
-
-After installation, you should see the Postgres database cluster, by running
-
-```
-  pg_lsclusters
-```
-
-Drop the existing database cluster, and replace it with a cluster with the locale `en_US.UTF-8`:
-
-```
-  sudo pg_dropcluster --stop 10 main
-  sudo pg_createcluster --locale en_US.UTF-8 --start 10 main
-```
-
-Create a new database user called `lisk` and grant it rights to create databases:
-
-```
-  sudo -u postgres createuser --createdb lisk
-```
-
-Create databases for Testnet and Mainnet:
-
-```
-  createdb -O lisk lisk_test
-  createdb -O lisk lisk_main
-```
-
-Change `'password'` to a secure password of your choice.
-
-```
-sudo -u postgres psql -d lisk_test -c "alter user lisk with password 'password';"
-sudo -u postgres psql -d lisk_main -c "alter user lisk with password 'password';"
-```
-
-* MacOS 10.12-10.14 (Sierra/High Sierra/Mojave)::
-
-```
-brew install postgresql@10
-initdb /usr/local/var/postgres@10 --encoding utf8 --locale=en_US.UTF-8
-brew services start postgresql@10
-createdb lisk_test
-createdb lisk_main
-```
-
-### Redis (optional)
-
-If you do not plan to use the API of your node for some reason, you can skip this step.
-
-Redis is an optional dependency, that caches database queries that need to be done to answer API requests.
-
-It is recommended to install Redis to improve the performance of API responses.
-
-* Ubuntu:
-
-```
-sudo apt-get install redis-server
-```
-
-Start Redis:
-
-```
-service redis start
-```
-
-Stop Redis:
-
-```
-service redis stop
-```
-
-* MacOS 10.12-10.14 (Sierra/High Sierra/Mojave):
-
-```
-brew install redis
-```
-
-Start Redis:
-
-```
-brew services start redis
-```
-
-Stop Redis:
-
-```
-brew services stop redis
-```
-
-**NOTE:** Lisk does not run on the Redis default port of 6379. Instead, it is configured to run on port: 6380. Because of this, for Lisk to run, you have one of two options:
-
-1. **Change the Redis launch configuration**
-
-Update the launch configuration file on your system. Note that there are many ways to do this.
-
-The following is one example:
-
-1. Stop redis-server
-2. Edit the file `redis.conf` and change: `port 6379` to `port 6380`
-   * Ubuntu: `/etc/redis/redis.conf`
-   * MacOS: `/usr/local/etc/redis.conf`
-3. Start redis-server
-
-Now confirm that Redis is running on `port 6380`:
-
-```bash
-redis-cli -p 6380
-> ping
-```
-
-And you should get the result `PONG`.
-To exit the `redis-cli`, type `exit`.
-
-2. **Change the Lisk configuration**
-
-To update the Redis port in the Lisk configuration, check the section [Configuring Lisk](#configuring-lisk)
 
 ## Installation
+### Dependencies
 
+The following dependencies need to be installed in order to run applications created with the Lisk SDK:
+
+| Dependencies     | Version |
+| ---------------- | ------- |
+| NodeJS           | 10.14.3 |
+| PostgreSQL       | 10+     |
+| Redis (optional) | 5+      |
+
+You can find further details on installing these dependencies in our [pre-installation setup guide](https://lisk.io/documentation/lisk-core/setup/source#pre-install).
 Clone the Lisk Core repository using Git and initialize the modules.
 
 ```bash
-git clone https://github.com/LiskHQ/lisk.git
-cd lisk
+git clone https://github.com/LiskHQ/lisk-core.git
+cd lisk-core
 git checkout master
 npm ci
 ```
@@ -402,86 +174,6 @@ createdb lisk_dev
 
 ```
 NODE_ENV=test npm start
-```
-
-### Running Tests
-
-Starting from version `1.6.0`, Lisk Core will be using [Jest](https://jestjs.io) as its main test runner and gradually deprecate [mocha](https://mochajs.org). Since rewriting all existing mocha tests is not feasible at the moment, we are going to have two test runners in our code base:
-
-* Modules (all source code under `framework/src/modules` folder) will be tested using `mocha` and test files should be located under `framework/test/mocha`.
-* Framework (all of the source files but `framework/src/modules`) will be tested using `jest` and test files should be located under `framework/test/jest`.
-* Functional and Network tests suites will be using `mocha` and test files should be located under `framework/test/mocha`.
-
-#### Running Mocha Tests
-
-Tests are run using the following command:
-
-```
-npm run mocha:<testType> -- [testPathPattern] [mochaCliOptions]
-```
-
-* Where **testType** can be one of `unit`, `integration`, `functional:ws`, `functional:get`, `functional:post`, `functional:put`, `functional`, `network` (required).
-* Where **testPathPattern** is a regexp pattern string that is matched against all tests paths before executing the test (optional).
-* Where **mochaCliOptions** can be any of mocha's [`command line options`](https://mochajs.org/#command-line-usage) (optional).
-
-Examples:
-
-```
-# Running network tests
-npm run mocha:network
-npm run mocha:network -- --grep @p2p
-npm run mocha:network -- --grep @propagation
-
-# Running unit tests
-npm run mocha:unit
-npm run mocha:unit -- --grep @slow
-npm run mocha:unit -- --grep @unstable
-### extensive
-npm run mocha:unit -- --grep="@unstable" --invert
-
-# Running Integration tests
-npm run mocha:integration -- --grep @slow
-npm run mocha:integration -- --grep @unstable
-# extensive
-npm run mocha:integration -- --grep="@unstable" --invert
-
-# Running functional tests
-npm run mocha:functional:ws
-npm run mocha:functional:get
-npm run mocha:functional:post
-npm run mocha:functional:put
-```
-
-Individual test files can be run using the following commands:
-
-```bash
-npm run mocha:unit -- <testPathPattern> [mochaCliOptions]
-```
-
-or
-
-```bash
-npm run mocha <filepath> [mochaCliOptions]
-```
-
-or
-
-```bash
-npx mocha <filepath> [mochaCliOptions]
-```
-
-#### Running Jest Tests
-
-```
-npm run jest:<testType>
-```
-
-`testType` can be `unit`|`integration`|`functional`
-
-##### Executing the tests per file:
-
-```
-npm run jest:<testType> -- [testPathPattern] [jestCliOptions]
 ```
 
 ## Utility Scripts
