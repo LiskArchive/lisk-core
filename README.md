@@ -54,6 +54,7 @@ git clone https://github.com/LiskHQ/lisk-core.git
 cd lisk-core
 git checkout master
 npm ci
+npm run build
 ```
 
 ## Managing Lisk
