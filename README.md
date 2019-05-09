@@ -42,9 +42,9 @@ The following dependencies need to be installed in order to run applications cre
 
 | Dependencies     | Version |
 | ---------------- | ------- |
-| NodeJS           | 10.14.3 |
+| NodeJS           | 10.15.3 |
 | PostgreSQL       | 10+     |
-| Redis (optional) | 5+      |
+| Redis (optional) | 4+      |
 
 You can find further details on installing these dependencies in our [pre-installation setup guide](https://lisk.io/documentation/lisk-core/setup/source#pre-install).
 Clone the Lisk Core repository using Git and initialize the modules.
