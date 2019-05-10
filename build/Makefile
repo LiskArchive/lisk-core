@@ -167,6 +167,8 @@ src/node-v$(NODEJS_VERSION)_SHASUMS256.txt.sig:
 	$(DOWNLOAD) https://nodejs.org/dist/v$(NODEJS_VERSION)/SHASUMS256.txt.sig --output-document=$@
 
 ../lisk-core-$(LISK_VERSION).tgz: ../npm-shrinkwrap.json src/node-v$(NODEJS_VERSION)-$(NODEJS_ARCH)
+	cd ../ && PATH="${PWD}/src/node-v$(NODEJS_VERSION)-$(NODEJS_ARCH)/bin:${PATH}" npm ci
+	cd ../ && PATH="${PWD}/src/node-v$(NODEJS_VERSION)-$(NODEJS_ARCH)/bin:${PATH}" npm run build
 	cd ../ && PATH="${PWD}/src/node-v$(NODEJS_VERSION)-$(NODEJS_ARCH)/bin:${PATH}" npm pack
 
 src/lisk-core-$(LISK_VERSION).tgz: ../lisk-core-$(LISK_VERSION).tgz

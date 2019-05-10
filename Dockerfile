@@ -1,6 +1,7 @@
 FROM node:10-alpine AS builder
 
-ENV NODE_ENV=production
+ARG REGISTRY_URL
+ARG REGISTRY_AUTH_TOKEN
 
 RUN apk --no-cache upgrade && \
     apk --no-cache add alpine-sdk python2 libtool autoconf automake
@@ -8,11 +9,16 @@ RUN apk --no-cache upgrade && \
 RUN addgroup -g 1100 lisk && \
     adduser -h /home/lisk -s /bin/bash -u 1100 -G lisk -D lisk
 COPY --chown=lisk:lisk . /home/lisk/lisk/
+RUN if [ -n "$REGISTRY_URL" ]; then \
+      echo -e "registry=$REGISTRY_URL/\n${REGISTRY_URL#*:}/:_authToken=$REGISTRY_AUTH_TOKEN" >/home/lisk/.npmrc; \
+    fi
 
 USER lisk
 WORKDIR /home/lisk/lisk
 
 RUN npm ci && \
+    npm run build
+RUN npm ci --production && \
     git rev-parse HEAD >REVISION && \
     rm -rf .git && \
     date --utc "+%Y-%m-%dT%H:%M:%S.000Z" >.build
