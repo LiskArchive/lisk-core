@@ -1,4 +1,4 @@
-import { configurator } from 'lisk-framework';
+import { configurator } from 'lisk-sdk';
 import path from 'path';
 import { getBuildVersion } from './build';
 import { getLastCommitId } from './git';
