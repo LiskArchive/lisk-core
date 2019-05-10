@@ -1,4 +1,4 @@
-import { Application } from 'lisk-framework';
+import { Application } from 'lisk-sdk';
 import {
 	DappTransaction,
 	InTransferTransaction,
