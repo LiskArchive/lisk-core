@@ -43,6 +43,8 @@ postgresql:
     repository: postgres
     tag: 10-alpine
     pullPolicy: IfNotPresent
+  config:
+    max_connections: 200
   resources:
     requests:
       memory: "512Mi"
