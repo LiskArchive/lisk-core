@@ -33,14 +33,48 @@ fi
 
 # shellcheck source=env.sh
 . "$PWD/env.sh"
-# shellcheck source=shared.sh
-. "$PWD/shared.sh"
 
 PM2_CONFIG="$PWD/etc/pm2-lisk.json"
+
+function get_lisk_app_name() {
+	local PM2_CONFIG=$1
+	PM2_APP="$( jq .apps[0].name -r "$PM2_CONFIG" )"
+	echo "$PM2_APP"
+}
 PM2_APP=$( get_lisk_app_name "$PM2_CONFIG" )
 
-LISK_LOGS=$( get_config '.components.logger.logFileName' )
+function get_lisk_custom_config() {
+	local PM2_CONFIG=$1
+	local REGEXP="-c ([^ ]+)"
+	PM2_APP_ARGS="$( jq .apps[0].args -r "$PM2_CONFIG" )"
+	if [[ "$PM2_APP_ARGS" =~ $REGEXP ]]; then
+		LISK_CUSTOM_CONFIG="${BASH_REMATCH[1]}"
+	else
+		LISK_CUSTOM_CONFIG=/dev/null
+	fi
+	echo "$LISK_CUSTOM_CONFIG"
+}
+LISK_CUSTOM_CONFIG=$( get_lisk_custom_config "$LISK_PATH/etc/pm2-lisk.json" )
 
+function cleanup() {
+	rm -f "$RUNNING_CONFIG"
+}
+RUNNING_CONFIG=$( mktemp --tmpdir="$LISK_PATH" )
+trap cleanup INT QUIT TERM EXIT
+
+function dump_running_config() {
+	node scripts/generate_config.js --config "$LISK_CUSTOM_CONFIG" >"$RUNNING_CONFIG"
+}
+dump_running_config
+
+function get_config() {
+	local KEY=$1
+	VALUE=$( jq --raw-output "$KEY" "$RUNNING_CONFIG" )
+	echo "$VALUE"
+}
+
+
+LISK_LOGS=$( get_config '.components.logger.logFileName' )
 LOGS_DIR="$PWD/logs"
 
 MINIMAL_DB_SNAPSHOT="$(pwd)/var/db/blockchain.db.gz"
@@ -63,8 +97,6 @@ config() {
 	REDIS_PASSWORD=$( get_config '.components.cache.password' )
 	REDIS_PID="$PWD/redis/redis_6380.pid"
 }
-
-# Sets all of the variables
 config
 
 # Setup logging
@@ -346,7 +378,7 @@ check_pid() {
 	if [ -f "$PM2_PID" ]; then
 	read -r PID < "$PM2_PID" 2>&1 > /dev/null
 	fi
-	if [ ! -z "$PID" ]; then
+	if [ -n "$PID" ]; then
 		ps -p "$PID" > /dev/null 2>&1
 		STATUS=$?
 	else
@@ -389,6 +421,7 @@ parse_option() {
 					PM2_CONFIG="$OPTARG"
 					PM2_APP=$( get_lisk_app_name "$PM2_CONFIG" )
 					LISK_CUSTOM_CONFIG=$( get_lisk_custom_config "$PM2_CONFIG" )
+					dump_running_config
 					# Resets all of the variables
 					config
 				else
