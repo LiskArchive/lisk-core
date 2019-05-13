@@ -22,16 +22,13 @@ const getLastCommitIdFromGit = (): string => {
 	let lastCommitId = '';
 	try {
 		// .toString() converts Buffer to String, .trim() removes eol character
-		lastCommitId = childProcess
-			.execSync('git rev-parse HEAD')
-			.toString()
-			.trim();
+		const spawn = childProcess
+			.spawnSync('git', ['rev-parse', 'HEAD']);
+			if (!spawn.stderr.toString().trim()) {
+				lastCommitId = spawn.stdout.toString().trim();
+			}
 	} catch (error) {
-		// tslint:disable-next-line no-console
-		console.log(
-			'When getting git rev-parse HEAD, following error happened',
-			error.toString()
-		);
+		// suppress error
 	}
 
 	return lastCommitId;

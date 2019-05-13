@@ -12,16 +12,14 @@ let buildVersion; // tslint:disable-line no-let
 try {
 	lastCommitId = getLastCommitId();
 } catch (err) {
-	// tslint:disable-next-line no-console
-	console.error('Cannot get last git commit:', err.message);
+	// suppress error
 }
 
 // Try to get the build version
 try {
 	buildVersion = getBuildVersion();
 } catch (err) {
-	// tslint:disable-next-line no-console
-	console.error('Cannot get build version:', err.message);
+	// suppress error
 }
 
 const appSchema = {
