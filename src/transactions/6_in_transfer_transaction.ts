@@ -261,4 +261,16 @@ export class InTransferTransaction extends BaseTransaction {
 
 		return errors;
 	}
+
+	// tslint:disable:next-line: prefer-function-over-method no-any
+	protected assetDbRead(raw: any): object | undefined {
+		if (!raw.in_dappId) {
+			return undefined;
+		}
+		const inTransfer = {
+			dappId: raw.in_dappId,
+		};
+	
+		return { inTransfer };
+	}
 }

@@ -279,4 +279,17 @@ export class OutTransferTransaction extends BaseTransaction {
 
 		return errors;
 	}
+
+	// tslint:disable:next-line: prefer-function-over-method no-any
+	protected assetDbRead(raw: any): object | undefined {
+		if (!raw.ot_dappId) {
+			return undefined;
+		}
+		const outTransfer = {
+			dappId: raw.ot_dappId,
+			transactionId: raw.ot_outTransactionId,
+		};
+	
+		return { outTransfer };
+	}
 }
