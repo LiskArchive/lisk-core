@@ -18,20 +18,14 @@ import childProcess from 'child_process';
 import fs from 'fs';
 
 const getLastCommitIdFromGit = (): string => {
-	// tslint:disable-next-line no-let
-	let lastCommitId = '';
-	try {
-		// .toString() converts Buffer to String, .trim() removes eol character
-		const spawn = childProcess
-			.spawnSync('git', ['rev-parse', 'HEAD']);
-			if (!spawn.stderr.toString().trim()) {
-				lastCommitId = spawn.stdout.toString().trim();
-			}
-	} catch (error) {
-		// suppress error
+	const spawn = childProcess
+		.spawnSync('git', ['rev-parse', 'HEAD']);
+
+	if (!spawn.stderr.toString().trim()) {
+		return spawn.stdout.toString().trim();
 	}
 
-	return lastCommitId;
+	return '';
 };
 
 const getLastCommitIdFromRevisionFile = (): string => {
