@@ -56,7 +56,6 @@ src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image/finished: \
 		src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image/env.sh \
 		src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image/lisk.sh \
 		src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image/lisk_snapshot.sh \
-		src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image/shared.sh \
 		src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image/tune.sh \
 		src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image/bin/jq \
 		src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image/bin/lisk \
@@ -108,8 +107,6 @@ src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image/config.json: | src/lisk-$(LISK_
 
 src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image/env.sh: | src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image
 	( cat target/env.sh; echo "export LISK_NETWORK=$(LISK_NETWORK)" ) |tee $@
-src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image/shared.sh: | src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image
-	$(INSTALL) --mode=0644 target/$(@F) $@
 src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image/%.sh: | src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image
 	$(INSTALL) --mode=0755 target/$(@F) $@
 src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image/etc/%: | src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image/etc
