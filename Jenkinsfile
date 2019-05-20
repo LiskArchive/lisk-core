@@ -15,6 +15,7 @@ pipeline {
 				VERSION=$( jq --raw-output '.version' package.json )
 				SHORT_HASH=$( git rev-parse --short HEAD )
 				echo "$VERSION-$SHORT_HASH" >.lisk_version
+				OUTPUT_FILE="lisk-$( cat .lisk_version )-Linux-x86_64.tar.gz"
 				if s3cmd --quiet info "s3://lisk-releases/lisk-core/$OUTPUT_FILE" 2>/dev/null; then
 				  echo "Build already exists."
 				  exit 1
