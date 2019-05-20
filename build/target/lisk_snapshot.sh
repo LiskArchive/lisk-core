@@ -39,7 +39,7 @@ cd "$( cd -P -- "$(dirname -- "$0")" && pwd -P )" || exit 2
 source "$( pwd )/env.sh"
 
 OUTPUT_DIRECTORY="${OUTPUT_DIRECTORY:-$PWD/backups}"
-SOURCE_DATABASE=$( node scripts/generate_config.js |jq --raw-output '.config.components.storage.database' )
+SOURCE_DATABASE=$( node scripts/generate_config.js |jq --raw-output '.components.storage.database' )
 
 mkdir -p "$OUTPUT_DIRECTORY"
 
