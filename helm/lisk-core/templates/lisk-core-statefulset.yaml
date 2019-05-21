@@ -149,6 +149,20 @@ spec:
               value: {{ .Values.lisk.network }}
             - name: POSTGRES_PASSWORD
               value: {{ .Values.lisk.database.password }}
+        {{- if .Values.postgresql.monitoring.enabled }}
+        - name: postgresql-exporter
+          image: {{ .Values.postgresql.monitoring.image.repository }}:{{ .Values.postgresql.monitoring.image.tag }}
+          env:
+            - name: DATA_SOURCE_USER
+              value: {{ .Values.lisk.database.user }}
+            - name: DATA_SOURCE_URI
+              value: "127.0.0.1:5432/{{ .Values.lisk.network }}?sslmode=disable"
+            - name: DATA_SOURCE_PASS
+              value: {{ .Values.lisk.database.password }}
+          ports:
+            - name: pg-metrics
+              containerPort: 9187
+        {{- end }}
         {{- if .Values.redis.enabled }}
         - name: redis
           image: {{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}
@@ -166,6 +180,18 @@ spec:
             - ""
           resources:
 {{ toYaml .Values.redis.resources | indent 12 }}
+        {{- if .Values.redis.monitoring.enabled }}
+        - name: redis-exporter
+          image: {{ .Values.redis.monitoring.image.repository }}:{{ .Values.redis.monitoring.image.tag }}
+          env:
+            - name: REDIS_ALIAS
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          ports:
+            - name: redis-metrics
+              containerPort: 9121
+        {{- end }}
         {{- end }}
       {{- if .Values.affinity }}
       affinity:
