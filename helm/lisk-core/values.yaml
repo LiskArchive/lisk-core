@@ -43,8 +43,11 @@ postgresql:
     repository: postgres
     tag: 10-alpine
     pullPolicy: IfNotPresent
+  config:
+    max_connections: 200
   resources:
     requests:
+      # Memory should be specified in Mi for postgresql tunables work.
       memory: "512Mi"
       cpu: "500m"
     limits:
