@@ -1,6 +1,6 @@
 {
 	"name": "lisk-core",
-	"version": "2.0.0-alpha.9",
+	"version": "2.0.0-alpha.10",
 	"description": "Lisk blockchain application platform",
 	"author": "Lisk Foundation <admin@lisk.io>, lightcurve GmbH <admin@lightcurve.io>",
 	"license": "GPL-3.0",
@@ -44,7 +44,7 @@
 		"commander": "2.19.0",
 		"deep-diff": "1.0.2",
 		"lisk-commander": "2.2.0-alpha.2",
-		"lisk-sdk": "2.0.0-alpha.8",
+		"lisk-sdk": "2.0.0-alpha.9",
 		"lodash": "4.17.11",
 		"moment": "2.23.0",
 		"pm2": "3.5.0",
