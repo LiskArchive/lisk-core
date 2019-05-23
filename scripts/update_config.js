@@ -312,6 +312,11 @@ history.version('2.0.0-alpha.0', version => {
 			'peers.options.wsEngine',
 			'modules.network.wsEngine'
 		);
+		config = moveElement(
+			config,
+			'modules.chain.broadcasts.broadcastLimit',
+			'modules.network.emitPeerLimit'
+		);
 		config = moveElement(config, 'wsPort', 'modules.network.wsPort');
 		config = moveElement(config, 'address', 'modules.network.address');
 		delete config.peers;
