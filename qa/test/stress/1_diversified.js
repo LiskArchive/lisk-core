@@ -150,17 +150,14 @@ Scenario('Create vote, multi-signature', async () => {
 	.tag('@slow')
 	.tag('@diversified');
 
-Scenario(
-	'Broadcast vote, multi-signature',
-	async () => {
-		const NUMBER_OF_BLOCKS = Math.ceil(
-			getAllTransactionCount() / utils.TRS_PER_BLOCK
-		);
-		await processTransactions();
+Scenario('Broadcast vote, multi-signature', async () => {
+	const NUMBER_OF_BLOCKS = Math.ceil(
+		getAllTransactionCount() / utils.TRS_PER_BLOCK
+	);
+	await processTransactions();
 
-		await I.waitForBlock(NUMBER_OF_BLOCKS);
-	}
-)
+	await I.waitForBlock(NUMBER_OF_BLOCKS);
+})
 	.tag('@slow')
 	.tag('@diversified');
 
