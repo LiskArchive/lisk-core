@@ -2,7 +2,6 @@ const output = require('codeceptjs').output;
 const crypto = require('crypto');
 const {
 	TO_BEDDOWS,
-	getAddressFromPublicKey,
 	getKeys,
 	generateMnemonic,
 	createAccounts,
@@ -183,60 +182,6 @@ Scenario('Register Multi-signature account', async () => {
 				account,
 				contractsByAddress[a.address]
 			);
-		})
-	);
-})
-	.tag('@slow')
-	.tag('@stress');
-
-Scenario('DApp registration', async () => {
-	output.print(
-		`==========Running Stress Test, Transaction Type: ${
-			TRS_TYPE.DAPP
-		}==========`
-	);
-
-	const dAppsTrxs = await Promise.all(
-		accounts.map(async a => {
-			const dAppName = crypto.randomBytes(5).toString('hex');
-			const options = {
-				name: dAppName,
-				category: 1,
-				description: `dApp for ${dAppName}`,
-				tags: '2',
-				type: 0,
-				link: `https://github.com/blocksafe/SDK-notice/dapp-multi-${dAppName}/master.zip`,
-				icon: `http://www.blocksafefoundation.com/dapp-multi-${dAppName}/header.jpg`,
-			};
-
-			a.dAppName = dAppName;
-			const dApp = await I.registerDapp(
-				{
-					passphrase: a.passphrase,
-					secondPassphrase: a.secondPassphrase,
-					options,
-				},
-				0
-			);
-			return dApp;
-		})
-	);
-
-	await Promise.all(
-		dAppsTrxs.map(async trx => {
-			const address = getAddressFromPublicKey(trx.senderPublicKey);
-			await I.sendSignaturesForMultisigTrx(trx, contractsByAddress[address], 0);
-		})
-	);
-
-	await I.waitForBlock(EXTRA_LIMIT);
-
-	await Promise.all(
-		accounts.map(async a => {
-			const api = await I.call();
-
-			const account = await api.getDapp({ name: a.dAppName });
-			expect(account.data[0].name).to.deep.equal(a.dAppName);
 		})
 	);
 })

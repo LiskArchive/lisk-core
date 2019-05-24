@@ -33,7 +33,7 @@ When(
 );
 
 Then(
-	'I should get list of transactions in {string}, {string} queue',
+	'I should get list of transactions in {string} queue',
 	async (state1, state2) => {
 		const api = await I.call();
 

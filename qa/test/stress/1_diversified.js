@@ -128,7 +128,7 @@ Scenario('Create delegates', async () => {
 	.tag('@slow')
 	.tag('@diversified');
 
-Scenario('Create vote, multi-signature, and dApp transactions', async () => {
+Scenario('Create vote, multi-signature', async () => {
 	const castVoteResult = utils.castVote(accounts);
 	all_trxs.vote_trxs = castVoteResult.v_transactions;
 
@@ -146,16 +146,12 @@ Scenario('Create vote, multi-signature, and dApp transactions', async () => {
 		multiSignatureAccountSPPResult.multiSigTransactions;
 	all_trxs.multi_sig_trxs_spp_signatures =
 		multiSignatureAccountSPPResult.signatures;
-
-	all_trxs.dapp_trxs = utils.dappRegistration(accounts);
-
-	all_trxs.dapp_spp_trxs = utils.dappRegistration(accounts_with_spp);
 })
 	.tag('@slow')
 	.tag('@diversified');
 
 Scenario(
-	'Broadcast vote, multi-signature, and dApp transactions together',
+	'Broadcast vote, multi-signature',
 	async () => {
 		const NUMBER_OF_BLOCKS = Math.ceil(
 			getAllTransactionCount() / utils.TRS_PER_BLOCK
