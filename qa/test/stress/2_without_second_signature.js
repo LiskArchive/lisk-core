@@ -17,7 +17,7 @@ const EXTRA_LIMIT = Math.ceil(NUMBER_OF_BLOCKS + NUMBER_OF_BLOCKS * 0.15);
 
 const accounts = createAccounts(STRESS_COUNT);
 
-Feature('Generic stress test');
+Feature('Generic stress test without second signature');
 
 Scenario('Transfer funds', async () => {
 	output.print(
@@ -42,39 +42,9 @@ Scenario('Transfer funds', async () => {
 		)
 	);
 })
-	.tag('@slow')
-	.tag('@generic_t')
-	.tag('@stress');
-
-Scenario('Second passphrase on an account', async () => {
-	output.print(
-		`==========Running Stress Test, Transaction Type: ${
-			TRS_TYPE.SECOND_PASSPHRASE
-		}==========`
-	);
-
-	await Promise.all(
-		accounts.map(async a => {
-			a.secondPassphrase = generateMnemonic();
-			await I.registerSecondPassphrase(a.passphrase, a.secondPassphrase, 0);
-		})
-	);
-
-	await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
-
-	await Promise.all(
-		accounts.map(async a => {
-			const { publicKey } = getKeys(a.secondPassphrase);
-			const api = await I.call();
-
-			const account = await api.getAccounts({ publicKey: a.publicKey });
-			expect(account.data[0].secondPublicKey).to.deep.equal(publicKey);
-		})
-	);
-})
-	.tag('@slow')
-	.tag('@generic_spp')
-	.tag('@stress');
+  .tag('@slow')
+  .tag('@generic_wss_t')
+	.tag('@stress_wss');
 
 Scenario('Delegate Registration', async () => {
 	output.print(
@@ -91,7 +61,6 @@ Scenario('Delegate Registration', async () => {
 				{
 					username: a.username,
 					passphrase: a.passphrase,
-					secondPassphrase: a.secondPassphrase,
 				},
 				0
 			);
@@ -109,9 +78,9 @@ Scenario('Delegate Registration', async () => {
 		})
 	);
 })
-	.tag('@slow')
-	.tag('@generic_dr')
-	.tag('@stress');
+  .tag('@slow')
+  .tag('@generic_wss_dr')
+  .tag('@stress_wss');
 
 Scenario('Cast vote', async () => {
 	output.print(
@@ -126,7 +95,6 @@ Scenario('Cast vote', async () => {
 				{
 					votes: [a.publicKey],
 					passphrase: a.passphrase,
-					secondPassphrase: a.secondPassphrase,
 				},
 				0
 			)
@@ -146,9 +114,9 @@ Scenario('Cast vote', async () => {
 		})
 	);
 })
-	.tag('@slow')
-	.tag('@generic_cv')
-	.tag('@stress');
+  .tag('@slow')
+  .tag('@generic_wss_cv')
+  .tag('@stress_wss');
 
 Scenario('Register Multi-signature account', async () => {
 	output.print(
@@ -159,7 +127,7 @@ Scenario('Register Multi-signature account', async () => {
 
 	await Promise.all(
 		accounts.map(async (a, index) => {
-			const { passphrase, secondPassphrase, address } = a;
+			const { passphrase, address } = a;
 			const signer1 = accounts[(index + 1) % accounts.length];
 			const signer2 = accounts[(index + 2) % accounts.length];
 			const contracts = [signer1, signer2];
@@ -167,7 +135,6 @@ Scenario('Register Multi-signature account', async () => {
 				lifetime: 1,
 				minimum: 2,
 				passphrase,
-				secondPassphrase,
 			};
 			contractsByAddress[address] = contracts;
 
@@ -189,6 +156,6 @@ Scenario('Register Multi-signature account', async () => {
 		})
 	);
 })
-	.tag('@slow')
-	.tag('@generic_ms')
-	.tag('@stress');
+  .tag('@slow')
+  .tag('@generic_wss_ms')
+	.tag('@stress_wss');

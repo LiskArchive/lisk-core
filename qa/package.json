@@ -27,6 +27,7 @@
     "features": "./node_modules/.bin/codeceptjs run --features",
     "features:debug": "./node_modules/.bin/codeceptjs run --features --debug --verbose --grep '(?=.*)^(?!.*@stress)'",
     "stress:generic": "./node_modules/.bin/codeceptjs run --tests --grep \"@stress\"",
+    "stress:generic:without:ss": "./node_modules/.bin/codeceptjs run --tests --grep \"@stress_wss\"",
     "stress:diversified": "./node_modules/.bin/codeceptjs run --tests --grep \"@diversified\"",
     "report": "allure serve output",
     "snippets": "./node_modules/.bin/codeceptjs gherkin:snippets",
@@ -41,16 +42,16 @@
     "prepush": "npm run lint"
   },
   "dependencies": {
+    "allure": "0.0.0",
     "bluebird": "^3.5.3",
     "chai": "^4.2.0",
+    "chai-bignumber": "^3.0.0",
     "chai-json-schema": "^1.5.0",
     "chai-sorted": "^0.2.0",
-    "chai-bignumber": "^3.0.0",
+    "codeceptjs": "^2.0.3",
     "debug": "^4.1.0",
-    "lisk-commons": "^1.1.2",
-    "lisk-elements": "=2.0.0",
-    "allure": "0.0.0",
-    "codeceptjs": "^2.0.3"
+    "json-schema-ref-parser": "^6.1.0",
+    "lisk-elements": "=2.0.0"
   },
   "devDependencies": {
     "bignumber.js": "^8.0.2",

@@ -103,10 +103,10 @@ class LiskUtil extends Helper {
 		const {
 			data: {
 				height,
-				transactions: { confirmed, unconfirmed, unprocessed, unsigned },
+				transactions: { confirmed, ready, verified, pending, validated },
 			},
 		} = await this.call().getNodeStatus();
-		const pendingTrxCnt = unconfirmed + unprocessed + unsigned;
+		const pendingTrxCnt = ready + verified + pending + validated;
 
 		output.print(
 			`Timestamp: ${new Date().toISOString()}, current height: ${height}, expected height: ${expectedHeight}, confirmed trxs: ${confirmed}, pending trxs: ${pendingTrxCnt}`
@@ -114,7 +114,7 @@ class LiskUtil extends Helper {
 
 		if (height >= expectedHeight) {
 			// Remove the buffer time when network is stable
-			if (unconfirmed + unprocessed >= 0) {
+			if (pendingTrxCnt >= 0) {
 				await this.wait(BLOCK_TIME);
 			}
 			return height;
@@ -494,11 +494,11 @@ class LiskUtil extends Helper {
 	async getPendingTransactionCount() {
 		const {
 			data: {
-				transactions: { unconfirmed, unprocessed, unsigned },
+				transactions: { ready, verified, pending, validated },
 			},
 		} = await this.call().getNodeStatus();
 
-		return unconfirmed + unprocessed + unsigned;
+		return ready + verified + pending + validated;
 	}
 
 	/**

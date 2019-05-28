@@ -20,7 +20,7 @@ Then('networkHeight should be greater than or equal to height', () => {
 	nodeStatus.forEach(res => {
 		if (process.env.NETWORK && process.env.NETWORK !== 'development') {
 			expect(res.data.networkHeight).to.satisfy(
-				nHeight => nHeight >= res.data.height
+				nHeight => res.data.height >= nHeight
 			);
 		}
 	});

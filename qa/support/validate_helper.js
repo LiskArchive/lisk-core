@@ -1,5 +1,5 @@
-const liskCommons = require('lisk-commons');
 const chai = require('chai');
+const apiSchema = require('../api_schema');
 const { TO_LISK, TO_BEDDOWS, from, sortBy, flattern } = require('../utils');
 const LiskUtil = require('./lisk_util');
 
@@ -26,7 +26,7 @@ const otherFields = [
 
 class ValidateHelper extends Helper {
 	async getSchemaDefinition(name) {
-		const { result, error } = await from(liskCommons.schema());
+		const { result, error } = await from(apiSchema.schema());
 
 		expect(error).to.be.null;
 		return result.definitions[name];
