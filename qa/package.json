@@ -27,6 +27,7 @@
     "features": "./node_modules/.bin/codeceptjs run --features",
     "features:debug": "./node_modules/.bin/codeceptjs run --features --debug --verbose --grep '(?=.*)^(?!.*@stress)'",
     "stress:generic": "./node_modules/.bin/codeceptjs run --tests --grep \"@stress\"",
+    "stress:generic:without:ss": "./node_modules/.bin/codeceptjs run --tests --grep \"@stress_wss\"",
     "stress:diversified": "./node_modules/.bin/codeceptjs run --tests --grep \"@diversified\"",
     "report": "allure serve output",
     "snippets": "./node_modules/.bin/codeceptjs gherkin:snippets",
