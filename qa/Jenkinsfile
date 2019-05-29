@@ -112,7 +112,7 @@ lisk_version: ${env.LISK_VERSION}""",
             templateType: 'job',
             jobTemplate: '16',  // devnet-archive-logs
             jobType: 'run',
-            extraVars: "devnet: ${params.NETWORK}",
+            extraVars: """devnet: ${params.NETWORK}""",
             throwExceptionWhenFail: false,
             verbose: false
         }
@@ -127,7 +127,7 @@ lisk_version: ${env.LISK_VERSION}""",
             templateType: 'job',
             jobTemplate: '15',  // do-destroy-tag
             jobType: 'run',
-            extraVars: "do_tag: ${params.NETWORK}_node",
+            extraVars: """do_tag: ${params.NETWORK}_node""",
             throwExceptionWhenFail: false,
             verbose: false
         } else {
