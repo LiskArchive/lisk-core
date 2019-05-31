@@ -1,0 +1,21 @@
+{{- if and .Values.redis.monitoring.enabled .Values.redis.monitoring.serviceMonitor }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app.kubernetes.io/name: "{{ include "lisk-core.name" . }}"
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "lisk-core.chart" . }}
+  name: "{{ include "lisk-core.name" . }}-redis"
+spec:
+  endpoints:
+    - port: redis-metrics
+  namespaceSelector:
+    matchNames:
+    - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: "{{ .Release.Name }}-lisk-core"
+      app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}

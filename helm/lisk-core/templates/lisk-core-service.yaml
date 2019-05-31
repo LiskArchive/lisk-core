@@ -19,6 +19,18 @@ spec:
       port: {{ .Values.lisk.wsPort }}
       targetPort: lisk-core-ws
       protocol: TCP
+    {{- if .Values.redis.monitoring.enabled }}
+    - name: redis-metrics
+      port: 9121
+      targetPort: redis-metrics
+      protocol: TCP
+    {{- end }}
+    {{- if .Values.postgresql.monitoring.enabled }}
+    - name: pg-metrics
+      port: 9187
+      targetPort: pg-metrics
+      protocol: TCP
+    {{- end }}
   selector:
     app.kubernetes.io/name: "{{ include "lisk-core.name" . }}"
     app.kubernetes.io/instance: {{ .Release.Name }}
