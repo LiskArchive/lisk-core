@@ -13,7 +13,7 @@ const I = actor();
 const contractsByAddress = {};
 const STRESS_COUNT = parseInt(process.env.STRESS_COUNT) || 25;
 const NUMBER_OF_BLOCKS = Math.ceil(STRESS_COUNT / TRS_PER_BLOCK);
-const EXTRA_LIMIT = Math.ceil(NUMBER_OF_BLOCKS + NUMBER_OF_BLOCKS * 0.15);
+const EXTRA_LIMIT = Math.ceil(NUMBER_OF_BLOCKS + NUMBER_OF_BLOCKS * 0.1);
 
 const accounts = createAccounts(STRESS_COUNT);
 
@@ -32,15 +32,21 @@ Scenario('Transfer funds', async () => {
 		amount: TO_BEDDOWS(LSK_TOKEN),
 	}));
 
-	const transferTransactions = await I.transferToMultipleAccounts(transferTrx);
+	try {
+		const transferTransactions = await I.transferToMultipleAccounts(
+			transferTrx
+		);
 
-	await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
+		await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
 
-	await Promise.all(
-		transferTransactions.map(trx =>
-			I.validateTransaction(trx.id, trx.recipientId, LSK_TOKEN)
-		)
-	);
+		await Promise.all(
+			transferTransactions.map(trx =>
+				I.validateTransaction(trx.id, trx.recipientId, LSK_TOKEN)
+			)
+		);
+	} catch (error) {
+		output.print('Error while processing transfer fund transaction', error);
+	}
 })
 	.tag('@slow')
 	.tag('@generic_t')
@@ -53,24 +59,31 @@ Scenario('Second passphrase on an account', async () => {
 		}==========`
 	);
 
-	await Promise.all(
-		accounts.map(async a => {
-			a.secondPassphrase = generateMnemonic();
-			await I.registerSecondPassphrase(a.passphrase, a.secondPassphrase, 0);
-		})
-	);
+	try {
+		await Promise.all(
+			accounts.map(async a => {
+				a.secondPassphrase = generateMnemonic();
+				await I.registerSecondPassphrase(a.passphrase, a.secondPassphrase, 0);
+			})
+		);
 
-	await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
+		await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
 
-	await Promise.all(
-		accounts.map(async a => {
-			const { publicKey } = getKeys(a.secondPassphrase);
-			const api = await I.call();
+		await Promise.all(
+			accounts.map(async a => {
+				const { publicKey } = getKeys(a.secondPassphrase);
+				const api = await I.call();
 
-			const account = await api.getAccounts({ publicKey: a.publicKey });
-			expect(account.data[0].secondPublicKey).to.deep.equal(publicKey);
-		})
-	);
+				const account = await api.getAccounts({ publicKey: a.publicKey });
+				expect(account.data[0].secondPublicKey).to.deep.equal(publicKey);
+			})
+		);
+	} catch (error) {
+		output.print(
+			'Error while processing second passphrase on an account',
+			error
+		);
+	}
 })
 	.tag('@slow')
 	.tag('@generic_spp')
@@ -83,31 +96,35 @@ Scenario('Delegate Registration', async () => {
 		}==========`
 	);
 
-	await Promise.all(
-		accounts.map(async a => {
-			a.username = crypto.randomBytes(9).toString('hex');
+	try {
+		await Promise.all(
+			accounts.map(async a => {
+				a.username = crypto.randomBytes(9).toString('hex');
 
-			await I.registerAsDelegate(
-				{
-					username: a.username,
-					passphrase: a.passphrase,
-					secondPassphrase: a.secondPassphrase,
-				},
-				0
-			);
-		})
-	);
+				await I.registerAsDelegate(
+					{
+						username: a.username,
+						passphrase: a.passphrase,
+						secondPassphrase: a.secondPassphrase,
+					},
+					0
+				);
+			})
+		);
 
-	await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
+		await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
 
-	await Promise.all(
-		accounts.map(async a => {
-			const api = await I.call();
+		await Promise.all(
+			accounts.map(async a => {
+				const api = await I.call();
 
-			const account = await api.getDelegates({ publicKey: a.publicKey });
-			expect(account.data[0].username).to.deep.equal(a.username);
-		})
-	);
+				const account = await api.getDelegates({ publicKey: a.publicKey });
+				expect(account.data[0].username).to.deep.equal(a.username);
+			})
+		);
+	} catch (error) {
+		output.print('Error while processing delegate registration', error);
+	}
 })
 	.tag('@slow')
 	.tag('@generic_dr')
@@ -120,31 +137,35 @@ Scenario('Cast vote', async () => {
 		}==========`
 	);
 
-	await Promise.all(
-		accounts.map(a =>
-			I.castVotes(
-				{
-					votes: [a.publicKey],
-					passphrase: a.passphrase,
-					secondPassphrase: a.secondPassphrase,
-				},
-				0
+	try {
+		await Promise.all(
+			accounts.map(a =>
+				I.castVotes(
+					{
+						votes: [a.publicKey],
+						passphrase: a.passphrase,
+						secondPassphrase: a.secondPassphrase,
+					},
+					0
+				)
 			)
-		)
-	);
+		);
 
-	await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
+		await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
 
-	await Promise.all(
-		accounts.map(async a => {
-			const api = await I.call();
+		await Promise.all(
+			accounts.map(async a => {
+				const api = await I.call();
 
-			const account = await api.getVoters({ publicKey: a.publicKey });
-			expect(
-				account.data.voters.some(v => v.address === a.address)
-			).to.deep.equal(true);
-		})
-	);
+				const account = await api.getVoters({ publicKey: a.publicKey });
+				expect(
+					account.data.voters.some(v => v.address === a.address)
+				).to.deep.equal(true);
+			})
+		);
+	} catch (error) {
+		output.print('Error while processing cast vote transaction', error);
+	}
 })
 	.tag('@slow')
 	.tag('@generic_cv')
@@ -157,37 +178,44 @@ Scenario('Register Multi-signature account', async () => {
 		}==========`
 	);
 
-	await Promise.all(
-		accounts.map(async (a, index) => {
-			const { passphrase, secondPassphrase, address } = a;
-			const signer1 = accounts[(index + 1) % accounts.length];
-			const signer2 = accounts[(index + 2) % accounts.length];
-			const contracts = [signer1, signer2];
-			const params = {
-				lifetime: 1,
-				minimum: 2,
-				passphrase,
-				secondPassphrase,
-			};
-			contractsByAddress[address] = contracts;
+	try {
+		await Promise.all(
+			accounts.map(async (a, index) => {
+				const { passphrase, secondPassphrase, address } = a;
+				const signer1 = accounts[(index + 1) % accounts.length];
+				const signer2 = accounts[(index + 2) % accounts.length];
+				const contracts = [signer1, signer2];
+				const params = {
+					lifetime: 1,
+					minimum: 2,
+					passphrase,
+					secondPassphrase,
+				};
+				contractsByAddress[address] = contracts;
 
-			await I.registerMultisignature(contracts, params, 0);
-		})
-	);
+				await I.registerMultisignature(contracts, params, 0);
+			})
+		);
 
-	await I.waitForBlock(EXTRA_LIMIT);
+		await I.waitForBlock(EXTRA_LIMIT);
 
-	await Promise.all(
-		accounts.map(async a => {
-			const api = await I.call();
+		await Promise.all(
+			accounts.map(async a => {
+				const api = await I.call();
 
-			const account = await api.getMultisignatureGroups(a.address);
-			await I.expectMultisigAccountToHaveContracts(
-				account,
-				contractsByAddress[a.address]
-			);
-		})
-	);
+				const account = await api.getMultisignatureGroups(a.address);
+				await I.expectMultisigAccountToHaveContracts(
+					account,
+					contractsByAddress[a.address]
+				);
+			})
+		);
+	} catch (error) {
+		output.print(
+			'Error while processing register multi-signature account transaction',
+			error
+		);
+	}
 })
 	.tag('@slow')
 	.tag('@generic_ms')

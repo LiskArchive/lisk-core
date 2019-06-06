@@ -49,15 +49,19 @@ Scenario('Transfer funds', async () => {
 
 	const NUMBER_OF_BLOCKS = Math.ceil(transactions.length / utils.TRS_PER_BLOCK);
 
-	await Promise.all(transactions.map(t => api.broadcastTransactions(t)));
-	await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
+	try {
+		await Promise.all(transactions.map(t => api.broadcastTransactions(t)));
+		await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
 
-	await Promise.all(
-		transactions.map(trx =>
-			I.validateTransaction(trx.id, trx.recipientId, LSK_TOKEN)
-		)
-	);
-	output.print('validating transfers successful!');
+		await Promise.all(
+			transactions.map(trx =>
+				I.validateTransaction(trx.id, trx.recipientId, LSK_TOKEN)
+			)
+		);
+		output.print('validating transfers successful!');
+	} catch (error) {
+		output.print('Failed to transfer transactions', error);
+	}
 })
 	.tag('@slow')
 	.tag('@diversified');
@@ -71,21 +75,25 @@ Scenario('Enable Second passphrase', async () => {
 		spp_transactions.length / utils.TRS_PER_BLOCK
 	);
 
-	await Promise.all(spp_transactions.map(t => api.broadcastTransactions(t)));
-	await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
+	try {
+		await Promise.all(spp_transactions.map(t => api.broadcastTransactions(t)));
+		await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
 
-	await Promise.all(
-		spp_transactions.map(async trx => {
-			const accountsRes = await api.getAccounts({
-				publicKey: trx.senderPublicKey,
-			});
-			await I.expectResponseToBeValid(accountsRes, 'AccountsResponse');
-			expect(accountsRes.data[0].secondPublicKey).to.deep.equal(
-				trx.asset.signature.publicKey
-			);
-		})
-	);
-	output.print('validating second passphrase account successful!');
+		await Promise.all(
+			spp_transactions.map(async trx => {
+				const accountsRes = await api.getAccounts({
+					publicKey: trx.senderPublicKey,
+				});
+				await I.expectResponseToBeValid(accountsRes, 'AccountsResponse');
+				expect(accountsRes.data[0].secondPublicKey).to.deep.equal(
+					trx.asset.signature.publicKey
+				);
+			})
+		);
+		output.print('validating second passphrase account successful!');
+	} catch (error) {
+		output.print('Failed to enable second passphrase on an account', error);
+	}
 })
 	.tag('@slow')
 	.tag('@diversified');
@@ -102,28 +110,32 @@ Scenario('Create delegates', async () => {
 	all_trxs.delegate_register_spp_trxs =
 		delegateRegistrationSPPResult.dr_transactions;
 
-	await processTransactions();
+	try {
+		await processTransactions();
 
-	const NUMBER_OF_BLOCKS = Math.ceil(
-		getAllTransactionCount() / utils.TRS_PER_BLOCK
-	);
+		const NUMBER_OF_BLOCKS = Math.ceil(
+			getAllTransactionCount() / utils.TRS_PER_BLOCK
+		);
 
-	await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
+		await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
 
-	const trxs = getAllTransactions();
-	await Promise.all(
-		trxs.map(async trx => {
-			const accountsRes = await api.getAccounts({
-				publicKey: trx.senderPublicKey,
-			});
-			await I.expectResponseToBeValid(accountsRes, 'AccountsResponse');
-			expect(accountsRes.data[0].delegate.username).to.deep.equal(
-				trx.asset.delegate.username
-			);
-		})
-	);
-	output.print('validating delegates successful!');
-	all_trxs = {};
+		const trxs = getAllTransactions();
+		await Promise.all(
+			trxs.map(async trx => {
+				const accountsRes = await api.getAccounts({
+					publicKey: trx.senderPublicKey,
+				});
+				await I.expectResponseToBeValid(accountsRes, 'AccountsResponse');
+				expect(accountsRes.data[0].delegate.username).to.deep.equal(
+					trx.asset.delegate.username
+				);
+			})
+		);
+		output.print('validating delegates successful!');
+		all_trxs = {};
+	} catch (error) {
+		output.print('Failed to delegate account', error);
+	}
 })
 	.tag('@slow')
 	.tag('@diversified');
@@ -154,9 +166,17 @@ Scenario('Broadcast vote, multi-signature', async () => {
 	const NUMBER_OF_BLOCKS = Math.ceil(
 		getAllTransactionCount() / utils.TRS_PER_BLOCK
 	);
-	await processTransactions();
 
-	await I.waitForBlock(NUMBER_OF_BLOCKS);
+	try {
+		await processTransactions();
+
+		await I.waitForBlock(NUMBER_OF_BLOCKS);
+	} catch (error) {
+		output.print(
+			'Failed to broadcast signatures for vote, multi-signature',
+			error
+		);
+	}
 })
 	.tag('@slow')
 	.tag('@diversified');
@@ -165,20 +185,24 @@ Scenario('Validate transaction confirmation', async () => {
 	const api = await I.call();
 	const trxs = getAllTransactions();
 
-	await Promise.all(
-		trxs.map(async trx => {
-			const confirmedTrx = await api.getTransactions({ id: trx.id });
-			if (confirmedTrx.data.length) {
-				expect(confirmedTrx.data[0].id).to.deep.equal(trx.id);
-			}
-			// Skipping the validation for one which din't get confirmed
-			// Since the order of transaction processing not strict
-			// the account used for voting can become multi-signature account
-			// much before the vote transaction get processed
-			// we know this as radical issue and continue to keep it this way
-		})
-	);
-	output.print('validating delegates successful!');
+	try {
+		await Promise.all(
+			trxs.map(async trx => {
+				const confirmedTrx = await api.getTransactions({ id: trx.id });
+				if (confirmedTrx.data.length) {
+					expect(confirmedTrx.data[0].id).to.deep.equal(trx.id);
+				}
+				// Skipping the validation for one which din't get confirmed
+				// Since the order of transaction processing not strict
+				// the account used for voting can become multi-signature account
+				// much before the vote transaction get processed
+				// we know this as radical issue and continue to keep it this way
+			})
+		);
+		output.print('validating delegates successful!');
+	} catch (error) {
+		output.print('Failed to validate transaction confirmation', error);
+	}
 })
 	.tag('@slow')
 	.tag('@diversified');

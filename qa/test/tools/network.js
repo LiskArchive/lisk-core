@@ -1,7 +1,7 @@
 const output = require('codeceptjs').output;
 const fs = require('fs');
 const path = require('path');
-const { from, chunkArray, config, getIpByDns } = require('../../utils');
+const { from, config, getIpByDns } = require('../../utils');
 const { seedNode } = require('../../fixtures');
 
 const I = actor();
@@ -21,8 +21,19 @@ const splitDelegatesByPeers = (delegates, peers) => {
 		peers.splice(101);
 	}
 
-	const chunkSize = Math.floor(delegates.length / peers.length);
-	const delegateList = chunkArray(delegates, chunkSize);
+	const delegateList = peers.map(() => []);
+
+	let counter = 0;
+	while (delegates.length) {
+		if (counter > delegateList.length - 1) {
+			counter = 0;
+		} else {
+			const delegate = delegates.shift();
+			delegateList[counter].push(delegate);
+			counter += 1;
+		}
+	}
+
 	return delegateList;
 };
 
@@ -100,7 +111,10 @@ const enableDisableDelegates = isEnable => {
 
 const checkIfAllPeersConnected = async () => {
 	const allPeers = await I.getAllPeers(100, 0);
-	const expectPeerCount = process.env.NODES_PER_REGION * 10 - 1;
+	// TODO: Remove this once DO API is stable
+	const flakyPeers = 8; // Sometimes DO can not start few nodes so keeping flaky peers into consideration.
+	const expectPeerCount =
+		(process.env.NODES_PER_REGION || 1) * 10 - 1 - flakyPeers;
 
 	output.print(
 		`Number of peers connected in network: ${
