@@ -23,9 +23,8 @@ import {
 	utils,
 } from '@liskhq/lisk-transactions';
 import {
-	IN_TRANSFER_FEE,
 	TRANSACTION_DAPP_TYPE,
-	TRANSACTION_INTRANSFER_TYPE,
+	IN_TRANSFER_FEE,
 } from './constants';
 
 const { convertBeddowsToLSK, verifyAmountBalance, validator } = utils;
@@ -55,6 +54,7 @@ export const inTransferAssetFormatSchema = {
 
 export class InTransferTransaction extends BaseTransaction {
 	public readonly asset: InTransferAsset;
+	public static TYPE = 6;
 
 	public constructor(rawTransaction: unknown) {
 		super(rawTransaction);
@@ -111,18 +111,6 @@ export class InTransferTransaction extends BaseTransaction {
 			this.id,
 			validator.errors
 		) as TransactionError[];
-
-		if (this.type !== TRANSACTION_INTRANSFER_TYPE) {
-			errors.push(
-				new TransactionError(
-					'Invalid type',
-					this.id,
-					'.type',
-					this.type,
-					TRANSACTION_INTRANSFER_TYPE
-				)
-			);
-		}
 
 		// Per current protocol, this recipientId and recipientPublicKey must be empty
 		if (this.recipientId) {
