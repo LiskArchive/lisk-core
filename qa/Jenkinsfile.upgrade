@@ -90,15 +90,17 @@ lisk_version: '${env.LISK_VERSION}'""",
     }
     stage('Test upgrade') {
       steps {
-        script {
-          env.DROPLET_FQDN = readFile('.droplet_fqdn').trim()
-        }
-        retry(5) {
-          nvm(getNodejsVersion()) {
-            sh '''
-            npm run tools:peers:upgrade:node
-            npm run test:blockchain
-            '''
+        dir('qa') {
+          script {
+            env.DROPLET_FQDN = readFile('.droplet_fqdn').trim()
+          }
+          retry(5) {
+            nvm(getNodejsVersion()) {
+              sh '''
+              npm run tools:peers:upgrade:node
+              npm run test:blockchain
+              '''
+            }
           }
         }
       }
