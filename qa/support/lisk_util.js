@@ -627,6 +627,24 @@ class LiskUtil extends Helper {
 		await this.waitForTransactionToConfirm(id);
 		return true;
 	}
+
+	async waitUntilNodeSyncWithNetwork(height, expectedHeight) {
+		output.print(
+			`Node sync started height: ${height}, ExpectedHeight to reach: ${expectedHeight}`
+		);
+		const nodeStatus = await this.call().getNodeStatus();
+
+		if (nodeStatus.data.height >= expectedHeight) {
+			output.print(
+				`Reached expected height: ${expectedHeight}, Node current height: ${
+					nodeStatus.data.height
+				}`
+			);
+			return;
+		}
+		await this.waitForBlock(10);
+		await this.waitUntilNodeSyncWithNetwork(height, expectedHeight);
+	}
 }
 
 module.exports = LiskUtil;
