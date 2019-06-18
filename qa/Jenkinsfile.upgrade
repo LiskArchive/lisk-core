@@ -28,7 +28,7 @@ pipeline {
           def b = build job: 'lisk-qa/lisk-core-build-dev',
                   parameters: [string(name: 'COMMITISH_SDK', value: """${params.SDK_BRANCH_NAME}"""),
                    string(name: 'COMMITISH_CORE', value: """${params.CORE_BRANCH_NAME}""")]
-          env.LISK_VERSION = b.getBuildVariables().get('LISK_VERSION')
+          env.BUILT_LISK_VERSION = b.getBuildVariables().get('LISK_VERSION')
         }
       }
     }
@@ -80,7 +80,7 @@ newrelic_enabled: '${params.NEWRELIC_ENABLED}'""",
               jobType: 'run',
               extraVars: """droplet_fqdn: '${env.DROPLET_FQDN}'
 devnet: ${params.NETWORK}
-lisk_version: '${env.LISK_VERSION}'""",
+lisk_version: '${env.BUILT_LISK_VERSION}'""",
               importTowerLogs: true,
               throwExceptionWhenFail: true,
               verbose: false
