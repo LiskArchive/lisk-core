@@ -47,7 +47,7 @@ pipeline {
         retry(5) {
           ansiColor('xterm') {
             ansibleTower \
-              towerServer: 'tower2',
+              towerServer: 'tower',
               templateType: 'job',
               jobTemplate: '10',  // lisk-self-service
               jobType: 'run',
@@ -74,7 +74,7 @@ newrelic_enabled: '${params.NEWRELIC_ENABLED}'""",
         retry(5) {
           ansiColor('xterm') {
             ansibleTower \
-              towerServer: 'tower2',
+              towerServer: 'tower',
               templateType: 'job',
               jobTemplate: '19',  // lisk-self-upgrade
               jobType: 'run',
@@ -107,7 +107,7 @@ lisk_version: '${env.LISK_VERSION}'""",
   post {
     cleanup {
       ansibleTower \
-        towerServer: 'tower2',
+        towerServer: 'tower',
         templateType: 'job',
         jobTemplate: '11',  // lisk-self-service-destroy
         jobType: 'run',
