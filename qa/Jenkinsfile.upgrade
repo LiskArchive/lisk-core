@@ -67,23 +67,25 @@ newrelic_enabled: '${params.NEWRELIC_ENABLED}'""",
       }
     }
     stage('Upgrade node') {
-      steps {
-        script {
-          env.DROPLET_FQDN = readFile('.droplet_fqdn').trim()
-        }
-        retry(5) {
-          ansiColor('xterm') {
-            ansibleTower \
-              towerServer: 'tower',
-              templateType: 'job',
-              jobTemplate: '19',  // lisk-self-upgrade
-              jobType: 'run',
-              extraVars: """droplet_fqdn: '${env.DROPLET_FQDN}'
-devnet: ${params.NETWORK}
-lisk_version: '${env.LISK_VERSION}'""",
-              importTowerLogs: true,
-              throwExceptionWhenFail: true,
-              verbose: false
+      dir('qa') {
+        steps {
+          script {
+            env.DROPLET_FQDN = readFile('.droplet_fqdn').trim()
+          }
+          retry(5) {
+            ansiColor('xterm') {
+              ansibleTower \
+                towerServer: 'tower',
+                templateType: 'job',
+                jobTemplate: '19',  // lisk-self-upgrade
+                jobType: 'run',
+                extraVars: """droplet_fqdn: '${env.DROPLET_FQDN}'
+  devnet: ${params.NETWORK}
+  lisk_version: '${env.LISK_VERSION}'""",
+                importTowerLogs: true,
+                throwExceptionWhenFail: true,
+                verbose: false
+            }
           }
         }
       }
