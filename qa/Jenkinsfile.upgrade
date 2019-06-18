@@ -2,7 +2,7 @@
 
 properties([
   parameters([
-    string(name: 'SDK_BRANCH_NAME', defaultValue: 'development', description: 'Lisk core branch name', ),
+    string(name: 'SDK_BRANCH_NAME', defaultValue: 'development', description: 'Lisk SDK branch name', ),
     string(name: 'CORE_BRANCH_NAME', defaultValue: 'master', description: 'Lisk core branch name', ),
     string(name: 'NETWORK', defaultValue: 'testnet', description: 'To Run test against a network', ),
     string(name: 'NEWRELIC_ENABLED', defaultValue: 'no', description: 'Enable NewRelic', ),
