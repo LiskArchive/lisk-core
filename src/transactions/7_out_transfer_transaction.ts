@@ -103,7 +103,7 @@ export class OutTransferTransaction extends BaseTransaction {
 	): ReadonlyArray<TransactionError> {
 		const sameTypeTransactions = transactions.filter(
 			tx =>
-				tx.type === this.type &&
+				tx.type === OutTransferTransaction.TYPE &&
 				'outTransfer' in tx.asset &&
 				this.asset.outTransfer.transactionId ===
 					(tx.asset as OutTransferAsset).outTransfer.transactionId
