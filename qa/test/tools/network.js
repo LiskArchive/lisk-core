@@ -200,3 +200,21 @@ Scenario('Enable delegates', async () => {
 Scenario('Disable delegates', async () => {
 	enableDisableDelegates(false);
 }).tag('@delegates_disable');
+
+Scenario('Upgrade node', async () => {
+	const configContent = getConfigContent();
+	const upgradedNodeHostName = process.env.DROPLET_FQDN;
+	const seedAddress = await getIpByDns(upgradedNodeHostName);
+
+	configContent.peers.push(seedAddress);
+
+	if (process.env.NETWORK === 'testnet') {
+		configContent.httpPort = 7000;
+		configContent.wsPort = 7001;
+	} else if (process.env.NETWORK === 'mainnet') {
+		configContent.httpPort = 8000;
+		configContent.wsPort = 8001;
+	}
+
+	updateConfigContent(configContent);
+}).tag('@upgrade_node');
