@@ -56,7 +56,7 @@ user_pubkey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDRSmkDPwDuzs74e4Dm3BdUV5KS+f
 droplet_name: '${params.NETWORK}-${env.TIMESTAMP}'
 devnet: ${params.NETWORK}
 lisk_version: '${env.LISK_VERSION}'
-droplet_size: 's-2vcpu-2gb'
+droplet_size: 'g-2vcpu-8gb'
 jenkins_ci: 'yes'
 newrelic_enabled: '${params.NEWRELIC_ENABLED}'""",
               importTowerLogs: true,
