@@ -3,6 +3,7 @@ build/
 docker/
 Dockerfile
 docs/
+qa/
 logs/*
 package/
 pids/*
