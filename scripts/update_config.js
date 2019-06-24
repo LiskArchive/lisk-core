@@ -297,6 +297,13 @@ history.version('2.0.0-alpha.0', version => {
 
 	version.change('add structure for network module', config => {
 		config = moveElement(config, 'peers.list', 'modules.network.seedPeers');
+		// Change wsPort to number
+		if (config.modules && config.modules.network && config.modules.network.seedPeers) {
+			config.modules.network.seedPeers = config.modules.network.seedPeers.map(peer => ({
+				...peer,
+				wsPort: parseInt(peer.wsPort),
+			}));
+		}
 		config = moveElement(
 			config,
 			'peers.access.blackList',
