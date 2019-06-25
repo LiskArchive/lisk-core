@@ -17,17 +17,18 @@
 const path = require('path');
 const fs = require('fs');
 const { spawnSync } = require('child_process');
+const { Application } = require('lisk-sdk')
+const originalConfig = require('../../fixtures/config_1.6.json');
+const genesisBlock = require('../../../config/devnet/genesis_block.json');
 
 const dirPath = __dirname;
 const rootPath = path.dirname(path.resolve(__filename, '../../../'));
 
 // TODO: Enable again after the issue https://github.com/LiskHQ/lisk/issues/3171
 // eslint-disable-next-line mocha/no-skipped-tests
-describe.skip('scripts/update_config', () => {
-	const testedConfigPath = `${dirPath}/tested_config.json`;
+describe('scripts/update_config', () => {
 	const updatedConfigPath = `${dirPath}/updated_config.json`;
 	let spawnedScript;
-	let testedConfig;
 	let updatedConfig;
 
 	before(async () => {
@@ -39,12 +40,11 @@ describe.skip('scripts/update_config', () => {
 				'testnet',
 				'--output',
 				updatedConfigPath,
-				testedConfigPath,
-				'1.0.0',
+				originalConfig,
+				'1.6.0',
 			],
 			{ cwd: rootPath }
 		);
-		testedConfig = fs.readFileSync(`${dirPath}/tested_config.json`);
 		updatedConfig = fs.readFileSync(`${dirPath}/updated_config.json`);
 	});
 
@@ -56,10 +56,7 @@ describe.skip('scripts/update_config', () => {
 		expect(spawnedScript.stderr.toString()).to.be.empty;
 	});
 
-	it('should create an updated file equal to the tested file', async () => {
-		const testedConfigJson = JSON.parse(testedConfig.toString());
-		const updatedConfigJson = JSON.parse(updatedConfig.toString());
-
-		expect(testedConfigJson).to.deep.eql(updatedConfigJson);
+	it('should be able to instanciate application', async () => {
+			expect(() => new Application(genesisBlock, updatedConfig)).not.to.throw;
 	});
 });
