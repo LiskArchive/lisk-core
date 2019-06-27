@@ -25,7 +25,6 @@ import {
 import { MAX_TRANSACTION_AMOUNT, OUT_TRANSFER_FEE } from './constants';
 
 const { verifyAmountBalance, validator } = utils;
-const TRANSACTION_OUTTRANSFER_TYPE = 7;
 const TRANSACTION_DAPP_REGISTERATION_TYPE = 5;
 
 export interface OutTransferAsset {
@@ -59,6 +58,7 @@ export const outTransferAssetFormatSchema = {
 export class OutTransferTransaction extends BaseTransaction {
 	public readonly asset: OutTransferAsset;
 	public readonly containsUniqueData: boolean;
+	public static TYPE = 7;
 
 	public constructor(rawTransaction: unknown) {
 		super(rawTransaction);
@@ -103,7 +103,7 @@ export class OutTransferTransaction extends BaseTransaction {
 	): ReadonlyArray<TransactionError> {
 		const sameTypeTransactions = transactions.filter(
 			tx =>
-				tx.type === this.type &&
+				tx.type === OutTransferTransaction.TYPE &&
 				'outTransfer' in tx.asset &&
 				this.asset.outTransfer.transactionId ===
 					(tx.asset as OutTransferAsset).outTransfer.transactionId
@@ -126,18 +126,6 @@ export class OutTransferTransaction extends BaseTransaction {
 			this.id,
 			validator.errors
 		) as TransactionError[];
-
-		if (this.type !== TRANSACTION_OUTTRANSFER_TYPE) {
-			errors.push(
-				new TransactionError(
-					'Invalid type',
-					this.id,
-					'.type',
-					this.type,
-					TRANSACTION_OUTTRANSFER_TYPE
-				)
-			);
-		}
 
 		// Amount has to be greater than 0
 		if (this.amount.lte(0)) {

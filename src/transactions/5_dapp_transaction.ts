@@ -21,7 +21,7 @@ import {
 	TransactionJSON,
 	utils,
 } from '@liskhq/lisk-transactions';
-import { DAPP_FEE, TRANSACTION_DAPP_TYPE } from './constants';
+import { DAPP_FEE } from './constants';
 
 const { validator, stringEndsWith } = utils;
 
@@ -93,6 +93,7 @@ export const dappAssetFormatSchema = {
 export class DappTransaction extends BaseTransaction {
 	public readonly containsUniqueData: boolean;
 	public readonly asset: DappAsset;
+	public static TYPE = 5;
 
 	public constructor(rawTransaction: unknown) {
 		super(rawTransaction);
@@ -214,18 +215,6 @@ export class DappTransaction extends BaseTransaction {
 			validator.errors
 		) as TransactionError[];
 
-		if (this.type !== TRANSACTION_DAPP_TYPE) {
-			errors.push(
-				new TransactionError(
-					'Invalid type',
-					this.id,
-					'.type',
-					this.type,
-					TRANSACTION_DAPP_TYPE
-				)
-			);
-		}
-
 		if (!this.amount.eq(0)) {
 			errors.push(
 				new TransactionError(
@@ -318,7 +307,7 @@ export class DappTransaction extends BaseTransaction {
 		const errors: TransactionError[] = [];
 		const nameExists = store.transaction.find(
 			(transaction: TransactionJSON) =>
-				transaction.type === TRANSACTION_DAPP_TYPE &&
+				transaction.type === DappTransaction.TYPE &&
 				transaction.id !== this.id &&
 				(transaction.asset as DappAsset).dapp &&
 				(transaction.asset as DappAsset).dapp.name === this.asset.dapp.name
@@ -336,7 +325,7 @@ export class DappTransaction extends BaseTransaction {
 
 		const linkExists = store.transaction.find(
 			(transaction: TransactionJSON) =>
-				transaction.type === TRANSACTION_DAPP_TYPE &&
+				transaction.type === DappTransaction.TYPE &&
 				transaction.id !== this.id &&
 				(transaction.asset as DappAsset).dapp &&
 				(transaction.asset as DappAsset).dapp.link === this.asset.dapp.link
