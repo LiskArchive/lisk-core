@@ -20,6 +20,7 @@
 			"./step_definitions/accounts/create_account.js",
 			"./step_definitions/accounts/list_account.js",
 			"./step_definitions/blocks/list_blocks.js",
+			"./step_definitions/bug_scenarios/over_spending.js",
 			"./step_definitions/delegates/list_delegates.js",
 			"./step_definitions/node/status.js",
 			"./step_definitions/node/constants.js",
