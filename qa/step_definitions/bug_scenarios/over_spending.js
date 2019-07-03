@@ -49,7 +49,6 @@ Then('I transfer {string}LSK from account {string} to {string}', async (amount, 
 	const user = `${fromAcc}to${toAcc}`;
 	trx.action = user;
 	transactions.push(trx);
-	console.log(trx.id, trx.action);
 });
 
 Then('I wait for a block', async () => {
