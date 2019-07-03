@@ -49,10 +49,11 @@ Then('I transfer {string}LSK from account {string} to {string}', async (amount, 
 	const user = `${fromAcc}to${toAcc}`;
 	trx.action = user;
 	transactions.push(trx);
+	console.log(trx.id, trx.action);
 });
 
 Then('I wait for a block', async () => {
-	await I.waitForBlock(1);
+	await I.waitForBlock(2);
 });
 
 Then('I expect transfer {string}LSK from A to X should be succeeded', async amount => {
@@ -67,7 +68,6 @@ Then('I expect transfer {string}LSK from B to Y should be succeeded', async amou
 	const api = await I.call();
 	const { id } = transactions.find(t => t.action === 'BtoY');
 	const { result, error } = await from(api.getTransactions({ id }));
-
 	expect(error).to.be.null;
 	expect(result.data[0].amount).to.deep.equal(TO_BEDDOWS(amount));
 });
@@ -75,17 +75,17 @@ Then('I expect transfer {string}LSK from B to Y should be succeeded', async amou
 Then('I expect transfer {string}LSK from A to B should fail', async () => {
 	const api = await I.call();
 	const { id } = transactions.find(t => t.action === 'AtoB');
-	const { result, error } = await from(api.getTransactions({ id }));
+	const { result, error } = await from(api.getTransactionsFromPool({ id }));
 
 	expect(error).to.be.null;
-	expect(result.data).to.be.an('array').that.is.empty;
+	result.map(r => expect(r.data).to.be.an('array').that.is.empty);
 });
 
 Then('I expect transfer {string}LSK from B to z should fail', async () => {
 	const api = await I.call();
 	const { id } = transactions.find(t => t.action === 'BtoZ');
-	const { result, error } = await from(api.getTransactions({ id }));
+	const { result, error } = await from(api.getTransactionsFromPool({ id }));
 
 	expect(error).to.be.null;
-	expect(result.data).to.be.an('array').that.is.empty;
+	result.map(r => expect(r.data).to.be.an('array').that.is.empty);
 });
