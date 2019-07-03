@@ -7,13 +7,13 @@ Feature: Over spend from account
     Given I have account A, B, X, Y, Z
     When I transfer 1LSK to account "A" and "B" from genesis account
     Then lisk account "A" and "B" should be created with balance 1LSK
-    And I transfer 0.7LSK from account "A" to "X"
-    And I transfer 0.5LSK from account "B" to "Y"
-    And I transfer 0.3LSK from account "A" to "B"
-    And I transfer 0.5LSK from account "B" to "Z"
-    And I wait for a block
-    Then I expect transfer 0.7LSK from A to X should be succeeded
-    And I expect transfer 0.5LSK from B to Y should be succeeded
-    And I expect transfer 0.3LSK from A to B should be failed
-    And I expect transfer 0.5LSK from B to z should be failed
+    Then I transfer "0.7"LSK from account "A" to "X"
+    Then I transfer "0.5"LSK from account "B" to "Y"
+    Then I transfer "0.3"LSK from account "A" to "B"
+    Then I transfer "0.5"LSK from account "B" to "Z"
+    Then I wait for a block
+    Then I expect transfer "0.7"LSK from A to X should be succeeded
+    Then I expect transfer "0.5"LSK from B to Y should be succeeded
+    Then I expect transfer "0.3"LSK from A to B should fail
+    Then I expect transfer "0.5"LSK from B to z should fail
 

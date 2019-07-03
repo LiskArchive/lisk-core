@@ -1,7 +1,6 @@
 const { TO_BEDDOWS, from } = require('../../utils');
 
 const I = actor();
-let account;
 const transactions = [];
 let users = ['A', 'B', 'X', 'Y', 'Z'];
 
@@ -41,76 +40,52 @@ Then('lisk account {string} and {string} should be created with balance {int}LSK
 	});
 });
 
-Then('I transfer {float}LSK from account {string} to {string}', async (amount, userA, userX) => {
-	const atox = await I.transfer({
-		recipientId: getUserAddress(userX),
+Then('I transfer {string}LSK from account {string} to {string}', async (amount, fromAcc, toAcc) => {
+	const trx = await I.transfer({
+		recipientId: getUserAddress(toAcc),
 		amount: TO_BEDDOWS(amount),
-		passphrase: users.filter(u => u.user === userA)[0].acc.passphrase,
+		passphrase: users.filter(u => u.user === fromAcc)[0].acc.passphrase,
 	}, 0);
-	transactions.push({ atox });
-});
-
-Then('I transfer {float}LSK from account {string} to {string}', async (amount, userB, userY) => {
-	const btoy = await I.transfer({
-		recipientId: getUserAddress(userY),
-		amount: TO_BEDDOWS(amount),
-		passphrase: users.filter(u => u.user === userB)[0].acc.passphrase,
-	}, 0);
-	transactions.push({ btoy });
-});
-
-Then('I transfer {float}LSK from account {string} to {string}', async (amount, userA, userB) => {
-	const atob = await I.transfer({
-		recipientId: getUserAddress(userB),
-		amount: TO_BEDDOWS(amount),
-		passphrase: users.filter(u => u.user === userA)[0].acc.passphrase,
-	}, 0);
-	transactions.push({ atob });
-});
-
-Then('I transfer {float}LSK from account {string} to {string}', async (amount, userB, userZ) => {
-	const btoz = await I.transfer({
-		recipientId: getUserAddress(userZ),
-		amount: TO_BEDDOWS(amount),
-		passphrase: users.filter(u => u.user === userB)[0].acc.passphrase,
-	}, 0);
-	transactions.push({ btoz });
+	const user = `${fromAcc}to${toAcc}`;
+	trx.action = user;
+	transactions.push(trx);
 });
 
 Then('I wait for a block', async () => {
-	await I.waitForBlock(2);
+	await I.waitForBlock(1);
 });
 
-Then('I expect transfer {float}LSK from A to X should be succeeded', async amount => {
+Then('I expect transfer {string}LSK from A to X should be succeeded', async amount => {
 	const api = await I.call();
-	const { id } = transactions.filter(t => t.atox);
+	const { id } = transactions.find(t => t.action === 'AtoX');
+	const { result, error } = await from(api.getTransactions({ id }));
+	expect(error).to.be.null;
+	expect(result.data[0].amount).to.deep.equal(TO_BEDDOWS(amount));
+});
+
+Then('I expect transfer {string}LSK from B to Y should be succeeded', async amount => {
+	const api = await I.call();
+	const { id } = transactions.find(t => t.action === 'BtoY');
 	const { result, error } = await from(api.getTransactions({ id }));
 
 	expect(error).to.be.null;
-	expect(result.data[0].balance).to.deep.equal(TO_BEDDOWS(amount));
+	expect(result.data[0].amount).to.deep.equal(TO_BEDDOWS(amount));
 });
 
-Then('I expect transfer {float}LSK from B to Y should be succeeded', async amount => {
+Then('I expect transfer {string}LSK from A to B should fail', async () => {
 	const api = await I.call();
-	const { id } = transactions.filter(t => t.btoy);
+	const { id } = transactions.find(t => t.action === 'AtoB');
 	const { result, error } = await from(api.getTransactions({ id }));
 
 	expect(error).to.be.null;
-	expect(result.data[0].balance).to.deep.equal(TO_BEDDOWS(amount));
+	expect(result.data).to.be.an('array').that.is.empty;
 });
 
-Then('I expect transfer {float}LSK from A to B should be failed', async () => {
+Then('I expect transfer {string}LSK from B to z should fail', async () => {
 	const api = await I.call();
-	const { id } = transactions.filter(t => t.btoy);
-	const { error } = await from(api.getTransactions({ id }));
+	const { id } = transactions.find(t => t.action === 'BtoZ');
+	const { result, error } = await from(api.getTransactions({ id }));
 
-	expect(error).to.be.not.null;
-});
-
-Then('I expect transfer {float}LSK from B to z should be failed', async () => {
-	const api = await I.call();
-	const { id } = transactions.filter(t => t.btoy);
-	const { error } = await from(api.getTransactions({ id }));
-
-	expect(error).to.be.not.null;
+	expect(error).to.be.null;
+	expect(result.data).to.be.an('array').that.is.empty;
 });
