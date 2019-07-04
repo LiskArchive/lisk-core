@@ -44,7 +44,7 @@ The following dependencies need to be installed in order to run applications cre
 | ---------------- | ------- |
 | NodeJS           | 10.15.3 |
 | PostgreSQL       | 10.x    |
-| Redis (optional) | 4+      |
+| Redis (optional) | 5+      |
 
 You can find further details on installing these dependencies in our [pre-installation setup guide](https://lisk.io/documentation/lisk-core/setup/source#pre-install).
 Clone the Lisk Core repository using Git and initialize the modules.
@@ -69,7 +69,7 @@ This will start the lisk instance with `devnet` configuration. Once the process 
 Optionally, start the process with `pm2`. This will fork the process into the background and automatically recover the process if it fails.
 
 ```
-npx pm2 start --name lisk src/index.js
+npx pm2 start --name lisk dist/index.js
 ```
 
 After the process is started, its runtime status and log location can be retrieved by issuing the following command:
@@ -87,7 +87,7 @@ npx pm2 stop lisk
 **NOTE:** The **port**, **address** and **config-path** can be overridden by providing the relevant command switch:
 
 ```
-npx pm2 start --name lisk src/index.js -- -p [port] -a [address] -c [config-path] -n [network]
+npx pm2 start --name lisk dist/index.js -- -p [port] -a [address] -c [config-path] -n [network]
 ```
 
 You can pass any of `devnet`, `alphanet`, `betanet`, `testnet` or `mainnet` for the network option.
@@ -116,7 +116,7 @@ More information about options can be found at [Command Line Options](#command-l
 There are plenty of options available that you can use to override configuration on runtime while starting the lisk.
 
 ```
-npm start -- [options]
+node dist/index.js -- [options]
 ```
 
 Each of that option can be appended to the command-line. There are also a few `ENV` variables that can be utilized for this purpose.
@@ -174,7 +174,7 @@ createdb lisk_dev
 2. Launch Lisk (runs on port 4000):
 
 ```
-NODE_ENV=test npm start
+NODE_ENV=test node dist/index.js
 ```
 
 ## Utility Scripts
