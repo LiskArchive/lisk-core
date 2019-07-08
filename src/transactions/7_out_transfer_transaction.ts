@@ -59,6 +59,7 @@ export class OutTransferTransaction extends BaseTransaction {
 	public readonly asset: OutTransferAsset;
 	public readonly containsUniqueData: boolean;
 	public static TYPE = 7;
+	public static FEE = OUT_TRANSFER_FEE.toString();
 
 	public constructor(rawTransaction: unknown) {
 		super(rawTransaction);
@@ -135,18 +136,6 @@ export class OutTransferTransaction extends BaseTransaction {
 					this.id,
 					'.amount',
 					this.amount.toString()
-				)
-			);
-		}
-
-		if (!this.fee.eq(OUT_TRANSFER_FEE)) {
-			errors.push(
-				new TransactionError(
-					`Fee must be equal to ${OUT_TRANSFER_FEE}`,
-					this.id,
-					'.fee',
-					this.fee.toString(),
-					OUT_TRANSFER_FEE
 				)
 			);
 		}
