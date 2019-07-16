@@ -94,6 +94,7 @@ export class DappTransaction extends BaseTransaction {
 	public readonly containsUniqueData: boolean;
 	public readonly asset: DappAsset;
 	public static TYPE = 5;
+	public static FEE = DAPP_FEE.toString();
 
 	public constructor(rawTransaction: unknown) {
 		super(rawTransaction);
@@ -237,17 +238,6 @@ export class DappTransaction extends BaseTransaction {
 			);
 		}
 
-		if (!this.fee.eq(DAPP_FEE)) {
-			errors.push(
-				new TransactionError(
-					`Fee must be equal to ${DAPP_FEE}`,
-					this.id,
-					'.fee',
-					this.fee.toString(),
-					DAPP_FEE
-				)
-			);
-		}
 		const validLinkSuffix = ['.zip'];
 
 		if (errors.length > 0) {

@@ -55,6 +55,7 @@ export const inTransferAssetFormatSchema = {
 export class InTransferTransaction extends BaseTransaction {
 	public readonly asset: InTransferAsset;
 	public static TYPE = 6;
+	public static FEE = IN_TRANSFER_FEE.toString();
 
 	public constructor(rawTransaction: unknown) {
 		super(rawTransaction);
@@ -143,18 +144,6 @@ export class InTransferTransaction extends BaseTransaction {
 					'.amount',
 					this.amount.toString(),
 					'0'
-				)
-			);
-		}
-
-		if (!this.fee.eq(IN_TRANSFER_FEE)) {
-			errors.push(
-				new TransactionError(
-					`Fee must be equal to ${IN_TRANSFER_FEE}`,
-					this.id,
-					'.fee',
-					this.fee.toString(),
-					IN_TRANSFER_FEE
 				)
 			);
 		}
