@@ -1,88 +1,85 @@
+require('util').inspect.defaultOptions.depth = null;
 const { TO_BEDDOWS, from } = require('../../utils');
 
 const I = actor();
 const transactions = [];
-let users = ['A', 'B', 'X', 'Y', 'Z'];
+let userAccounts;
+const secondPassphrase = 'wagon stock borrow episode laundry kitten salute link globe zero feed marble';
 
-const getUserAddress = userName => users.filter(u => u.user === userName)[0].acc.address;
+const getUserAddress = (accounts, userName) => accounts.filter(u => u.user === userName)[0].acc.address;
 
-Given('I have account A, B, X, Y, Z', async () => {
-	users = await Promise.all(users.map(async user => {
+Given('I have account {string}', async users => {
+	userAccounts = await Promise.all(users.split(',').map(async user => {
 		const acc = await I.createAccount();
-		return { user, acc };
+		return { user: user.trim(), acc };
 	}));
 });
 
-When('I transfer {int}LSK to account {string} and {string} from genesis account', async (amount, userA, userB) => {
-	const trxA = await I.transfer({
-		recipientId: getUserAddress(userA),
-		amount: TO_BEDDOWS(amount),
-	}, 0);
-
-	const trxB = await I.transfer({
-		recipientId: getUserAddress(userB),
-		amount: TO_BEDDOWS(amount),
-	}, 0);
-
-	await I.waitForTransactionToConfirm(trxA.id);
-	await I.waitForTransactionToConfirm(trxB.id);
-});
-
-Then('lisk account {string} and {string} should be created with balance {int}LSK', async (userA, userB, amount) => {
-	const api = await I.call();
-	const response1 = await from(api.getAccounts({ address: getUserAddress(userA) }));
-	const response2 = await from(api.getAccounts({ address: getUserAddress(userB) }));
-
-	[response1, response2].forEach(res => {
-		expect(res.error).to.be.null;
-		I.expectResponseToBeValid(res.result, 'AccountsResponse');
-		expect(res.result.data[0].balance).to.deep.equal(TO_BEDDOWS(amount));
-	});
-});
-
-Then('I transfer {string}LSK from account {string} to {string}', async (amount, fromAcc, toAcc) => {
+Then('I transfer {int}LSK to account {string} from genesis account', async (amount, user) => {
 	const trx = await I.transfer({
-		recipientId: getUserAddress(toAcc),
+		recipientId: getUserAddress(userAccounts, user),
 		amount: TO_BEDDOWS(amount),
-		passphrase: users.filter(u => u.user === fromAcc)[0].acc.passphrase,
 	}, 0);
-	const user = `${fromAcc}to${toAcc}`;
+
 	trx.action = user;
 	transactions.push(trx);
 });
 
-Then('I wait for a block', async () => {
-	await I.waitForBlock(2);
+Then('I wait for transactions {string} to get confirmed in blockchain', async users => {
+	const trxs = users.split(',').map(user => transactions.find(t => t.action === user.trim()));
+
+	await Promise.all(trxs.map(async trx => I.waitForTransactionToConfirm(trx.id)));
 });
 
-Then('I expect transfer {string}LSK from A to X should be succeeded', async amount => {
+Then('I transfer {string}LSK from account {string} to {string}', async (amount, fromAcc, toAcc) => {
+	const user = `${fromAcc}to${toAcc}`;
+	const trx = await I.transfer({
+		recipientId: getUserAddress(userAccounts, toAcc),
+		amount: TO_BEDDOWS(amount),
+		data: user,
+		passphrase: userAccounts.filter(u => u.user === fromAcc)[0].acc.passphrase,
+	}, 0);
+
+	trx.action = user;
+	transactions.push(trx);
+});
+
+Then('I transfer {string}LSK from second signature account {string} to {string}', async (amount, fromAcc, toAcc) => {
+	const user = `${fromAcc}to${toAcc}`;
+	const trx = await I.transfer({
+		recipientId: getUserAddress(userAccounts, toAcc),
+		amount: TO_BEDDOWS(amount),
+		data: user,
+		passphrase: userAccounts.filter(u => u.user === fromAcc)[0].acc.passphrase,
+	}, 0);
+
+	trx.action = user;
+	transactions.push(trx);
+});
+
+Then('I register second passphrase on account {string}', async user => {
+	const { address, passphrase } = userAccounts.filter(u => u.user === user)[0].acc;
+
+	await I.haveAccountWithSecondSignature(address, passphrase, secondPassphrase);
+});
+
+Then('I wait for {string} blocks to make sure consicutive transactions included in one block', async blocksToWait => {
+	await I.waitForBlock(parseInt(blocksToWait));
+});
+
+Then('I expect transfer {string}LSK from {string} to {string} should succeeded', async (amount, fromUser, toUser) => {
 	const api = await I.call();
-	const { id } = transactions.find(t => t.action === 'AtoX');
+
+	const { id } = transactions.find(t => t.action === `${fromUser}to${toUser}`);
+	await I.waitForTransactionToConfirm(id, 0);
 	const { result, error } = await from(api.getTransactions({ id }));
 	expect(error).to.be.null;
 	expect(result.data[0].amount).to.deep.equal(TO_BEDDOWS(amount));
 });
 
-Then('I expect transfer {string}LSK from B to Y should be succeeded', async amount => {
+Then('I expect transfer {string}LSK from {string} to {string} should fail', async (amount, fromUser, toUser) => {
 	const api = await I.call();
-	const { id } = transactions.find(t => t.action === 'BtoY');
-	const { result, error } = await from(api.getTransactions({ id }));
-	expect(error).to.be.null;
-	expect(result.data[0].amount).to.deep.equal(TO_BEDDOWS(amount));
-});
-
-Then('I expect transfer {string}LSK from A to B should fail', async () => {
-	const api = await I.call();
-	const { id } = transactions.find(t => t.action === 'AtoB');
-	const { result, error } = await from(api.getTransactionsFromPool({ id }));
-
-	expect(error).to.be.null;
-	result.map(r => expect(r.data).to.be.an('array').that.is.empty);
-});
-
-Then('I expect transfer {string}LSK from B to z should fail', async () => {
-	const api = await I.call();
-	const { id } = transactions.find(t => t.action === 'BtoZ');
+	const { id } = transactions.find(t => t.action === `${fromUser}to${toUser}`);
 	const { result, error } = await from(api.getTransactionsFromPool({ id }));
 
 	expect(error).to.be.null;
