@@ -100,6 +100,7 @@ class LiskUtil extends Helper {
 	 * @param {number} expectedHeight - expected height to reach
 	 */
 	async waitUntilBlock(expectedHeight) {
+		let counter = 0;
 		const {
 			data: {
 				height,
@@ -120,6 +121,11 @@ class LiskUtil extends Helper {
 			return height;
 		}
 
+		if (counter >= 10) {
+			return true;
+		}
+
+		counter += 1;
 		await this.wait(BLOCK_TIME);
 		await this.waitUntilBlock(expectedHeight);
 		return true;
@@ -616,14 +622,14 @@ class LiskUtil extends Helper {
 	 * Waits until the transaction is confirmed on the network
 	 * @param {string} id transaction id
 	 */
-	async waitForTransactionToConfirm(id) {
+	async waitForTransactionToConfirm(id, numberOfBlocks = 1) {
 		const { result, error } = await from(this.call().getTransactions({ id }));
 
 		expect(error).to.be.null;
 		if (result.data.length) {
 			return result;
 		}
-		await this.waitForBlock();
+		await this.waitForBlock(numberOfBlocks);
 		await this.waitForTransactionToConfirm(id);
 		return true;
 	}
@@ -637,7 +643,7 @@ class LiskUtil extends Helper {
 		if (nodeStatus.data.height >= expectedHeight) {
 			output.print(
 				`Reached expected height: ${expectedHeight}, Node current height: ${
-					nodeStatus.data.height
+				nodeStatus.data.height
 				}`
 			);
 			return;
