@@ -48,6 +48,8 @@ pipeline {
           dir('qa') {
             nvm(getNodejsVersion()) {
               ansiColor('xterm') {
+                sh 'npm run tools:peers:seed:node'
+                sh 'npm run tools:peers:network:nodes'
                 sh 'npm run stress:generic || true'
                 sh 'npm run stress:diversified'
               }
