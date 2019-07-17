@@ -4,7 +4,7 @@ properties([
   parameters([
     string(name: 'NETWORK', description: 'To Run test against a network', ),
     string(name: 'STRESS_COUNT', defaultValue: '500', description: 'Number of transactions to create', ), // Used by stage: Test Network Stress
-    booleanParam(name: 'CLEAN_UP', defaultValue: true, description: 'Destroy deployed nodes when done testing', ),
+    booleanParam(name: 'CLEAN_UP', defaultValue: false, description: 'Destroy deployed nodes when done testing', ),
   ])
 ])
 
