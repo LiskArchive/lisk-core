@@ -4,8 +4,9 @@ properties([
   parameters([
     string(name: 'SDK_BRANCH_NAME', defaultValue: 'development', description: 'Lisk core branch name', ),
     string(name: 'CORE_BRANCH_NAME', defaultValue: 'master', description: 'Lisk core branch name', ),
-    string(name: 'NETWORK', defaultValue: 'jenkinsnet-$BUILD_ID', description: 'To Run test against a network', ),
+    string(name: 'NETWORK', defaultValue: 'alphanet-$BUILD_ID', description: 'To Run test against a network', ),
     string(name: 'NODES_PER_REGION', defaultValue: '1', description: 'Number of nodes per region', ),
+    string(name: 'NEWRELIC_ENABLED', defaultValue: 'no', description: 'Enable NewRelic', ),
   ])
 ])
 
