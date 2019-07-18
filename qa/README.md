@@ -1,7 +1,5 @@
 # Lisk Core QA
-[![Build Status](https://jenkins.lisk.io/job/lisk-core-qa-external/job/master/2/badge/icon)](https://jenkins.lisk.io/job/lisk-core-qa-external/job/master/)
-[![dependencies Status](https://david-dm.org/LiskHQ/lisk-core-qa-external/status.svg)](https://david-dm.org/LiskHQ/lisk-core-qa-external)
-[![devDependencies Status](https://david-dm.org/LiskHQ/lisk-core-qa-external/dev-status.svg)](https://david-dm.org/LiskHQ/lisk-core-qa-external?type=dev)
+[![Build Status](https://jenkins.lisk.io/job/lisk-qa/job/lisk-core-qa/job/master/badge/icon)](https://jenkins.lisk.io/job/lisk-qa/job/lisk-core-qa/job/master/)
 
 Quality Assurance of Lisk Network.
 
@@ -19,10 +17,7 @@ The quality assurance ensures if the release candidates are
 
   - Newly introduced features for a particular release to be covered with new feature scenarios.
 
-## Checklist
-* For every release run through this [checklist](docs/qa_round_template.md).
-
-This document details how to install Lisk Core Qa External from source.
+This document details how to install Lisk Core QA from source.
 If you have satisfied the requirements from the Pre-Installation section, you can jump directly to the next section [Installation Steps](#installation).
 
 ## Index
@@ -31,7 +26,7 @@ If you have satisfied the requirements from the Pre-Installation section, you ca
   * [Git](#git)
   * [Node.JS](#nodejs)
 * [Installation](#installation)
-* [Managing-Lisk-Core-Qa-External](#managing-lisk-core-qa-external)
+* [Managing-Lisk-Core-QA](#managing-lisk-core-qa)
   * [Single-Node](#single-node)
     * [Add-peers-to-config-Single-Node](#add-peers-to-config-single-node)
   * [Network-Mode](#network-mode)
@@ -44,13 +39,13 @@ If you have satisfied the requirements from the Pre-Installation section, you ca
 
 ## Pre-Installation
 
-The next section details the prerequisites to install Lisk Core Qa External from source.
+The next section details the prerequisites to install Lisk Core QA from source.
 
 ### System Install
 
 ### [Git](https://github.com/git/git)
 
-Used for cloning and updating Lisk Core Qa External
+Used for cloning and updating Lisk Core QA
 
 * Ubuntu:
 
@@ -88,13 +83,13 @@ brew install node@10.14.1
 Clone the Lisk Core repository using Git and initialize the modules.
 
 ```
-git clone https://github.com/LiskHQ/lisk-core-qa-external.git
-cd lisk-core-qa-external
+git clone https://github.com/LiskHQ/lisk-core.git
 git checkout master
+cd lisk-core/qa
 npm i
 ```
 
-## Managing-Lisk-Core-Qa-External
+## Managing-Lisk-Core-QA
 
 ### Single-Node
 To run tests against single node setup [Lisk Core](https://lisk.io/documentation/lisk-core/setup/source), once you have the Lisk Core up and running.
