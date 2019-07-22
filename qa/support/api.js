@@ -96,6 +96,18 @@ class API {
 		return true;
 	}
 
+	async getTransactionsFromPool(params, states = ['pending', 'ready', 'received', 'validated', 'verified']) {
+		try {
+			return Promise.all(states.map(state => this.getTransactionsByState(state, params, '')));
+		} catch (error) {
+			output.print(
+				'API.getTransactionsFromPool: Error while processing request'
+			);
+			output.error(error);
+		}
+		return true;
+	}
+
 	async getPeers(params, ipAddress) {
 		try {
 			const client = this.getClientByAddress(ipAddress);

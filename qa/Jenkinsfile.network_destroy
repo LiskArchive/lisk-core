@@ -1,0 +1,56 @@
+@Library('lisk-jenkins') _
+
+properties([
+  parameters([
+    string(name: 'NETWORK', description: 'Network to destroy', ),
+  ])
+])
+
+pipeline {
+  agent { node { label 'lisk-core' } }
+  options { disableConcurrentBuilds() }
+  stages {
+    stage('Destroy network') {
+      steps {
+        script {
+          ansibleTower \
+            towerServer: 'tower',
+            templateType: 'job',
+            jobTemplate: '16',  // devnet-archive-logs
+            jobType: 'run',
+            extraVars: """devnet: ${params.NETWORK}""",
+            throwExceptionWhenFail: false,
+            verbose: false
+        }
+      }
+    }
+  }
+  post {
+    failure {
+      script {
+        ansibleTower \
+          towerServer: 'tower',
+          templateType: 'job',
+          jobTemplate: '16',  // devnet-archive-logs
+          jobType: 'run',
+          extraVars: """devnet: ${params.NETWORK}""",
+          throwExceptionWhenFail: false,
+          verbose: false
+      }
+      liskSlackSend('danger', "Build failed (<${env.BUILD_URL}/console|console>, <${env.BUILD_URL}/changes|changes>)", 'lisk-ci-core')
+    }
+    cleanup {
+      script {
+        ansibleTower \
+          towerServer: 'tower',
+          templateType: 'job',
+          jobTemplate: '15',  // do-destroy-tag
+          jobType: 'run',
+          extraVars: """do_tag: ${params.NETWORK}_node""",
+          throwExceptionWhenFail: false,
+          verbose: false
+      }
+    }
+  }
+}
+// vim: filetype=groovy

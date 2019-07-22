@@ -15,5 +15,5 @@ services:
     image: redis:alpine
     networks:
       - lisk
-    restart: on-failure
+    restart: unless-stopped
     command: --maxclients 500 --tcp-backlog 128 --maxmemory-policy allkeys-lru --save ""

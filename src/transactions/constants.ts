@@ -18,8 +18,6 @@ import { constants } from '@liskhq/lisk-transactions';
 const { FIXED_POINT, MAX_TRANSACTION_AMOUNT } = constants;
 
 export const TRANSACTION_DAPP_TYPE = 5;
-export const TRANSACTION_INTRANSFER_TYPE = 6;
-export const TRANSACTION_OUTTRANSFER_TYPE = 7;
 
 export const IN_TRANSFER_FEE = FIXED_POINT * 0.1;
 export const OUT_TRANSFER_FEE = FIXED_POINT * 0.1;

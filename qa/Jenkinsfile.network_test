@@ -2,13 +2,9 @@
 
 properties([
   parameters([
-    string(name: 'SDK_BRANCH_NAME', defaultValue: 'development', description: 'Lisk core branch name', ),
-    string(name: 'CORE_BRANCH_NAME', defaultValue: 'master', description: 'Lisk core branch name', ),
-    string(name: 'NETWORK', defaultValue: 'jenkinsnet-$BUILD_ID', description: 'To Run test against a network', ),
-    string(name: 'NODES_PER_REGION', defaultValue: '1', description: 'Number of nodes per region', ),
+    string(name: 'NETWORK', description: 'To Run test against a network', ),
     string(name: 'STRESS_COUNT', defaultValue: '500', description: 'Number of transactions to create', ), // Used by stage: Test Network Stress
-    string(name: 'NEWRELIC_ENABLED', defaultValue: 'no', description: 'Enable NewRelic', ),
-    booleanParam(name: 'CLEAN_UP', defaultValue: true, description: 'Destroy deployed nodes when done testing', ),
+    booleanParam(name: 'CLEAN_UP', defaultValue: false, description: 'Destroy deployed nodes when done testing', ),
   ])
 ])
 
@@ -21,56 +17,16 @@ pipeline {
         dir('qa') {
           nvm(getNodejsVersion()) {
             sh 'npm ci'
-          }
-        }
-      }
-    }
-    stage('Trigger core build') {
-      steps {
-        script {
-          def b = build job: 'lisk-qa/lisk-core-build-dev',
-                  parameters: [string(name: 'COMMITISH_SDK', value: """${params.SDK_BRANCH_NAME}"""),
-                   string(name: 'COMMITISH_CORE', value: """${params.CORE_BRANCH_NAME}""")]
-          env.LISK_VERSION = b.getBuildVariables().get('LISK_VERSION')
-        }
-      }
-    }
-    stage('Deploy network') {
-      steps {
-        retry(5) {
-          ansiColor('xterm') {
-            ansibleTower \
-              towerServer: 'tower',
-              templateType: 'job',
-              jobTemplate: '14',  // devnet-deploy
-              jobType: 'run',
-              extraVars: """newrelic_enabled: '${params.NEWRELIC_ENABLED}'
-devnet: ${params.NETWORK}
-do_nodes_per_region: ${params.NODES_PER_REGION}
-jenkins_ci: 'yes'
-lisk_version: ${env.LISK_VERSION}""",
-              importTowerLogs: true,
-              throwExceptionWhenFail: true,
-              verbose: false
-          }
-        }
-      }
-    }
-    stage('Generate peer config and enable forging') {
-      steps {
-        dir('qa') {
-          nvm(getNodejsVersion()) {
-            sh '''
-            npm run tools:peers:seed:node
-            npm run tools:peers:connected
-            npm run tools:peers:network:nodes
-            npm run tools:delegates:enable
-            '''
+            sh 'npm run tools:peers:seed:node'
+            sh 'npm run tools:peers:network:nodes'
           }
         }
       }
     }
     stage('Test Scenarios') {
+      options {
+        timeout(time: 30, unit: 'MINUTES')
+      }
       steps {
         retry(2) {
           timestamps {
@@ -86,6 +42,9 @@ lisk_version: ${env.LISK_VERSION}""",
       }
     }
     stage('Test Network Stress') {
+      options {
+        timeout(time: 1, unit: 'HOURS')
+      }
       steps {
         timestamps {
           dir('qa') {
