@@ -28,9 +28,10 @@ class API {
 			)[0];
 			return clientList ? clientList.client : this.clients[0].client;
 		}
-		// TODO: until the network is stablized and
-		// broadcasting works as expected we have to use seednode
+
 		return this.clients[0].client;
+		// const randomNode = this.clients[Math.floor(Math.random() * this.clients.length)];
+		// return randomNode.client;
 	}
 
 	async getNodeStatus(node) {

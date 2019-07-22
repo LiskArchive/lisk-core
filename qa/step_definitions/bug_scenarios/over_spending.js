@@ -70,7 +70,7 @@ Then('I expect transfer {string}LSK from {string} to {string} should succeeded',
 	const api = await I.call();
 
 	const { id } = transactions.find(t => t.action === `${fromUser}to${toUser}`);
-	await I.waitForTransactionToConfirm(id, 0);
+	await I.waitForTransactionToConfirm(id);
 	const { result, error } = await from(api.getTransactions({ id }));
 	expect(error).to.be.null;
 	expect(result.data[0].amount).to.deep.equal(TO_BEDDOWS(amount));

@@ -101,8 +101,7 @@ class LiskUtil extends Helper {
 	 * check node height and wait until it reaches the expected height
 	 * @param {number} expectedHeight - expected height to reach
 	 */
-	async waitUntilBlock(expectedHeight) {
-		let counter = 0;
+	async waitUntilBlock(expectedHeight, counter) {
 		const {
 			data: {
 				height,
@@ -110,10 +109,15 @@ class LiskUtil extends Helper {
 			},
 		} = await this.call().getNodeStatus();
 		const pendingTrxCnt = ready + verified + pending + validated;
+		counter = counter ? (counter += 1) : 1;
 
 		output.print(
-			`Timestamp: ${new Date().toISOString()}, current height: ${height}, expected height: ${expectedHeight}, confirmed trxs: ${confirmed}, pending trxs: ${pendingTrxCnt}`
+			`Counter: ${counter}, Timestamp: ${new Date().toISOString()}, current height: ${height}, expected height: ${expectedHeight}, confirmed trxs: ${confirmed}, pending trxs: ${pendingTrxCnt}`
 		);
+
+		if (counter >= 20) {
+			return true;
+		}
 
 		if (height >= expectedHeight) {
 			// Remove the buffer time when network is stable
@@ -123,13 +127,8 @@ class LiskUtil extends Helper {
 			return height;
 		}
 
-		if (counter >= 10) {
-			return true;
-		}
-
-		counter += 1;
 		await this.wait(BLOCK_TIME);
-		await this.waitUntilBlock(expectedHeight);
+		await this.waitUntilBlock(expectedHeight, counter);
 		return true;
 	}
 
@@ -624,15 +623,23 @@ class LiskUtil extends Helper {
 	 * Waits until the transaction is confirmed on the network
 	 * @param {string} id transaction id
 	 */
-	async waitForTransactionToConfirm(id, numberOfBlocks = 1) {
+	async waitForTransactionToConfirm(id, numberOfBlocks = 1, counter) {
+		counter = counter ? (counter += 1) : 1;
 		const { result, error } = await from(this.call().getTransactions({ id }));
+
+		if (counter >= 5) {
+			output.print(
+				`Counter: ${counter}, Timestamp: ${new Date().toISOString()}, Transaction: ${id}`
+			);
+			return true;
+		}
 
 		expect(error).to.be.null;
 		if (result.data.length) {
 			return result;
 		}
 		await this.waitForBlock(numberOfBlocks);
-		await this.waitForTransactionToConfirm(id);
+		await this.waitForTransactionToConfirm(id, numberOfBlocks, counter);
 		return true;
 	}
 
