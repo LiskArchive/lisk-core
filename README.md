@@ -62,7 +62,13 @@ npm run build
 To test Lisk is built and configured correctly, issue the following command at the root level of the project:
 
 ```
-npm start
+node dist/index.js
+```
+
+To pretty-print the console logs:
+
+```
+node dist/index.js | npx bunyan -o short
 ```
 
 This will start the lisk instance with `devnet` configuration. Once the process is verified as running correctly, use `CTRL+C` to quit the running application.
