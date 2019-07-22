@@ -1,3 +1,4 @@
+const chai = require('chai');
 const elements = require('lisk-elements');
 const output = require('codeceptjs').output;
 const API = require('./api.js');
@@ -10,6 +11,7 @@ const {
 const { TO_BEDDOWS, BLOCK_TIME, from } = require('../utils');
 
 const users = {};
+chai.config.truncateThreshold = 0;
 
 /* eslint camelcase: ["error", {allow: ["codecept_helper"]}] */
 const Helper = codecept_helper;

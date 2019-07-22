@@ -1,4 +1,3 @@
-require('util').inspect.defaultOptions.depth = null;
 const { TO_BEDDOWS, from } = require('../../utils');
 
 const I = actor();
