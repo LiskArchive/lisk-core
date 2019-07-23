@@ -127,7 +127,8 @@
 					"10531191392368229062": "57178850733351210759L"
 				},
 				"precedent": {
-					"disableDappTransfer": 6901027
+					"disableDappTransfer": 6901027,
+					"disableDappTransaction": 10000000
 				},
 				"blockVersions": {
 					"0": {
