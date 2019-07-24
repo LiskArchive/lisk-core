@@ -1,9 +1,9 @@
 {
   "name": "lisk-core-qa-external",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Lisk core quality assurance",
   "author": "Lisk Foundation <admin@lisk.io>, lightcurve GmbH <admin@lightcurve.io>",
-  "license": "GPL-3.0",
+  "license": "Apache-2.0",
   "keywords": [
     "qa",
     "bdd",

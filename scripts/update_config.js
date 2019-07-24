@@ -335,11 +335,11 @@ history.version('2.0.0-rc.0', version => {
 		return config;
 	});
 
-	version.change('move forging.access to http_api', config => {
+	version.change('move forging.access to modules.http_api.forging.access', config => {
 		config = moveElement(
 			config,
 			'modules.chain.forging.access',
-			'modules.http_api.forging'
+			'modules.http_api.forging.access'
 		);
 		return config;
 	});
