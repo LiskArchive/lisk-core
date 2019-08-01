@@ -652,7 +652,7 @@ class LiskUtil extends Helper {
 		if (nodeStatus.data.height >= expectedHeight) {
 			output.print(
 				`Reached expected height: ${expectedHeight}, Node current height: ${
-				nodeStatus.data.height
+					nodeStatus.data.height
 				}`
 			);
 			return;

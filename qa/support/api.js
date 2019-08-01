@@ -23,9 +23,7 @@ class API {
 
 	getClientByAddress(node) {
 		if (node) {
-			const clientList = this.clients.filter(
-				client => client.node === node
-			)[0];
+			const clientList = this.clients.filter(client => client.node === node)[0];
 			return clientList ? clientList.client : this.clients[0].client;
 		}
 
@@ -96,9 +94,14 @@ class API {
 		return true;
 	}
 
-	async getTransactionsFromPool(params, states = ['pending', 'ready', 'received', 'validated', 'verified']) {
+	async getTransactionsFromPool(
+		params,
+		states = ['pending', 'ready', 'received', 'validated', 'verified']
+	) {
 		try {
-			return Promise.all(states.map(state => this.getTransactionsByState(state, params, '')));
+			return Promise.all(
+				states.map(state => this.getTransactionsByState(state, params, ''))
+			);
 		} catch (error) {
 			output.print(
 				'API.getTransactionsFromPool: Error while processing request'

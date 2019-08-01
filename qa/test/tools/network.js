@@ -59,7 +59,7 @@ const updateForgingStatus = async ({
 			expect(res.result.data[0].forging).to.deep.equal(isEnable);
 			output.print(
 				`Delegate with publicKey: ${
-				delegate.publicKey
+					delegate.publicKey
 				}, forging: ${isEnable} on node: ${ipAddress}`
 			);
 		} catch (err) {
@@ -67,7 +67,7 @@ const updateForgingStatus = async ({
 			output.error(err);
 			output.print(
 				`Failed to set forging: ${isEnable} for delegate with publicKey: ${
-				delegate.publicKey
+					delegate.publicKey
 				}, on node: ${ipAddress}`
 			);
 		}
@@ -90,7 +90,7 @@ const enableDisableDelegates = isEnable => {
 
 			output.print(
 				`${
-				delegateList.length
+					delegateList.length
 				} delegates ${enableOrDisable}d to on node ===> ${ipAddress}`,
 				'\n'
 			);
@@ -118,7 +118,7 @@ const checkIfAllPeersConnected = async () => {
 
 	output.print(
 		`Number of peers connected in network: ${
-		allPeers.length
+			allPeers.length
 		}, Expected peers: ${expectPeerCount}`
 	);
 
@@ -177,7 +177,11 @@ Scenario('Add network peers to config', async () => {
 		const allPeers = await I.getAllPeers(100, 0);
 		const configContent = getConfigContent();
 		const seedAddress = await getIpByDns(seedNode);
-		const uniquePeers = mergePeers(`${seedAddress}:${4000}`, configContent.peers, allPeers);
+		const uniquePeers = mergePeers(
+			`${seedAddress}:${4000}`,
+			configContent.peers,
+			allPeers
+		);
 
 		configContent.peers = []; // To avoid duplication first remove everything
 		configContent.peers.push(...uniquePeers);
