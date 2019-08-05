@@ -24,6 +24,15 @@ const { cloneDeep } = require('lodash');
 const dirPath = __dirname;
 const rootPath = path.dirname(path.resolve(__filename, '../../../'));
 
+/**
+ * Spawns node script to convert config file from version x to version y.
+ * Reads the outputted config and returns this as JSON.
+ * 
+ * @param {*} outputFilePath File to write updated config to
+ * @param {*} inputFilePath File to read config from to be updated
+ * @param {*} fromVersion Current version of config for input (fromVersion < toVersion)
+ * @param {*} toVersion Version to update config to
+ */
 const getUpdatedConfig = (outputFilePath, inputFilePath, fromVersion, toVersion) => {
 	spawnSync(
 		'node',
@@ -60,10 +69,6 @@ describe('scripts/update_config', () => {
 		fs.unlinkSync(outputPath);
 	});
 
-	it('should run update_config with no errors', async () => {
-		expect(spawnedScript.stderr.toString()).to.be.empty;
-	});
-
 	it('should be able to instanciate application', async () => {
 		expect(() => new Application(genesisBlock, updatedConfig)).not.to.throw;
 	});
@@ -71,10 +76,10 @@ describe('scripts/update_config', () => {
 
 describe('migrate from 1.6.0 to 2.0.0', () => {
 	const outputPath = `${dirPath}/output.json`;
-	const inputPath = `${dirPath}/input_config.json`; // Better var names
+	const inputPath = `${dirPath}/input_config.json`;
 	let baseConfig;
 
-	before(async () => { // Add docs
+	before(async () => {
 		baseConfig = JSON.parse(fs.readFileSync(path.resolve(__dirname, `../../fixtures/config_1.6.json`), {
 			encoding: 'utf8'
 		}));
