@@ -16,11 +16,10 @@
 
 const path = require('path');
 const fs = require('fs');
+const { Application } = require('lisk-sdk');
+const genesisBlock = require('../../../config/devnet/genesis_block.json');
 const { spawnSync } = require('child_process');
 const { cloneDeep } = require('lodash');
-const { Application } = require('lisk-sdk')
-// const originalConfig = require('../../fixtures/config_1.6.json');
-const genesisBlock = require('../../../config/devnet/genesis_block.json');
 
 const dirPath = __dirname;
 const rootPath = path.dirname(path.resolve(__filename, '../../../'));
@@ -49,31 +48,16 @@ const getUpdatedConfig = (outputFilePath, inputFilePath, fromVersion, toVersion)
 }
 
 describe('scripts/update_config', () => {
-	const updatedConfigPath = `${dirPath}/updated_config.json`;
+	const outputPath = `${dirPath}/output.json`;
 	let spawnedScript;
 	let updatedConfig;
 
-	before(async () => { // Update
-		spawnedScript = spawnSync(
-			'node',
-			[
-				'./scripts/update_config.js',
-				'--network',
-				'testnet',
-				'--output',
-				updatedConfigPath,
-				'/Users/michiel.mulders/lisk/lisk-core/test/fixtures/config_1.6.json',
-				'1.6.0',
-			],
-			{ cwd: rootPath }
-		);
-		updatedConfig = fs.readFileSync(`${dirPath}/updated_config.json`, {
-			encoding: 'utf8'
-		});
+	before(async () => {
+		updatedConfig = getUpdatedConfig(outputPath, path.resolve(__dirname, `../../fixtures/config_1.6.json`), '1.6.0', '2.0.0');
 	});
 
 	after(async () => {
-		fs.unlinkSync(updatedConfigPath);
+		fs.unlinkSync(outputPath);
 	});
 
 	it('should run update_config with no errors', async () => {
@@ -81,27 +65,27 @@ describe('scripts/update_config', () => {
 	});
 
 	it('should be able to instanciate application', async () => {
-			expect(() => new Application(genesisBlock, updatedConfig)).not.to.throw;
+		expect(() => new Application(genesisBlock, updatedConfig)).not.to.throw;
 	});
 });
 
 describe('migrate from 1.6.0 to 2.0.0', () => {
-	const updatedConfigPath = `${dirPath}/updated_config.json`;
-	const modifiedPath = `${dirPath}/modified_config.json`; // Better var names
+	const outputPath = `${dirPath}/output.json`;
+	const inputPath = `${dirPath}/input_config.json`; // Better var names
 	let baseConfig;
 
 	before(async () => { // Add docs
-		baseConfig = JSON.parse(fs.readFileSync('/Users/michiel.mulders/lisk/lisk-core/test/fixtures/config_1.6.json', { // Relative
+		baseConfig = JSON.parse(fs.readFileSync(path.resolve(__dirname, `../../fixtures/config_1.6.json`), {
 			encoding: 'utf8'
 		}));
 	});
 
 	afterEach(async () => {
-		fs.unlinkSync(updatedConfigPath);
+		fs.unlinkSync(outputPath);
 	});
 
 	after(async () => {
-		fs.unlinkSync(modifiedPath);
+		fs.unlinkSync(inputPath);
 	});
 
 	it('should detect custom config for wsPort', async () => {
@@ -109,10 +93,10 @@ describe('migrate from 1.6.0 to 2.0.0', () => {
 		const config = cloneDeep(baseConfig);
 		config.wsPort = 7001; // Default: 5000
 
-		fs.writeFileSync(modifiedPath, JSON.stringify(config), 'utf8');
+		fs.writeFileSync(inputPath, JSON.stringify(config), 'utf8');
 
 		// Act & Assert
-		const updatedConfig = getUpdatedConfig(updatedConfigPath, modifiedPath, '1.6.0', '2.0.0');
+		const updatedConfig = getUpdatedConfig(outputPath, inputPath, '1.6.0', '2.0.0');
 		expect(updatedConfig.modules.network.wsPort).to.eql(config.wsPort);
 	});
 
@@ -122,10 +106,10 @@ describe('migrate from 1.6.0 to 2.0.0', () => {
 		config.fileLogLevel = 'none'; // Default: 'info'
 		config.consoleLogLevel = 'warn'; // Default: 'none'
 
-		fs.writeFileSync(modifiedPath, JSON.stringify(config), 'utf8');
+		fs.writeFileSync(inputPath, JSON.stringify(config), 'utf8');
 
 		// Act
-		const updatedConfig = getUpdatedConfig(updatedConfigPath, modifiedPath, '1.6.0', '2.0.0');
+		const updatedConfig = getUpdatedConfig(outputPath, inputPath, '1.6.0', '2.0.0');
 
 		// Assert
 		expect(updatedConfig.components.logger.fileLogLevel).to.eql(config.fileLogLevel);
@@ -138,10 +122,10 @@ describe('migrate from 1.6.0 to 2.0.0', () => {
 		config.db.host = 'lisk-network'; // Default: 'localhost'
 		config.db.port = 1111; // Default: 5432
 
-		fs.writeFileSync(modifiedPath, JSON.stringify(config), 'utf8');
+		fs.writeFileSync(inputPath, JSON.stringify(config), 'utf8');
 
 		// Act
-		const updatedConfig = getUpdatedConfig(updatedConfigPath, modifiedPath, '1.6.0', '2.0.0');
+		const updatedConfig = getUpdatedConfig(outputPath, inputPath, '1.6.0', '2.0.0');
 
 		// Assert
 		expect(updatedConfig.components.storage.host).to.eql(config.db.host);
@@ -154,10 +138,10 @@ describe('migrate from 1.6.0 to 2.0.0', () => {
 		config.cacheEnabled = true; // Default: false
 		config.trustProxy = true; // Default: false
 
-		fs.writeFileSync(modifiedPath, JSON.stringify(config), 'utf8');
+		fs.writeFileSync(inputPath, JSON.stringify(config), 'utf8');
 
 		// Act
-		const updatedConfig = getUpdatedConfig(updatedConfigPath, modifiedPath, '1.6.0', '2.0.0');
+		const updatedConfig = getUpdatedConfig(outputPath, inputPath, '1.6.0', '2.0.0');
 
 		// Assert
 		expect(updatedConfig.components.cache.enabled).to.eql(config.cacheEnabled);
@@ -170,10 +154,10 @@ describe('migrate from 1.6.0 to 2.0.0', () => {
 		config.db.host = 'localhost'; // Default: 'localhost'
 		config.db.port = 5432; // Default: 5432
 
-		fs.writeFileSync(modifiedPath, JSON.stringify(config), 'utf8');
+		fs.writeFileSync(inputPath, JSON.stringify(config), 'utf8');
 
 		// Act
-		const updatedConfig = getUpdatedConfig(updatedConfigPath, modifiedPath, '1.6.0', '2.0.0');
+		const updatedConfig = getUpdatedConfig(outputPath, inputPath, '1.6.0', '2.0.0');
 
 		// Assert
 		expect(updatedConfig.components.storage.host).to.eql(undefined);
