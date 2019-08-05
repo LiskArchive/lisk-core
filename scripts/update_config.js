@@ -258,6 +258,10 @@ history.version('1.2.0-rc.x', version => {
 });
 
 history.version('2.0.0-rc.0', version => {
+	version.change('add structure for app component', config => 
+		moveElement(config, 'ipc', 'app.ipc')
+	);
+
 	version.change('add structure for logger component', config =>
 		moveKeys(
 			config,
@@ -321,7 +325,7 @@ history.version('2.0.0-rc.0', version => {
 		);
 		config = moveElement(
 			config,
-			'modules.chain.broadcasts.broadcastLimit',
+			'broadcasts.broadcastLimit',
 			'modules.network.emitPeerLimit'
 		);
 		config = moveElement(config, 'wsPort', 'modules.network.wsPort');

@@ -1,6 +1,6 @@
 {
-	"wsPort": 6000,
-	"httpPort": 3000,
+	"wsPort": 5000,
+	"httpPort": 4000,
 	"address": "0.0.0.0",
 	"fileLogLevel": "info",
 	"logFileName": "logs/lisk.log",
@@ -11,7 +11,6 @@
 	"db": {
 		"host": "localhost",
 		"port": 5432,
-		"database": "",
 		"user": "lisk",
 		"password": "password",
 		"min": 10,
