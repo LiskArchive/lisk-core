@@ -444,10 +444,11 @@ history.migrate(
 			console.info(`\nWriting configuration file to ${program.output}`);
 			fs.writeFileSync(
 				program.output,
-				JSON.stringify(customConfig, null, '\t')
+				JSON.stringify(customConfig, null, '\t'),
+				{ flag: 'wx' }
 			);
 		} else {
-			console.info('\n\n------------ OUTPUT -------------');
+			console.infso('\n\n------------ OUTPUT -------------');
 			console.info(JSON.stringify(customConfig, null, '\t'));
 		}
 		process.exit(0);
