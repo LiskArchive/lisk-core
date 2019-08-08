@@ -531,13 +531,14 @@ class LiskUtil extends Helper {
 		const peerList = peerResult.result.data;
 
 		await pagination.reduce(async (acc, curr) => {
+			const accRes = await acc;
 			const { result, error } = await from(
 				this.call().getPeers({ limit, offset: curr })
 			);
 
 			expect(error).to.be.null;
-			acc.push(...result.data);
-			return acc;
+			accRes.push(...result.data);
+			return accRes;
 		}, peerList);
 
 		return peerList;
