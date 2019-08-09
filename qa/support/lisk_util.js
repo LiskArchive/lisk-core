@@ -558,11 +558,13 @@ class LiskUtil extends Helper {
 				expect(error).to.be.null;
 				if (result && result.data.length) {
 					const forgingDelegates = result.data.filter(d => d.forging);
+					output.print(forgingDelegates);
 					return { ip: p.ip, ...forgingDelegates[0] };
 				}
 				return false;
 			})
 		);
+
 		return forgingStatus.filter(n => n);
 	}
 

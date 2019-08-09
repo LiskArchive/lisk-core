@@ -10,15 +10,20 @@ class API {
 	}
 
 	createApiClients() {
-		return this.peers.map(node => {
-			const url = `http://${node}`;
-			const client = new elements.APIClient([url]);
-			return {
-				node,
-				url,
-				client,
-			};
-		});
+		try {
+			return this.peers.map(node => {
+				const url = `http://${node}`;
+				const client = new elements.APIClient([url]);
+				return {
+					node,
+					url,
+					client,
+				};
+			});
+		} catch (error) {
+			output.error(error);
+			throw error;
+		}
 	}
 
 	getClientByAddress(node) {

@@ -1,3 +1,4 @@
+const output = require('codeceptjs').output;
 const chai = require('chai');
 const apiSchema = require('../api_schema');
 const { TO_LISK, TO_BEDDOWS, from, sortBy, flattern } = require('../utils');
@@ -26,152 +27,215 @@ const otherFields = [
 
 class ValidateHelper extends Helper {
 	async getSchemaDefinition(name) {
-		const { result, error } = await from(apiSchema.schema());
+		try {
+			const { result, error } = await from(apiSchema.schema());
 
-		expect(error).to.be.null;
-		return result.definitions[name];
+			expect(error).to.be.null;
+			return result.definitions[name];
+		} catch (error) {
+			output.error(error);
+			throw error;
+		}
 	}
 
 	async haveAccount(params) {
-		const { result, error } = await from(liskUtil.call().getAccounts(params));
-		const {
-			data: [account],
-		} = result;
+		try {
+			const { result, error } = await from(liskUtil.call().getAccounts(params));
+			const {
+				data: [account],
+			} = result;
 
-		expect(error).to.be.null;
-		this.expectResponseToBeValid(result, 'AccountsResponse');
-		return account;
+			expect(error).to.be.null;
+			this.expectResponseToBeValid(result, 'AccountsResponse');
+			return account;
+		} catch (error) {
+			output.error(error);
+			throw error;
+		}
 	}
 
 	async haveAccountWithBalance(address, balance) {
-		const account = await this.haveAccount({ address });
+		try {
+			const account = await this.haveAccount({ address });
 
-		if (!account || !(TO_LISK(account.balance) >= balance)) {
-			if (account) {
-				balance = Math.ceil(balance - TO_LISK(account.balance));
+			if (!account || !(TO_LISK(account.balance) >= balance)) {
+				if (account) {
+					balance = Math.ceil(balance - TO_LISK(account.balance));
+				}
+
+				await liskUtil.transfer({
+					recipientId: address,
+					amount: TO_BEDDOWS(balance),
+				});
 			}
-
-			await liskUtil.transfer({
-				recipientId: address,
-				amount: TO_BEDDOWS(balance),
-			});
+			await this.haveAccount({ address });
+		} catch (error) {
+			output.error(error);
 		}
-		await this.haveAccount({ address });
 	}
 
 	async haveAccountWithSecondSignature(address, passphrase, secondPassphrase) {
-		const account = await this.haveAccount({ address });
+		try {
+			const account = await this.haveAccount({ address });
 
-		if (account && account.secondPublicKey) {
-			expect(account.secondPublicKey)
-				.to.be.an('string')
-				.to.have.lengthOf(64);
-		} else {
-			await liskUtil.registerSecondPassphrase(passphrase, secondPassphrase);
+			if (account && account.secondPublicKey) {
+				expect(account.secondPublicKey)
+					.to.be.an('string')
+					.to.have.lengthOf(64);
+			} else {
+				await liskUtil.registerSecondPassphrase(passphrase, secondPassphrase);
+			}
+			return account;
+		} catch (error) {
+			output.error(error);
+			throw error;
 		}
-		return account;
 	}
 
 	async haveAccountRegisteredAsDelegate(params) {
-		const account = await this.haveAccount({ address: params.address });
+		try {
+			const account = await this.haveAccount({ address: params.address });
 
-		if (account && account.delegate) {
-			this.expectResponseToBeValid(account.delegate, 'Delegate');
-		} else {
-			if (account && account.secondPublicKey) {
-				delete params.secondPassphrase;
+			if (account && account.delegate) {
+				this.expectResponseToBeValid(account.delegate, 'Delegate');
+			} else {
+				if (account && account.secondPublicKey) {
+					delete params.secondPassphrase;
+				}
+				await liskUtil.registerAsDelegate(params);
 			}
-			await liskUtil.registerAsDelegate(params);
+			return account;
+		} catch (error) {
+			output.error(error);
+			throw error;
 		}
-		return account;
 	}
 
 	async haveMultiSignatureAccount(requester, keepers, params) {
-		const account = await this.haveAccountWithBalance(requester.address, 100);
+		try {
+			const account = await this.haveAccountWithBalance(requester.address, 100);
 
-		await liskUtil.registerMultisignature(keepers, params);
-		return account;
+			await liskUtil.registerMultisignature(keepers, params);
+			return account;
+		} catch (error) {
+			output.error(error);
+			throw error;
+		}
 	}
 
 	async expectResponseToBeValid(response, definition) {
-		const schemaDefinition = await this.getSchemaDefinition(definition);
+		try {
+			const schemaDefinition = await this.getSchemaDefinition(definition);
 
-		return expect(response).to.be.jsonSchema(schemaDefinition);
+			return expect(response).to.be.jsonSchema(schemaDefinition);
+		} catch (error) {
+			output.error(error);
+			throw error;
+		}
 	}
 
 	expectResponseToBeSortedBy(data, field, order) {
-		const result = data.map(item => item[field]);
-		if (result.length > 0 && !Number.isNaN(result[0])) {
-			return expect(result).to.deep.equal(sortBy(result, order));
-		}
+		try {
+			const result = data.map(item => item[field]);
+			if (result.length > 0 && !Number.isNaN(result[0])) {
+				return expect(result).to.deep.equal(sortBy(result, order));
+			}
 
-		if (order.toLowerCase() === 'asc') {
-			return expect(result).to.be.ascending;
+			if (order.toLowerCase() === 'asc') {
+				return expect(result).to.be.ascending;
+			}
+			return expect(result).to.be.descending;
+		} catch (error) {
+			output.error(error);
+			throw error;
 		}
-		return expect(result).to.be.descending;
 	}
 
 	expectResultToMatchParams(response, params) {
-		Object.entries(params).forEach(item => {
-			const [k, v] = item;
-			if (otherFields.includes(k)) {
+		try {
+			Object.entries(params).forEach(item => {
+				const [k, v] = item;
+				if (otherFields.includes(k)) {
+					this.handleOtherParams(response, k, v);
+				} else {
+					const data = flattern(response.data[0]);
+					expect(data[k].toString()).to.deep.equal(v);
+				}
+			});
+		} catch (error) {
+			output.error(error);
+		}
+	}
+
+	expectBlockResultToMatchParams(response, params) {
+		try {
+			const [[k, v]] = Object.entries(params);
+			if (['limit', 'sort', 'offset', 'blockId'].includes(k)) {
 				this.handleOtherParams(response, k, v);
 			} else {
 				const data = flattern(response.data[0]);
 				expect(data[k].toString()).to.deep.equal(v);
 			}
-		});
-	}
-
-	expectBlockResultToMatchParams(response, params) {
-		const [[k, v]] = Object.entries(params);
-		if (['limit', 'sort', 'offset', 'blockId'].includes(k)) {
-			this.handleOtherParams(response, k, v);
-		} else {
-			const data = flattern(response.data[0]);
-			expect(data[k].toString()).to.deep.equal(v);
+		} catch (error) {
+			output.error(error);
 		}
 	}
 
 	expectDelegatesToMatchParams(response, params) {
-		const [[k, v]] = Object.entries(params);
-		if (['limit', 'sort', 'offset', 'search'].includes(k)) {
-			this.handleOtherParams(response, k, v);
-		} else {
-			const data = flattern(response.data[0]);
-			expect(data[k].toString()).to.deep.equal(v);
+		try {
+			const [[k, v]] = Object.entries(params);
+			if (['limit', 'sort', 'offset', 'search'].includes(k)) {
+				this.handleOtherParams(response, k, v);
+			} else {
+				const data = flattern(response.data[0]);
+				expect(data[k].toString()).to.deep.equal(v);
+			}
+		} catch (error) {
+			output.error(error);
 		}
 	}
 
 	expectMultisigAccountToHaveContracts(account, contracts) {
-		const addresses = account.data[0].members.map(m => m.address);
-		expect(contracts.every(c => addresses.includes(c.address))).to.deep.equal(
-			true
-		);
+		try {
+			const addresses = account.data[0].members.map(m => m.address);
+			expect(contracts.every(c => addresses.includes(c.address))).to.deep.equal(
+				true
+			);
+		} catch (error) {
+			output.error(error);
+		}
 	}
 
 	expectVotesResultToMatchParams(response, params) {
-		Object.entries(params).forEach(item => {
-			const [k, v] = item;
-			if (['sort'].includes(k)) {
-				const [field, order] = v.split(':');
-				this.expectResponseToBeSortedBy(response.data.votes, field, order);
-			} else if (k !== 'limit') {
-				expect(response.data[k].toString()).to.deep.equal(v);
-			}
-		});
+		try {
+			Object.entries(params).forEach(item => {
+				const [k, v] = item;
+				if (['sort'].includes(k)) {
+					const [field, order] = v.split(':');
+					this.expectResponseToBeSortedBy(response.data.votes, field, order);
+				} else if (k !== 'limit') {
+					expect(response.data[k].toString()).to.deep.equal(v);
+				}
+			});
+		} catch (error) {
+			output.error(error);
+		}
 	}
 
 	expectVotersResultToMatchParams(response, params) {
-		Object.entries(params).forEach(item => {
-			const [k, v] = item;
-			if (['sort'].includes(k)) {
-				const [field, order] = v.split(':');
-				this.expectResponseToBeSortedBy(response.data.voters, field, order);
-			} else if (k !== 'limit') {
-				expect(response.data[k].toString()).to.deep.equal(v);
-			}
-		});
+		try {
+			Object.entries(params).forEach(item => {
+				const [k, v] = item;
+				if (['sort'].includes(k)) {
+					const [field, order] = v.split(':');
+					this.expectResponseToBeSortedBy(response.data.voters, field, order);
+				} else if (k !== 'limit') {
+					expect(response.data[k].toString()).to.deep.equal(v);
+				}
+			});
+		} catch (error) {
+			output.error(error);
+		}
 	}
 
 	expectDefaultCount(response) {
