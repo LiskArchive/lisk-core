@@ -450,10 +450,10 @@ history.migrate(
 			fs.writeFileSync(
 				program.output,
 				JSON.stringify(customConfig, null, '\t'),
-				{ flag: 'wx' }
+				{ flag: 'w' }
 			);
 		} else {
-			console.infso('\n\n------------ OUTPUT -------------');
+			console.info('\n\n------------ OUTPUT -------------');
 			console.info(JSON.stringify(customConfig, null, '\t'));
 		}
 		process.exit(0);

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Lisk Foundation
+ * Copyright © 2019 Lisk Foundation
  *
  * See the LICENSE file at the top-level directory of this distribution
  * for licensing information.
@@ -137,7 +137,7 @@ describe('migrate from 1.6.0 to 2.0.0 for testnet', () => {
 		expect(updatedConfig.components.storage.port).to.eql(config.db.port);
 	});
 
-	it('should detect custom config for db.host and db.port', async () => {
+	it('should detect custom config for cacheEnabled and trustProxy', async () => {
 		// Arrange
 		const config = cloneDeep(baseConfig);
 		config.cacheEnabled = true; // Default: false
@@ -180,7 +180,10 @@ describe('migrate from 1.6.0 to 2.0.0 for testnet', () => {
 		config.forging = {
 			force: true,
 			delegates: [
-				'47c8b3d6a9e418f0920ef58383260bcd04799db150612d4ff6eb399bcd07f216',
+				{
+					encryptedPassphrase: "iterations=1&salt=476d4299531718af8c88156aab0bb7d6&cipherText=663dde611776d87029ec188dc616d96d813ecabcef62ed0ad05ffe30528f5462c8d499db943ba2ded55c3b7c506815d8db1c2d4c35121e1d27e740dc41f6c405ce8ab8e3120b23f546d8b35823a30639&iv=1a83940b72adc57ec060a648&tag=b5b1e6c6e225c428a4473735bc8f1fc9&version=1",
+					publicKey: "9d3058175acab969f41ad9b86f7a2926c74258670fe56b37c429c01fca9f2f0f"
+				}
 			],
 			access: {
 				whitelist: [
@@ -214,7 +217,7 @@ describe('migrate from 1.6.0 to 2.0.0 for testnet', () => {
 			],
 			access: {
 				blackList: [
-					'11c8b3d6a9e418fff20ef58383260bcd04799db150612d4ff6eb399bcd07f111'
+					'10.10.10.19'
 				]
 			}
 		}; // Default: { [], { [] } }
@@ -338,7 +341,7 @@ describe('migrate from 1.6.0 to 2.0.0 for devnet', () => {
 		expect(updatedConfig.components.storage.port).to.eql(config.db.port);
 	});
 
-	it('should detect custom config for db.host and db.port', async () => {
+	it('should detect custom config for cacheEnabled and trustProxy', async () => {
 		// Arrange
 		const config = cloneDeep(baseConfig);
 		config.cacheEnabled = true; // Default: false
@@ -376,7 +379,10 @@ describe('migrate from 1.6.0 to 2.0.0 for devnet', () => {
 		config.forging = {
 			force: true,
 			delegates: [
-				'47c8b3d6a9e418f0920ef58383260bcd04799db150612d4ff6eb399bcd07f216',
+				{
+					encryptedPassphrase: "iterations=1&salt=476d4299531718af8c88156aab0bb7d6&cipherText=663dde611776d87029ec188dc616d96d813ecabcef62ed0ad05ffe30528f5462c8d499db943ba2ded55c3b7c506815d8db1c2d4c35121e1d27e740dc41f6c405ce8ab8e3120b23f546d8b35823a30639&iv=1a83940b72adc57ec060a648&tag=b5b1e6c6e225c428a4473735bc8f1fc9&version=1",
+					publicKey: "9d3058175acab969f41ad9b86f7a2926c74258670fe56b37c429c01fca9f2f0f"
+				}
 			],
 			access: {
 				whitelist: [
@@ -410,7 +416,7 @@ describe('migrate from 1.6.0 to 2.0.0 for devnet', () => {
 			],
 			access: {
 				blackList: [
-					'11c8b3d6a9e418fff20ef58383260bcd04799db150612d4ff6eb399bcd07f111'
+					'10.10.10.19'
 				]
 			}
 		}; // Default: { [], { [] } }
@@ -518,7 +524,7 @@ describe('migrate from 1.6.0 to 2.0.0 for mainnet', () => {
 		expect(updatedConfig.components.storage.port).to.eql(config.db.port);
 	});
 
-	it('should detect custom config for db.host and db.port', async () => {
+	it('should detect custom config for cacheEnabled and trustProxy', async () => {
 		// Arrange
 		const config = cloneDeep(baseConfig);
 		config.cacheEnabled = true; // Default: false
@@ -556,7 +562,10 @@ describe('migrate from 1.6.0 to 2.0.0 for mainnet', () => {
 		config.forging = {
 			force: true,
 			delegates: [
-				'47c8b3d6a9e418f0920ef58383260bcd04799db150612d4ff6eb399bcd07f216',
+				{
+					encryptedPassphrase: "iterations=1&salt=476d4299531718af8c88156aab0bb7d6&cipherText=663dde611776d87029ec188dc616d96d813ecabcef62ed0ad05ffe30528f5462c8d499db943ba2ded55c3b7c506815d8db1c2d4c35121e1d27e740dc41f6c405ce8ab8e3120b23f546d8b35823a30639&iv=1a83940b72adc57ec060a648&tag=b5b1e6c6e225c428a4473735bc8f1fc9&version=1",
+					publicKey: "9d3058175acab969f41ad9b86f7a2926c74258670fe56b37c429c01fca9f2f0f"
+				}
 			],
 			access: {
 				whitelist: [
@@ -590,7 +599,7 @@ describe('migrate from 1.6.0 to 2.0.0 for mainnet', () => {
 			],
 			access: {
 				blackList: [
-					'11c8b3d6a9e418fff20ef58383260bcd04799db150612d4ff6eb399bcd07f111'
+					'10.10.10.19'
 				]
 			}
 		}; // Default: { [], { [] } }
