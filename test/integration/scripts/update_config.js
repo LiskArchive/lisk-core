@@ -174,7 +174,7 @@ describe('migrate from 1.6.0 to 2.0.0 for testnet', () => {
 		expect(updatedConfig.modules.http_api.ssl.options).to.eql(config.api.ssl.options);
 	});
 
-	it.only('should detect custom config for forging', async () => {
+	it('should detect custom config for forging', async () => {
 		// Arrange
 		const config = cloneDeep(baseConfig);
 		config.forging = {
@@ -193,10 +193,44 @@ describe('migrate from 1.6.0 to 2.0.0 for testnet', () => {
 
 		// Act
 		const updatedConfig = getUpdatedConfig(outputPath, inputPath, '1.6.0', '2.0.0');
-		console.log(updatedConfig);
 
 		// Assert
-		//expect(updatedConfig.modules.http_api.ssl.enabled).to.eql(config.api.ssl.enabled);
+		expect(updatedConfig.modules.http_api.forging.access).to.eql(config.forging.access);
+		expect(updatedConfig.modules.chain.forging).to.eql({
+			force: config.forging.force,
+			delegates: config.forging.delegates
+		});
+	});
+
+	it('should detect custom config for peers', async () => {
+		// Arrange
+		const config = cloneDeep(baseConfig);
+		config.peers = {
+			list: [
+				{
+					ip: 'mynode.ip.net',
+					wsPort: '5000',
+				}
+			],
+			access: {
+				blackList: [
+					'11c8b3d6a9e418fff20ef58383260bcd04799db150612d4ff6eb399bcd07f111'
+				]
+			}
+		}; // Default: { [], { [] } }
+
+		fs.writeFileSync(inputPath, JSON.stringify(config), 'utf8');
+
+		// Act
+		const updatedConfig = getUpdatedConfig(outputPath, inputPath, '1.6.0', '2.0.0');
+
+		// Assert
+		config.peers.list = config.peers.list.map(e => ({
+			ip: e.ip,
+			wsPort: parseInt(e.wsPort)
+		}));
+		expect(updatedConfig.modules.network.seedPeers).to.eql(config.peers.list);
+		expect(updatedConfig.modules.network.blacklistedPeers).to.deep.eql(config.peers.access.blackList);
 	});
 
 	it('should remove custom config for api.ssl.enabled and api.ssl.options if config equals default config', async () => {
@@ -223,8 +257,6 @@ describe('migrate from 1.6.0 to 2.0.0 for testnet', () => {
 			cert: config.api.ssl.options.cert
 		});
 	});
-	
-	// ===================================
 
 	it('should remove custom config for db.host and db.port if config equals default config', async () => {
 		// Arrange
@@ -337,6 +369,90 @@ describe('migrate from 1.6.0 to 2.0.0 for devnet', () => {
 		expect(updatedConfig.components.storage.host).to.eql(undefined);
 		expect(updatedConfig.components.storage.port).to.eql(undefined);
 	});
+
+	it('should detect custom config for forging', async () => {
+		// Arrange
+		const config = cloneDeep(baseConfig);
+		config.forging = {
+			force: true,
+			delegates: [
+				'47c8b3d6a9e418f0920ef58383260bcd04799db150612d4ff6eb399bcd07f216',
+			],
+			access: {
+				whitelist: [
+					'10.10.10.10'
+				]
+			}
+		}; // Default: { false, [], { { ['127.0.0.1'] }} }
+
+		fs.writeFileSync(inputPath, JSON.stringify(config), 'utf8');
+
+		// Act
+		const updatedConfig = getUpdatedConfig(outputPath, inputPath, '1.6.0', '2.0.0', 'devnet');
+
+		// Assert
+		expect(updatedConfig.modules.http_api.forging.access).to.eql(config.forging.access);
+		expect(updatedConfig.modules.chain.forging).to.eql({
+			force: config.forging.force,
+			delegates: config.forging.delegates
+		});
+	});
+
+	it('should detect custom config for peers', async () => {
+		// Arrange
+		const config = cloneDeep(baseConfig);
+		config.peers = {
+			list: [
+				{
+					ip: 'mynode.ip.net',
+					wsPort: '5000',
+				}
+			],
+			access: {
+				blackList: [
+					'11c8b3d6a9e418fff20ef58383260bcd04799db150612d4ff6eb399bcd07f111'
+				]
+			}
+		}; // Default: { [], { [] } }
+
+		fs.writeFileSync(inputPath, JSON.stringify(config), 'utf8');
+
+		// Act
+		const updatedConfig = getUpdatedConfig(outputPath, inputPath, '1.6.0', '2.0.0', 'devnet');
+
+		// Assert
+		config.peers.list = config.peers.list.map(e => ({
+			ip: e.ip,
+			wsPort: parseInt(e.wsPort)
+		}));
+		expect(updatedConfig.modules.network.seedPeers).to.eql(config.peers.list);
+		expect(updatedConfig.modules.network.blacklistedPeers).to.deep.eql(config.peers.access.blackList);
+	});
+
+	it('should remove custom config for api.ssl.enabled and api.ssl.options if config equals default config', async () => {
+		// Arrange
+		const config = cloneDeep(baseConfig);
+		config.api.ssl.enabled = false; // Default: false
+		config.api.ssl.options = {
+			port: 443,
+			address: "127.0.0.1",
+			key: "./ssl/mykey.key",
+			cert: "./ssl/mycert.crt"
+		}; // Default: { 443, "0.0.0.0", "./ssl/lisk.key", "./ssl/lisk.crt" }
+
+		fs.writeFileSync(inputPath, JSON.stringify(config), 'utf8');
+
+		// Act
+		const updatedConfig = getUpdatedConfig(outputPath, inputPath, '1.6.0', '2.0.0', 'devnet');
+
+		// Assert
+		expect(updatedConfig.modules.http_api.ssl.enabled).to.not.exist;
+		expect(updatedConfig.modules.http_api.ssl.options).to.eql({
+			address: config.api.ssl.options.address,
+			key: config.api.ssl.options.key,
+			cert: config.api.ssl.options.cert
+		});
+	});
 });
 
 describe('migrate from 1.6.0 to 2.0.0 for mainnet', () => {
@@ -432,5 +548,89 @@ describe('migrate from 1.6.0 to 2.0.0 for mainnet', () => {
 		// Assert
 		expect(updatedConfig.components.storage.host).to.eql(undefined);
 		expect(updatedConfig.components.storage.port).to.eql(undefined);
+	});
+
+	it('should detect custom config for forging', async () => {
+		// Arrange
+		const config = cloneDeep(baseConfig);
+		config.forging = {
+			force: true,
+			delegates: [
+				'47c8b3d6a9e418f0920ef58383260bcd04799db150612d4ff6eb399bcd07f216',
+			],
+			access: {
+				whitelist: [
+					'10.10.10.10'
+				]
+			}
+		}; // Default: { false, [], { { ['127.0.0.1'] }} }
+
+		fs.writeFileSync(inputPath, JSON.stringify(config), 'utf8');
+
+		// Act
+		const updatedConfig = getUpdatedConfig(outputPath, inputPath, '1.6.0', '2.0.0', 'mainnet');
+
+		// Assert
+		expect(updatedConfig.modules.http_api.forging.access).to.eql(config.forging.access);
+		expect(updatedConfig.modules.chain.forging).to.eql({
+			force: config.forging.force,
+			delegates: config.forging.delegates
+		});
+	});
+
+	it('should detect custom config for peers', async () => {
+		// Arrange
+		const config = cloneDeep(baseConfig);
+		config.peers = {
+			list: [
+				{
+					ip: 'mynode.ip.net',
+					wsPort: '5000',
+				}
+			],
+			access: {
+				blackList: [
+					'11c8b3d6a9e418fff20ef58383260bcd04799db150612d4ff6eb399bcd07f111'
+				]
+			}
+		}; // Default: { [], { [] } }
+
+		fs.writeFileSync(inputPath, JSON.stringify(config), 'utf8');
+
+		// Act
+		const updatedConfig = getUpdatedConfig(outputPath, inputPath, '1.6.0', '2.0.0', 'mainnet');
+
+		// Assert
+		config.peers.list = config.peers.list.map(e => ({
+			ip: e.ip,
+			wsPort: parseInt(e.wsPort)
+		}));
+		expect(updatedConfig.modules.network.seedPeers).to.eql(config.peers.list);
+		expect(updatedConfig.modules.network.blacklistedPeers).to.deep.eql(config.peers.access.blackList);
+	});
+
+	it('should remove custom config for api.ssl.enabled and api.ssl.options if config equals default config', async () => {
+		// Arrange
+		const config = cloneDeep(baseConfig);
+		config.api.ssl.enabled = false; // Default: false
+		config.api.ssl.options = {
+			port: 443,
+			address: "127.0.0.1",
+			key: "./ssl/mykey.key",
+			cert: "./ssl/mycert.crt"
+		}; // Default: { 443, "0.0.0.0", "./ssl/lisk.key", "./ssl/lisk.crt" }
+
+		fs.writeFileSync(inputPath, JSON.stringify(config), 'utf8');
+
+		// Act
+		const updatedConfig = getUpdatedConfig(outputPath, inputPath, '1.6.0', '2.0.0', 'mainnet');
+
+		// Assert
+		expect(updatedConfig.modules.http_api.ssl.enabled).to.not.exist;
+		expect(updatedConfig.modules.http_api.ssl.options).to.eql({
+			address: config.api.ssl.options.address,
+			key: config.api.ssl.options.key,
+			cert: config.api.ssl.options.cert
+		});
 	});
 });
