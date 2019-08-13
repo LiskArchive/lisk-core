@@ -14,8 +14,6 @@ Feature: List Peers
 
     Examples:
       | params            |
-      | httpPort=4000     |
-      | wsPort=5000       |
       | state=2           |
       | sort=height:asc   |
       | sort=height:desc  |

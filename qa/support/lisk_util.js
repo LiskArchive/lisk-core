@@ -1,3 +1,4 @@
+const chai = require('chai');
 const elements = require('lisk-elements');
 const output = require('codeceptjs').output;
 const API = require('./api.js');
@@ -10,6 +11,7 @@ const {
 const { TO_BEDDOWS, BLOCK_TIME, from } = require('../utils');
 
 const users = {};
+chai.config.truncateThreshold = 0;
 
 /* eslint camelcase: ["error", {allow: ["codecept_helper"]}] */
 const Helper = codecept_helper;
@@ -99,8 +101,7 @@ class LiskUtil extends Helper {
 	 * check node height and wait until it reaches the expected height
 	 * @param {number} expectedHeight - expected height to reach
 	 */
-	async waitUntilBlock(expectedHeight) {
-		let counter = 0;
+	async waitUntilBlock(expectedHeight, counter) {
 		const {
 			data: {
 				height,
@@ -108,10 +109,15 @@ class LiskUtil extends Helper {
 			},
 		} = await this.call().getNodeStatus();
 		const pendingTrxCnt = ready + verified + pending + validated;
+		counter = counter ? (counter += 1) : 1;
 
 		output.print(
-			`Timestamp: ${new Date().toISOString()}, current height: ${height}, expected height: ${expectedHeight}, confirmed trxs: ${confirmed}, pending trxs: ${pendingTrxCnt}`
+			`Counter: ${counter}, Timestamp: ${new Date().toISOString()}, current height: ${height}, expected height: ${expectedHeight}, confirmed trxs: ${confirmed}, pending trxs: ${pendingTrxCnt}`
 		);
+
+		if (counter >= 20) {
+			return true;
+		}
 
 		if (height >= expectedHeight) {
 			// Remove the buffer time when network is stable
@@ -121,13 +127,8 @@ class LiskUtil extends Helper {
 			return height;
 		}
 
-		if (counter >= 10) {
-			return true;
-		}
-
-		counter += 1;
 		await this.wait(BLOCK_TIME);
-		await this.waitUntilBlock(expectedHeight);
+		await this.waitUntilBlock(expectedHeight, counter);
 		return true;
 	}
 
@@ -512,8 +513,10 @@ class LiskUtil extends Helper {
 	 * @param {number} limit initial limit
 	 * @param {number} offset initial offset
 	 */
-	async getAllPeers(limit, offset) {
-		const peerResult = await from(this.call().getPeers({ limit, offset }));
+	async getAllPeers(limit, offset, state = 2) {
+		const peerResult = await from(
+			this.call().getPeers({ limit, offset, state })
+		);
 
 		if (!process.env.NETWORK || process.env.NETWORK === 'development') {
 			return [seedNode];
@@ -530,13 +533,14 @@ class LiskUtil extends Helper {
 		const peerList = peerResult.result.data;
 
 		await pagination.reduce(async (acc, curr) => {
+			const accRes = await acc;
 			const { result, error } = await from(
 				this.call().getPeers({ limit, offset: curr })
 			);
 
 			expect(error).to.be.null;
-			acc.push(...result.data);
-			return acc;
+			accRes.push(...result.data);
+			return accRes;
 		}, peerList);
 
 		return peerList;
@@ -550,17 +554,22 @@ class LiskUtil extends Helper {
 		const forgingStatus = await Promise.all(
 			peers.map(async p => {
 				const { result, error } = await from(
-					this.call().getForgingStatus({}, p.ip)
+					this.call().getForgingStatus({}, `${p.ip}:4000`)
 				);
 
 				expect(error).to.be.null;
 				if (result && result.data.length) {
 					const forgingDelegates = result.data.filter(d => d.forging);
-					return { ip: p.ip, ...forgingDelegates[0] };
+
+					if (forgingDelegates[0]) {
+						return { ip: p.ip, ...forgingDelegates[0] };
+					}
+					return false;
 				}
 				return false;
 			})
 		);
+
 		return forgingStatus.filter(n => n);
 	}
 
@@ -622,15 +631,23 @@ class LiskUtil extends Helper {
 	 * Waits until the transaction is confirmed on the network
 	 * @param {string} id transaction id
 	 */
-	async waitForTransactionToConfirm(id, numberOfBlocks = 1) {
+	async waitForTransactionToConfirm(id, numberOfBlocks = 1, counter) {
+		counter = counter ? (counter += 1) : 1;
 		const { result, error } = await from(this.call().getTransactions({ id }));
+
+		if (counter >= 5) {
+			output.print(
+				`Counter: ${counter}, Timestamp: ${new Date().toISOString()}, Transaction: ${id}`
+			);
+			return true;
+		}
 
 		expect(error).to.be.null;
 		if (result.data.length) {
 			return result;
 		}
 		await this.waitForBlock(numberOfBlocks);
-		await this.waitForTransactionToConfirm(id);
+		await this.waitForTransactionToConfirm(id, numberOfBlocks, counter);
 		return true;
 	}
 
@@ -643,7 +660,7 @@ class LiskUtil extends Helper {
 		if (nodeStatus.data.height >= expectedHeight) {
 			output.print(
 				`Reached expected height: ${expectedHeight}, Node current height: ${
-				nodeStatus.data.height
+					nodeStatus.data.height
 				}`
 			);
 			return;

@@ -4,7 +4,6 @@ Feature: List Delegates
   I want to see the list of users who are delegates
 
   Scenario Outline: List delegates with params
-    Given The delegates are enabled to forge
     When I request for delegates list with "<params>"
     Then I should get delegates according to "<params>"
 
@@ -29,7 +28,6 @@ Feature: List Delegates
 
 
   Scenario Outline: List of the next forgers in this delegate round
-    Given The delegates are enabled to forge
     When I request for forging delegates list with "<params>"
     Then I should get next forging delegates list according to "<params>"
 
@@ -39,7 +37,6 @@ Feature: List Delegates
       | limit=101 |
 
   Scenario Outline: Get delegates forging statistics
-    Given The delegates are enabled to forge
     When I request for forging delegates statistics "8273455169423958419L" with "<params>"
     Then I should get forging delegate statistics
 

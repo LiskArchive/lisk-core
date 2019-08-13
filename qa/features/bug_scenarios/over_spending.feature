@@ -26,16 +26,17 @@ Feature: Over spend from account
     Then I wait for "1" blocks to make sure consicutive transactions included in one block
     Then I transfer "0.6"LSK from account "C" to "E"
     Then I transfer "0.4"LSK from account "C" to "F"
+    Then I wait for "1" blocks to make sure consicutive transactions included in one block
     Then I transfer "0.3"LSK from account "D" to "C"
     Then I expect transfer "0.6"LSK from "C" to "E" should succeeded
     Then I expect transfer "0.4"LSK from "C" to "F" should fail
     Then I expect transfer "0.3"LSK from "D" to "C" should succeeded
 
-  Scenario: Transfer and register second signature in one block
-    Given I have account "SPP"
-    Then I transfer 6LSK to account "SPP" from genesis account
-    Then I wait for transactions "SPP" to get confirmed in blockchain
-    Then I wait for "1" blocks to make sure consicutive transactions included in one block
-    Then I transfer "0.01"LSK from second signature account "SPP" to "SPP"
-    Then I register second passphrase on account "SPP"
-    Then I expect transfer "0.01"LSK from "SPP" to "SPP" should succeeded
+  # Scenario: Transfer and register second signature in one block
+  #   Given I have account "SPP"
+  #   Then I transfer 6LSK to account "SPP" from genesis account
+  #   Then I wait for transactions "SPP" to get confirmed in blockchain
+  #   Then I wait for "1" blocks to make sure consicutive transactions included in one block
+  #   Then I transfer "0.01"LSK from second signature account "SPP" to "SPP"
+  #   Then I register second passphrase on account "SPP"
+  #   Then I expect transfer "0.01"LSK from "SPP" to "SPP" should succeeded

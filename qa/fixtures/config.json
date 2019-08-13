@@ -1,7 +1,5 @@
 {
 	"peers": [],
-	"httpPort": 4000,
-	"wsPort": 5000,
 	"forging": {
 		"defaultPassword": "elephant tree paris dragon chair galaxy",
 		"delegates": [

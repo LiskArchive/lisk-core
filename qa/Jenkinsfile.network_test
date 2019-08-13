@@ -33,7 +33,7 @@ pipeline {
             dir('qa') {
               nvm(getNodejsVersion()) {
                 ansiColor('xterm') {
-                  sh 'npm run features || true'
+                  sh 'npm run features:debug || true'
                 }
               }
             }
