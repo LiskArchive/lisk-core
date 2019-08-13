@@ -1,0 +1,8 @@
+{
+	"components": {
+		"logger": {
+			"fileLogLevel": "info",
+			"consoleLogLevel": "debug"
+		}
+	}
+}

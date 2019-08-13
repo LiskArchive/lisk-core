@@ -258,6 +258,10 @@ history.version('1.2.0-rc.x', version => {
 });
 
 history.version('2.0.0-rc.0', version => {
+	version.change('add structure for app component', config => 
+		moveElement(config, 'ipc', 'app.ipc')
+	);
+
 	version.change('add structure for logger component', config =>
 		moveKeys(
 			config,
@@ -327,6 +331,11 @@ history.version('2.0.0-rc.0', version => {
 		config = moveElement(config, 'wsPort', 'modules.network.wsPort');
 		config = moveElement(config, 'address', 'modules.network.address');
 		delete config.peers;
+		return config;
+	});
+
+	version.change('remove broadcasts.parallelLimit', config => {
+		delete config.modules.chain.broadcasts.parallelLimit;
 		return config;
 	});
 
@@ -440,7 +449,8 @@ history.migrate(
 			console.info(`\nWriting configuration file to ${program.output}`);
 			fs.writeFileSync(
 				program.output,
-				JSON.stringify(customConfig, null, '\t')
+				JSON.stringify(customConfig, null, '\t'),
+				{ flag: 'w' }
 			);
 		} else {
 			console.info('\n\n------------ OUTPUT -------------');
