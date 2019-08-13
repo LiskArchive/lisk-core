@@ -170,7 +170,7 @@ describe('migrate from 1.6.0 to 2.0.0 for testnet', () => {
 	});
 });
 
-describe('migrate from 1.6.0 to 2.0.0 for testnet', () => {
+describe('migrate from 1.6.0 to 2.0.0 for devnet', () => {
 	const outputPath = `${dirPath}/output.json`;
 	const inputPath = `${dirPath}/input_config.json`;
 	let baseConfig;
