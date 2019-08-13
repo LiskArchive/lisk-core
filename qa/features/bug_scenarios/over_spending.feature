@@ -26,6 +26,7 @@ Feature: Over spend from account
     Then I wait for "1" blocks to make sure consicutive transactions included in one block
     Then I transfer "0.6"LSK from account "C" to "E"
     Then I transfer "0.4"LSK from account "C" to "F"
+    Then I wait for "1" blocks to make sure consicutive transactions included in one block
     Then I transfer "0.3"LSK from account "D" to "C"
     Then I expect transfer "0.6"LSK from "C" to "E" should succeeded
     Then I expect transfer "0.4"LSK from "C" to "F" should fail

@@ -172,7 +172,9 @@ const updateConfigContent = configContent => {
 };
 
 const mergePeers = (seedAddress, configContentPeers, allPeers) => {
-	const peers = allPeers.map(p => `${p.ip}:${p.httpPort}`);
+	// sometimes httpPort will be undefined so giving it 4000 as it will be default
+
+	const peers = allPeers.map(p => `${p.ip}:${p.httpPort || 4000}`);
 	const uniquePeers = new Set([seedAddress, ...configContentPeers, ...peers]);
 	return [...uniquePeers].slice(0, 101).filter(p => p);
 };

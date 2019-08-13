@@ -13,7 +13,6 @@ When('I request for peers without any params', async () => {
 	} catch (error) {
 		output.error(error);
 		throw error;
-		throw error;
 	}
 });
 
@@ -39,15 +38,14 @@ Then(
 	}
 );
 
-When('I request for peers with {string}', async () => {
+When('I request for peers with {string}', async params => {
 	try {
 		const api = await I.call();
 
-		response = await from(api.getPeers());
+		response = await from(api.getPeers(splitBy(params)));
 		return expect(response.error).to.be.null;
 	} catch (error) {
 		output.error(error);
-		throw error;
 		throw error;
 	}
 });

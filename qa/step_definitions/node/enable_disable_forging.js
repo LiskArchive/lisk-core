@@ -17,7 +17,7 @@ Given('The node is forging', async () => {
 
 		expect(error).to.be.null;
 		nodes.forEach(n => {
-			// expect(n.forging).to.deep.equal(true);
+			expect(n.forging).to.deep.equal(true);
 		});
 	} catch (error) {
 		output.error(error);

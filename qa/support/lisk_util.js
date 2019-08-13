@@ -513,8 +513,10 @@ class LiskUtil extends Helper {
 	 * @param {number} limit initial limit
 	 * @param {number} offset initial offset
 	 */
-	async getAllPeers(limit, offset) {
-		const peerResult = await from(this.call().getPeers({ limit, offset }));
+	async getAllPeers(limit, offset, state = 2) {
+		const peerResult = await from(
+			this.call().getPeers({ limit, offset, state })
+		);
 
 		if (!process.env.NETWORK || process.env.NETWORK === 'development') {
 			return [seedNode];
@@ -552,14 +554,17 @@ class LiskUtil extends Helper {
 		const forgingStatus = await Promise.all(
 			peers.map(async p => {
 				const { result, error } = await from(
-					this.call().getForgingStatus({}, p.ip)
+					this.call().getForgingStatus({}, `${p.ip}:4000`)
 				);
 
 				expect(error).to.be.null;
 				if (result && result.data.length) {
 					const forgingDelegates = result.data.filter(d => d.forging);
-					output.print(forgingDelegates);
-					return { ip: p.ip, ...forgingDelegates[0] };
+
+					if (forgingDelegates[0]) {
+						return { ip: p.ip, ...forgingDelegates[0] };
+					}
+					return false;
 				}
 				return false;
 			})
