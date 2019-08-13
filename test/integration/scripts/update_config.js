@@ -174,7 +174,32 @@ describe('migrate from 1.6.0 to 2.0.0 for testnet', () => {
 		expect(updatedConfig.modules.http_api.ssl.options).to.eql(config.api.ssl.options);
 	});
 
-	it.only('should remove custom config for api.ssl.enabled and api.ssl.options if config equals default config', async () => {
+	it.only('should detect custom config for forging', async () => {
+		// Arrange
+		const config = cloneDeep(baseConfig);
+		config.forging = {
+			force: true,
+			delegates: [
+				'47c8b3d6a9e418f0920ef58383260bcd04799db150612d4ff6eb399bcd07f216',
+			],
+			access: {
+				whitelist: [
+					'10.10.10.10'
+				]
+			}
+		}; // Default: { false, [], { { ['127.0.0.1'] }} }
+
+		fs.writeFileSync(inputPath, JSON.stringify(config), 'utf8');
+
+		// Act
+		const updatedConfig = getUpdatedConfig(outputPath, inputPath, '1.6.0', '2.0.0');
+		console.log(updatedConfig);
+
+		// Assert
+		//expect(updatedConfig.modules.http_api.ssl.enabled).to.eql(config.api.ssl.enabled);
+	});
+
+	it('should remove custom config for api.ssl.enabled and api.ssl.options if config equals default config', async () => {
 		// Arrange
 		const config = cloneDeep(baseConfig);
 		config.api.ssl.enabled = false; // Default: false
