@@ -325,12 +325,17 @@ history.version('2.0.0-rc.0', version => {
 		);
 		config = moveElement(
 			config,
-			'broadcasts.broadcastLimit',
+			'modules.chain.broadcasts.broadcastLimit',
 			'modules.network.emitPeerLimit'
 		);
 		config = moveElement(config, 'wsPort', 'modules.network.wsPort');
 		config = moveElement(config, 'address', 'modules.network.address');
 		delete config.peers;
+		return config;
+	});
+
+	version.change('remove broadcasts.parallelLimit', config => {
+		delete config.modules.chain.broadcasts.parallelLimit;
 		return config;
 	});
 

@@ -153,6 +153,54 @@ describe('migrate from 1.6.0 to 2.0.0 for testnet', () => {
 		expect(updatedConfig.modules.http_api.trustProxy).to.eql(config.trustProxy);
 	});
 
+	it('should detect custom config for api.ssl.enabled and api.ssl.options', async () => {
+		// Arrange
+		const config = cloneDeep(baseConfig);
+		config.api.ssl.enabled = true; // Default: false
+		config.api.ssl.options = {
+			port: 444,
+			address: "127.0.0.1",
+			key: "./ssl/mykey.key",
+			cert: "./ssl/mycert.crt"
+		}; // Default: { 443, "0.0.0.0", "./ssl/lisk.key", "./ssl/lisk.crt" }
+
+		fs.writeFileSync(inputPath, JSON.stringify(config), 'utf8');
+
+		// Act
+		const updatedConfig = getUpdatedConfig(outputPath, inputPath, '1.6.0', '2.0.0');
+
+		// Assert
+		expect(updatedConfig.modules.http_api.ssl.enabled).to.eql(config.api.ssl.enabled);
+		expect(updatedConfig.modules.http_api.ssl.options).to.eql(config.api.ssl.options);
+	});
+
+	it.only('should remove custom config for api.ssl.enabled and api.ssl.options if config equals default config', async () => {
+		// Arrange
+		const config = cloneDeep(baseConfig);
+		config.api.ssl.enabled = false; // Default: false
+		config.api.ssl.options = {
+			port: 443,
+			address: "127.0.0.1",
+			key: "./ssl/mykey.key",
+			cert: "./ssl/mycert.crt"
+		}; // Default: { 443, "0.0.0.0", "./ssl/lisk.key", "./ssl/lisk.crt" }
+
+		fs.writeFileSync(inputPath, JSON.stringify(config), 'utf8');
+
+		// Act
+		const updatedConfig = getUpdatedConfig(outputPath, inputPath, '1.6.0', '2.0.0');
+
+		// Assert
+		expect(updatedConfig.modules.http_api.ssl.enabled).to.not.exist;
+		expect(updatedConfig.modules.http_api.ssl.options).to.eql({
+			address: config.api.ssl.options.address,
+			key: config.api.ssl.options.key,
+			cert: config.api.ssl.options.cert
+		});
+	});
+	
+	// ===================================
+
 	it('should remove custom config for db.host and db.port if config equals default config', async () => {
 		// Arrange
 		const config = cloneDeep(baseConfig);
