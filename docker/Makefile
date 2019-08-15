@@ -33,8 +33,10 @@ coldstart: $(lisk_net)_blockchain.db.gz up
 clean:
 	rm -f *blockchain.db.gz
 
+LOGS_TAIL_LINES?=1000
+LOGS_BUNYAN_OPTIONS=-o short
 logs:
-	docker-compose logs --tail=1000 --follow lisk |docker-compose exec -T lisk npx bunyan
+	docker-compose logs --tail=$(LOGS_TAIL_LINES) --follow lisk |docker-compose exec -T lisk npx bunyan $(LOGS_BUNYAN_OPTIONS)
 
 mrproper: clean
 	docker-compose down --volumes --remove-orphans
