@@ -36,7 +36,7 @@ clean:
 LOGS_TAIL_LINES?=1000
 LOGS_BUNYAN_OPTIONS=-o short
 logs:
-	docker-compose logs --tail=$(LOGS_TAIL_LINES) --follow lisk |docker-compose exec -T lisk npx bunyan $(LOGS_BUNYAN_OPTIONS)
+	docker logs --tail=$(LOGS_TAIL_LINES) --follow $$( docker-compose ps --quiet lisk ) |docker-compose exec -T lisk npx bunyan $(LOGS_BUNYAN_OPTIONS)
 
 mrproper: clean
 	docker-compose down --volumes --remove-orphans
