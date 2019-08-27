@@ -66,7 +66,7 @@
 		"typescript": "3.3.1"
 	},
 	"lisk": {
-		"minVersion": "1.0.0",
+		"minVersion": "1.1.0-rc.0",
 		"protocolVersion": "1.1"
 	}
 }
