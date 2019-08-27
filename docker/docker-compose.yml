@@ -15,7 +15,7 @@ services:
       - lisk
     depends_on:
       - db
-    restart: on-failure
+    restart: unless-stopped
     entrypoint: ["/home/lisk/wait-for-it.sh", "db:5432", "--", "node", "/home/lisk/lisk/dist/index.js"]
     command: ["-n", "${ENV_LISK_NETWORK}"]
     environment:
@@ -33,7 +33,7 @@ services:
       - db-data:/var/lib/postgresql/data
     networks:
       - lisk
-    restart: on-failure
+    restart: unless-stopped
     environment:
       - POSTGRES_DB=${ENV_LISK_DB_DATABASE}
       - POSTGRES_PASSWORD=${ENV_LISK_DB_PASSWORD}

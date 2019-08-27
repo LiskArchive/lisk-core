@@ -4,11 +4,9 @@ properties([
   parameters([
     string(name: 'SDK_BRANCH_NAME', defaultValue: 'development', description: 'Lisk core branch name', ),
     string(name: 'CORE_BRANCH_NAME', defaultValue: 'master', description: 'Lisk core branch name', ),
-    string(name: 'NETWORK', defaultValue: 'jenkinsnet-$BUILD_ID', description: 'To Run test against a network', ),
+    string(name: 'NETWORK', defaultValue: 'alphanet-$BUILD_ID', description: 'To Run test against a network', ),
     string(name: 'NODES_PER_REGION', defaultValue: '1', description: 'Number of nodes per region', ),
-    string(name: 'STRESS_COUNT', defaultValue: '500', description: 'Number of transactions to create', ), // Used by stage: Test Network Stress
     string(name: 'NEWRELIC_ENABLED', defaultValue: 'no', description: 'Enable NewRelic', ),
-    booleanParam(name: 'CLEAN_UP', defaultValue: true, description: 'Destroy deployed nodes when done testing', ),
   ])
 ])
 
@@ -57,83 +55,26 @@ lisk_version: ${env.LISK_VERSION}""",
       }
     }
     stage('Generate peer config and enable forging') {
+      options {
+        timeout(time: 20, unit: 'MINUTES')
+      }
       steps {
         dir('qa') {
           nvm(getNodejsVersion()) {
             sh '''
             npm run tools:peers:seed:node
-            npm run tools:peers:connected
             npm run tools:peers:network:nodes
+            npm run tools:peers:connected
             npm run tools:delegates:enable
             '''
           }
         }
       }
     }
-    stage('Test Scenarios') {
-      steps {
-        retry(2) {
-          timestamps {
-            dir('qa') {
-              nvm(getNodejsVersion()) {
-                ansiColor('xterm') {
-                  sh 'npm run features || true'
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    stage('Test Network Stress') {
-      steps {
-        timestamps {
-          dir('qa') {
-            nvm(getNodejsVersion()) {
-              ansiColor('xterm') {
-                sh 'npm run stress:generic || true'
-                sh 'npm run stress:diversified'
-              }
-            }
-          }
-        }
-      }
-    }
   }
   post {
-    always {
-      allure includeProperties: false, jdk: '', results: [[path: 'qa/output']]
-    }
     failure {
-      script {
-        if (env.CLEAN_UP == "true") {
-          ansibleTower \
-            towerServer: 'tower',
-            templateType: 'job',
-            jobTemplate: '16',  // devnet-archive-logs
-            jobType: 'run',
-            extraVars: """devnet: ${params.NETWORK}""",
-            throwExceptionWhenFail: false,
-            verbose: false
-        }
-      }
       liskSlackSend('danger', "Build failed (<${env.BUILD_URL}/console|console>, <${env.BUILD_URL}/changes|changes>)", 'lisk-ci-core')
-    }
-    cleanup {
-      script {
-        if (env.CLEAN_UP == "true") {
-          ansibleTower \
-            towerServer: 'tower',
-            templateType: 'job',
-            jobTemplate: '15',  // do-destroy-tag
-            jobType: 'run',
-            extraVars: """do_tag: ${params.NETWORK}_node""",
-            throwExceptionWhenFail: false,
-            verbose: false
-        } else {
-          echo 'Not cleaning up, as requested.'
-        }
-      }
     }
   }
 }
