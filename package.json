@@ -1,6 +1,6 @@
 {
 	"name": "lisk-core",
-	"version": "2.1.1-rc.0",
+	"version": "2.1.1",
 	"description": "Lisk blockchain application platform",
 	"author": "Lisk Foundation <admin@lisk.io>, lightcurve GmbH <admin@lightcurve.io>",
 	"license": "Apache-2.0",
@@ -66,7 +66,7 @@
 		"typescript": "3.3.1"
 	},
 	"lisk": {
-		"minVersion": "1.1.0-rc.0",
+		"minVersion": "1.0.0",
 		"protocolVersion": "1.1"
 	}
 }
