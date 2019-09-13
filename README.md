@@ -236,15 +236,6 @@ lisk-core [lisk_dev] >
 
 Once you get the prompt, you can use `modules`, `helpers`, `logic`, `storage` and `config` objects and play with these in REPL.
 
-## Performance Monitoring
-
-We used [newrelic](http://newrelic.com/) to monitor the activities inside the application. It enables to have detail insight
-into the system and keeps track of the performance of each activity. e.g. An HTTP API call or a background job from a queue.
-
-To enable the performance monitoring on your node make sure you have an environment variable `NEW_RELIC_LICENSE_KEY`
-available and set and then start the node normally. The monitoring data will be visible to your newRelic account with the
-name of the network you started. e.g. `lisk-mainnet`, `lisk-testnet`.
-
 ## Contributors
 
 https://github.com/LiskHQ/lisk-core/graphs/contributors
