@@ -18,7 +18,10 @@
 	},
 	"modules": {
 		"http_api": {
-			"httpPort": 8000
+			"httpPort": 8000,
+			"apm": {
+				"enabled": false
+			}
 		},
 		"chain": {
 			"exceptions": {
