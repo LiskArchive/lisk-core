@@ -20,7 +20,10 @@
 			"access": {
 				"public": true
 			},
-			"httpPort": 4000
+			"httpPort": 4000,
+			"apm": {
+				"enabled": true
+			}
 		},
 		"chain": {
 			"forging": {

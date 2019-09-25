@@ -11,10 +11,7 @@
 	},
 	"modules": {
 		"http_api": {
-			"httpPort": 7000,
-			"apm": {
-				"enabled": false
-			}
+			"httpPort": 7000
 		},
 		"chain": {
 			"exceptions": {
