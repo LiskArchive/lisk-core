@@ -13,7 +13,10 @@
 	},
 	"modules": {
 		"http_api": {
-			"httpPort": 5000
+			"httpPort": 5000,
+			"apm": {
+				"enabled": true
+			}
 		},
 		"network": {
 			"seedPeers": [

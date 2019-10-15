@@ -24,6 +24,9 @@
 		"http_api": {
 			"access": {
 				"public": true
+			},
+			"apm": {
+				"enabled": true
 			}
 		},
 		"chain": {
