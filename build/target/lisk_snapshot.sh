@@ -38,6 +38,7 @@ cd "$( cd -P -- "$(dirname -- "$0")" && pwd -P )" || exit 2
 # shellcheck source=env.sh
 source "$( pwd )/env.sh"
 
+CORE_VERSION=$( jq --raw-output .version package.json )
 OUTPUT_DIRECTORY="${OUTPUT_DIRECTORY:-$PWD/backups}"
 SOURCE_DATABASE=$( node scripts/generate_config.js |jq --raw-output '.components.storage.database' )
 
@@ -62,7 +63,7 @@ bash lisk.sh start_node >/dev/null
 psql --dbname=lisk_snapshot --command='TRUNCATE peers;' >/dev/null
 
 HEIGHT=$( psql --dbname=lisk_snapshot --tuples-only --command='SELECT height FROM blocks ORDER BY height DESC LIMIT 1;' |xargs)
-OUTPUT_FILE="${OUTPUT_DIRECTORY}/${SOURCE_DATABASE}_backup-${HEIGHT}.gz"
+OUTPUT_FILE="${OUTPUT_DIRECTORY}/${SOURCE_DATABASE}_backup-${HEIGHT}-${CORE_VERSION}.gz"
 
 pg_dump --no-owner lisk_snapshot |gzip -9 >"$TEMP_FILE"
 mv "$TEMP_FILE" "$OUTPUT_FILE"
