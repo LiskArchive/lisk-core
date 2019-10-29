@@ -13,17 +13,18 @@
  *
  */
 import {
-	BaseTransaction,
-	convertToAssetError,
-	StateStore,
-	StateStorePrepare,
-	TransactionError,
-	TransactionJSON,
-	utils,
-} from '@liskhq/lisk-transactions';
+	transactions,
+} from 'lisk-sdk';
 import { DAPP_FEE } from './constants';
 
-const { validator, stringEndsWith } = utils;
+const {
+	convertToAssetError,
+	TransactionError,
+	utils: {
+		validator,
+		stringEndsWith,
+	},
+} = transactions;
 
 export interface DappAsset {
 	readonly dapp: {
@@ -90,7 +91,7 @@ export const dappAssetFormatSchema = {
 	},
 };
 
-export class DappTransaction extends BaseTransaction {
+export class DappTransaction extends transactions.BaseTransaction {
 	public readonly containsUniqueData: boolean;
 	public readonly asset: DappAsset;
 	public static TYPE = 5;
@@ -100,7 +101,7 @@ export class DappTransaction extends BaseTransaction {
 		super(rawTransaction);
 		const tx = (typeof rawTransaction === 'object' && rawTransaction !== null
 			? rawTransaction
-			: {}) as Partial<TransactionJSON>;
+			: {}) as Partial<transactions.TransactionJSON>;
 		this.asset = (tx.asset || { dapp: {} }) as DappAsset;
 		this.containsUniqueData = true;
 		if (this.asset && this.asset.dapp && typeof this.asset.dapp === 'object') {
@@ -151,7 +152,7 @@ export class DappTransaction extends BaseTransaction {
 		return this.asset;
 	}
 
-	public async prepare(store: StateStorePrepare): Promise<void> {
+	public async prepare(store: transactions.StateStorePrepare): Promise<void> {
 		await store.account.cache([
 			{
 				address: this.senderId,
@@ -167,8 +168,8 @@ export class DappTransaction extends BaseTransaction {
 	}
 
 	protected verifyAgainstTransactions(
-		transactions: ReadonlyArray<TransactionJSON>
-	): ReadonlyArray<TransactionError> {
+		transactions: ReadonlyArray<transactions.TransactionJSON>
+	): ReadonlyArray<transactions.TransactionError> {
 		const sameTypeTransactions = transactions.filter(
 			tx => tx.type === this.type
 		);
@@ -209,34 +210,12 @@ export class DappTransaction extends BaseTransaction {
 		return errors;
 	}
 
-	protected validateAsset(): ReadonlyArray<TransactionError> {
+	protected validateAsset(): ReadonlyArray<transactions.TransactionError> {
 		validator.validate(dappAssetFormatSchema, this.asset);
 		const errors = convertToAssetError(
 			this.id,
 			validator.errors
-		) as TransactionError[];
-
-		if (!this.amount.eq(0)) {
-			errors.push(
-				new TransactionError(
-					'Amount must be zero for dapp transaction',
-					this.id,
-					'.amount',
-					this.amount.toString(),
-					'0'
-				)
-			);
-		}
-
-		if (this.recipientId) {
-			errors.push(
-				new TransactionError(
-					`RecipientId is expected to be undefined`,
-					this.id,
-					'.recipientId'
-				)
-			);
-		}
+		) as transactions.TransactionError[];
 
 		const validLinkSuffix = ['.zip'];
 
@@ -293,10 +272,10 @@ export class DappTransaction extends BaseTransaction {
 		return errors;
 	}
 
-	protected applyAsset(store: StateStore): ReadonlyArray<TransactionError> {
-		const errors: TransactionError[] = [];
+	protected applyAsset(store: transactions.StateStore): ReadonlyArray<transactions.TransactionError> {
+		const errors: transactions.TransactionError[] = [];
 		const nameExists = store.transaction.find(
-			(transaction: TransactionJSON) =>
+			(transaction: transactions.TransactionJSON) =>
 				transaction.type === DappTransaction.TYPE &&
 				transaction.id !== this.id &&
 				(transaction.asset as DappAsset).dapp &&
@@ -314,7 +293,7 @@ export class DappTransaction extends BaseTransaction {
 		}
 
 		const linkExists = store.transaction.find(
-			(transaction: TransactionJSON) =>
+			(transaction: transactions.TransactionJSON) =>
 				transaction.type === DappTransaction.TYPE &&
 				transaction.id !== this.id &&
 				(transaction.asset as DappAsset).dapp &&
@@ -335,7 +314,7 @@ export class DappTransaction extends BaseTransaction {
 	}
 
 	// tslint:disable-next-line prefer-function-over-method
-	protected undoAsset(_: StateStore): ReadonlyArray<TransactionError> {
+	protected undoAsset(_: transactions.StateStore): ReadonlyArray<transactions.TransactionError> {
 		return [];
 	}
 
