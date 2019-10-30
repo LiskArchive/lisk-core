@@ -20,7 +20,6 @@ const {
 	utils: {
 		validator,
 		verifyAmountBalance,
-		isValidInteger,
 	},
 	constants,
 } = transactions;
