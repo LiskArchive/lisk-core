@@ -13,18 +13,18 @@
  *
  */
 import BigNum from '@liskhq/bignum';
-import {
-	BaseTransaction,
+import { transactions, cryptography } from 'lisk-sdk';
+const {
 	convertToAssetError,
-	StateStore,
-	StateStorePrepare,
 	TransactionError,
-	TransactionJSON,
-	utils,
-} from '@liskhq/lisk-transactions';
+	utils: {
+		validator,
+		verifyAmountBalance,
+	},
+	constants,
+} = transactions;
 import { MAX_TRANSACTION_AMOUNT, OUT_TRANSFER_FEE } from './constants';
 
-const { verifyAmountBalance, validator } = utils;
 const TRANSACTION_DAPP_REGISTERATION_TYPE = 5;
 
 export interface OutTransferAsset {
@@ -55,23 +55,29 @@ export const outTransferAssetFormatSchema = {
 	},
 };
 
-export class OutTransferTransaction extends BaseTransaction {
+export class OutTransferTransaction extends transactions.BaseTransaction {
 	public readonly asset: OutTransferAsset;
 	public readonly containsUniqueData: boolean;
 	public static TYPE = 7;
 	public static FEE = OUT_TRANSFER_FEE.toString();
+	public amount: BigNum;
+	public recipientId: string;
 
 	public constructor(rawTransaction: unknown) {
 		super(rawTransaction);
 		const tx = (typeof rawTransaction === 'object' && rawTransaction !== null
 			? rawTransaction
-			: {}) as Partial<TransactionJSON>;
+			: {}) as Partial<transactions.TransactionJSON>;
+
+		// TransactionJSON no longer has amount, so need to access this way
+		this.amount = new BigNum(tx['amount'] || '0');
+		this.recipientId = tx['recipientId'] || '';
 
 		this.asset = (tx.asset || { outTransfer: {} }) as OutTransferAsset;
 		this.containsUniqueData = true;
 	}
 
-	public async prepare(store: StateStorePrepare): Promise<void> {
+	public async prepare(store: transactions.StateStorePrepare): Promise<void> {
 		await store.account.cache([
 			{
 				address: this.senderId,
@@ -87,12 +93,41 @@ export class OutTransferTransaction extends BaseTransaction {
 		]);
 	}
 
-	protected assetToBytes(): Buffer {
+	// Function getBasicBytes is overriden to maintain the bytes order
+	// TODO: remove after hardfork implementation
+	protected getBasicBytes(): Buffer {
+		const transactionType = cryptography.intToBuffer(this.type, constants.BYTESIZES.TYPE);
+		const transactionTimestamp = cryptography.intToBuffer(
+			this.timestamp,
+			constants.BYTESIZES.TIMESTAMP,
+			'little',
+		);
+
+		const transactionSenderPublicKey = cryptography.hexToBuffer(this.senderPublicKey);
+
+		const transactionRecipientID = cryptography.intToBuffer(
+			this.recipientId.slice(0, -1),
+			constants.BYTESIZES.RECIPIENT_ID,
+		).slice(0, constants.BYTESIZES.RECIPIENT_ID);
+
+		const transactionAmount = cryptography.bigNumberToBuffer(
+			this.amount.toString(),
+			constants.BYTESIZES.AMOUNT,
+			'little',
+		);
+
 		const { dappId, transactionId } = this.asset.outTransfer;
 		const outAppIdBuffer = Buffer.from(dappId, 'utf8');
 		const outTransactionIdBuffer = Buffer.from(transactionId, 'utf8');
 
-		return Buffer.concat([outAppIdBuffer, outTransactionIdBuffer]);
+		return Buffer.concat([
+			transactionType,
+			transactionTimestamp,
+			transactionSenderPublicKey,
+			transactionRecipientID,
+			transactionAmount,
+			Buffer.concat([outAppIdBuffer, outTransactionIdBuffer]),
+		]);
 	}
 
 	public assetToJSON(): object {
@@ -100,8 +135,8 @@ export class OutTransferTransaction extends BaseTransaction {
 	}
 
 	protected verifyAgainstTransactions(
-		transactions: ReadonlyArray<TransactionJSON>
-	): ReadonlyArray<TransactionError> {
+		transactions: ReadonlyArray<transactions.TransactionJSON>
+	): ReadonlyArray<transactions.TransactionError> {
 		const sameTypeTransactions = transactions.filter(
 			tx =>
 				tx.type === OutTransferTransaction.TYPE &&
@@ -121,12 +156,12 @@ export class OutTransferTransaction extends BaseTransaction {
 			: [];
 	}
 
-	protected validateAsset(): ReadonlyArray<TransactionError> {
+	protected validateAsset(): ReadonlyArray<transactions.TransactionError> {
 		validator.validate(outTransferAssetFormatSchema, this.asset);
 		const errors = convertToAssetError(
 			this.id,
 			validator.errors
-		) as TransactionError[];
+		) as transactions.TransactionError[];
 
 		// Amount has to be greater than 0
 		if (this.amount.lte(0)) {
@@ -154,8 +189,8 @@ export class OutTransferTransaction extends BaseTransaction {
 		return errors;
 	}
 
-	protected applyAsset(store: StateStore): ReadonlyArray<TransactionError> {
-		const errors: TransactionError[] = [];
+	protected applyAsset(store: transactions.StateStore): ReadonlyArray<transactions.TransactionError> {
+		const errors: transactions.TransactionError[] = [];
 		const dappRegistrationTransaction = store.transaction.get(
 			this.asset.outTransfer.dappId
 		);
@@ -210,8 +245,8 @@ export class OutTransferTransaction extends BaseTransaction {
 		return errors;
 	}
 
-	public undoAsset(store: StateStore): ReadonlyArray<TransactionError> {
-		const errors: TransactionError[] = [];
+	public undoAsset(store: transactions.StateStore): ReadonlyArray<transactions.TransactionError> {
+		const errors: transactions.TransactionError[] = [];
 		const sender = store.account.get(this.senderId);
 		const updatedBalance = new BigNum(sender.balance).add(this.amount);
 

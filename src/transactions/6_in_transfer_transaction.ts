@@ -13,21 +13,22 @@
  *
  */
 import BigNum from '@liskhq/bignum';
-import {
-	BaseTransaction,
-	convertToAssetError,
-	StateStore,
-	StateStorePrepare,
-	TransactionError,
-	TransactionJSON,
-	utils,
-} from '@liskhq/lisk-transactions';
+import { cryptography, transactions } from 'lisk-sdk';
 import {
 	TRANSACTION_DAPP_TYPE,
 	IN_TRANSFER_FEE,
 } from './constants';
 
-const { convertBeddowsToLSK, verifyAmountBalance, validator } = utils;
+const {
+	convertToAssetError,
+	TransactionError,
+	utils: {
+		convertBeddowsToLSK,
+		verifyAmountBalance,
+		validator,
+	},
+	constants,
+} = transactions;
 
 export interface InTransferAsset {
 	readonly inTransfer: {
@@ -52,25 +53,55 @@ export const inTransferAssetFormatSchema = {
 	},
 };
 
-export class InTransferTransaction extends BaseTransaction {
+export class InTransferTransaction extends transactions.BaseTransaction {
 	public readonly asset: InTransferAsset;
 	public static TYPE = 6;
 	public static FEE = IN_TRANSFER_FEE.toString();
+	public amount: BigNum;
 
 	public constructor(rawTransaction: unknown) {
 		super(rawTransaction);
 		const tx = (typeof rawTransaction === 'object' && rawTransaction !== null
 			? rawTransaction
-			: {}) as Partial<TransactionJSON>;
+			: {}) as Partial<transactions.TransactionJSON>;
+		
+		// TransactionJSON no longer has amount, so need to access this way
+		this.amount = new BigNum(tx['amount'] || '0');
 
 		this.asset = (tx.asset || { inTransfer: {} }) as InTransferAsset;
 	}
 
-	protected assetToBytes(): Buffer {
-		return Buffer.from(this.asset.inTransfer.dappId, 'utf8');
+	// Function getBasicBytes is overriden to maintain the bytes order
+	// TODO: remove after hardfork implementation
+	protected getBasicBytes(): Buffer {
+		const transactionType = cryptography.intToBuffer(this.type, constants.BYTESIZES.TYPE);
+		const transactionTimestamp = cryptography.intToBuffer(
+			this.timestamp,
+			constants.BYTESIZES.TIMESTAMP,
+			'little',
+		);
+
+		const transactionSenderPublicKey = cryptography.hexToBuffer(this.senderPublicKey);
+
+		const transactionRecipientID = Buffer.alloc(constants.BYTESIZES.RECIPIENT_ID);
+
+		const transactionAmount = cryptography.bigNumberToBuffer(
+			this.amount.toString(),
+			constants.BYTESIZES.AMOUNT,
+			'little',
+		);
+
+		return Buffer.concat([
+			transactionType,
+			transactionTimestamp,
+			transactionSenderPublicKey,
+			transactionRecipientID,
+			transactionAmount,
+			Buffer.from(this.asset.inTransfer.dappId, 'utf8'),
+		]);
 	}
 
-	public async prepare(store: StateStorePrepare): Promise<void> {
+	public async prepare(store: transactions.StateStorePrepare): Promise<void> {
 		await store.account.cache([{ address: this.senderId }]);
 
 		const transactions = await store.transaction.cache([
@@ -90,7 +121,7 @@ export class InTransferTransaction extends BaseTransaction {
 
 		if (dappTransaction) {
 			await store.account.cache([
-				{ address: dappTransaction.senderId as string },
+				{ address: cryptography.getAddressFromPublicKey(dappTransaction.senderPublicKey) },
 			]);
 		}
 	}
@@ -101,40 +132,17 @@ export class InTransferTransaction extends BaseTransaction {
 
 	// tslint:disable-next-line prefer-function-over-method
 	protected verifyAgainstTransactions(
-		_: ReadonlyArray<TransactionJSON>
-	): ReadonlyArray<TransactionError> {
+		_: ReadonlyArray<transactions.TransactionJSON>
+	): ReadonlyArray<transactions.TransactionError> {
 		return [];
 	}
 
-	protected validateAsset(): ReadonlyArray<TransactionError> {
+	protected validateAsset(): ReadonlyArray<transactions.TransactionError> {
 		validator.validate(inTransferAssetFormatSchema, this.asset);
 		const errors = convertToAssetError(
 			this.id,
 			validator.errors
-		) as TransactionError[];
-
-		// Per current protocol, this recipientId and recipientPublicKey must be empty
-		if (this.recipientId) {
-			errors.push(
-				new TransactionError(
-					'RecipientId is expected to be undefined.',
-					this.id,
-					'.recipientId',
-					this.recipientId
-				)
-			);
-		}
-
-		if (this.recipientPublicKey) {
-			errors.push(
-				new TransactionError(
-					'RecipientPublicKey is expected to be undefined.',
-					this.id,
-					'.recipientPublicKey',
-					this.recipientPublicKey
-				)
-			);
-		}
+		) as transactions.TransactionError[];
 
 		if (this.amount.lte(0)) {
 			errors.push(
@@ -151,10 +159,10 @@ export class InTransferTransaction extends BaseTransaction {
 		return errors;
 	}
 
-	protected applyAsset(store: StateStore): ReadonlyArray<TransactionError> {
-		const errors: TransactionError[] = [];
+	protected applyAsset(store: transactions.StateStore): ReadonlyArray<transactions.TransactionError> {
+		const errors: transactions.TransactionError[] = [];
 		const idExists = store.transaction.find(
-			(transaction: TransactionJSON) =>
+			(transaction: transactions.TransactionJSON) =>
 				transaction.type === TRANSACTION_DAPP_TYPE &&
 				transaction.id === this.asset.inTransfer.dappId
 		);
@@ -188,7 +196,7 @@ export class InTransferTransaction extends BaseTransaction {
 
 		const dappTransaction = store.transaction.get(this.asset.inTransfer.dappId);
 
-		const recipient = store.account.get(dappTransaction.senderId as string);
+		const recipient = store.account.get(cryptography.getAddressFromPublicKey(dappTransaction.senderPublicKey));
 
 		const updatedRecipientBalance = new BigNum(recipient.balance).add(
 			this.amount
@@ -203,8 +211,8 @@ export class InTransferTransaction extends BaseTransaction {
 		return errors;
 	}
 
-	protected undoAsset(store: StateStore): ReadonlyArray<TransactionError> {
-		const errors: TransactionError[] = [];
+	protected undoAsset(store: transactions.StateStore): ReadonlyArray<transactions.TransactionError> {
+		const errors: transactions.TransactionError[] = [];
 		const sender = store.account.get(this.senderId);
 		const updatedBalance = new BigNum(sender.balance).add(this.amount);
 		const updatedSender = { ...sender, balance: updatedBalance.toString() };
@@ -213,7 +221,7 @@ export class InTransferTransaction extends BaseTransaction {
 
 		const dappTransaction = store.transaction.get(this.asset.inTransfer.dappId);
 
-		const recipient = store.account.get(dappTransaction.senderId as string);
+		const recipient = store.account.get(cryptography.getAddressFromPublicKey(dappTransaction.senderPublicKey));
 
 		const updatedRecipientBalance = new BigNum(recipient.balance).sub(
 			this.amount
