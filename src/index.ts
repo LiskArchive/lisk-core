@@ -38,78 +38,43 @@ try {
 
 	const app = new Application(genesisBlock, config);
 
-	const { disableV1Transactions } = app.config.modules.chain.exceptions.precedent;
-	const { disableDappTransaction } = app.config.modules.chain.exceptions.precedent;
-	const { disableDappTransfer } = app.config.modules.chain.exceptions.precedent;
+	const {
+		disableV1Transactions,
+		disableDappTransaction,
+		disableDappTransfer,
+	} = app.config.modules.chain.exceptions.precedent;
 
-	app.registerTransaction(
-		TransferTransaction,
-		{
-			matcher: context =>
-				context.blockHeight <
-				disableV1Transactions,
-		}
-	);
-
-	app.registerTransaction(
-		SecondSignatureTransaction,
-		{
-			matcher: context =>
-				context.blockHeight <
-				disableV1Transactions,
-		}
-	);
-
-	app.registerTransaction(
-		DelegateTransaction,
-		{
-			matcher: context =>
-				context.blockHeight <
-				disableV1Transactions,
-		}
-	);
-
-	app.registerTransaction(
-		VoteTransaction,
-		{
-			matcher: context =>
-				context.blockHeight <
-				disableV1Transactions,
-		}
-	);
-
-	app.registerTransaction(
-		MultisignatureTransaction,
-		{
-			matcher: context =>
-				context.blockHeight <
-				disableV1Transactions,
-		}
-	);
-
-	app.registerTransaction(DappTransaction, {
-		matcher: context =>
-			context.blockHeight <
-			disableDappTransaction,
+	app.registerTransaction(TransferTransaction, {
+		matcher: context => context.blockHeight < disableV1Transactions,
 	});
 
-	app.registerTransaction(
-		InTransferTransaction,
-		{
-			matcher: context =>
-				context.blockHeight <
-				disableDappTransfer,
-		}
-	);
+	app.registerTransaction(SecondSignatureTransaction, {
+		matcher: context => context.blockHeight < disableV1Transactions,
+	});
 
-	app.registerTransaction(
-		OutTransferTransaction,
-		{
-			matcher: context =>
-				context.blockHeight <
-				disableDappTransfer,
-		}
-	);
+	app.registerTransaction(DelegateTransaction, {
+		matcher: context => context.blockHeight < disableV1Transactions,
+	});
+
+	app.registerTransaction(VoteTransaction, {
+		matcher: context => context.blockHeight < disableV1Transactions,
+	});
+
+	app.registerTransaction(MultisignatureTransaction, {
+		matcher: context => context.blockHeight < disableV1Transactions,
+	});
+
+	app.registerTransaction(DappTransaction, {
+		matcher: context => context.blockHeight < disableDappTransaction,
+	});
+
+	app.registerTransaction(InTransferTransaction, {
+		matcher: context => context.blockHeight < disableDappTransfer,
+	});
+
+	app.registerTransaction(OutTransferTransaction, {
+		matcher: context => context.blockHeight < disableDappTransfer,
+	});
 
 	app
 		.run()
