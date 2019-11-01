@@ -39,6 +39,8 @@ try {
 	const app = new Application(genesisBlock, config);
 
 	const { disableV1Transactions } = app.config.modules.chain.exceptions.precedent;
+	const { disableDappTransaction } = app.config.modules.chain.exceptions.precedent;
+	const { disableDappTransfer } = app.config.modules.chain.exceptions.precedent;
 
 	app.registerTransaction(
 		TransferTransaction,
@@ -88,7 +90,7 @@ try {
 	app.registerTransaction(DappTransaction, {
 		matcher: context =>
 			context.blockHeight <
-			app.config.modules.chain.exceptions.precedent.disableDappTransaction,
+			disableDappTransaction,
 	});
 
 	app.registerTransaction(
@@ -96,7 +98,7 @@ try {
 		{
 			matcher: context =>
 				context.blockHeight <
-				app.config.modules.chain.exceptions.precedent.disableDappTransfer,
+				disableDappTransfer,
 		}
 	);
 
@@ -105,7 +107,7 @@ try {
 		{
 			matcher: context =>
 				context.blockHeight <
-				app.config.modules.chain.exceptions.precedent.disableDappTransfer,
+				disableDappTransfer,
 		}
 	);
 
