@@ -128,7 +128,8 @@
 				},
 				"precedent": {
 					"disableDappTransfer": 6901027,
-					"disableDappTransaction": 10000000
+					"disableDappTransaction": 10000000,
+					"disableV1Transactions": 20000000
 				},
 				"blockVersions": {
 					"0": {

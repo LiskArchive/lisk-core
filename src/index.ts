@@ -13,6 +13,11 @@
  */
 import { Application } from 'lisk-sdk';
 import {
+	TransferTransaction,
+	SecondSignatureTransaction,
+	DelegateTransaction,
+	VoteTransaction,
+	MultisignatureTransaction,
 	DappTransaction,
 	InTransferTransaction,
 	OutTransferTransaction,
@@ -32,6 +37,51 @@ try {
 	const genesisBlock = require(`../config/${NETWORK}/genesis_block.json`);
 
 	const app = new Application(genesisBlock, config);
+
+	app.registerTransaction(
+		TransferTransaction,
+		{
+			matcher: context =>
+				context.blockHeight <
+				app.config.modules.chain.exceptions.precedent.disableV1Transactions,
+		}
+	);
+
+	app.registerTransaction(
+		SecondSignatureTransaction,
+		{
+			matcher: context =>
+				context.blockHeight <
+				app.config.modules.chain.exceptions.precedent.disableV1Transactions,
+		}
+	);
+
+	app.registerTransaction(
+		DelegateTransaction,
+		{
+			matcher: context =>
+				context.blockHeight <
+				app.config.modules.chain.exceptions.precedent.disableV1Transactions,
+		}
+	);
+
+	app.registerTransaction(
+		VoteTransaction,
+		{
+			matcher: context =>
+				context.blockHeight <
+				app.config.modules.chain.exceptions.precedent.disableV1Transactions,
+		}
+	);
+
+	app.registerTransaction(
+		MultisignatureTransaction,
+		{
+			matcher: context =>
+				context.blockHeight <
+				app.config.modules.chain.exceptions.precedent.disableV1Transactions,
+		}
+	);
 
 	app.registerTransaction(DappTransaction, {
 		matcher: context =>
