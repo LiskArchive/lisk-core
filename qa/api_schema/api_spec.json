@@ -2248,7 +2248,7 @@
 					"example": 200,
 					"description": "Number of times that this Block has been confirmed by the network.\nBy forging a new block on a chain, all former blocks in the chain get confirmed by the forging delegate.\n"
 				},
-				"previousBlockId": {
+				"previousBlockIdId": {
 					"type": "string",
 					"format": "id",
 					"example": "15918760246746894806",
