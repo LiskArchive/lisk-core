@@ -16,7 +16,6 @@ export const baseTransaction = {
 	$id: 'lisk/base-transaction',
 	type: 'object',
 	required: [
-		'id',
 		'type',
 		'senderPublicKey',
 		'timestamp',
