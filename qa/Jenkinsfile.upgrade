@@ -5,7 +5,6 @@ properties([
     string(name: 'SDK_BRANCH_NAME', defaultValue: 'development', description: 'Lisk SDK branch name', ),
     string(name: 'CORE_BRANCH_NAME', defaultValue: 'master', description: 'Lisk core branch name', ),
     string(name: 'NETWORK', defaultValue: 'testnet', description: 'To Run test against a network', ),
-    string(name: 'NEWRELIC_ENABLED', defaultValue: 'no', description: 'Enable NewRelic', ),
   ])
 ])
 
@@ -57,8 +56,7 @@ droplet_name: '${params.NETWORK}-${env.TIMESTAMP}'
 devnet: ${params.NETWORK}
 lisk_version: '${env.LISK_VERSION}'
 droplet_size: 'g-2vcpu-8gb'
-jenkins_ci: 'yes'
-newrelic_enabled: '${params.NEWRELIC_ENABLED}'""",
+jenkins_ci: 'yes'""",
               importTowerLogs: true,
               throwExceptionWhenFail: true,
               verbose: false
