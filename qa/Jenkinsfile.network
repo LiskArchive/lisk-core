@@ -3,10 +3,9 @@
 properties([
   parameters([
     string(name: 'SDK_BRANCH_NAME', defaultValue: 'development', description: 'Lisk core branch name', ),
-    string(name: 'CORE_BRANCH_NAME', defaultValue: 'master', description: 'Lisk core branch name', ),
+    string(name: 'CORE_BRANCH_NAME', defaultValue: 'development', description: 'Lisk core branch name', ),
     string(name: 'NETWORK', defaultValue: 'alphanet-$BUILD_ID', description: 'To Run test against a network', ),
     string(name: 'NODES_PER_REGION', defaultValue: '1', description: 'Number of nodes per region', ),
-    string(name: 'NEWRELIC_ENABLED', defaultValue: 'no', description: 'Enable NewRelic', ),
   ])
 ])
 
@@ -42,8 +41,7 @@ pipeline {
               templateType: 'job',
               jobTemplate: '14',  // devnet-deploy
               jobType: 'run',
-              extraVars: """newrelic_enabled: '${params.NEWRELIC_ENABLED}'
-devnet: ${params.NETWORK}
+              extraVars: """devnet: ${params.NETWORK}
 do_nodes_per_region: ${params.NODES_PER_REGION}
 jenkins_ci: 'yes'
 lisk_version: ${env.LISK_VERSION}""",
