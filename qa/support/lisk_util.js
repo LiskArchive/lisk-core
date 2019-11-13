@@ -103,12 +103,9 @@ class LiskUtil extends Helper {
 	 */
 	async waitUntilBlock(expectedHeight, counter) {
 		const {
-			data: {
-				height,
-				transactions: { confirmed, ready, verified, pending, validated },
-			},
+			data: { height },
 		} = await this.call().getNodeStatus();
-		const pendingTrxCnt = ready + verified + pending + validated;
+		const pendingTrxCnt = await this.getPendingTransactionCount();
 		counter = counter ? (counter += 1) : 1;
 
 		output.print(
@@ -499,13 +496,9 @@ class LiskUtil extends Helper {
 	 * returns count of transactions in queue
 	 */
 	async getPendingTransactionCount() {
-		const {
-			data: {
-				transactions: { ready, verified, pending, validated },
-			},
-		} = await this.call().getNodeStatus();
+		const { result } = await from(this.call().getTransactionsFromPool({}));
 
-		return ready + verified + pending + validated;
+		return result.reduce(r => r.meta.count, 0);
 	}
 
 	/**
