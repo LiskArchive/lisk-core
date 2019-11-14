@@ -41,7 +41,7 @@ Scenario('Transfer funds', async () => {
 
 		await Promise.all(
 			transferTransactions.map(trx =>
-				I.validateTransaction(trx.id, trx.recipientId, LSK_TOKEN)
+				I.validateTransaction(trx.id, trx.asset.recipientId, LSK_TOKEN)
 			)
 		);
 	} catch (error) {
