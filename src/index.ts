@@ -13,6 +13,11 @@
  */
 import { Application } from 'lisk-sdk';
 import {
+	TransferTransaction,
+	SecondSignatureTransaction,
+	DelegateTransaction,
+	VoteTransaction,
+	MultisignatureTransaction,
 	DappTransaction,
 	InTransferTransaction,
 	OutTransferTransaction,
@@ -33,29 +38,43 @@ try {
 
 	const app = new Application(genesisBlock, config);
 
-	app.registerTransaction(DappTransaction, {
-		matcher: context =>
-			context.blockHeight <
-			app.config.modules.chain.exceptions.precedent.disableDappTransaction,
+	const {
+		disableV1Transactions,
+		disableDappTransaction,
+		disableDappTransfer,
+	} = app.config.modules.chain.exceptions.precedent;
+
+	app.registerTransaction(TransferTransaction, {
+		matcher: context => context.blockHeight < disableV1Transactions,
 	});
 
-	app.registerTransaction(
-		InTransferTransaction,
-		{
-			matcher: context =>
-				context.blockHeight <
-				app.config.modules.chain.exceptions.precedent.disableDappTransfer,
-		}
-	);
+	app.registerTransaction(SecondSignatureTransaction, {
+		matcher: context => context.blockHeight < disableV1Transactions,
+	});
 
-	app.registerTransaction(
-		OutTransferTransaction,
-		{
-			matcher: context =>
-				context.blockHeight <
-				app.config.modules.chain.exceptions.precedent.disableDappTransfer,
-		}
-	);
+	app.registerTransaction(DelegateTransaction, {
+		matcher: context => context.blockHeight < disableV1Transactions,
+	});
+
+	app.registerTransaction(VoteTransaction, {
+		matcher: context => context.blockHeight < disableV1Transactions,
+	});
+
+	app.registerTransaction(MultisignatureTransaction, {
+		matcher: context => context.blockHeight < disableV1Transactions,
+	});
+
+	app.registerTransaction(DappTransaction, {
+		matcher: context => context.blockHeight < disableDappTransaction,
+	});
+
+	app.registerTransaction(InTransferTransaction, {
+		matcher: context => context.blockHeight < disableDappTransfer,
+	});
+
+	app.registerTransaction(OutTransferTransaction, {
+		matcher: context => context.blockHeight < disableDappTransfer,
+	});
 
 	app
 		.run()

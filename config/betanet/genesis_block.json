@@ -1,4 +1,5 @@
 {
+    "communityIdentifier": "Lisk",
     "version": 0,
     "totalAmount": "10000000000000000",
     "totalFee": "0",
@@ -7,7 +8,7 @@
     "timestamp": 0,
     "numberOfTransactions": 103,
     "payloadLength": 19619,
-    "previousBlock": null,
+    "previousBlockId": null,
     "generatorPublicKey": "97bf097a097ca36a073196e9184a6a0393a5d588fa8eec0cbadd1f2346f4d1e7",
     "transactions": [
         {

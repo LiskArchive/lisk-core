@@ -15,6 +15,9 @@
 import BigNum from '@liskhq/bignum';
 import { cryptography, transactions } from 'lisk-sdk';
 import {
+	BaseTransaction,
+} from './legacy_base_transaction';
+import {
 	TRANSACTION_DAPP_TYPE,
 	IN_TRANSFER_FEE,
 } from './constants';
@@ -53,7 +56,7 @@ export const inTransferAssetFormatSchema = {
 	},
 };
 
-export class InTransferTransaction extends transactions.BaseTransaction {
+export class InTransferTransaction extends BaseTransaction {
 	public readonly asset: InTransferAsset;
 	public static TYPE = 6;
 	public static FEE = IN_TRANSFER_FEE.toString();

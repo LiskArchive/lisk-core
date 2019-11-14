@@ -15,6 +15,9 @@
 import {
 	transactions,
 } from 'lisk-sdk';
+import {
+	BaseTransaction,
+} from './legacy_base_transaction';
 import { DAPP_FEE } from './constants';
 
 const {
@@ -91,7 +94,7 @@ export const dappAssetFormatSchema = {
 	},
 };
 
-export class DappTransaction extends transactions.BaseTransaction {
+export class DappTransaction extends BaseTransaction {
 	public readonly containsUniqueData: boolean;
 	public readonly asset: DappAsset;
 	public static TYPE = 5;

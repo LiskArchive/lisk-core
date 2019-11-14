@@ -14,6 +14,11 @@
  */
 import BigNum from '@liskhq/bignum';
 import { transactions, cryptography } from 'lisk-sdk';
+import {
+	BaseTransaction,
+} from './legacy_base_transaction';
+import { MAX_TRANSACTION_AMOUNT, OUT_TRANSFER_FEE } from './constants';
+
 const {
 	convertToAssetError,
 	TransactionError,
@@ -23,8 +28,6 @@ const {
 	},
 	constants,
 } = transactions;
-import { MAX_TRANSACTION_AMOUNT, OUT_TRANSFER_FEE } from './constants';
-
 const TRANSACTION_DAPP_REGISTERATION_TYPE = 5;
 
 export interface OutTransferAsset {
@@ -55,7 +58,7 @@ export const outTransferAssetFormatSchema = {
 	},
 };
 
-export class OutTransferTransaction extends transactions.BaseTransaction {
+export class OutTransferTransaction extends BaseTransaction {
 	public readonly asset: OutTransferAsset;
 	public readonly containsUniqueData: boolean;
 	public static TYPE = 7;
