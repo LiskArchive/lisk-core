@@ -104,9 +104,7 @@ class LiskUtil extends Helper {
 	 */
 	async waitUntilBlock(expectedHeight, counter) {
 		const {
-			data: {
-				height,
-			},
+			data: { height },
 		} = await this.call().getNodeStatus();
 		const pendingTrxCnt = await this.getPendingTransactionCount();
 
@@ -229,7 +227,7 @@ class LiskUtil extends Helper {
 				transaction,
 				passphrase: account.passphrase,
 				networkIdentifier,
-			});
+			}).signature;
 
 			return {
 				transactionId: transaction.id,
@@ -275,8 +273,9 @@ class LiskUtil extends Helper {
 		const trxs = accounts.map(a => {
 			if (!a.passphrase) {
 				a.passphrase = GENESIS_ACCOUNT.password;
-				a.networkIdentifier = networkIdentifier;
 			}
+			a.networkIdentifier = networkIdentifier;
+
 			return elements.transaction.transfer(a);
 		});
 
@@ -298,10 +297,11 @@ class LiskUtil extends Helper {
 			transactionId: transaction.id,
 			networkIdentifier,
 			publicKey: s.publicKey,
-			signature: elements.transaction.utils.multiSignTransaction(
+			signature: elements.transaction.createSignatureObject({
 				transaction,
-				s.passphrase
-			),
+				passphrase: s.passphrase,
+				networkIdentifier,
+			}).signature,
 		}));
 
 		await Promise.all(
@@ -339,7 +339,10 @@ class LiskUtil extends Helper {
 	 * @returns {Object} transaction
 	 */
 	async registerAsDelegate(params, blocksToWait) {
-		const trx = elements.transaction.registerDelegate({ ...params, networkIdentifier });
+		const trx = elements.transaction.registerDelegate({
+			...params,
+			networkIdentifier,
+		});
 
 		await from(this.broadcastAndValidateTransactionAndWait(trx, blocksToWait));
 
@@ -355,7 +358,10 @@ class LiskUtil extends Helper {
 	 * @param {Number} blocksToWait - Number of blocks to wait
 	 */
 	async castVotes(params, blocksToWait) {
-		const trx = elements.transaction.castVotes({ ...params, networkIdentifier });
+		const trx = elements.transaction.castVotes({
+			...params,
+			networkIdentifier,
+		});
 		await from(this.broadcastAndValidateTransactionAndWait(trx, blocksToWait));
 	}
 
@@ -368,7 +374,10 @@ class LiskUtil extends Helper {
 	 * @param {Number} blocksToWait - Number of blocks to wait
 	 */
 	async castUnvotes(params, blocksToWait) {
-		const trx = elements.transaction.castUnvotes({ ...params, networkIdentifier });
+		const trx = elements.transaction.castUnvotes({
+			...params,
+			networkIdentifier,
+		});
 		await from(this.broadcastAndValidateTransactionAndWait(trx, blocksToWait));
 	}
 
@@ -417,7 +426,10 @@ class LiskUtil extends Helper {
 	 * @param {Number} blocksToWait - Number of blocks to wait
 	 */
 	async registerDapp(data, blocksToWait) {
-		const dAppTrx = elements.transaction.createDapp({ ...data, networkIdentifier });
+		const dAppTrx = elements.transaction.createDapp({
+			...data,
+			networkIdentifier,
+		});
 
 		await this.broadcastAndValidateTransactionAndWait(dAppTrx, blocksToWait);
 
@@ -457,6 +469,8 @@ class LiskUtil extends Helper {
 			response.result,
 			'TransactionsResponse'
 		);
+
+		expect(response.result.data).to.be.an('array').that.is.not.empty;
 		return expect(response.result.data[0].asset.amount).to.deep.equal(
 			TO_BEDDOWS(amount)
 		);
@@ -662,7 +676,7 @@ class LiskUtil extends Helper {
 		if (nodeStatus.data.height >= expectedHeight) {
 			output.print(
 				`Reached expected height: ${expectedHeight}, Node current height: ${
-				nodeStatus.data.height
+					nodeStatus.data.height
 				}`
 			);
 			return;

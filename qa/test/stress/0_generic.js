@@ -49,7 +49,7 @@ Scenario('Transfer funds', async () => {
 	}
 })
 	.tag('@slow')
-	.tag('@generic_t')
+	.tag('@generic')
 	.tag('@stress');
 
 Scenario('Second passphrase on an account', async () => {
@@ -86,7 +86,7 @@ Scenario('Second passphrase on an account', async () => {
 	}
 })
 	.tag('@slow')
-	.tag('@generic_spp')
+	.tag('@generic')
 	.tag('@stress');
 
 Scenario('Delegate Registration', async () => {
@@ -127,7 +127,7 @@ Scenario('Delegate Registration', async () => {
 	}
 })
 	.tag('@slow')
-	.tag('@generic_dr')
+	.tag('@generic')
 	.tag('@stress');
 
 Scenario('Cast vote', async () => {
@@ -168,7 +168,7 @@ Scenario('Cast vote', async () => {
 	}
 })
 	.tag('@slow')
-	.tag('@generic_cv')
+	.tag('@generic')
 	.tag('@stress');
 
 Scenario('Register Multi-signature account', async () => {
@@ -218,5 +218,5 @@ Scenario('Register Multi-signature account', async () => {
 	}
 })
 	.tag('@slow')
-	.tag('@generic_ms')
+	.tag('@generic')
 	.tag('@stress');

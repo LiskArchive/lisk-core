@@ -154,7 +154,7 @@ Then(
 			await I.waitForTransactionToConfirm(id);
 			const { result, error } = await from(api.getTransactions({ id }));
 			expect(error).to.be.null;
-			expect(result.data[0].amount).to.deep.equal(TO_BEDDOWS(amount));
+			expect(result.data[0].asset.amount).to.deep.equal(TO_BEDDOWS(amount));
 		} catch (error) {
 			output.error(error);
 			throw error;

@@ -53,7 +53,7 @@ Given(
 			await trxs.map(t =>
 				I.validateTransaction(
 					t.id,
-					t.recipientId,
+					t.asset.recipientId,
 					amount,
 					GENESIS_ACCOUNT.address
 				)
@@ -111,7 +111,7 @@ Then(
 			expect(error).to.be.null;
 			expect(result.data[0].id).to.deep.equal(transaction.id);
 			expect(result.data[0].senderId).to.deep.equal(multisigAccount.address);
-			expect(result.data[0].recipientId).to.deep.equal(address);
+			expect(result.data[0].asset.recipientId).to.deep.equal(address);
 			expect(result.data[0].signatures).to.have.lengthOf(contracts.length);
 		} catch (error) {
 			output.error(error);

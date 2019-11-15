@@ -8,7 +8,10 @@ const GENESIS_ACCOUNT = config.genesis_account;
 const ASGARD_FIXTURE = config.asgard_fixture;
 const communityIdentifier = 'Lisk';
 const nethash = config.genesis_block.payloadHash;
-const networkIdentifier = cryptography.getNetworkIdentifier(nethash, communityIdentifier);
+const networkIdentifier = cryptography.getNetworkIdentifier(
+	nethash,
+	communityIdentifier
+);
 const getRandomIpAddress = () => {
 	const { peers } = config;
 	return peers[Math.floor(Math.random() * peers.length)];

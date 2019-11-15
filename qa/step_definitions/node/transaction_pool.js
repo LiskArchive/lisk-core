@@ -6,6 +6,7 @@ const {
 	TO_BEDDOWS,
 	TRS_PER_BLOCK,
 } = require('../../utils');
+const { networkIdentifier } = require('../../fixtures');
 
 const I = actor();
 let response;
@@ -26,6 +27,7 @@ When(
 				recipientId: a.address,
 				amount: TO_BEDDOWS(amount),
 				passphrase,
+				networkIdentifier,
 			}));
 
 			const trxs = transfers.map(t => elements.transaction.transfer(t));
@@ -76,6 +78,7 @@ When(
 				recipientId: address,
 				amount: TO_BEDDOWS(amount),
 				passphrase,
+				networkIdentifier,
 			});
 
 			response = await from(

@@ -17,8 +17,6 @@ Feature: List Delegates
       | limit=20                                                                   |
       | sort=username:asc                                                          |
       | sort=username:desc                                                         |
-      | sort=rank:asc                                                              |
-      | sort=rank:desc                                                             |
       | sort=productivity:asc                                                      |
       | sort=productivity:desc                                                     |
       | sort=missedBlocks:asc                                                      |
