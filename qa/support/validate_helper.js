@@ -285,9 +285,7 @@ class ValidateHelper extends Helper {
 			case 'maxAmount':
 				response.data.forEach(t => {
 					if (key === 'minAmount') {
-						expect(t.amount).to.be.bignumber.at.least(value);
-					} else {
-						expect(t.amount).to.be.bignumber.at.most(value);
+						expect(t.asset.amount).to.be.bignumber.at.least(value);
 					}
 				});
 				break;
