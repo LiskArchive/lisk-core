@@ -4,6 +4,7 @@
 	"height": 1,
 	"maxHeightPreviouslyForged": 0,
 	"maxHeightPrevoted": 0,
+	"previousBlockId": null,
 	"reward": "0",
 	"totalFee": "0",
 	"communityIdentifier": "Lisk",
