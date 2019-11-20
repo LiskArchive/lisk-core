@@ -12,6 +12,7 @@ REVISION
 npm-shrinkwrap.json
 
 # Dependency directories
+tsconfig.tsbuildinfo
 node_modules/
 
 # Docs
