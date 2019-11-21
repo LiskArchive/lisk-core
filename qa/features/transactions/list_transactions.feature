@@ -13,17 +13,17 @@ Feature: List Transactions
 
     Examples:
       | params                                                                              |
-      | id=3634383815892709956                                                              |
-      | recipientId=16313739661670634666L                                                   |
-      | senderId=1085993630748340485L                                                       |
-      | senderPublicKey=c96dec3595ff6041c3bd28b76b8cf75dce8225173d1bd00241624ee89b50f2a8    |
-      | senderIdOrRecipientId=1085993630748340485L                                          |
+      | id=9912090348171005050                                                              |
+      | recipientId=11237980039345381032L                                                   |
+      | senderId=1276152240083265771L                                                       |
+      | senderPublicKey=edf5786bef965f1836b8009e2c566463d62b6edd94e9cced49c1f098c972b92b    |
+      | senderIdOrRecipientId=1276152240083265771L                                          |
       | height=1                                                                            |
       | minAmount=100000000                                                                 |
       | maxAmount=10000000000000000                                                         |
       | fromTimestamp=0                                                                     |
       | toTimestamp=81100864                                                                |
-      | blockId=6524861224470851795                                                         |
+      | blockId=10620616195853047363                                                         |
       | limit=100                                                                           |
       | offset=0                                                                            |
       | sort=amount:asc                                                                     |

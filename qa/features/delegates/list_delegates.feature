@@ -9,9 +9,9 @@ Feature: List Delegates
 
     Examples:
       | params                                                                     |
-      | address=8273455169423958419L                                               |
+      | address=9188714956982834108L                                               |
       | username=genesis_1                                                         |
-      | publicKey=9d3058175acab969f41ad9b86f7a2926c74258670fe56b37c429c01fca9f2f0f |
+      | publicKey=1d4677e06f870449f271f859e299e3514718e4b8498c1bd832daa7843b83d9c5 |
       | search=genesis_18                                                          |
       | offset=3                                                                   |
       | limit=20                                                                   |
@@ -35,7 +35,7 @@ Feature: List Delegates
       | limit=101 |
 
   Scenario Outline: Get delegates forging statistics
-    When I request for forging delegates statistics "8273455169423958419L" with "<params>"
+    When I request for forging delegates statistics "9188714956982834108L" with "<params>"
     Then I should get forging delegate statistics
 
     Examples:
