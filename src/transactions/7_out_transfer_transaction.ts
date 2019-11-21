@@ -23,6 +23,7 @@ const {
 	convertToAssetError,
 	TransactionError,
 	utils: {
+		isValidNumber,
 		validator,
 		verifyAmountBalance,
 	},
@@ -58,6 +59,15 @@ export const outTransferAssetFormatSchema = {
 	},
 };
 
+interface RawAsset {
+	readonly recipientId: string;
+	readonly amount: BigNum;
+	readonly outTransfer: {
+		readonly dappId: string;
+		readonly transactionId: string;
+	};
+}
+
 export class OutTransferTransaction extends BaseTransaction {
 	public readonly asset: OutTransferAsset;
 	public readonly containsUniqueData: boolean;
@@ -72,11 +82,13 @@ export class OutTransferTransaction extends BaseTransaction {
 			? rawTransaction
 			: {}) as Partial<transactions.TransactionJSON>;
 
-		// TransactionJSON no longer has amount, so need to access this way
-		this.amount = new BigNum(tx['amount'] || '0');
-		this.recipientId = tx['recipientId'] || '';
+		const rawAsset = tx.asset as RawAsset;
+		this.asset = {
+			outTransfer: rawAsset.outTransfer || {},
+		} as OutTransferAsset;
+		this.amount = new BigNum(isValidNumber(rawAsset.amount) ? rawAsset.amount : '0');
+		this.recipientId = rawAsset.recipientId || '';
 
-		this.asset = (tx.asset || { outTransfer: {} }) as OutTransferAsset;
 		this.containsUniqueData = true;
 	}
 

@@ -27,6 +27,7 @@ const {
 	TransactionError,
 	utils: {
 		convertBeddowsToLSK,
+		isValidNumber,
 		verifyAmountBalance,
 		validator,
 	},
@@ -56,6 +57,13 @@ export const inTransferAssetFormatSchema = {
 	},
 };
 
+interface RawAsset {
+	readonly amount: BigNum;
+	readonly inTransfer: {
+		readonly dappId: string;
+	};
+}
+
 export class InTransferTransaction extends BaseTransaction {
 	public readonly asset: InTransferAsset;
 	public static TYPE = 6;
@@ -67,11 +75,12 @@ export class InTransferTransaction extends BaseTransaction {
 		const tx = (typeof rawTransaction === 'object' && rawTransaction !== null
 			? rawTransaction
 			: {}) as Partial<transactions.TransactionJSON>;
-		
-		// TransactionJSON no longer has amount, so need to access this way
-		this.amount = new BigNum(tx['amount'] || '0');
 
-		this.asset = (tx.asset || { inTransfer: {} }) as InTransferAsset;
+		const rawAsset = tx.asset as RawAsset;
+		this.asset = {
+			inTransfer: rawAsset.inTransfer || {},
+		} as InTransferAsset;
+		this.amount = new BigNum(isValidNumber(rawAsset.amount) ? rawAsset.amount : '0');
 	}
 
 	// Function getBasicBytes is overriden to maintain the bytes order
