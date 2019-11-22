@@ -9,9 +9,9 @@ Feature: List Votes
 
     Examples:
       | params                                                                     |
-      | address=16313739661670634666L                                              |
+      | address=11237980039345381032L                                              |
       | username=genesis_1                                                         |
-      | publicKey=c094ebee7ec0c50ebee32918655e089f6e1a604b83bcaa760293c61e0f18ab6f |
-      | sort=balance:asc&address=16313739661670634666L                             |
-      | sort=balance:desc&address=16313739661670634666L                            |
+      | publicKey=5c554d43301786aec29a09b13b485176e81d1532347a351aeafe018c199fd7ca |
+      | sort=balance:asc&address=11237980039345381032L                             |
+      | sort=balance:desc&address=11237980039345381032L                            |
 

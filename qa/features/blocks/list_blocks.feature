@@ -13,11 +13,11 @@ Feature: List blocks
 
     Examples:
       | params                                                                              |
-      | blockId=6524861224470851795                                                         |
+      | blockId=10620616195853047363                                                         |
       | height=1                                                                            |
       | limit=2                                                                             |
       | offset=2                                                                            |
-      | generatorPublicKey=c96dec3595ff6041c3bd28b76b8cf75dce8225173d1bd00241624ee89b50f2a8 |
+      | generatorPublicKey=1d4677e06f870449f271f859e299e3514718e4b8498c1bd832daa7843b83d9c5 |
       | sort=height:asc                                                                     |
       | sort=height:desc                                                                    |
       | sort=totalAmount:asc                                                                |

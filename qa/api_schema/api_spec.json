@@ -2,7 +2,7 @@
 	"swagger": "2.0",
 	"info": {
 		"title": "Lisk API Documentation",
-		"description": "# Welcome!\n\n## Access Restrictions\nThe API endpoints are by default restricted to a whitelist of IPs that can be found in `config.json` in the section [`api.access.whitelist`](https://github.com/LiskHQ/lisk/blob/1.0.0/config.json#L35).\nIf you want your API to be accessable by the public, you can do this by changing `api.access.public` to `true`.\nThis will allow anyone to make requests to your Lisk Core node.\nHowever some endpoints stay private, that means only a list of whitelisted IPs can successfully make API calls to that particular endpoint;\nThis includes all forging related API calls.\nBy default, only the nodes' local IP is included in the whitelist, you can change the setting in `config.json` in the section [`forging.access.whitelist`](https://github.com/LiskHQ/lisk/blob/1.0.0/config.json#L114).\nFor more details, see the descriptions at the respective endpoint.\n\n## Requests\nChained filter parameters are logically connected with `AND`.\n`HTTP` is the supported URL schema by default.\nTo enable `HTTPS`, please adjust the the [`ssl`](https://github.com/LiskHQ/lisk/blob/1.0.0/config.json#L124) section in `config.json`.\n\n## Responses\nThe general response format is JSON (`application/json`).\nThe responses for each API request have a common basic structure:\n```javascript\n{\n\t\"data\": {}, //Contains the requested data\n\t\"meta\": {}, //Contains additional metadata, e.g. the values of `limit` and `offset`\n\t\"links\": {} //Will contain links to connected API calls from here, e.g. pagination links\n}\n```\n\n## Date Formats\nMost of the timestamp parameters are in the Lisk Timestamp format, which is similar to the Unix Timestamp format.\nThe **Lisk Timestamp** is the number of seconds that have elapsed since the Lisk epoch time (2016-05-24T17:00:00.000Z), not counting leap seconds.\nThe **Lisk Epoch Time** is returned in the [ISO8601](https://en.wikipedia.org/wiki/ISO_8601) format, combined date and time: `YYYY-MM-DDThh:mm:ssZ`.\nFor details, see the descriptions and examples at the respective endpoint.\n\n## Pagination\nOne can paginate nicely through the results by providing `limit` and `offset` parameters to the requests.\n`limit` and `offset` can be found in the `meta`-object of the response of an API request.\nIf no limit and offset are provided, they are set to 10 and 0 by default, what will display the first 10 results.\n\n## List of Endpoints\nAll possible API endpoints for Lisk Core are listed below.\nClick on an endpoint to show descriptions, details and examples.\n",
+		"description": "# Welcome!\n\n## Access Restrictions\nThe API endpoints are by default restricted to a whitelist of IPs that can be found in `config.json` in the section [`api.access.whitelist`](https://github.com/LiskHQ/lisk/blob/1.0.0/config.json#L35).\nIf you want your API to be accessable by the public, you can do this by changing `api.access.public` to `true`.\nThis will allow anyone to make requests to your Lisk Core node.\nHowever some endpoints stay private, that means only a list of whitelisted IPs can successfully make API calls to that particular endpoint;\nThis includes all forging related API calls.\nBy default, only the nodes' local IP is included in the whitelist, you can change the setting in `config.json` in the section [`forging.access.whitelist`](https://github.com/LiskHQ/lisk/blob/1.0.0/config.json#L114).\nFor more details, see the descriptions at the respective endpoint.\n\n## Requests\nChained filter parameters are logically connected with `AND`.\n`HTTP` is the supported URL schema by default.\nTo enable `HTTPS`, please adjust the the [`ssl`](https://github.com/LiskHQ/lisk/blob/1.0.0/config.json#L124) section in `config.json`.\n\n## Responses\nThe general response format is JSON (`application/json`).\nThe responses for each API request have a common basic structure:\n```javascript\n{\n    \"data\": {}, //Contains the requested data\n    \"meta\": {}, //Contains additional metadata, e.g. the values of `limit` and `offset`\n    \"links\": {} //Will contain links to connected API calls from here, e.g. pagination links\n}\n```\n\n## Date Formats\nMost of the timestamp parameters are in the Lisk Timestamp format, which is similar to the Unix Timestamp format.\nThe **Lisk Timestamp** is the number of seconds that have elapsed since the Lisk epoch time (2016-05-24T17:00:00.000Z), not counting leap seconds.\nThe **Lisk Epoch Time** is returned in the [ISO8601](https://en.wikipedia.org/wiki/ISO_8601) format, combined date and time: `YYYY-MM-DDThh:mm:ssZ`.\nFor details, see the descriptions and examples at the respective endpoint.\n\n## Pagination\nOne can paginate nicely through the results by providing `limit` and `offset` parameters to the requests.\n`limit` and `offset` can be found in the `meta`-object of the response of an API request.\nIf no limit and offset are provided, they are set to 10 and 0 by default, what will display the first 10 results.\n\n## List of Endpoints\nAll possible API endpoints for Lisk Core are listed below.\nClick on an endpoint to show descriptions, details and examples.\n",
 		"version": "1.0.32",
 		"contact": {
 			"email": "admin@lisk.io"
@@ -329,9 +329,6 @@
 						"$ref": "#/parameters/height"
 					},
 					{
-						"$ref": "#/parameters/broadhash"
-					},
-					{
 						"$ref": "#/parameters/limit"
 					},
 					{
@@ -416,7 +413,7 @@
 				"tags": ["Node"],
 				"summary": "Requests status data",
 				"operationId": "getStatus",
-				"description": "Returns all current status data of the node, e.g. height and broadhash.",
+				"description": "Returns all current status data of the node, e.g. height.",
 				"produces": ["application/json"],
 				"responses": {
 					"200": {
@@ -451,6 +448,9 @@
 				"parameters": [
 					{
 						"$ref": "#/parameters/publicKey"
+					},
+					{
+						"$ref": "#/parameters/forging"
 					}
 				],
 				"responses": {
@@ -589,9 +589,6 @@
 						"$ref": "#/parameters/recipientId"
 					},
 					{
-						"$ref": "#/parameters/recipientPublicKey"
-					},
-					{
 						"$ref": "#/parameters/senderId"
 					},
 					{
@@ -705,8 +702,6 @@
 						"enum": [
 							"username:asc",
 							"username:desc",
-							"rank:asc",
-							"rank:desc",
 							"productivity:asc",
 							"productivity:desc",
 							"missedBlocks:asc",
@@ -714,7 +709,7 @@
 							"producedBlocks:asc",
 							"producedBlocks:desc"
 						],
-						"default": "rank:asc"
+						"default": "username:asc"
 					}
 				],
 				"responses": {
@@ -1170,9 +1165,6 @@
 						"$ref": "#/parameters/recipientId"
 					},
 					{
-						"$ref": "#/parameters/recipientPublicKey"
-					},
-					{
 						"$ref": "#/parameters/senderId"
 					},
 					{
@@ -1376,13 +1368,6 @@
 			"format": "int32",
 			"minimum": 1
 		},
-		"broadhash": {
-			"name": "broadhash",
-			"in": "query",
-			"description": "Broadhash of the network",
-			"type": "string",
-			"format": "hex"
-		},
 		"limit": {
 			"in": "query",
 			"name": "limit",
@@ -1462,14 +1447,6 @@
 			"minLength": 1,
 			"maxLength": 22
 		},
-		"recipientPublicKey": {
-			"name": "recipientPublicKey",
-			"in": "query",
-			"description": "Recipient public key",
-			"type": "string",
-			"format": "publicKey",
-			"minLength": 1
-		},
 		"senderId": {
 			"name": "senderId",
 			"in": "query",
@@ -1530,6 +1507,12 @@
 			"description": "Ending unix timestamp",
 			"type": "integer",
 			"minimum": 1
+		},
+		"forging": {
+			"name": "forging",
+			"in": "query",
+			"description": "Forging status to filter",
+			"type": "boolean"
 		}
 	},
 	"definitions": {
@@ -1565,10 +1548,7 @@
 			"required": [
 				"id",
 				"type",
-				"amount",
-				"fee",
 				"senderPublicKey",
-				"recipientId",
 				"timestamp",
 				"asset",
 				"signature"
@@ -1582,16 +1562,6 @@
 					"maxLength": 20,
 					"description": "Unique identifier of the transaction.\nDerived from the transaction signature.\n"
 				},
-				"amount": {
-					"type": "string",
-					"example": "150000000",
-					"description": "Amount of Lisk to be transferred in this transaction.\n"
-				},
-				"fee": {
-					"type": "string",
-					"example": "1000000",
-					"description": "Transaction fee associated with this transaction.\n"
-				},
 				"type": {
 					"type": "integer",
 					"minimum": 0,
@@ -1602,29 +1572,11 @@
 					"example": 28227090,
 					"description": "Time when the transaction was created.\nUnix Timestamp.\n"
 				},
-				"senderId": {
-					"type": "string",
-					"format": "address",
-					"example": "12668885769632475474L",
-					"description": "Lisk Address of the Senders' account.\n"
-				},
 				"senderPublicKey": {
 					"type": "string",
 					"format": "publicKey",
 					"example": "2ca9a7143fc721fdc540fef893b27e8d648d2288efa61e56264edf01a2c23079",
 					"description": "The public key of the Senders' account.\n"
-				},
-				"senderSecondPublicKey": {
-					"type": "string",
-					"format": "publicKey",
-					"example": "2ca9a7143fc721fdc540fef893b27e8d648d2288efa61e56264edf01a2c23079",
-					"description": "The second public key of the Senders' account, if it exists.\n"
-				},
-				"recipientId": {
-					"type": "string",
-					"format": "address",
-					"example": "12668885769632475474L",
-					"description": "Lisk Address of the Recipients' account.\n"
 				},
 				"signature": {
 					"type": "string",
@@ -1649,7 +1601,20 @@
 				},
 				"asset": {
 					"type": "object",
-					"description": "Displays additional transaction data.\nCan include e.g. vote data or delegate username.\n"
+					"description": "Displays additional transaction data.\nCan include e.g. vote data or delegate username.\n",
+					"properties": {
+						"amount": {
+							"type": "string",
+							"example": "150000000",
+							"description": "Amount of Lisk to be transferred in this transaction.\n"
+						},
+						"recipientId": {
+							"type": "string",
+							"format": "address",
+							"example": "12668885769632475474L",
+							"description": "Lisk Address of the Recipients' account.\n"
+						}
+					}
 				}
 			}
 		},
@@ -2022,10 +1987,8 @@
 			"required": [
 				"id",
 				"type",
-				"amount",
 				"fee",
 				"senderPublicKey",
-				"recipientId",
 				"timestamp",
 				"asset",
 				"signature"
@@ -2039,11 +2002,6 @@
 					"maxLength": 20,
 					"description": "Unique identifier of the transaction.\nDerived from the transaction signature.\n"
 				},
-				"amount": {
-					"type": "string",
-					"example": "150000000",
-					"description": "Amount of Lisk to be transferred in this transaction.\n"
-				},
 				"fee": {
 					"type": "string",
 					"example": "1000000",
@@ -2052,7 +2010,6 @@
 				"type": {
 					"type": "integer",
 					"minimum": 0,
-					"maximum": 7,
 					"description": "Describes the Transaction type.\n"
 				},
 				"height": {
@@ -2091,18 +2048,6 @@
 					"example": "2ca9a7143fc721fdc540fef893b27e8d648d2288efa61e56264edf01a2c23079",
 					"description": "The second public key of the Senders' account, if it exists.\n"
 				},
-				"recipientId": {
-					"type": "string",
-					"format": "address",
-					"example": "12668885769632475474L",
-					"description": "Lisk Address of the Recipients' account.\n"
-				},
-				"recipientPublicKey": {
-					"type": "string",
-					"format": "publicKey",
-					"example": "2ca9a7143fc721fdc540fef893b27e8d648d2288efa61e56264edf01a2c23079",
-					"description": "The public key of the Recipients' account.\n"
-				},
 				"signature": {
 					"type": "string",
 					"format": "signature",
@@ -2136,10 +2081,6 @@
 					"type": "string",
 					"format": "date-time",
 					"description": "The timestamp of the moment, where a node discovered a transaction for the first time."
-				},
-				"relays": {
-					"type": "integer",
-					"description": "Number of times, a single transaction object has been broadcasted to another peer."
 				},
 				"ready": {
 					"type": "boolean",
@@ -2278,6 +2219,16 @@
 					"type": "string",
 					"example": "65000000",
 					"description": "Total amount of LSK that have been forged in this Block.\nConsists of fees and the reward.\n"
+				},
+				"maxHeightPreviouslyForged": {
+					"type": "integer",
+					"example": 123,
+					"description": "Largest height of any block previously forged by the generatorPublicKey as defined in the Lisk BFT Protocol.\nSee https://github.com/LiskHQ/lips/blob/master/proposals/lip-0014.md\n"
+				},
+				"maxHeightPrevoted": {
+					"type": "integer",
+					"example": 123,
+					"description": "Largest height of an ancestor block with at least 68 prevotes as defined in the Lisk BFT Protocol.\nSee https://github.com/LiskHQ/lips/blob/master/proposals/lip-0014.md\n"
 				}
 			}
 		},
@@ -2502,12 +2453,6 @@
 					"example": 123,
 					"description": "Network height on the peer node.\nRepresents the current number of blocks in the chain on the peer node.\n"
 				},
-				"broadhash": {
-					"type": "string",
-					"example": "258974416d58533227c6a3da1b6333f0541b06c65b41e45cf31926847a3db1ea",
-					"format": "hex",
-					"description": "Broadhash on the peer node.\nBroadhash is established as an aggregated rolling hash of the past five blocks present in the database.\n"
-				},
 				"nonce": {
 					"type": "string",
 					"example": "sYHEDBKcScaAAAYg",
@@ -2570,7 +2515,6 @@
 				"milestone",
 				"nethash",
 				"reward",
-				"nonce",
 				"supply",
 				"build",
 				"commit",
@@ -2628,13 +2572,6 @@
 					"example": "500000000",
 					"description": "The reward a delegate will get for forging a block.\nDepends on the slot height.\n"
 				},
-				"nonce": {
-					"type": "string",
-					"example": "cJmXK66xxz644d67",
-					"minLength": 16,
-					"maxLength": 16,
-					"description": "Unique identifier of the node.\nRandom string.\n"
-				},
 				"fees": {
 					"$ref": "#/definitions/Fees"
 				}
@@ -2643,31 +2580,15 @@
 		"NodeStatus": {
 			"type": "object",
 			"required": [
-				"broadhash",
-				"consensus",
 				"currentTime",
 				"height",
-				"loaded",
 				"networkHeight",
+				"chainMaxHeightFinalized",
 				"secondsSinceEpoch",
-				"syncing",
-				"transactions"
+				"loaded",
+				"syncing"
 			],
 			"properties": {
-				"broadhash": {
-					"type": "string",
-					"example": "258974416d58533227c6a3da1b6333f0541b06c65b41e45cf31926847a3db1ea",
-					"minLength": 64,
-					"maxLength": 64,
-					"description": "Broadhash is established as an aggregated rolling hash of the past five blocks present in the database.\nBroadhash consensus serves a vital function for the Lisk network in order to prevent forks.\nIt ensures that a majority of available peers agree that it is acceptable to forge.\n"
-				},
-				"consensus": {
-					"type": "integer",
-					"example": 95,
-					"minimum": 0,
-					"maximum": 100,
-					"description": "Percentage of the connected peers, that have the same broadhash as the querying node."
-				},
 				"currentTime": {
 					"type": "integer",
 					"example": 1533558858128,
@@ -2689,6 +2610,11 @@
 					"example": 123,
 					"description": "Current block height of the network.\nRepresents the current number of blocks in the chain on the network.\n"
 				},
+				"chainMaxHeightFinalized": {
+					"type": "integer",
+					"example": 123,
+					"description": "The largest height with precommits by at least 68 delegates.\nSee https://github.com/LiskHQ/lips/blob/master/proposals/lip-0014.md\n"
+				},
 				"secondsSinceEpoch": {
 					"type": "integer",
 					"example": 1533558858,
@@ -2698,56 +2624,6 @@
 					"type": "boolean",
 					"example": false,
 					"description": "True if the node syncing with other peers."
-				},
-				"transactions": {
-					"type": "object",
-					"required": [
-						"ready",
-						"pending",
-						"verified",
-						"confirmed",
-						"validated",
-						"received",
-						"total"
-					],
-					"description": "Transactions known to the node.",
-					"properties": {
-						"ready": {
-							"type": "integer",
-							"example": 5,
-							"description": "Number of unconfirmed Transactions known to the node."
-						},
-						"pending": {
-							"type": "integer",
-							"example": 2,
-							"description": "Number of pending Transactions known to the node."
-						},
-						"verified": {
-							"type": "integer",
-							"example": 3,
-							"description": "Number of verified Transactions known to the node."
-						},
-						"confirmed": {
-							"type": "integer",
-							"example": 5,
-							"description": "Number of confirmed Transactions known to the node."
-						},
-						"validated": {
-							"type": "integer",
-							"example": 5,
-							"description": "Number of validated Transactions known to the node."
-						},
-						"received": {
-							"type": "integer",
-							"example": 5,
-							"description": "Number of received Transactions known to the node."
-						},
-						"total": {
-							"type": "integer",
-							"example": 15,
-							"description": "Number of total Transactions known to the node."
-						}
-					}
 				}
 			}
 		},
@@ -2979,6 +2855,14 @@
 					"example": "968ba2fa993ea9dc27ed740da0daf49eddd740dbd7cb1cb4fc5db3a20baf341b",
 					"description": "The second public key is derived from the second private key of an account, if the owner activated a second passphrase for her/his account."
 				},
+				"asset": {
+					"type": "object",
+					"example": {
+						"custom": true,
+						"field": true
+					},
+					"description": "Any JSON stored in the account's asset field."
+				},
 				"delegate": {
 					"$ref": "#/definitions/Delegate"
 				}
@@ -3038,7 +2922,7 @@
 		},
 		"Delegate": {
 			"type": "object",
-			"required": ["username", "vote"],
+			"required": ["username", "voteWeight"],
 			"properties": {
 				"username": {
 					"type": "string",
@@ -3046,7 +2930,7 @@
 					"format": "username",
 					"description": "The delegates' username.\nA delegate chooses the username by registering a delegate on the Lisk network.\nIt is unique and cannot be changed later.\n"
 				},
-				"vote": {
+				"voteWeight": {
 					"type": "string",
 					"example": 1081560729258,
 					"description": "The voters weight of the delegate.\nRepresents the total amount of Lisk (in Beddows) that the delegates' voters own.\nThe voters weight decides which rank the delegate gets in relation to the other delegates and their voters weights.\n"
@@ -3075,17 +2959,12 @@
 					"type": "number",
 					"example": 96.41,
 					"description": "Productivity rate.\nPercentage of successfully forged blocks (not missed) by the delegate.\n"
-				},
-				"rank": {
-					"format": "integerOrNull",
-					"example": 70,
-					"description": "Rank of the delegate.\nThe rank is defined by the voters weight/ approval of a delegates, in relation to all other delegates.\n"
 				}
 			}
 		},
 		"DelegateWithAccount": {
 			"type": "object",
-			"required": ["username", "vote", "account"],
+			"required": ["username", "voteWeight", "account"],
 			"properties": {
 				"username": {
 					"type": "string",
@@ -3093,7 +2972,7 @@
 					"format": "username",
 					"description": "The delegates' username.\nA delegate chooses the username by registering a delegate on the Lisk network.\nIt is unique and cannot be changed later.\n"
 				},
-				"vote": {
+				"voteWeight": {
 					"type": "string",
 					"example": 1081560729258,
 					"description": "The voters weight of the delegate.\nRepresents the total amount of Lisk (in Beddows) that the delegates' voters own.\nThe voters weight decides which rank the delegate gets in relation to the other delegates and their voters weights.\n"
@@ -3122,11 +3001,6 @@
 					"type": "number",
 					"example": 96.41,
 					"description": "Productivity rate.\nPercentage of successfully forged blocks (not missed) by the delegate.\n"
-				},
-				"rank": {
-					"format": "integerOrNull",
-					"example": 70,
-					"description": "Rank of the delegate.\nThe rank is defined by the voters weight/ approval of a delegates, in relation to all other delegates.\n"
 				},
 				"account": {
 					"$ref": "#/definitions/Account"

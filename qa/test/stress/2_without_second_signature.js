@@ -39,7 +39,7 @@ Scenario('Transfer funds', async () => {
 
 		await Promise.all(
 			transferTransactions.map(trx =>
-				I.validateTransaction(trx.id, trx.recipientId, LSK_TOKEN)
+				I.validateTransaction(trx.id, trx.asset.recipientId, LSK_TOKEN)
 			)
 		);
 	} catch (error) {
@@ -47,8 +47,8 @@ Scenario('Transfer funds', async () => {
 	}
 })
 	.tag('@slow')
-	.tag('@generic_wss_t')
-	.tag('@stress_wss');
+	.tag('@generic_wss')
+	.tag('@stress');
 
 Scenario('Delegate Registration', async () => {
 	output.print(
@@ -87,8 +87,8 @@ Scenario('Delegate Registration', async () => {
 	}
 })
 	.tag('@slow')
-	.tag('@generic_wss_dr')
-	.tag('@stress_wss');
+	.tag('@generic_wss')
+	.tag('@stress');
 
 Scenario('Cast vote', async () => {
 	output.print(
@@ -127,8 +127,8 @@ Scenario('Cast vote', async () => {
 	}
 })
 	.tag('@slow')
-	.tag('@generic_wss_cv')
-	.tag('@stress_wss');
+	.tag('@generic_wss')
+	.tag('@stress');
 
 Scenario('Register Multi-signature account', async () => {
 	output.print(
@@ -176,5 +176,5 @@ Scenario('Register Multi-signature account', async () => {
 	}
 })
 	.tag('@slow')
-	.tag('@generic_wss_ms')
-	.tag('@stress_wss');
+	.tag('@generic_wss')
+	.tag('@stress');

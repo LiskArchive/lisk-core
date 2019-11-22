@@ -16,7 +16,7 @@ Feature: Lisk Accounts
   Scenario: List accounts
     When I look for list of accounts without any params
     Then I should get list of accounts sorted by "balance" in "asc" order
-    When I search for a particular account "16313739661670634666L"
+    When I search for a particular account "11237980039345381032L"
     Then I should get my account details
 
   Scenario Outline: List account
@@ -25,8 +25,8 @@ Feature: Lisk Accounts
 
     Examples:
       | params                                                                           |
-      | address=16313739661670634666L                                                    |
-      | publicKey=c094ebee7ec0c50ebee32918655e089f6e1a604b83bcaa760293c61e0f18ab6f       |
+      | address=11237980039345381032L                                                    |
+      | publicKey=5c554d43301786aec29a09b13b485176e81d1532347a351aeafe018c199fd7ca       |
       | secondPublicKey=af365443121487c4935a33cd632ea6e6308a0e9b2e488de38a6a2e5aca96e8eb |
       | username=odin                                                                    |
       | limit=100                                                                        |
