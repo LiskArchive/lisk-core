@@ -1,5 +1,5 @@
 JQ_VERSION := 1.6
-POSTGRES_VERSION := 10.10-1
+POSTGRES_VERSION := 12.1-1
 REDIS_VERSION := 5.0.5
 REDIS_SHA256SUM := 2139009799d21d8ff94fc40b7f36ac46699b9e1254086299f8d3b223ca54a375
 
@@ -72,11 +72,11 @@ src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image/finished: \
 		src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image/redis
 	touch $@
 
-src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image: ../lisk-core-$(LISK_VERSION).tgz src/postgresql-$(POSTGRES_VERSION)-$(POSTGRES_ARCH)-binaries.$(POSTGRES_EXT) src/postgresql-$(POSTGRES_VERSION)-$(POSTGRES_ARCH)-binaries.$(POSTGRES_EXT).sha256sum
+src/lisk-$(LISK_VERSION)-$(UNAME_S)-x86_64_image: ../lisk-core-$(LISK_VERSION).tgz src/postgresql-$(POSTGRES_VERSION)-$(POSTGRES_ARCH)-binaries.tar.gz src/postgresql-$(POSTGRES_VERSION)-$(POSTGRES_ARCH)-binaries.tar.gz.sha256sum
 	rm -rf src/package
 	tar xfm ../lisk-core-$(LISK_VERSION).tgz --directory=src
-	cd src/ && sha256sum --check postgresql-$(POSTGRES_VERSION)-$(POSTGRES_ARCH)-binaries.$(POSTGRES_EXT).sha256sum
-	tar xfm src/postgresql-$(POSTGRES_VERSION)-$(POSTGRES_ARCH)-binaries.$(POSTGRES_EXT) \
+	cd src/ && sha256sum --check postgresql-$(POSTGRES_VERSION)-$(POSTGRES_ARCH)-binaries.tar.gz.sha256sum
+	tar xfm src/postgresql-$(POSTGRES_VERSION)-$(POSTGRES_ARCH)-binaries.tar.gz \
 	  --exclude=doc --exclude=include --exclude="pgAdmin 4*" --exclude=stackbuilder \
 	  --directory=src/package
 	mv src/package $@
@@ -185,11 +185,11 @@ src/redis-$(REDIS_VERSION).tar.gz:
 src/redis-$(REDIS_VERSION).tar.gz.sha256sum:
 	echo "$(REDIS_SHA256SUM)  redis-$(REDIS_VERSION).tar.gz" |tee $@
 
-src/postgresql-$(POSTGRES_VERSION)-$(POSTGRES_ARCH)-binaries.$(POSTGRES_EXT):
-	$(DOWNLOAD) https://get.enterprisedb.com/postgresql/postgresql-$(POSTGRES_VERSION)-$(POSTGRES_ARCH)-binaries.$(POSTGRES_EXT) --output-document=$@
+src/postgresql-$(POSTGRES_VERSION)-$(POSTGRES_ARCH)-binaries.tar.gz:
+	$(DOWNLOAD) https://downloads.lisk.io/postgresql/postgresql-$(POSTGRES_VERSION)-$(POSTGRES_ARCH)-binaries.tar.gz --output-document=$@
 
-src/postgresql-$(POSTGRES_VERSION)-$(POSTGRES_ARCH)-binaries.$(POSTGRES_EXT).sha256sum:
-	echo "$(POSTGRES_SHA256SUM)  postgresql-$(POSTGRES_VERSION)-$(POSTGRES_ARCH)-binaries.$(POSTGRES_EXT)" |tee $@
+src/postgresql-$(POSTGRES_VERSION)-$(POSTGRES_ARCH)-binaries.tar.gz.sha256sum:
+	echo "$(POSTGRES_SHA256SUM)  postgresql-$(POSTGRES_VERSION)-$(POSTGRES_ARCH)-binaries.tar.gz" |tee $@
 
 .PHONY: clean
 clean:
