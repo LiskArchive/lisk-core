@@ -32,6 +32,8 @@ const {
 const TRANSACTION_DAPP_REGISTERATION_TYPE = 5;
 
 export interface OutTransferAsset {
+	readonly recipientId: string;
+	readonly amount: BigNum;
 	readonly outTransfer: {
 		readonly dappId: string;
 		readonly transactionId: string;
@@ -40,8 +42,16 @@ export interface OutTransferAsset {
 
 export const outTransferAssetFormatSchema = {
 	type: 'object',
-	required: ['outTransfer'],
+	required: ['outTransfer', 'recipientId', 'amount'],
 	properties: {
+		recipientId: {
+			type: 'string',
+			format: 'address',
+		},
+		amount: {
+			type: 'string',
+			format: 'amount',
+		},
 		outTransfer: {
 			type: 'object',
 			required: ['dappId', 'transactionId'],
@@ -61,7 +71,7 @@ export const outTransferAssetFormatSchema = {
 
 interface RawAsset {
 	readonly recipientId: string;
-	readonly amount: BigNum;
+	readonly amount: string;
 	readonly outTransfer: {
 		readonly dappId: string;
 		readonly transactionId: string;
@@ -73,8 +83,6 @@ export class OutTransferTransaction extends BaseTransaction {
 	public readonly containsUniqueData: boolean;
 	public static TYPE = 7;
 	public static FEE = OUT_TRANSFER_FEE.toString();
-	public amount: BigNum;
-	public recipientId: string;
 
 	public constructor(rawTransaction: unknown) {
 		super(rawTransaction);
@@ -84,10 +92,10 @@ export class OutTransferTransaction extends BaseTransaction {
 
 		const rawAsset = tx.asset as RawAsset;
 		this.asset = {
+			amount: new BigNum(isValidNumber(rawAsset.amount) ? rawAsset.amount : '0'),
+			recipientId: rawAsset.recipientId || '',
 			outTransfer: rawAsset.outTransfer || {},
 		} as OutTransferAsset;
-		this.amount = new BigNum(isValidNumber(rawAsset.amount) ? rawAsset.amount : '0');
-		this.recipientId = rawAsset.recipientId || '';
 
 		this.containsUniqueData = true;
 	}
@@ -97,7 +105,7 @@ export class OutTransferTransaction extends BaseTransaction {
 			{
 				address: this.senderId,
 			},
-			{ address: this.recipientId },
+			{ address: this.asset.recipientId },
 		]);
 
 		await store.transaction.cache([
@@ -121,12 +129,12 @@ export class OutTransferTransaction extends BaseTransaction {
 		const transactionSenderPublicKey = cryptography.hexToBuffer(this.senderPublicKey);
 
 		const transactionRecipientID = cryptography.intToBuffer(
-			this.recipientId.slice(0, -1),
+			this.asset.recipientId.slice(0, -1),
 			constants.BYTESIZES.RECIPIENT_ID,
 		).slice(0, constants.BYTESIZES.RECIPIENT_ID);
 
 		const transactionAmount = cryptography.bigNumberToBuffer(
-			this.amount.toString(),
+			this.asset.amount.toString(),
 			constants.BYTESIZES.AMOUNT,
 			'little',
 		);
@@ -179,24 +187,24 @@ export class OutTransferTransaction extends BaseTransaction {
 		) as transactions.TransactionError[];
 
 		// Amount has to be greater than 0
-		if (this.amount.lte(0)) {
+		if (this.asset.amount.lte(0)) {
 			errors.push(
 				new TransactionError(
 					'Amount must be greater than zero for outTransfer transaction',
 					this.id,
 					'.amount',
-					this.amount.toString()
+					this.asset.amount.toString()
 				)
 			);
 		}
 
-		if (this.recipientId === '') {
+		if (this.asset.recipientId === '') {
 			errors.push(
 				new TransactionError(
 					'RecipientId must be set for outTransfer transaction',
 					this.id,
 					'.recipientId',
-					this.recipientId
+					this.asset.recipientId
 				)
 			);
 		}
@@ -228,22 +236,22 @@ export class OutTransferTransaction extends BaseTransaction {
 		const balanceError = verifyAmountBalance(
 			this.id,
 			sender,
-			this.amount,
+			this.asset.amount,
 			this.fee
 		);
 		if (balanceError) {
 			errors.push(balanceError);
 		}
 
-		const updatedBalance = new BigNum(sender.balance).sub(this.amount);
+		const updatedBalance = new BigNum(sender.balance).sub(this.asset.amount);
 
 		const updatedSender = { ...sender, balance: updatedBalance.toString() };
 		store.account.set(updatedSender.address, updatedSender);
 
-		const recipient = store.account.getOrDefault(this.recipientId);
+		const recipient = store.account.getOrDefault(this.asset.recipientId);
 
 		const updatedRecipientBalance = new BigNum(recipient.balance).add(
-			this.amount
+			this.asset.amount
 		);
 
 		if (updatedRecipientBalance.gt(MAX_TRANSACTION_AMOUNT)) {
@@ -263,7 +271,7 @@ export class OutTransferTransaction extends BaseTransaction {
 	public undoAsset(store: transactions.StateStore): ReadonlyArray<transactions.TransactionError> {
 		const errors: transactions.TransactionError[] = [];
 		const sender = store.account.get(this.senderId);
-		const updatedBalance = new BigNum(sender.balance).add(this.amount);
+		const updatedBalance = new BigNum(sender.balance).add(this.asset.amount);
 
 		if (updatedBalance.gt(MAX_TRANSACTION_AMOUNT)) {
 			errors.push(
@@ -271,7 +279,7 @@ export class OutTransferTransaction extends BaseTransaction {
 					'Invalid amount',
 					this.id,
 					'.amount',
-					this.amount.toString()
+					this.asset.amount.toString()
 				)
 			);
 		}
@@ -279,10 +287,10 @@ export class OutTransferTransaction extends BaseTransaction {
 		const updatedSender = { ...sender, balance: updatedBalance.toString() };
 		store.account.set(updatedSender.address, updatedSender);
 
-		const recipient = store.account.getOrDefault(this.recipientId);
+		const recipient = store.account.getOrDefault(this.asset.recipientId);
 
 		const updatedRecipientBalance = new BigNum(recipient.balance).sub(
-			this.amount
+			this.asset.amount
 		);
 
 		if (updatedRecipientBalance.lt(0)) {
