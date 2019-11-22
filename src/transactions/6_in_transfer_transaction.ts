@@ -27,6 +27,7 @@ const {
 	TransactionError,
 	utils: {
 		convertBeddowsToLSK,
+		isValidNumber,
 		verifyAmountBalance,
 		validator,
 	},
@@ -34,6 +35,7 @@ const {
 } = transactions;
 
 export interface InTransferAsset {
+	readonly amount: BigNum;
 	readonly inTransfer: {
 		readonly dappId: string;
 	};
@@ -41,8 +43,12 @@ export interface InTransferAsset {
 
 export const inTransferAssetFormatSchema = {
 	type: 'object',
-	required: ['inTransfer'],
+	required: ['inTransfer', 'amount'],
 	properties: {
+		amount: {
+			type: 'string',
+			format: 'amount',
+		},
 		inTransfer: {
 			type: 'object',
 			required: ['dappId'],
@@ -56,22 +62,29 @@ export const inTransferAssetFormatSchema = {
 	},
 };
 
+interface RawAsset {
+	readonly amount: string;
+	readonly inTransfer: {
+		readonly dappId: string;
+	};
+}
+
 export class InTransferTransaction extends BaseTransaction {
 	public readonly asset: InTransferAsset;
 	public static TYPE = 6;
 	public static FEE = IN_TRANSFER_FEE.toString();
-	public amount: BigNum;
 
 	public constructor(rawTransaction: unknown) {
 		super(rawTransaction);
 		const tx = (typeof rawTransaction === 'object' && rawTransaction !== null
 			? rawTransaction
 			: {}) as Partial<transactions.TransactionJSON>;
-		
-		// TransactionJSON no longer has amount, so need to access this way
-		this.amount = new BigNum(tx['amount'] || '0');
 
-		this.asset = (tx.asset || { inTransfer: {} }) as InTransferAsset;
+		const rawAsset = tx.asset as RawAsset;
+		this.asset = {
+			amount: new BigNum(isValidNumber(rawAsset.amount) ? rawAsset.amount : '0'),
+			inTransfer: rawAsset.inTransfer || {},
+		} as InTransferAsset;
 	}
 
 	// Function getBasicBytes is overriden to maintain the bytes order
@@ -89,7 +102,7 @@ export class InTransferTransaction extends BaseTransaction {
 		const transactionRecipientID = Buffer.alloc(constants.BYTESIZES.RECIPIENT_ID);
 
 		const transactionAmount = cryptography.bigNumberToBuffer(
-			this.amount.toString(),
+			this.asset.amount.toString(),
 			constants.BYTESIZES.AMOUNT,
 			'little',
 		);
@@ -147,13 +160,13 @@ export class InTransferTransaction extends BaseTransaction {
 			validator.errors
 		) as transactions.TransactionError[];
 
-		if (this.amount.lte(0)) {
+		if (this.asset.amount.lte(0)) {
 			errors.push(
 				new TransactionError(
 					'Amount must be greater than 0',
 					this.id,
 					'.amount',
-					this.amount.toString(),
+					this.asset.amount.toString(),
 					'0'
 				)
 			);
@@ -184,14 +197,14 @@ export class InTransferTransaction extends BaseTransaction {
 		const balanceError = verifyAmountBalance(
 			this.id,
 			sender,
-			this.amount,
+			this.asset.amount,
 			this.fee
 		);
 		if (balanceError) {
 			errors.push(balanceError);
 		}
 
-		const updatedBalance = new BigNum(sender.balance).sub(this.amount);
+		const updatedBalance = new BigNum(sender.balance).sub(this.asset.amount);
 
 		const updatedSender = { ...sender, balance: updatedBalance.toString() };
 
@@ -202,7 +215,7 @@ export class InTransferTransaction extends BaseTransaction {
 		const recipient = store.account.get(cryptography.getAddressFromPublicKey(dappTransaction.senderPublicKey));
 
 		const updatedRecipientBalance = new BigNum(recipient.balance).add(
-			this.amount
+			this.asset.amount
 		);
 		const updatedRecipient = {
 			...recipient,
@@ -217,7 +230,7 @@ export class InTransferTransaction extends BaseTransaction {
 	protected undoAsset(store: transactions.StateStore): ReadonlyArray<transactions.TransactionError> {
 		const errors: transactions.TransactionError[] = [];
 		const sender = store.account.get(this.senderId);
-		const updatedBalance = new BigNum(sender.balance).add(this.amount);
+		const updatedBalance = new BigNum(sender.balance).add(this.asset.amount);
 		const updatedSender = { ...sender, balance: updatedBalance.toString() };
 
 		store.account.set(updatedSender.address, updatedSender);
@@ -227,7 +240,7 @@ export class InTransferTransaction extends BaseTransaction {
 		const recipient = store.account.get(cryptography.getAddressFromPublicKey(dappTransaction.senderPublicKey));
 
 		const updatedRecipientBalance = new BigNum(recipient.balance).sub(
-			this.amount
+			this.asset.amount
 		);
 
 		if (updatedRecipientBalance.lt(0)) {
