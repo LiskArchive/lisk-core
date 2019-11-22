@@ -59,7 +59,7 @@ LISK_CUSTOM_CONFIG=$( get_lisk_custom_config "$LISK_PATH/etc/pm2-lisk.json" )
 function cleanup() {
 	rm -f "$RUNNING_CONFIG"
 }
-RUNNING_CONFIG=$( mktemp --tmpdir="$LISK_PATH" )
+RUNNING_CONFIG=$( mktemp )
 trap cleanup INT QUIT TERM EXIT
 
 function dump_running_config() {
