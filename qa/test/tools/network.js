@@ -207,7 +207,13 @@ Scenario('Add seed node to config', async () => {
 
 Scenario('Add network peers to config', async () => {
 	try {
-		const allPeers = await I.getAllPeers(100, 0);
+		const partialConnectedPeers = await I.getAllPeers(100, 0);
+		const fullPeerList = await Promise.all(
+			partialConnectedPeers.map(async p =>
+				I.getAllPeers(100, 0, 2, `${p.ip}:${p.httpPort}`)
+			)
+		);
+		const allPeers = fullPeerList.flat();
 		const configContent = getConfigContent();
 		const seedAddress = await getIpByDns(seedNode);
 		const uniquePeers = mergePeers(
