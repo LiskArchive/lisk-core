@@ -2582,10 +2582,8 @@
 			"required": [
 				"currentTime",
 				"height",
-				"networkHeight",
 				"chainMaxHeightFinalized",
 				"secondsSinceEpoch",
-				"loaded",
 				"syncing"
 			],
 			"properties": {
@@ -2599,16 +2597,6 @@
 					"example": 123,
 					"minimum": 1,
 					"description": "Current block height of the node.\nRepresents the current number of blocks in the chain on the node.\n"
-				},
-				"loaded": {
-					"type": "boolean",
-					"example": true,
-					"description": "True if the blockchain loaded."
-				},
-				"networkHeight": {
-					"type": "integer",
-					"example": 123,
-					"description": "Current block height of the network.\nRepresents the current number of blocks in the chain on the network.\n"
 				},
 				"chainMaxHeightFinalized": {
 					"type": "integer",
