@@ -213,7 +213,7 @@ Scenario('Add network peers to config', async () => {
 				I.getAllPeers(100, 0, 2, `${p.ip}:${p.httpPort}`)
 			)
 		);
-		const allPeers = fullPeerList.flat();
+		const allPeers = fullPeerList.reduce((acc, val) => acc.concat(val), []);
 		const configContent = getConfigContent();
 		const seedAddress = await getIpByDns(seedNode);
 		const uniquePeers = mergePeers(
