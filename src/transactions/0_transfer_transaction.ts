@@ -16,6 +16,7 @@ import BigNum from '@liskhq/bignum';
 import {
 	transactions,
 	cryptography,
+	validator as liskValidator,
 } from 'lisk-sdk';
 import {
 	BaseTransaction,
@@ -25,9 +26,6 @@ const {
 	convertToAssetError,
 	TransactionError,
 	utils: {
-		validator,
-		isValidNumber,
-		validateTransferAmount,
 		verifyAmountBalance,
 		verifyBalance,
 	},
@@ -37,6 +35,11 @@ const {
 		TRANSFER_FEE,
 	},
 } = transactions;
+const {
+	isValidTransferAmount,
+	isPositiveNumberString,
+	validator,
+} = liskValidator;
 const {
 	bigNumberToBuffer,
 	hexToBuffer,
@@ -93,7 +96,7 @@ export class TransferTransaction extends BaseTransaction {
 				data: rawAsset.data,
 				recipientId: rawAsset.recipientId,
 				amount: new BigNum(
-					isValidNumber(rawAsset.amount) ? rawAsset.amount : '0',
+					isPositiveNumberString(rawAsset.amount) ? rawAsset.amount : '0',
 				),
 			};
 		} else {
@@ -160,13 +163,13 @@ export class TransferTransaction extends BaseTransaction {
 
 	protected validateAsset(): ReadonlyArray<transactions.TransactionError> {
 		const asset = this.assetToJSON();
-		validator.validate(transferAssetFormatSchema, asset);
+		const schemaErrors = validator.validate(transferAssetFormatSchema, asset);
 		const errors = convertToAssetError(
 			this.id,
-			validator.errors,
+			schemaErrors,
 		) as transactions.TransactionError[];
 
-		if (!validateTransferAmount(this.asset.amount.toString())) {
+		if (!isValidTransferAmount(this.asset.amount.toString())) {
 			errors.push(
 				new TransactionError(
 					'Amount must be a valid number in string format.',

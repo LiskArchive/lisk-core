@@ -16,6 +16,7 @@ import BigNum from '@liskhq/bignum';
 import {
 	transactions,
 	cryptography,
+	validator as liskValidator,
 } from 'lisk-sdk';
 import {
 	BaseTransaction,
@@ -29,7 +30,6 @@ const {
 	createResponse,
 	Status,
 	utils: {
-		validator,
 		validateMultisignatures,
 		validateSignature,
 	},
@@ -40,6 +40,9 @@ const {
 const {
 	getAddressFromPublicKey,
 } = cryptography;
+const {
+	validator,
+} = liskValidator;
 
 export const multisignatureAssetFormatSchema = {
 	type: 'object',
@@ -156,10 +159,10 @@ export class MultisignatureTransaction extends BaseTransaction {
 	}
 
 	protected validateAsset(): ReadonlyArray<transactions.TransactionError> {
-		validator.validate(multisignatureAssetFormatSchema, this.asset);
+		const schemaErrors = validator.validate(multisignatureAssetFormatSchema, this.asset);
 		const errors = convertToAssetError(
 			this.id,
-			validator.errors,
+			schemaErrors,
 		) as transactions.TransactionError[];
 
 		if (errors.length > 0) {

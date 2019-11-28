@@ -15,6 +15,7 @@
 import {
 	transactions,
 	cryptography,
+	validator as liskValidator,
 } from 'lisk-sdk';
 import {
 	BaseTransaction,
@@ -24,7 +25,6 @@ const {
 	convertToAssetError,
 	TransactionError,
 	utils: {
-		validator,
 		getId,
 	},
 	constants: {
@@ -36,6 +36,9 @@ const {
 	hexToBuffer,
 	signData,
 } = cryptography;
+const {
+	validator,
+} = liskValidator;
 
 export interface SecondSignatureAsset {
 	readonly publicKey: string;
@@ -99,10 +102,10 @@ export class SecondSignatureTransaction extends BaseTransaction {
 	}
 
 	protected validateAsset(): ReadonlyArray<transactions.TransactionError> {
-		validator.validate(secondSignatureAssetFormatSchema, this.asset);
+		const schemaerrors = validator.validate(secondSignatureAssetFormatSchema, this.asset);
 		const errors = convertToAssetError(
 			this.id,
-			validator.errors,
+			schemaerrors,
 		) as transactions.TransactionError[];
 
 		return errors;

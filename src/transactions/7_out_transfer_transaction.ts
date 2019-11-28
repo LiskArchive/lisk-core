@@ -13,7 +13,7 @@
  *
  */
 import BigNum from '@liskhq/bignum';
-import { transactions, cryptography } from 'lisk-sdk';
+import { transactions, cryptography, validator as liskValidator } from 'lisk-sdk';
 import {
 	BaseTransaction,
 } from './legacy_base_transaction';
@@ -23,12 +23,14 @@ const {
 	convertToAssetError,
 	TransactionError,
 	utils: {
-		isValidNumber,
-		validator,
 		verifyAmountBalance,
 	},
 	constants,
 } = transactions;
+const {
+	isPositiveNumberString,
+	validator,
+} = liskValidator;
 const TRANSACTION_DAPP_REGISTERATION_TYPE = 5;
 
 export interface OutTransferAsset {
@@ -92,7 +94,7 @@ export class OutTransferTransaction extends BaseTransaction {
 
 		const rawAsset = tx.asset as RawAsset;
 		this.asset = {
-			amount: new BigNum(isValidNumber(rawAsset.amount) ? rawAsset.amount : '0'),
+			amount: new BigNum(isPositiveNumberString(rawAsset.amount) ? rawAsset.amount : '0'),
 			recipientId: rawAsset.recipientId || '',
 			outTransfer: rawAsset.outTransfer || {},
 		} as OutTransferAsset;
@@ -180,10 +182,10 @@ export class OutTransferTransaction extends BaseTransaction {
 	}
 
 	protected validateAsset(): ReadonlyArray<transactions.TransactionError> {
-		validator.validate(outTransferAssetFormatSchema, this.asset);
+		const schemaErrors = validator.validate(outTransferAssetFormatSchema, this.asset);
 		const errors = convertToAssetError(
 			this.id,
-			validator.errors
+			schemaErrors
 		) as transactions.TransactionError[];
 
 		// Amount has to be greater than 0

@@ -16,6 +16,7 @@ import BigNum from '@liskhq/bignum';
 import {
 	transactions,
 	cryptography,
+	validator as liskValidator,
 } from 'lisk-sdk';
 import * as schemas from './schema';
 
@@ -29,7 +30,6 @@ const {
 		getId,
 		validateSenderIdAndPublicKey,
 		validateSignature,
-		validator,
 		verifyBalance,
 		verifyMultiSignatures,
 		verifySecondSignature,
@@ -42,6 +42,9 @@ const {
 		UNCONFIRMED_TRANSACTION_TIMEOUT,
 	},
 } = transactions;
+const {
+	validator,
+} = liskValidator;
 const {
 	getAddressAndPublicKeyFromPassphrase,
 	getAddressFromPublicKey,
@@ -541,10 +544,10 @@ export abstract class BaseTransaction {
 
 	private _validateSchema(): ReadonlyArray<transactions.TransactionError> {
 		const transaction = this.toJSON();
-		validator.validate(schemas.baseTransaction, transaction);
+		const schemaErrors = validator.validate(schemas.baseTransaction, transaction);
 		const errors = convertToTransactionError(
 			this.id,
-			validator.errors,
+			schemaErrors,
 		) as transactions.TransactionError[];
 
 		if (

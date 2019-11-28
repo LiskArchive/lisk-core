@@ -14,6 +14,7 @@
  */
 import {
 	transactions,
+	validator as liskValidator,
 } from 'lisk-sdk';
 import {
 	BaseTransaction,
@@ -22,13 +23,13 @@ import {
 const {
 	convertToAssetError,
 	TransactionError,
-	utils: {
-		validator,
-	},
 	constants: {
 		DELEGATE_FEE,
 	},
 } = transactions;
+const {
+	validator,
+} = liskValidator;
 
 
 export interface DelegateAsset {
@@ -99,10 +100,10 @@ export class DelegateTransaction extends BaseTransaction {
 	}
 
 	protected validateAsset(): ReadonlyArray<transactions.TransactionError> {
-		validator.validate(delegateAssetFormatSchema, this.asset);
+		const schemaErrors = validator.validate(delegateAssetFormatSchema, this.asset);
 		const errors = convertToAssetError(
 			this.id,
-			validator.errors,
+			schemaErrors,
 		) as transactions.TransactionError[];
 
 		return errors;
