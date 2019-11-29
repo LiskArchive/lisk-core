@@ -16,6 +16,7 @@ import BigNum from '@liskhq/bignum';
 import {
 	transactions,
 	cryptography,
+	validator as liskValidator,
 } from 'lisk-sdk';
 import {
 	BaseTransaction,
@@ -25,9 +26,7 @@ const {
 	convertToAssetError,
 	TransactionError,
 	utils: {
-		validator,
 		verifyAmountBalance,
-		isValidNumber,
 	},
 	constants: {
 		BYTESIZES,
@@ -41,6 +40,10 @@ const {
 	intToBuffer,
 	stringToBuffer,
 } = cryptography;
+const {
+	isPositiveNumberString,
+	validator,
+} = liskValidator;
 
 const PREFIX_UPVOTE = '+';
 const PREFIX_UNVOTE = '-';
@@ -111,7 +114,7 @@ export class VoteTransaction extends BaseTransaction {
 				votes: rawAsset.votes,
 				recipientId: rawAsset.recipientId || this.senderId,
 				amount: new BigNum(
-					isValidNumber(rawAsset.amount) ? rawAsset.amount : '0',
+					isPositiveNumberString(rawAsset.amount) ? rawAsset.amount : '0',
 				),
 			};
 		} else {
@@ -221,10 +224,10 @@ export class VoteTransaction extends BaseTransaction {
 
 	protected validateAsset(): ReadonlyArray<transactions.TransactionError> {
 		const asset = this.assetToJSON();
-		validator.validate(voteAssetFormatSchema, asset);
+		const schemaErrors = validator.validate(voteAssetFormatSchema, asset);
 		const errors = convertToAssetError(
 			this.id,
-			validator.errors,
+			schemaErrors,
 		) as transactions.TransactionError[];
 
 		return errors;

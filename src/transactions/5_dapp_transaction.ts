@@ -14,6 +14,7 @@
  */
 import {
 	transactions,
+	validator as liskValidator,
 } from 'lisk-sdk';
 import {
 	BaseTransaction,
@@ -23,11 +24,11 @@ import { DAPP_FEE } from './constants';
 const {
 	convertToAssetError,
 	TransactionError,
-	utils: {
-		validator,
-		stringEndsWith,
-	},
 } = transactions;
+const {
+	validator,
+	isStringEndsWith,
+} = liskValidator;
 
 export interface DappAsset {
 	readonly dapp: {
@@ -214,10 +215,10 @@ export class DappTransaction extends BaseTransaction {
 	}
 
 	protected validateAsset(): ReadonlyArray<transactions.TransactionError> {
-		validator.validate(dappAssetFormatSchema, this.asset);
+		const schemaErrors = validator.validate(dappAssetFormatSchema, this.asset);
 		const errors = convertToAssetError(
 			this.id,
-			validator.errors
+			schemaErrors,	
 		) as transactions.TransactionError[];
 
 		const validLinkSuffix = ['.zip'];
@@ -228,7 +229,7 @@ export class DappTransaction extends BaseTransaction {
 
 		if (
 			this.asset.dapp.link &&
-			!stringEndsWith(this.asset.dapp.link, validLinkSuffix)
+			!isStringEndsWith(this.asset.dapp.link, validLinkSuffix)
 		) {
 			errors.push(
 				new TransactionError(
@@ -243,7 +244,7 @@ export class DappTransaction extends BaseTransaction {
 		const validIconSuffix = ['.png', '.jpeg', '.jpg'];
 		if (
 			this.asset.dapp.icon &&
-			!stringEndsWith(this.asset.dapp.icon, validIconSuffix)
+			!isStringEndsWith(this.asset.dapp.icon, validIconSuffix)
 		) {
 			errors.push(
 				new TransactionError(

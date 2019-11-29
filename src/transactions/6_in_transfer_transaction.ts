@@ -13,7 +13,7 @@
  *
  */
 import BigNum from '@liskhq/bignum';
-import { cryptography, transactions } from 'lisk-sdk';
+import { cryptography, transactions, validator as liskValidator } from 'lisk-sdk';
 import {
 	BaseTransaction,
 } from './legacy_base_transaction';
@@ -27,12 +27,14 @@ const {
 	TransactionError,
 	utils: {
 		convertBeddowsToLSK,
-		isValidNumber,
 		verifyAmountBalance,
-		validator,
 	},
 	constants,
 } = transactions;
+const {
+	isPositiveNumberString,
+	validator,
+} = liskValidator;
 
 export interface InTransferAsset {
 	readonly amount: BigNum;
@@ -82,7 +84,7 @@ export class InTransferTransaction extends BaseTransaction {
 
 		const rawAsset = tx.asset as RawAsset;
 		this.asset = {
-			amount: new BigNum(isValidNumber(rawAsset.amount) ? rawAsset.amount : '0'),
+			amount: new BigNum(isPositiveNumberString(rawAsset.amount) ? rawAsset.amount : '0'),
 			inTransfer: rawAsset.inTransfer || {},
 		} as InTransferAsset;
 	}
@@ -154,10 +156,10 @@ export class InTransferTransaction extends BaseTransaction {
 	}
 
 	protected validateAsset(): ReadonlyArray<transactions.TransactionError> {
-		validator.validate(inTransferAssetFormatSchema, this.asset);
+		const schemaErrors = validator.validate(inTransferAssetFormatSchema, this.asset);
 		const errors = convertToAssetError(
 			this.id,
-			validator.errors
+			schemaErrors,
 		) as transactions.TransactionError[];
 
 		if (this.asset.amount.lte(0)) {
