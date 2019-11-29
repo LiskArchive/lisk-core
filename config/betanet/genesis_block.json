@@ -3,7 +3,7 @@
 	"timestamp": 0,
 	"height": 1,
 	"maxHeightPreviouslyForged": 0,
-	"prevotedConfirmedUptoHeight": 0,
+	"maxHeightPrevoted": 0,
 	"reward": "0",
 	"totalFee": "0",
 	"communityIdentifier": "Lisk",
