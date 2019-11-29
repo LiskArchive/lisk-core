@@ -10,5 +10,3 @@ Feature: Node status
    Scenario: nodes status
       When I request for node status
       Then I have the status from all the nodes
-      And networkHeight should be greater than or equal to height
-

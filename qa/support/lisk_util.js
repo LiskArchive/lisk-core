@@ -529,9 +529,9 @@ class LiskUtil extends Helper {
 	 * @param {number} limit initial limit
 	 * @param {number} offset initial offset
 	 */
-	async getAllPeers(limit, offset, state = 2) {
+	async getAllPeers(limit, offset, state = 2, node = undefined) {
 		const peerResult = await from(
-			this.call().getPeers({ limit, offset, state })
+			this.call().getPeers({ limit, offset, state }, node)
 		);
 
 		if (!process.env.NETWORK || process.env.NETWORK === 'development') {
