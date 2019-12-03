@@ -145,7 +145,10 @@ export class InTransferTransaction extends BaseTransaction {
 	}
 
 	public assetToJSON(): object {
-		return this.asset;
+		return {
+			amount: this.asset.amount.toString(),
+			inTransfer: this.asset.inTransfer,
+		};
 	}
 
 	// tslint:disable-next-line prefer-function-over-method
@@ -156,7 +159,8 @@ export class InTransferTransaction extends BaseTransaction {
 	}
 
 	protected validateAsset(): ReadonlyArray<transactions.TransactionError> {
-		const schemaErrors = validator.validate(inTransferAssetFormatSchema, this.asset);
+		const asset = this.assetToJSON();
+		const schemaErrors = validator.validate(inTransferAssetFormatSchema, asset);
 		const errors = convertToAssetError(
 			this.id,
 			schemaErrors,
