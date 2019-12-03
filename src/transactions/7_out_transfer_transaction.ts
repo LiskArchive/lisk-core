@@ -157,9 +157,8 @@ export class OutTransferTransaction extends BaseTransaction {
 
 	public assetToJSON(): object {
 		return {
+			...this.asset,
 			amount: this.asset.amount.toString(),
-			recipientId: this.asset.recipientId,
-			outTransfer: this.asset.outTransfer,
 		};
 	}
 

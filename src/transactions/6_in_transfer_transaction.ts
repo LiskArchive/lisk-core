@@ -146,8 +146,8 @@ export class InTransferTransaction extends BaseTransaction {
 
 	public assetToJSON(): object {
 		return {
+			...this.asset,
 			amount: this.asset.amount.toString(),
-			inTransfer: this.asset.inTransfer,
 		};
 	}
 
