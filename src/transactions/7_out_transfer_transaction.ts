@@ -156,7 +156,10 @@ export class OutTransferTransaction extends BaseTransaction {
 	}
 
 	public assetToJSON(): object {
-		return this.asset;
+		return {
+			...this.asset,
+			amount: this.asset.amount.toString(),
+		};
 	}
 
 	protected verifyAgainstTransactions(
@@ -182,7 +185,8 @@ export class OutTransferTransaction extends BaseTransaction {
 	}
 
 	protected validateAsset(): ReadonlyArray<transactions.TransactionError> {
-		const schemaErrors = validator.validate(outTransferAssetFormatSchema, this.asset);
+		const asset = this.assetToJSON();
+		const schemaErrors = validator.validate(outTransferAssetFormatSchema, asset);
 		const errors = convertToAssetError(
 			this.id,
 			schemaErrors
