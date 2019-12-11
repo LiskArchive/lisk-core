@@ -14,7 +14,7 @@ Feature: List Peers
 
     Examples:
       | params            |
-      | state=2           |
+      | state=connected   |
       | sort=height:asc   |
       | sort=height:desc  |
       | sort=version:asc  |
