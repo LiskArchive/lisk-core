@@ -1355,10 +1355,8 @@
 			"name": "state",
 			"in": "query",
 			"description": "Current state of the network",
-			"type": "integer",
-			"format": "int32",
-			"minimum": 0,
-			"maximum": 2
+			"type": "string",
+			"enum": ["connected", "disconnected"]
 		},
 		"height": {
 			"name": "height",
@@ -2441,23 +2439,15 @@
 					"description": "The protocol version of Lisk Core that the peer node runs on."
 				},
 				"state": {
-					"type": "integer",
-					"example": 2,
-					"format": "int32",
-					"minimum": 0,
-					"maximum": 2,
-					"description": "The state of the Peer.\nAvailable values: Connected, Disconnected, Banned\n"
+					"type": "string",
+					"example": "connected",
+					"enum": ["connected", "disconnected"],
+					"description": "The state of the Peer.\n"
 				},
 				"height": {
 					"type": "integer",
 					"example": 123,
 					"description": "Network height on the peer node.\nRepresents the current number of blocks in the chain on the peer node.\n"
-				},
-				"nonce": {
-					"type": "string",
-					"example": "sYHEDBKcScaAAAYg",
-					"minLength": 1,
-					"description": "Unique Identifier for the peer.\nRandom string.\n"
 				}
 			}
 		},

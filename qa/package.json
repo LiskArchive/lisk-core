@@ -53,7 +53,7 @@
     "codeceptjs": "^2.0.3",
     "debug": "^4.1.0",
     "json-schema-ref-parser": "^6.1.0",
-    "lisk-elements": "=2.0.0"
+    "lisk-elements": "3.0.0-alpha.1"
   },
   "devDependencies": {
     "bignumber.js": "^8.0.2",
