@@ -19,6 +19,10 @@
   "bugs": {
     "url": "https://github.com/LiskHQ/lisk-core-qa-external/issues"
   },
+  "engines": {
+    "node": ">=12.13.0 <=12",
+    "npm": ">=6.12.0"
+  },
   "scripts": {
     "format": "prettier --write \"**/*.{js,json,md}\"",
     "lint": "./node_modules/.bin/eslint .",
@@ -53,7 +57,7 @@
     "codeceptjs": "^2.0.3",
     "debug": "^4.1.0",
     "json-schema-ref-parser": "^6.1.0",
-    "lisk-elements": "=2.0.0"
+    "lisk-elements": "3.0.0-alpha.1"
   },
   "devDependencies": {
     "bignumber.js": "^8.0.2",
@@ -64,7 +68,7 @@
     "eslint-plugin-codeceptjs": "^0.4.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-mocha": "^5.2.1",
-    "lint-staged": "^8.1.0",
+    "lint-staged": "8.1.3",
     "prettier": "^1.15.3"
   }
 }

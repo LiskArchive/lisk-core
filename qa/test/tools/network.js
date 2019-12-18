@@ -210,7 +210,7 @@ Scenario('Add network peers to config', async () => {
 		const partialConnectedPeers = await I.getAllPeers(100, 0);
 		const fullPeerList = await Promise.all(
 			partialConnectedPeers.map(async p =>
-				I.getAllPeers(100, 0, 2, `${p.ip}:${p.httpPort}`)
+				I.getAllPeers(100, 0, 'connected', `${p.ip}:${p.httpPort}`)
 			)
 		);
 		const allPeers = fullPeerList.reduce((acc, val) => acc.concat(val), []);
