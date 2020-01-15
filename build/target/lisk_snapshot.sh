@@ -63,7 +63,7 @@ bash lisk.sh start_node >/dev/null
 psql --dbname=lisk_snapshot --command='TRUNCATE peers;' >/dev/null
 
 HEIGHT=$( psql --dbname=lisk_snapshot --tuples-only --command='SELECT height FROM blocks ORDER BY height DESC LIMIT 1;' |xargs)
-OUTPUT_FILE="${OUTPUT_DIRECTORY}/${SOURCE_DATABASE}_backup-${HEIGHT}-${CORE_VERSION}.gz"
+OUTPUT_FILE="${OUTPUT_DIRECTORY}/${SOURCE_DATABASE}_backup-${HEIGHT}-${CORE_VERSION}.db.gz"
 
 pg_dump --no-owner lisk_snapshot |gzip -9 >"$TEMP_FILE"
 mv "$TEMP_FILE" "$OUTPUT_FILE"
