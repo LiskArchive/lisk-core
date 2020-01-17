@@ -38,7 +38,7 @@ const packageJSON = require('../package.json');
 const rootPath = path.resolve(path.dirname(__filename), '../../../../../');
 const loadJSONFileIfExists = filePath => {
 	if (fs.existsSync(filePath)) {
-		return JSON.parse(fs.readFileSync(filePath), 'utf8');
+		return JSON.parse(fs.readFileSync(filePath, 'utf8'));
 	}
 	return {};
 };

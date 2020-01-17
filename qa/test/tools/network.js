@@ -133,7 +133,7 @@ const checkIfAllPeersConnected = async () => {
 			}, Expected peers: ${expectPeerCount}`
 		);
 
-		while (allPeers.length >= expectPeerCount) {
+		if (allPeers.length >= expectPeerCount) {
 			return true;
 		}
 		await I.wait(5000);

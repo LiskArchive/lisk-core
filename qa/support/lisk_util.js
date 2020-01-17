@@ -621,12 +621,12 @@ class LiskUtil extends Helper {
 	 */
 	async checkIfNetworkIsMoving() {
 		let heights = await this.getAllNodeHeights();
-		const previousHeight = Math.max(heights.filter(h => h));
+		const previousHeight = 	heights.reduce((a, b) => Math.max(a, b));
 
 		await this.waitForBlock();
 
 		heights = await this.getAllNodeHeights();
-		const currentHeight = Math.max(heights.filter(h => h));
+		const currentHeight = heights.reduce((a, b) => Math.max(a, b));
 
 		expect(currentHeight).to.be.above(previousHeight);
 	}
