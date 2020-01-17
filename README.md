@@ -38,7 +38,7 @@ The following dependencies need to be installed in order to run applications cre
 
 | Dependencies     | Version |
 | ---------------- | ------- |
-| NodeJS           | 12.13.0 |
+| NodeJS           | 12.14.0 |
 | PostgreSQL       | 10.x    |
 | Redis (optional) | 5+      |
 

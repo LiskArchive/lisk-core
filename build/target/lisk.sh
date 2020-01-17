@@ -402,7 +402,7 @@ help() {
 	echo -e "stop_node                             Stops a Nodejs process for Lisk"
 	echo -e "stop                                  Stop the Nodejs process and PostgreSQL Database for Lisk"
 	echo -e "reload                                Restarts the Nodejs process for Lisk"
-	echo -e "rebuild [-u URL] [-f file.db.gz] [-0] Rebuilds the PostgreSQL database"
+	echo -e "rebuild [-u URL] [-f file.gz] [-0] Rebuilds the PostgreSQL database"
 	echo -e "start_db                              Starts the PostgreSQL database"
 	echo -e "stop_db                               Stops the PostgreSQL database"
 	echo -e "coldstart                             Creates the PostgreSQL database and configures config.json for Lisk"

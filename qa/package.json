@@ -20,8 +20,8 @@
     "url": "https://github.com/LiskHQ/lisk-core-qa-external/issues"
   },
   "engines": {
-    "node": ">=12.13.0 <=12",
-    "npm": ">=6.12.0"
+    "node": ">=12.14.0 <=12",
+    "npm": ">=6.13.4"
   },
   "scripts": {
     "format": "prettier --write \"**/*.{js,json,md}\"",
@@ -57,7 +57,7 @@
     "codeceptjs": "^2.0.3",
     "debug": "^4.1.0",
     "json-schema-ref-parser": "^6.1.0",
-    "lisk-elements": "3.0.0-alpha.1"
+    "lisk-elements": "3.0.0"
   },
   "devDependencies": {
     "bignumber.js": "^8.0.2",
