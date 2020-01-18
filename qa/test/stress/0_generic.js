@@ -48,7 +48,6 @@ Scenario('Transfer funds', async () => {
 		output.print('Error while processing transfer fund transaction', error);
 	}
 })
-	.tag('@slow')
 	.tag('@generic')
 	.tag('@stress');
 
@@ -85,7 +84,6 @@ Scenario('Second passphrase on an account', async () => {
 		);
 	}
 })
-	.tag('@slow')
 	.tag('@generic')
 	.tag('@stress');
 
@@ -126,7 +124,6 @@ Scenario('Delegate Registration', async () => {
 		output.print('Error while processing delegate registration', error);
 	}
 })
-	.tag('@slow')
 	.tag('@generic')
 	.tag('@stress');
 
@@ -167,7 +164,6 @@ Scenario('Cast vote', async () => {
 		output.print('Error while processing cast vote transaction', error);
 	}
 })
-	.tag('@slow')
 	.tag('@generic')
 	.tag('@stress');
 
@@ -217,6 +213,5 @@ Scenario('Register Multi-signature account', async () => {
 		);
 	}
 })
-	.tag('@slow')
 	.tag('@generic')
 	.tag('@stress');
