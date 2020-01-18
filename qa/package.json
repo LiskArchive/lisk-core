@@ -1,5 +1,5 @@
 {
-  "name": "lisk-core-qa-external",
+  "name": "lisk-core-qa",
   "version": "0.1.0",
   "description": "Lisk core quality assurance",
   "author": "Lisk Foundation <admin@lisk.io>, lightcurve GmbH <admin@lightcurve.io>",
@@ -11,13 +11,13 @@
     "lisk",
     "blockchain"
   ],
-  "homepage": "https://github.com/LiskHQ/lisk-core-qa-external#readme",
+  "homepage": "https://github.com/LiskHQ/lisk-core/blob/development/qa/README.md",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LiskHQ/lisk-core-qa-external.git"
+    "url": "git+https://github.com/LiskHQ/lisk-core.git"
   },
   "bugs": {
-    "url": "https://github.com/LiskHQ/lisk-core-qa-external/issues"
+    "url": "https://github.com/LiskHQ/lisk-core/issues"
   },
   "engines": {
     "node": ">=12.14.1 <=12",
@@ -49,18 +49,17 @@
   },
   "dependencies": {
     "allure": "0.0.0",
-    "bluebird": "^3.5.3",
     "chai": "^4.2.0",
     "chai-bignumber": "^3.0.0",
     "chai-json-schema": "^1.5.0",
     "chai-sorted": "^0.2.0",
     "codeceptjs": "^2.0.3",
-    "debug": "^4.1.0",
     "json-schema-ref-parser": "^6.1.0",
     "lisk-elements": "3.0.0"
   },
   "devDependencies": {
     "bignumber.js": "^8.0.2",
+    "debug": "^4.1.0",
     "eslint": "^5.12.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-config-lisk-base": "^1.0.0",
