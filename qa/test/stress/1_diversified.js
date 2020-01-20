@@ -23,7 +23,7 @@ const getAllTransactions = () => {
 const processTransactions = async () => {
 	const api = await I.call();
 
-	await Object.keys(all_trxs).forEach(async transaction_type => {
+	Object.keys(all_trxs).forEach(async transaction_type => {
 		const trxs = all_trxs[transaction_type];
 		if (transaction_type.match('_signatures')) {
 			await Promise.all(trxs.map(t => api.broadcastSignatures(t)));
