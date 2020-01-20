@@ -91,7 +91,15 @@ npm i
 
 ## Managing-Lisk-Core-QA
 
-### Single-Node
+### Running tests on local machine against devnet configuration
+To run tests against single node setup [Lisk Core](https://lisk.io/documentation/lisk-core/setup/source), once you have the Lisk Core up and running.
+
+Run the following bash script to run all the tests
+```
+bash scripts/run.sh
+```
+
+### Running tests manually (Single-Node)
 To run tests against single node setup [Lisk Core](https://lisk.io/documentation/lisk-core/setup/source), once you have the Lisk Core up and running.
 
 #### Add-peers-to-config-Single-Node
@@ -101,7 +109,7 @@ If Lisk Core is running on localhost `127.0.0.1` then add the ip to peers sectio
 
 Example:
 ```
-"peers": ["127.0.0.1"]
+"peers": ["127.0.0.1:4000"]
 ```
 
 ### Network-Mode
@@ -112,13 +120,13 @@ In order to run network test in Network mode add all the peers to [config](fixtu
 
 Example:
 ```
-"peers": ["102.248.2.33", "101.248.1.21"]
+"peers": ["102.248.2.33:4000", "101.248.1.21:4000"]
 ```
 
 ### Enable-delegates
 Once the peers config is updated in (Single/Network Mode) Enable delegates for forging
 
-`Note: If the IP address is external, ensure the address is accessible for api to enable forging`
+`Note: If the IP address is external, ensure the address is accessible for api to enable forging. Also the delegates are configured by default for devnet, if you would like to use the test suite against your custom node or network please update the fixtures/config.json with delegates and defaultPassword section with correct details for these test to work`
 ```
 npm run tools:delegates:enable
 ```
