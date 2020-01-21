@@ -1,4 +1,4 @@
-FROM node:10-alpine AS builder
+FROM node:10-alpine3.9 AS builder
 
 ARG REGISTRY_URL
 ARG REGISTRY_AUTH_TOKEN
@@ -24,7 +24,7 @@ RUN npm ci --production && \
     date --utc "+%Y-%m-%dT%H:%M:%S.000Z" >.build
 
 
-FROM node:10-alpine
+FROM node:10-alpine3.9
 
 ENV NODE_ENV=production
 ENV WFI_COMMIT=e34c502a3efe0e8b8166ea6148d55b73da5c8401
