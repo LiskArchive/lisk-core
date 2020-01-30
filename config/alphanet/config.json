@@ -1,31 +1,6 @@
 {
-	"components": {
-		"logger": {
-			"fileLogLevel": "debug",
-			"logFileName": "logs/alphanet/lisk.log",
-			"consoleLogLevel": "info"
-		},
-		"storage": {
-			"database": "lisk_alpha",
-			"min": 1,
-			"max": 10,
-			"logFileName": "logs/alphanet/lisk_db.log"
-		},
-		"cache": {
-			"enabled": true
-		}
-	},
-	"modules": {
-		"http_api": {
-			"access": {
-				"public": true
-			},
-			"httpPort": 4000,
-			"apm": {
-				"enabled": true
-			}
-		},
-		"chain": {
+	"app": {
+		"node": {
 			"forging": {
 				"delegates": [
 					{
@@ -444,6 +419,33 @@
 				}
 			],
 			"wsPort": 5000
+		}
+	},
+	"components": {
+		"logger": {
+			"fileLogLevel": "debug",
+			"logFileName": "logs/alphanet/lisk.log",
+			"consoleLogLevel": "info"
+		},
+		"storage": {
+			"database": "lisk_alpha",
+			"min": 1,
+			"max": 10,
+			"logFileName": "logs/alphanet/lisk_db.log"
+		},
+		"cache": {
+			"enabled": true
+		}
+	},
+	"modules": {
+		"http_api": {
+			"access": {
+				"public": true
+			},
+			"httpPort": 4000,
+			"apm": {
+				"enabled": true
+			}
 		}
 	}
 }

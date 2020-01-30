@@ -1,23 +1,5 @@
 {
-	"components": {
-		"logger": {
-			"fileLogLevel": "debug",
-			"logFileName": "logs/betanet/lisk.log",
-			"consoleLogLevel": "error"
-		},
-		"storage": {
-			"database": "lisk_beta",
-			"logFileName": "logs/betanet/lisk_db.log"
-		},
-		"cache": {}
-	},
-	"modules": {
-		"http_api": {
-			"httpPort": 5000,
-			"apm": {
-				"enabled": true
-			}
-		},
+	"app": {
 		"network": {
 			"seedPeers": [
 				{
@@ -42,6 +24,26 @@
 				}
 			],
 			"wsPort": 5001
+		}
+	},
+	"components": {
+		"logger": {
+			"fileLogLevel": "debug",
+			"logFileName": "logs/betanet/lisk.log",
+			"consoleLogLevel": "error"
+		},
+		"storage": {
+			"database": "lisk_beta",
+			"logFileName": "logs/betanet/lisk_db.log"
+		},
+		"cache": {}
+	},
+	"modules": {
+		"http_api": {
+			"httpPort": 5000,
+			"apm": {
+				"enabled": true
+			}
 		}
 	}
 }
