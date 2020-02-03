@@ -42,7 +42,7 @@ try {
 		disableV1Transactions,
 		disableDappTransaction,
 		disableDappTransfer,
-	} = app.config.modules.chain.exceptions.precedent;
+	} = app.config.app.node.exceptions.precedent;
 
 	app.registerTransaction(TransferTransaction, {
 		matcher: context => context.blockHeight < disableV1Transactions,

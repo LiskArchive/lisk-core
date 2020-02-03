@@ -258,7 +258,7 @@ history.version('1.2.0-rc.x', version => {
 });
 
 history.version('2.0.0-rc.0', version => {
-	version.change('add structure for app component', config => 
+	version.change('add structure for app component', config =>
 		moveElement(config, 'ipc', 'app.ipc')
 	);
 
@@ -302,11 +302,17 @@ history.version('2.0.0-rc.0', version => {
 	version.change('add structure for network module', config => {
 		config = moveElement(config, 'peers.list', 'modules.network.seedPeers');
 		// Change wsPort to number
-		if (config.modules && config.modules.network && config.modules.network.seedPeers) {
-			config.modules.network.seedPeers = config.modules.network.seedPeers.map(peer => ({
-				...peer,
-				wsPort: parseInt(peer.wsPort),
-			}));
+		if (
+			config.modules &&
+			config.modules.network &&
+			config.modules.network.seedPeers
+		) {
+			config.modules.network.seedPeers = config.modules.network.seedPeers.map(
+				peer => ({
+					...peer,
+					wsPort: parseInt(peer.wsPort),
+				})
+			);
 		}
 		config = moveElement(
 			config,
@@ -344,12 +350,27 @@ history.version('2.0.0-rc.0', version => {
 		return config;
 	});
 
-	version.change('move forging.access to modules.http_api.forging.access', config => {
-		config = moveElement(
-			config,
-			'modules.chain.forging.access',
-			'modules.http_api.forging.access'
-		);
+	version.change(
+		'move forging.access to modules.http_api.forging.access',
+		config => {
+			config = moveElement(
+				config,
+				'modules.chain.forging.access',
+				'modules.http_api.forging.access'
+			);
+			return config;
+		}
+	);
+});
+
+history.version('3.0.0-rc.0', version => {
+	version.change('move modules.chain to app.node', config => {
+		config = moveElement(config, 'modules.chain', 'app.node');
+		return config;
+	});
+
+	version.change('move modules.network to app.network', config => {
+		config = moveElement(config, 'modules.network', 'app.network');
 		return config;
 	});
 });
