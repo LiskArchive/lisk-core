@@ -14,24 +14,24 @@ If you have satisfied the requirements from the Pre-Installation section, you ca
 
 ## Index
 
-* [Installation](#installation)
-    * [Dependencies](#dependencies)
-* [Managing Lisk](#tool)
-* [Configuring Lisk](#configuring-lisk)
-  * [Structure](#structure)
-  * [Command Line Options](#command-line-options)
-  * [Examples](#examples)
-* [Tests](#tests)
-  * [Preparing Node](#preparing-node)
-  * [Running Tests](#running-tests)
-    * [Running Mocha Tests](#running-mocha-tests)
-    * [Running Jest Tests](#running-jest-tests)
-* [Utility Scripts](#utility-scripts)
-* [Performance Monitoring](#performance-monitoring)
-* [License](#license)
-
+- [Installation](#installation)
+  - [Dependencies](#dependencies)
+- [Managing Lisk](#tool)
+- [Configuring Lisk](#configuring-lisk)
+  - [Structure](#structure)
+  - [Command Line Options](#command-line-options)
+  - [Examples](#examples)
+- [Tests](#tests)
+  - [Preparing Node](#preparing-node)
+  - [Running Tests](#running-tests)
+    - [Running Mocha Tests](#running-mocha-tests)
+    - [Running Jest Tests](#running-jest-tests)
+- [Utility Scripts](#utility-scripts)
+- [Performance Monitoring](#performance-monitoring)
+- [License](#license)
 
 ## Installation
+
 ### Dependencies
 
 The following dependencies need to be installed in order to run applications created with the Lisk SDK:
@@ -106,10 +106,10 @@ More information about options can be found at [Command Line Options](#command-l
 5. Don't override any value in files mentioned above if you need custom configuration.
 6. Create your own `json` file and pass it as command line options `-c` or `LISK_CONFIG_FILE`
 7. Configurations will be loaded in the following order, lowest in the list has the highest priority:
-   * Default configuration file
-   * Network specific configuration file
-   * Custom configuration file (if specified by the user)
-   * Command line configurations, specified as command `flags` or `env` variables
+   - Default configuration file
+   - Network specific configuration file
+   - Custom configuration file (if specified by the user)
+   - Command line configurations, specified as command `flags` or `env` variables
 8. Any config option of array type gets completely overridden. If you specify one peer at `peers.list` in your custom config file, it will replace every default peer for the network.
 9. For development use `devnet` as the network option.
 
@@ -123,36 +123,36 @@ node dist/index.js -- [options]
 
 Each of that option can be appended to the command-line. There are also a few `ENV` variables that can be utilized for this purpose.
 
-| Option                               | ENV Variable           | Config Option            | Description                                                                                                                                                                                                                                                                                                                |
-| ------------------------------------ | ---------------------- | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| <pre nowrap>--network<br>-n</pre>    | LISK_NETWORK           |                          | Which configurations set to use, associated to lisk networks. Any of this option can be used `devnet`, `alphanet`, `betanet`, `testnet` and `mainnet`. Default value is `devnet`.                                                                                                                                          |
-| <pre nowrap>--config<br> -c</pre>    | LISK_CONFIG_FILE       |                          | Path to the custom configuration file, which will override values of `config/default/config.json`. Should be relative path from root of project.                                                                                                                                                                           |
-| <pre nowrap>--port<br> -p</pre>      | LISK_WS_PORT           | wsPort                   | TCP port for P2P layer                                                                                                                                                                                                                                                                                                     |
-| <pre nowrap>--http-port<br> -h</pre> | LISK_HTTP_PORT         | httpPort                 | TCP port for HTTP API                                                                                                                                                                                                                                                                                                      |
-| <pre nowrap>--address<br> -a</pre>   | LISK_ADDRESS           | address                  | Listening host name or ip                                                                                                                                                                                                                                                                                                  |
-| <pre nowrap>--log<br> -l</pre>       | LISK_FILE_LOG_LEVEL    | fileLogLevel             | Log level for file output                                                                                                                                                                                                                                                                                                  |
-|                                      | LISK_CONSOLE_LOG_LEVEL | consoleLogLevel          | Log level for console output                                                                                                                                                                                                                                                                                               |
-|                                      | LISK_CACHE_ENABLED     | cacheEnabled             | Enable or disable cache. Must be set to true/false                                                                                                                                                                                                                                                                         |
-| <pre nowrap>--database<br> -d</pre>  | LISK_DB_NAME           | db.database              | PostgreSQL database name to connect to                                                                                                                                                                                                                                                                                     |
-|                                      | LISK_DB_HOST           | db.host                  | PostgreSQL database host name                                                                                                                                                                                                                                                                                              |
-|                                      | LISK_DB_PORT           | db.port                  | PostgreSQL database port                                                                                                                                                                                                                                                                                                   |
-|                                      | LISK_DB_USER           | db.user                  | PostgreSQL database username to connect to                                                                                                                                                                                                                                                                                 |
-|                                      | LISK_DB_PASSWORD       | db.password              | PostgreSQL database password to connect to                                                                                                                                                                                                                                                                                 |
-| <pre nowrap>--redis<br> -r</pre>     | LISK_REDIS_HOST        | redis.host               | Redis host name                                                                                                                                                                                                                                                                                                            |
-|                                      | LISK_REDIS_PORT        | redis.port               | Redis port                                                                                                                                                                                                                                                                                                                 |
-|                                      | LISK_REDIS_DB_NAME     | redis.db                 | Redis database name to connect to                                                                                                                                                                                                                                                                                          |
-|                                      | LISK_REDIS_DB_PASSWORD | redis.password           | Redis database password to connect to                                                                                                                                                                                                                                                                                      |
-| <pre nowrap>--peers<br> -x</pre>     | LISK_PEERS             | peers.list               | Comma separated list of peers to connect to in the format `192.168.99.100:5000,172.169.99.77:5000`                                                                                                                                                                                                                         |
-|                                      | LISK_API_PUBLIC        | api.access.public        | Enable or disable public access of http API. Must be set to true/false                                                                                                                                                                                                                                                     |
-|                                      | LISK_API_WHITELIST     | api.access.whiteList     | Comma separated list of IPs to enable API access. Format `192.168.99.100,172.169.99.77`                                                                                                                                                                                                                                    |
-|                                      | LISK_FORGING_DELEGATES | forging.delegates        | Comma separated list of delegates to load in the format _publicKey&#x7c;encryptedPassphrase,publicKey2&#x7c;encryptedPassphrase2_                                                                                                                                                                                          |
-|                                      | LISK_FORGING_WHITELIST | forging.access.whiteList | Comma separated list of IPs to enable access to forging endpoints. Format `192.168.99.100,172.169.99.77`                                                                                                                                                                                                                   |
-| <pre nowrap>--snapshot<br> -s</pre>  |                        |                          | Number of rounds to include in the snapshot, must be a positive integer equal to or greater than `0`. When `0` is passed, this corresponds to the inclusion of all rounds. Any other number equals to its corresponding round. Bear in mind this mode disables all the network features of the node to ensure reliability. |
+| Option                               | ENV Variable           | Config Option                                   | Description                                                                                                                                                                                                                                                                                                          |
+| ------------------------------------ | ---------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <pre nowrap>--network<br>-n</pre>    | LISK_NETWORK           |                                                 | Which configurations set to use, associated to lisk networks. Any of this option can be used `devnet`, `alphanet`, `betanet`, `testnet` and `mainnet`. Default value is `devnet`.                                                                                                                                    |
+| <pre nowrap>--config<br> -c</pre>    | LISK_CONFIG_FILE       |                                                 | Path to the custom configuration file, which will override values of `config/default/config.json`. Should be relative path from root of project.                                                                                                                                                                     |
+| <pre nowrap>--port<br> -p</pre>      | LISK_WS_PORT           | modules.network.wsPort                          | TCP port for P2P layer                                                                                                                                                                                                                                                                                               |
+| <pre nowrap>--http-port<br> -h</pre> | LISK_HTTP_PORT         | modules.http_api.httpPort                       | TCP port for HTTP API                                                                                                                                                                                                                                                                                                |
+| <pre nowrap>--address<br> -a</pre>   | LISK_ADDRESS           | modules.http_api.address,modules.network.hostIp | Listening host name or ip                                                                                                                                                                                                                                                                                            |
+| <pre nowrap>--log<br> -l</pre>       | LISK_FILE_LOG_LEVEL    | components.logger.fileLogLevel                  | Log level for file output                                                                                                                                                                                                                                                                                            |
+|                                      | LISK_CONSOLE_LOG_LEVEL | components.logger.consoleLogLevel               | Log level for console output                                                                                                                                                                                                                                                                                         |
+|                                      | LISK_CACHE_ENABLED     | components.cache.enabled                        | Enable or disable cache. Must be set to true/false                                                                                                                                                                                                                                                                   |
+| <pre nowrap>--database<br> -d</pre>  | LISK_DB_NAME           | components.storage.database                     | PostgreSQL database name to connect to                                                                                                                                                                                                                                                                               |
+|                                      | LISK_DB_HOST           | components.storage.host                         | PostgreSQL database host name                                                                                                                                                                                                                                                                                        |
+|                                      | LISK_DB_PORT           | components.storage.port                         | PostgreSQL database port                                                                                                                                                                                                                                                                                             |
+|                                      | LISK_DB_USER           | components.storage.user                         | PostgreSQL database username to connect to                                                                                                                                                                                                                                                                           |
+|                                      | LISK_DB_PASSWORD       | components.storage.password                     | PostgreSQL database password to connect to                                                                                                                                                                                                                                                                           |
+| <pre nowrap>--redis<br> -r</pre>     | LISK_REDIS_HOST        | components.cache.host                           | Redis host name                                                                                                                                                                                                                                                                                                      |
+|                                      | LISK_REDIS_PORT        | components.cache.port                           | Redis port                                                                                                                                                                                                                                                                                                           |
+|                                      | LISK_REDIS_DB_NAME     | components.cache.db                             | Redis database name to connect to                                                                                                                                                                                                                                                                                    |
+|                                      | LISK_REDIS_DB_PASSWORD | components.cache.password                       | Redis database password to connect to                                                                                                                                                                                                                                                                                |
+| <pre nowrap>--peers<br> -x</pre>     | LISK_PEERS             | modules.network.seedPeers                       | Comma separated list of peers to connect to in the format `192.168.99.100:5000,172.169.99.77:5000`                                                                                                                                                                                                                   |
+|                                      | LISK_API_PUBLIC        | modules.http_api.access.public                  | Enable or disable public access of http API. Must be set to true/false                                                                                                                                                                                                                                               |
+|                                      | LISK_API_WHITELIST     | modules.http_api.access.whiteList               | Comma separated list of IPs to enable API access. Format `192.168.99.100,172.169.99.77`                                                                                                                                                                                                                              |
+|                                      | LISK_FORGING_DELEGATES | modules.chain.forging.delegates                 | Comma separated list of delegates to load in the format _publicKey&#x7c;encryptedPassphrase,publicKey2&#x7c;encryptedPassphrase2_                                                                                                                                                                                    |
+|                                      | LISK_FORGING_WHITELIST | modules.http_api.forging.access.whiteList       | Comma separated list of IPs to enable access to forging endpoints. Format `192.168.99.100,172.169.99.77`                                                                                                                                                                                                             |
+| <pre nowrap>--rebuild<br> -b</pre>   |                        | modules.chain.loading.rebuildUpToRound          | Number of rounds to rebuild the chain, must be a positive integer equal to or greater than `0`. When `0` is passed, this corresponds to the inclusion of all rounds. Any other number equals to its corresponding round. Bear in mind this mode disables all the network features of the node to ensure reliability. |
 
 #### Note
 
-* All `ENV` variables restricted with operating system constraint of `ENV` variable maximum length.
-* Comma-separated lists will replace the original config values. e.g. If you specify `LISK_PEERS`, original `peers.list`, which is specific to the network, will be replaced completely.
+- All `ENV` variables restricted with operating system constraint of `ENV` variable maximum length.
+- Comma-separated lists will replace the original config values. e.g. If you specify `LISK_PEERS`, original `modules.network.seedPeers`, which is specific to the network, will be replaced completely.
 
 For a more detailed understanding of configuration read this [online documentation](https://lisk.io/documentation/lisk-core/user-guide/configuration)
 
@@ -257,6 +257,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 ---
+
 Copyright © 2016-2019 Lisk Foundation
 
 Copyright © 2015 Crypti
