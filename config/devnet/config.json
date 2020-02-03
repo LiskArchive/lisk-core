@@ -14,7 +14,12 @@
 			"database": "lisk_dev",
 			"min": 1,
 			"max": 10,
-			"logFileName": "logs/devnet/lisk_db.log"
+			"logFileName": "logs/devnet/lisk_db.log",
+			"logEvents": [
+				"query",
+				"tx",
+				"error"
+			]
 		},
 		"cache": {
 			"enabled": true
