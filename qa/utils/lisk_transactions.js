@@ -1,13 +1,11 @@
-const elements = require('lisk-elements');
-const crypto = require('crypto');
-const { GENESIS_ACCOUNT } = require('../fixtures');
-
 const {
-	transaction,
+	transactions: { utils, constants },
+	transactions,
 	passphrase: { Mnemonic },
 	cryptography,
-} = elements;
-const { utils, constants } = transaction;
+} = require('lisk-elements');
+const crypto = require('crypto');
+const { GENESIS_ACCOUNT } = require('../fixtures');
 
 // amount converted from lisk to beddows
 const TO_BEDDOWS = amount => utils.convertLSKToBeddows(amount.toString());
@@ -50,7 +48,7 @@ const transfer = (accounts, amount) =>
 		acount.amount = TO_BEDDOWS(amount);
 		acount.passphrase = GENESIS_ACCOUNT.password;
 
-		return transaction.transfer(acount);
+		return transactions.transfer(acount);
 	});
 
 const secondPassphraseAccount = accounts => {
@@ -60,7 +58,7 @@ const secondPassphraseAccount = accounts => {
 	});
 
 	const spp_transactions = secondPassAccounts.map(a =>
-		transaction.registerSecondPassphrase({
+		transactions.registerSecondPassphrase({
 			...filterByKey(a, defaultFilter),
 		})
 	);
@@ -73,7 +71,7 @@ const delegateRegistration = accounts => {
 		return a;
 	});
 	const dr_transactions = delegateAccounts.map(a =>
-		transaction.registerDelegate({
+		transactions.registerDelegate({
 			...filterByKey(a, [...defaultFilter, 'username']),
 		})
 	);
@@ -87,7 +85,7 @@ const castVote = accounts => {
 		return a;
 	});
 	const v_transactions = votedAccounts.map(a =>
-		transaction.castVotes({
+		transactions.castVotes({
 			...filterByKey(a, [...defaultFilter, 'votes']),
 		})
 	);
@@ -101,7 +99,7 @@ const castUnVote = accounts => {
 		return a;
 	});
 	const uv_transactions = unVotedAccounts.map(a =>
-		transaction.castVotes({
+		transactions.castVotes({
 			...filterByKey(a, [...defaultFilter, 'unvotes']),
 		})
 	);
@@ -127,10 +125,10 @@ const multiSignatureAccount = accounts => {
 			keysgroup
 		);
 
-		const multiSigTransaction = transaction.registerMultisignature(params);
+		const multiSigTransaction = transactions.registerMultisignature(params);
 
 		signatures.push({
-			transactionId: multiSigTransaction.id,
+			transactionId: multiSigTransactions.id,
 			publicKey: signer.publicKey,
 			signature: utils.multiSignTransaction(
 				multiSigTransaction,
@@ -162,7 +160,7 @@ const dappRegistration = accounts =>
 	accounts.map(a => {
 		const options = createDappOptions();
 
-		return elements.transaction.createDapp({
+		return transactions.createDapp({
 			...filterByKey(a, defaultFilter),
 			options,
 		});

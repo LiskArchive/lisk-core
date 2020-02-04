@@ -1,5 +1,5 @@
 const output = require('codeceptjs').output;
-const { constants } = require('lisk-elements').transaction;
+const { constants } = require('lisk-elements');
 
 const I = actor();
 
