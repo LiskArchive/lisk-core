@@ -1,5 +1,5 @@
 const output = require('codeceptjs').output;
-const elements = require('lisk-elements');
+const { APIClient } = require('lisk-elements');
 
 class API {
 	constructor(config) {
@@ -13,7 +13,7 @@ class API {
 		try {
 			return this.peers.map(node => {
 				const url = `http://${node}`;
-				const client = new elements.APIClient([url]);
+				const client = new APIClient([url]);
 				return {
 					node,
 					url,

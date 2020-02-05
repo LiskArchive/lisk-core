@@ -1,5 +1,5 @@
 const chai = require('chai');
-const elements = require('lisk-elements');
+const { cryptography, passphrase: passphraseUtil, transactions } = require('lisk-elements');
 const output = require('codeceptjs').output;
 const API = require('./api.js');
 const {
@@ -136,9 +136,9 @@ class LiskUtil extends Helper {
 	 * @returns account object
 	 */
 	createAccount() {
-		const passphrase = elements.passphrase.Mnemonic.generateMnemonic();
-		const { publicKey } = elements.cryptography.getKeys(passphrase);
-		const address = elements.cryptography.getAddressFromPublicKey(publicKey);
+		const passphrase = passphraseUtil.Mnemonic.generateMnemonic();
+		const { publicKey } = cryptography.getKeys(passphrase);
+		const address = cryptography.getAddressFromPublicKey(publicKey);
 
 		return {
 			passphrase,
@@ -223,7 +223,7 @@ class LiskUtil extends Helper {
 	 */
 	createSignatures(accounts, transaction) {
 		return accounts.map(account => {
-			const signature = elements.transaction.createSignatureObject({
+			const signature = transactions.createSignatureObject({
 				transaction,
 				passphrase: account.passphrase,
 				networkIdentifier,
@@ -253,7 +253,7 @@ class LiskUtil extends Helper {
 		}
 		account.networkIdentifier = networkIdentifier;
 
-		const trx = elements.transaction.transfer(account);
+		const trx = transactions.transfer(account);
 
 		await from(this.broadcastAndValidateTransactionAndWait(trx, blocksToWait));
 
@@ -276,7 +276,7 @@ class LiskUtil extends Helper {
 			}
 			a.networkIdentifier = networkIdentifier;
 
-			return elements.transaction.transfer(a);
+			return transactions.transfer(a);
 		});
 
 		await from(
@@ -297,7 +297,7 @@ class LiskUtil extends Helper {
 			transactionId: transaction.id,
 			networkIdentifier,
 			publicKey: s.publicKey,
-			signature: elements.transaction.createSignatureObject({
+			signature: transactions.createSignatureObject({
 				transaction,
 				passphrase: s.passphrase,
 				networkIdentifier,
@@ -318,7 +318,7 @@ class LiskUtil extends Helper {
 	 * @returns {Object} transaction
 	 */
 	async registerSecondPassphrase(passphrase, secondPassphrase, blocksToWait) {
-		const trx = elements.transaction.registerSecondPassphrase({
+		const trx = transactions.registerSecondPassphrase({
 			passphrase,
 			secondPassphrase,
 			networkIdentifier,
@@ -339,7 +339,7 @@ class LiskUtil extends Helper {
 	 * @returns {Object} transaction
 	 */
 	async registerAsDelegate(params, blocksToWait) {
-		const trx = elements.transaction.registerDelegate({
+		const trx = transactions.registerDelegate({
 			...params,
 			networkIdentifier,
 		});
@@ -358,7 +358,7 @@ class LiskUtil extends Helper {
 	 * @param {Number} blocksToWait - Number of blocks to wait
 	 */
 	async castVotes(params, blocksToWait) {
-		const trx = elements.transaction.castVotes({
+		const trx = transactions.castVotes({
 			...params,
 			networkIdentifier,
 		});
@@ -374,7 +374,7 @@ class LiskUtil extends Helper {
 	 * @param {Number} blocksToWait - Number of blocks to wait
 	 */
 	async castUnvotes(params, blocksToWait) {
-		const trx = elements.transaction.castUnvotes({
+		const trx = transactions.castUnvotes({
 			...params,
 			networkIdentifier,
 		});
@@ -395,7 +395,7 @@ class LiskUtil extends Helper {
 	async registerMultisignature(accounts, params, blocksToWait) {
 		const keysgroup = accounts.map(account => account.publicKey);
 
-		const registerMultisignatureTrx = elements.transaction.registerMultisignature(
+		const registerMultisignatureTrx = transactions.registerMultisignature(
 			{ ...params, keysgroup, networkIdentifier }
 		);
 
@@ -426,7 +426,7 @@ class LiskUtil extends Helper {
 	 * @param {Number} blocksToWait - Number of blocks to wait
 	 */
 	async registerDapp(data, blocksToWait) {
-		const dAppTrx = elements.transaction.createDapp({
+		const dAppTrx = transactions.createDapp({
 			...data,
 			networkIdentifier,
 		});
@@ -676,7 +676,7 @@ class LiskUtil extends Helper {
 		if (nodeStatus.data.height >= expectedHeight) {
 			output.print(
 				`Reached expected height: ${expectedHeight}, Node current height: ${
-					nodeStatus.data.height
+				nodeStatus.data.height
 				}`
 			);
 			return;
