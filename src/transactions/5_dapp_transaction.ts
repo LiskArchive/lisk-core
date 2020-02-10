@@ -99,7 +99,7 @@ export class DappTransaction extends BaseTransaction {
 	public readonly containsUniqueData: boolean;
 	public readonly asset: DappAsset;
 	public static TYPE = 5;
-	public static FEE = DAPP_FEE.toString();
+	public static FEE = BigInt(DAPP_FEE);
 
 	public constructor(rawTransaction: unknown) {
 		super(rawTransaction);
@@ -276,7 +276,7 @@ export class DappTransaction extends BaseTransaction {
 		return errors;
 	}
 
-	protected applyAsset(store: transactions.StateStore): ReadonlyArray<transactions.TransactionError> {
+	protected async applyAsset(store: transactions.StateStore): Promise<ReadonlyArray<transactions.TransactionError>> {
 		const errors: transactions.TransactionError[] = [];
 		const nameExists = store.transaction.find(
 			(transaction: transactions.TransactionJSON) =>
@@ -318,7 +318,7 @@ export class DappTransaction extends BaseTransaction {
 	}
 
 	// tslint:disable-next-line prefer-function-over-method
-	protected undoAsset(_: transactions.StateStore): ReadonlyArray<transactions.TransactionError> {
+	protected async undoAsset(_: transactions.StateStore): Promise<ReadonlyArray<transactions.TransactionError>> {
 		return [];
 	}
 

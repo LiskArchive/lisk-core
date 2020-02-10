@@ -53,7 +53,7 @@ export class DelegateTransaction extends BaseTransaction {
 	public readonly asset: DelegateAsset;
 	public readonly containsUniqueData: boolean;
 	public static TYPE = 2;
-	public static FEE = DELEGATE_FEE.toString();
+	public static FEE = BigInt(DELEGATE_FEE);
 
 	public constructor(rawTransaction: unknown) {
 		super(rawTransaction);
@@ -109,9 +109,9 @@ export class DelegateTransaction extends BaseTransaction {
 		return errors;
 	}
 
-	protected applyAsset(store: transactions.StateStore): ReadonlyArray<transactions.TransactionError> {
+	protected async applyAsset(store: transactions.StateStore): Promise<ReadonlyArray<transactions.TransactionError>> {
 		const errors: transactions.TransactionError[] = [];
-		const sender = store.account.get(this.senderId);
+		const sender = await store.account.get(this.senderId);
 		const usernameExists = store.account.find(
 			account => account.username === this.asset.username,
 		);
@@ -134,28 +134,20 @@ export class DelegateTransaction extends BaseTransaction {
 				),
 			);
 		}
-		const updatedSender = {
-			...sender,
-			username: this.asset.username,
-			vote: 0,
-			isDelegate: 1,
-		};
-		store.account.set(updatedSender.address, updatedSender);
+		sender.username = this.asset.username;
+		sender.voteWeight = BigInt(0);
+		sender.isDelegate = 1;
+		store.account.set(sender.address, sender);
 
 		return errors;
 	}
 
-	protected undoAsset(store: transactions.StateStore): ReadonlyArray<transactions.TransactionError> {
-		const sender = store.account.get(this.senderId);
-		const { username, ...strippedSender } = sender;
-		const resetSender = {
-			...sender,
-			// tslint:disable-next-line no-null-keyword - Exception for compatibility with Core 1.4
-			username: null,
-			vote: 0,
-			isDelegate: 0,
-		};
-		store.account.set(strippedSender.address, resetSender);
+	protected async undoAsset(store: transactions.StateStore): Promise<ReadonlyArray<transactions.TransactionError>> {
+		const sender = await store.account.get(this.senderId);
+		sender.username = null;
+		sender.voteWeight = BigInt(0);
+		sender.isDelegate = 0;
+		store.account.set(sender.address, sender);
 
 		return [];
 	}

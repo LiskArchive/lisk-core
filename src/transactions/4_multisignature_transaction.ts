@@ -12,7 +12,6 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import BigNum from '@liskhq/bignum';
 import {
 	transactions,
 	cryptography,
@@ -71,19 +70,16 @@ export const multisignatureAssetFormatSchema = {
 	},
 };
 
-const setMemberAccounts = (
+const setMemberAccounts = async (
 	store: transactions.StateStore,
 	membersPublicKeys: ReadonlyArray<string>,
 ) => {
-	membersPublicKeys.forEach(memberPublicKey => {
+	for (const memberPublicKey of membersPublicKeys) {
 		const address = getAddressFromPublicKey(memberPublicKey);
-		const memberAccount = store.account.getOrDefault(address);
-		const memberAccountWithPublicKey = {
-			...memberAccount,
-			publicKey: memberAccount.publicKey || memberPublicKey,
-		};
-		store.account.set(memberAccount.address, memberAccountWithPublicKey);
-	});
+		const memberAccount = await store.account.getOrDefault(address);
+		memberAccount.publicKey = memberAccount.publicKey || memberPublicKey;
+		store.account.set(memberAccount.address, memberAccount);
+	}
 };
 
 const extractPublicKeysFromAsset = (assetPublicKeys: ReadonlyArray<string>) =>
@@ -98,7 +94,7 @@ export interface MultiSignatureAsset {
 export class MultisignatureTransaction extends BaseTransaction {
 	public readonly asset: MultiSignatureAsset;
 	public static TYPE = 4;
-	public static FEE = MULTISIGNATURE_FEE.toString();
+	public static FEE = BigInt(MULTISIGNATURE_FEE);
 	protected _multisignatureStatus: MultisignatureStatus =
 		MultisignatureStatus.PENDING;
 
@@ -109,7 +105,7 @@ export class MultisignatureTransaction extends BaseTransaction {
 			: {}) as Partial<transactions.TransactionJSON>;
 		this.asset = (tx.asset || {}) as MultiSignatureAsset;
 		// Overwrite fee as it is different from the static fee
-		this.fee = new BigNum(MultisignatureTransaction.FEE).mul(
+		this.fee = MultisignatureTransaction.FEE * BigInt(
 			(this.asset.keysgroup && this.asset.keysgroup.length
 				? this.asset.keysgroup.length
 				: 0) + 1,
@@ -183,7 +179,7 @@ export class MultisignatureTransaction extends BaseTransaction {
 		return errors;
 	}
 
-	public processMultisignatures(_: transactions.StateStore): transactions.TransactionResponse {
+	public async processMultisignatures(_: transactions.StateStore): Promise<transactions.TransactionResponse> {
 		const transactionBytes = this.getBasicBytes();
 
 		const { valid, errors } = validateMultisignatures(
@@ -218,9 +214,9 @@ export class MultisignatureTransaction extends BaseTransaction {
 		return createResponse(this.id, errors);
 	}
 
-	protected applyAsset(store: transactions.StateStore): ReadonlyArray<transactions.TransactionError> {
+	protected async applyAsset(store: transactions.StateStore): Promise<ReadonlyArray<transactions.TransactionError>> {
 		const errors: transactions.TransactionError[] = [];
-		const sender = store.account.get(this.senderId);
+		const sender = await store.account.get(this.senderId);
 
 		// Check if multisignatures already exists on account
 		if (sender.membersPublicKeys && sender.membersPublicKeys.length > 0) {
@@ -244,38 +240,30 @@ export class MultisignatureTransaction extends BaseTransaction {
 			);
 		}
 
-		const updatedSender = {
-			...sender,
-			membersPublicKeys: extractPublicKeysFromAsset(this.asset.keysgroup),
-			multiMin: this.asset.min,
-			multiLifetime: this.asset.lifetime,
-		};
-		store.account.set(updatedSender.address, updatedSender);
+		sender.membersPublicKeys = extractPublicKeysFromAsset(this.asset.keysgroup);
+		sender.multiMin = this.asset.min;
+		sender.multiLifetime = this.asset.lifetime;
+		store.account.set(sender.address, sender);
 
-		setMemberAccounts(store, updatedSender.membersPublicKeys);
+		setMemberAccounts(store, sender.membersPublicKeys);
 
 		return errors;
 	}
 
-	protected undoAsset(store: transactions.StateStore): ReadonlyArray<transactions.TransactionError> {
-		const sender = store.account.get(this.senderId);
-
-		const resetSender = {
-			...sender,
-			membersPublicKeys: [],
-			multiMin: 0,
-			multiLifetime: 0,
-		};
-
-		store.account.set(resetSender.address, resetSender);
+	protected async undoAsset(store: transactions.StateStore): Promise<ReadonlyArray<transactions.TransactionError>> {
+		const sender = await store.account.get(this.senderId);
+		sender.membersPublicKeys = [];
+		sender.multiMin = 0;
+		sender.multiLifetime = 0;
+		store.account.set(sender.address, sender);
 
 		return [];
 	}
 
-	public addMultisignature(
+	public async addMultisignature(
 		store: transactions.StateStore,
 		signatureObject: transactions.SignatureObject,
-	): transactions.TransactionResponse {
+	): Promise<transactions.TransactionResponse> {
 		// Validate signature key belongs to pending multisig registration transaction
 		const keysgroup = this.asset.keysgroup.map((aKey: string) => aKey.slice(1));
 

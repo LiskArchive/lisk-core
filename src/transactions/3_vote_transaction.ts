@@ -12,7 +12,6 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import BigNum from '@liskhq/bignum';
 import {
 	transactions,
 	cryptography,
@@ -35,7 +34,6 @@ const {
 	},
 } = transactions;
 const {
-	bigNumberToBuffer,
 	hexToBuffer,
 	intToBuffer,
 	stringToBuffer,
@@ -57,7 +55,7 @@ export interface VoteAsset {
 	recipientId: string;
 	// Amount is kept for handling exception
 	// For exceptions.votes 15449731671927352923
-	readonly amount: BigNum;
+	readonly amount: bigint;
 	readonly votes: ReadonlyArray<string>;
 }
 
@@ -101,7 +99,7 @@ export class VoteTransaction extends BaseTransaction {
 	public readonly containsUniqueData: boolean;
 	public readonly asset: VoteAsset;
 	public static TYPE = 3;
-	public static FEE = VOTE_FEE.toString();
+	public static FEE = BigInt(VOTE_FEE);
 
 	public constructor(rawTransaction: unknown) {
 		super(rawTransaction);
@@ -113,7 +111,7 @@ export class VoteTransaction extends BaseTransaction {
 			this.asset = {
 				votes: rawAsset.votes,
 				recipientId: rawAsset.recipientId || this.senderId,
-				amount: new BigNum(
+				amount: BigInt(
 					isPositiveNumberString(rawAsset.amount) ? rawAsset.amount : '0',
 				),
 			};
@@ -153,7 +151,7 @@ export class VoteTransaction extends BaseTransaction {
 			this.asset.recipientId.slice(0, -1),
 			BYTESIZES.RECIPIENT_ID,
 		).slice(0, BYTESIZES.RECIPIENT_ID);
-		const transactionAmount = bigNumberToBuffer(
+		const transactionAmount = intToBuffer(
 			this.asset.amount.toString(),
 			BYTESIZES.AMOUNT,
 			'little',
@@ -233,9 +231,9 @@ export class VoteTransaction extends BaseTransaction {
 		return errors;
 	}
 
-	protected applyAsset(store: transactions.StateStore): ReadonlyArray<transactions.TransactionError> {
+	protected async applyAsset(store: transactions.StateStore): Promise<ReadonlyArray<transactions.TransactionError>> {
 		const errors: transactions.TransactionError[] = [];
-		const sender = store.account.get(this.senderId);
+		const sender = await store.account.get(this.senderId);
 		// Deduct amount from sender in case of exceptions
 		// See issue: https://github.com/LiskHQ/lisk-elements/issues/1215
 		const balanceError = verifyAmountBalance(
@@ -247,9 +245,7 @@ export class VoteTransaction extends BaseTransaction {
 		if (balanceError) {
 			errors.push(balanceError);
 		}
-		const updatedSenderBalance = new BigNum(sender.balance).sub(
-			this.asset.amount,
-		);
+		sender.balance -= this.asset.amount;
 
 		this.asset.votes.forEach(actionVotes => {
 			const vote = actionVotes.substring(1);
@@ -320,26 +316,20 @@ export class VoteTransaction extends BaseTransaction {
 				),
 			);
 		}
-		const updatedSender = {
-			...sender,
-			balance: updatedSenderBalance.toString(),
-			votedDelegatesPublicKeys,
-		};
-		store.account.set(updatedSender.address, updatedSender);
+		sender.votedDelegatesPublicKeys = votedDelegatesPublicKeys as string[];
+		store.account.set(sender.address, sender);
 
 		return errors;
 	}
 
-	protected undoAsset(store: transactions.StateStore): ReadonlyArray<transactions.TransactionError> {
+	protected async undoAsset(store: transactions.StateStore): Promise<ReadonlyArray<transactions.TransactionError>> {
 		const errors: transactions.TransactionError[] = [];
-		const sender = store.account.get(this.senderId);
-		const updatedSenderBalance = new BigNum(sender.balance).add(
-			this.asset.amount,
-		);
+		const sender = await store.account.get(this.senderId);
+		sender.balance += this.asset.amount;
 
 		// Deduct amount from sender in case of exceptions
 		// See issue: https://github.com/LiskHQ/lisk-elements/issues/1215
-		if (updatedSenderBalance.gt(MAX_TRANSACTION_AMOUNT)) {
+		if (sender.balance > BigInt(MAX_TRANSACTION_AMOUNT)) {
 			errors.push(
 				new TransactionError(
 					'Invalid amount',
@@ -375,12 +365,8 @@ export class VoteTransaction extends BaseTransaction {
 			);
 		}
 
-		const updatedSender = {
-			...sender,
-			balance: updatedSenderBalance.toString(),
-			votedDelegatesPublicKeys,
-		};
-		store.account.set(updatedSender.address, updatedSender);
+		sender.votedDelegatesPublicKeys = votedDelegatesPublicKeys as string[];
+		store.account.set(sender.address, sender);
 
 		return errors;
 	}
