@@ -1,5 +1,5 @@
 const output = require('codeceptjs').output;
-const elements = require('lisk-elements');
+const { transactions } = require('lisk-elements');
 const {
 	getFixtureUser,
 	from,
@@ -30,7 +30,7 @@ When(
 				networkIdentifier,
 			}));
 
-			const trxs = transfers.map(t => elements.transaction.transfer(t));
+			const trxs = transfers.map(t => transactions.transfer(t));
 
 			await from(
 				Promise.all(trxs.map(t => I.broadcastAndValidateTransaction(t)))
@@ -74,7 +74,7 @@ When(
 			const { passphrase } = getFixtureUser('username', userName);
 			const { address } = await I.createAccount();
 
-			multisignatureTrx = elements.transaction.transfer({
+			multisignatureTrx = transactions.transfer({
 				recipientId: address,
 				amount: TO_BEDDOWS(amount),
 				passphrase,
