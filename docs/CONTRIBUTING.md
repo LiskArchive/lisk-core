@@ -46,9 +46,8 @@ to get help. These are some of them:
 
 If you prefer to chat with LiskHQ and other developers directly:
 
-* [Join the LiskHQ Gitter](https://gitter.im/LiskHQ/lisk)
-* Even though Gitter is a chat service, sometimes it takes several hours for
-  community members to respond &mdash; please be patient!
+* [Join the LiskHQ Discord](https://discordapp.com/invite/7EKWJ7b)
+* Even though Discord is a chat service, sometimes it takes several hours for community members to respond &mdash; please be patient!
 
 ## How Can I Contribute?
 
@@ -157,7 +156,7 @@ the problem:
   described steps and clearly demonstrate the problem. You can use
   [this tool](http://www.cockos.com/licecap/) to record GIFs on macOS and
   Windows, and [this tool](https://github.com/colinkeenan/silentcast) or
-  [this tool](https://github.com/GNOME/byzanz) on Linux.
+  [this tool](https://github.com/cgoodrich/byzanz) on Linux.
 * **If the problem wasn’t triggered by a specific action**, describe what you
   were doing before the problem happened and share more information using the
   guidelines below.
@@ -207,7 +206,7 @@ following information:
   or point out the part of Lisk Core which the suggestion is related to. You
   can use [this tool](http://www.cockos.com/licecap/) to record GIFs on macOS
   and Windows, and [this tool](https://github.com/colinkeenan/silentcast) or
-  [this tool](https://github.com/GNOME/byzanz) on Linux.
+  [this tool](https://github.com/cgoodrich/byzanz) on Linux.
 * **Explain why this enhancement would be useful** to most Lisk and
   Lisk Core users.
 * **Specify which version of Lisk and Lisk Core you’re using.**
