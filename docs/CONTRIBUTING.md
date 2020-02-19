@@ -169,7 +169,7 @@ Provide more context by answering these questions:
 * If the problem started happening recently, **can you reproduce the problem in
   an older version of Lisk Core?** What’s the most recent version in which
   the problem doesn’t happen? You can download older versions of Lisk Core
-  from [the releases page](https://github.com/LiskHQ/Lisk Core/releases).
+  from [the releases page](https://github.com/LiskHQ/Lisk-Core/releases).
 * **Can you reliably reproduce the issue?** If not, provide details about how
   often the problem happens and under which conditions it normally happens.
 
