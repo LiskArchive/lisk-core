@@ -12,7 +12,6 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import BigNum from '@liskhq/bignum';
 import { transactions, cryptography, validator as liskValidator } from 'lisk-sdk';
 import {
 	BaseTransaction,
@@ -35,7 +34,7 @@ const TRANSACTION_DAPP_REGISTERATION_TYPE = 5;
 
 export interface OutTransferAsset {
 	readonly recipientId: string;
-	readonly amount: BigNum;
+	readonly amount: bigint;
 	readonly outTransfer: {
 		readonly dappId: string;
 		readonly transactionId: string;
@@ -84,7 +83,7 @@ export class OutTransferTransaction extends BaseTransaction {
 	public readonly asset: OutTransferAsset;
 	public readonly containsUniqueData: boolean;
 	public static TYPE = 7;
-	public static FEE = OUT_TRANSFER_FEE.toString();
+	public static FEE = BigInt(OUT_TRANSFER_FEE);
 
 	public constructor(rawTransaction: unknown) {
 		super(rawTransaction);
@@ -94,7 +93,7 @@ export class OutTransferTransaction extends BaseTransaction {
 
 		const rawAsset = tx.asset as RawAsset;
 		this.asset = {
-			amount: new BigNum(isPositiveNumberString(rawAsset.amount) ? rawAsset.amount : '0'),
+			amount: BigInt(isPositiveNumberString(rawAsset.amount) ? rawAsset.amount : '0'),
 			recipientId: rawAsset.recipientId || '',
 			outTransfer: rawAsset.outTransfer || {},
 		} as OutTransferAsset;
@@ -135,7 +134,7 @@ export class OutTransferTransaction extends BaseTransaction {
 			constants.BYTESIZES.RECIPIENT_ID,
 		).slice(0, constants.BYTESIZES.RECIPIENT_ID);
 
-		const transactionAmount = cryptography.bigNumberToBuffer(
+		const transactionAmount = cryptography.intToBuffer(
 			this.asset.amount.toString(),
 			constants.BYTESIZES.AMOUNT,
 			'little',
@@ -193,7 +192,7 @@ export class OutTransferTransaction extends BaseTransaction {
 		) as transactions.TransactionError[];
 
 		// Amount has to be greater than 0
-		if (this.asset.amount.lte(0)) {
+		if (this.asset.amount <= BigInt(0)) {
 			errors.push(
 				new TransactionError(
 					'Amount must be greater than zero for outTransfer transaction',
@@ -218,7 +217,7 @@ export class OutTransferTransaction extends BaseTransaction {
 		return errors;
 	}
 
-	protected applyAsset(store: transactions.StateStore): ReadonlyArray<transactions.TransactionError> {
+	protected async applyAsset(store: transactions.StateStore): Promise<ReadonlyArray<transactions.TransactionError>> {
 		const errors: transactions.TransactionError[] = [];
 		const dappRegistrationTransaction = store.transaction.get(
 			this.asset.outTransfer.dappId
@@ -237,7 +236,7 @@ export class OutTransferTransaction extends BaseTransaction {
 			);
 		}
 
-		const sender = store.account.get(this.senderId);
+		const sender = await store.account.get(this.senderId);
 
 		const balanceError = verifyAmountBalance(
 			this.id,
@@ -249,37 +248,27 @@ export class OutTransferTransaction extends BaseTransaction {
 			errors.push(balanceError);
 		}
 
-		const updatedBalance = new BigNum(sender.balance).sub(this.asset.amount);
+		sender.balance -= this.asset.amount;
+		store.account.set(sender.address, sender);
 
-		const updatedSender = { ...sender, balance: updatedBalance.toString() };
-		store.account.set(updatedSender.address, updatedSender);
+		const recipient = await store.account.getOrDefault(this.asset.recipientId);
+		recipient.balance += this.asset.amount;
 
-		const recipient = store.account.getOrDefault(this.asset.recipientId);
-
-		const updatedRecipientBalance = new BigNum(recipient.balance).add(
-			this.asset.amount
-		);
-
-		if (updatedRecipientBalance.gt(MAX_TRANSACTION_AMOUNT)) {
+		if (recipient.balance > BigInt(MAX_TRANSACTION_AMOUNT)) {
 			errors.push(new TransactionError('Invalid amount', this.id, '.amount'));
 		}
 
-		const updatedRecipient = {
-			...recipient,
-			balance: updatedRecipientBalance.toString(),
-		};
-
-		store.account.set(updatedRecipient.address, updatedRecipient);
+		store.account.set(recipient.address, recipient);
 
 		return errors;
 	}
 
-	public undoAsset(store: transactions.StateStore): ReadonlyArray<transactions.TransactionError> {
+	public async undoAsset(store: transactions.StateStore): Promise<ReadonlyArray<transactions.TransactionError>> {
 		const errors: transactions.TransactionError[] = [];
-		const sender = store.account.get(this.senderId);
-		const updatedBalance = new BigNum(sender.balance).add(this.asset.amount);
+		const sender = await store.account.get(this.senderId);
+		sender.balance += this.asset.amount;
 
-		if (updatedBalance.gt(MAX_TRANSACTION_AMOUNT)) {
+		if (sender.balance > BigInt(MAX_TRANSACTION_AMOUNT)) {
 			errors.push(
 				new TransactionError(
 					'Invalid amount',
@@ -290,33 +279,24 @@ export class OutTransferTransaction extends BaseTransaction {
 			);
 		}
 
-		const updatedSender = { ...sender, balance: updatedBalance.toString() };
-		store.account.set(updatedSender.address, updatedSender);
+		store.account.set(sender.address, sender);
 
-		const recipient = store.account.getOrDefault(this.asset.recipientId);
+		const recipient = await store.account.getOrDefault(this.asset.recipientId);
+		recipient.balance -= this.asset.amount;
 
-		const updatedRecipientBalance = new BigNum(recipient.balance).sub(
-			this.asset.amount
-		);
-
-		if (updatedRecipientBalance.lt(0)) {
+		if (recipient.balance < BigInt(0)) {
 			errors.push(
 				new TransactionError(
 					`Account does not have enough LSK: ${recipient.address}, balance: ${
 						recipient.balance
 					}`,
 					this.id,
-					updatedRecipientBalance.toString()
+					recipient.balance.toString(),
 				)
 			);
 		}
 
-		const updatedRecipient = {
-			...recipient,
-			balance: updatedRecipientBalance.toString(),
-		};
-
-		store.account.set(updatedRecipient.address, updatedRecipient);
+		store.account.set(recipient.address, recipient);
 
 		return errors;
 	}

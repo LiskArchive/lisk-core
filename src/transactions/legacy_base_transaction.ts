@@ -12,7 +12,6 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import BigNum from '@liskhq/bignum';
 import {
 	transactions,
 	cryptography,
@@ -54,23 +53,28 @@ const {
 } = cryptography;
 
 export interface StateStoreGetter<T> {
-	get(key: string): T;
+	get(key: string): Promise<T>;
 	find(func: (item: T) => boolean): T | undefined;
 }
 
 export interface StateStoreDefaultGetter<T> {
-	getOrDefault(key: string): T;
+	getOrDefault(key: string): Promise<T>;
 }
 
 export interface StateStoreSetter<T> {
 	set(key: string, value: T): void;
 }
 
+export interface StateStoreTransactionGetter<T> {
+	get(key: string): T;
+	find(func: (item: T) => boolean): T | undefined;
+}
+
 export interface StateStore {
 	readonly account: StateStoreGetter<transactions.Account> &
 		StateStoreDefaultGetter<transactions.Account> &
 		StateStoreSetter<transactions.Account>;
-	readonly transaction: StateStoreGetter<transactions.TransactionJSON>;
+	readonly transaction: StateStoreTransactionGetter<transactions.TransactionJSON>;
 }
 
 export interface StateStoreCache<T> {
@@ -104,11 +108,11 @@ export abstract class BaseTransaction {
 	public readonly type: number;
 	public readonly containsUniqueData?: boolean;
 	public readonly asset: object;
-	public fee: BigNum;
+	public fee: bigint;
 	public receivedAt?: Date;
 
 	public static TYPE: number;
-	public static FEE = '0';
+	public static FEE = BigInt('0');
 
 	protected _id?: string;
 	protected _senderPublicKey?: string;
@@ -120,17 +124,17 @@ export abstract class BaseTransaction {
 	protected abstract validateAsset(): ReadonlyArray<transactions.TransactionError>;
 	protected abstract applyAsset(
 		store: StateStore,
-	): ReadonlyArray<transactions.TransactionError>;
+	): Promise<ReadonlyArray<transactions.TransactionError>>;
 	protected abstract undoAsset(
 		store: StateStore,
-	): ReadonlyArray<transactions.TransactionError>;
+	): Promise<ReadonlyArray<transactions.TransactionError>>;
 
 	public constructor(rawTransaction: unknown) {
 		const tx = (typeof rawTransaction === 'object' && rawTransaction !== null
 			? rawTransaction
 			: {}) as Partial<transactions.TransactionJSON>;
 
-		this.fee = new BigNum((this.constructor as typeof BaseTransaction).FEE);
+		this.fee = (this.constructor as typeof BaseTransaction).FEE;
 
 		this.type =
 			typeof tx.type === 'number'
@@ -280,24 +284,20 @@ export abstract class BaseTransaction {
 		return createResponse(this.id, errors);
 	}
 
-	public apply(store: StateStore): transactions.TransactionResponse {
-		const sender = store.account.getOrDefault(this.senderId);
+	public async apply(store: StateStore): Promise<transactions.TransactionResponse> {
+		const sender = await store.account.getOrDefault(this.senderId);
 		const errors = this._verify(sender) as transactions.TransactionError[];
 
 		// Verify MultiSignature
-		const { errors: multiSigError } = this.processMultisignatures(store);
+		const { errors: multiSigError } = await this.processMultisignatures(store);
 		if (multiSigError) {
 			errors.push(...multiSigError);
 		}
 
-		const updatedBalance = new BigNum(sender.balance).sub(this.fee);
-		const updatedSender = {
-			...sender,
-			balance: updatedBalance.toString(),
-			publicKey: sender.publicKey || this.senderPublicKey,
-		};
-		store.account.set(updatedSender.address, updatedSender);
-		const assetErrors = this.applyAsset(store);
+		sender.balance -= this.fee;
+		sender.publicKey = sender.publicKey || this.senderPublicKey;
+		store.account.set(sender.address, sender);
+		const assetErrors = await this.applyAsset(store);
 
 		errors.push(...assetErrors);
 
@@ -316,27 +316,25 @@ export abstract class BaseTransaction {
 		return createResponse(this.id, errors);
 	}
 
-	public undo(store: StateStore): transactions.TransactionResponse {
-		const sender = store.account.getOrDefault(this.senderId);
-		const updatedBalance = new BigNum(sender.balance).add(this.fee);
-		const updatedAccount = {
-			...sender,
-			balance: updatedBalance.toString(),
-			publicKey: sender.publicKey || this.senderPublicKey,
-		};
-		const errors = updatedBalance.lte(MAX_TRANSACTION_AMOUNT)
+	public async undo(store: StateStore): Promise<transactions.TransactionResponse> {
+		const sender = await store.account.getOrDefault(this.senderId);
+		const originalBalance = sender.balance;
+		sender.balance += this.fee;
+		sender.publicKey = sender.publicKey || this.senderPublicKey;
+		
+		const errors = sender.balance <= BigInt(MAX_TRANSACTION_AMOUNT)
 			? []
 			: [
 					new TransactionError(
 						'Invalid balance amount',
 						this.id,
 						'.balance',
-						sender.balance,
-						updatedBalance.toString(),
+						originalBalance.toString(),
+						sender.balance.toString(),
 					),
 			  ];
-		store.account.set(updatedAccount.address, updatedAccount);
-		const assetErrors = this.undoAsset(store);
+		store.account.set(sender.address, sender);
+		const assetErrors = await this.undoAsset(store);
 		errors.push(...assetErrors);
 
 		return createResponse(this.id, errors);
@@ -350,12 +348,12 @@ export abstract class BaseTransaction {
 		]);
 	}
 
-	public addMultisignature(
+	public async addMultisignature(
 		store: StateStore,
 		signatureObject: transactions.SignatureObject,
-	): transactions.TransactionResponse {
+	): Promise<transactions.TransactionResponse> {
 		// Get the account
-		const account = store.account.get(this.senderId);
+		const account = await store.account.get(this.senderId);
 		// Validate signature key belongs to account's multisignature group
 		if (
 			account.membersPublicKeys &&
@@ -420,8 +418,8 @@ export abstract class BaseTransaction {
 		]);
 	}
 
-	public processMultisignatures(store: StateStore): transactions.TransactionResponse {
-		const sender = store.account.get(this.senderId);
+	public async processMultisignatures(store: StateStore): Promise<transactions.TransactionResponse> {
+		const sender = await store.account.get(this.senderId);
 		const transactionBytes = this.getBasicBytes();
 
 		const { status, errors } = verifyMultiSignatures(
@@ -491,10 +489,7 @@ export abstract class BaseTransaction {
 		const transactionRecipientID = Buffer.alloc(BYTESIZES.RECIPIENT_ID);
 
 		// TODO: Remove on the hard fork change
-		const transactionAmount = new BigNum(0).toBuffer({
-			endian: 'little',
-			size: BYTESIZES.AMOUNT,
-		});
+		const transactionAmount = cryptography.intToBuffer('0', BYTESIZES.AMOUNT, 'little');
 
 		return Buffer.concat([
 			transactionType,

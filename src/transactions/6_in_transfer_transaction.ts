@@ -12,7 +12,6 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import BigNum from '@liskhq/bignum';
 import { cryptography, transactions, validator as liskValidator } from 'lisk-sdk';
 import {
 	BaseTransaction,
@@ -37,7 +36,7 @@ const {
 } = liskValidator;
 
 export interface InTransferAsset {
-	readonly amount: BigNum;
+	readonly amount: bigint;
 	readonly inTransfer: {
 		readonly dappId: string;
 	};
@@ -74,7 +73,7 @@ interface RawAsset {
 export class InTransferTransaction extends BaseTransaction {
 	public readonly asset: InTransferAsset;
 	public static TYPE = 6;
-	public static FEE = IN_TRANSFER_FEE.toString();
+	public static FEE = BigInt(IN_TRANSFER_FEE);
 
 	public constructor(rawTransaction: unknown) {
 		super(rawTransaction);
@@ -84,7 +83,7 @@ export class InTransferTransaction extends BaseTransaction {
 
 		const rawAsset = tx.asset as RawAsset;
 		this.asset = {
-			amount: new BigNum(isPositiveNumberString(rawAsset.amount) ? rawAsset.amount : '0'),
+			amount: BigInt(isPositiveNumberString(rawAsset.amount) ? rawAsset.amount : '0'),
 			inTransfer: rawAsset.inTransfer || {},
 		} as InTransferAsset;
 	}
@@ -103,7 +102,7 @@ export class InTransferTransaction extends BaseTransaction {
 
 		const transactionRecipientID = Buffer.alloc(constants.BYTESIZES.RECIPIENT_ID);
 
-		const transactionAmount = cryptography.bigNumberToBuffer(
+		const transactionAmount = cryptography.intToBuffer(
 			this.asset.amount.toString(),
 			constants.BYTESIZES.AMOUNT,
 			'little',
@@ -166,7 +165,7 @@ export class InTransferTransaction extends BaseTransaction {
 			schemaErrors,
 		) as transactions.TransactionError[];
 
-		if (this.asset.amount.lte(0)) {
+		if (this.asset.amount <= BigInt(0)) {
 			errors.push(
 				new TransactionError(
 					'Amount must be greater than 0',
@@ -181,7 +180,7 @@ export class InTransferTransaction extends BaseTransaction {
 		return errors;
 	}
 
-	protected applyAsset(store: transactions.StateStore): ReadonlyArray<transactions.TransactionError> {
+	protected async applyAsset(store: transactions.StateStore): Promise<ReadonlyArray<transactions.TransactionError>> {
 		const errors: transactions.TransactionError[] = [];
 		const idExists = store.transaction.find(
 			(transaction: transactions.TransactionJSON) =>
@@ -198,7 +197,7 @@ export class InTransferTransaction extends BaseTransaction {
 				)
 			);
 		}
-		const sender = store.account.get(this.senderId);
+		const sender = await store.account.get(this.senderId);
 
 		const balanceError = verifyAmountBalance(
 			this.id,
@@ -210,61 +209,42 @@ export class InTransferTransaction extends BaseTransaction {
 			errors.push(balanceError);
 		}
 
-		const updatedBalance = new BigNum(sender.balance).sub(this.asset.amount);
+		sender.balance -= this.asset.amount;
 
-		const updatedSender = { ...sender, balance: updatedBalance.toString() };
-
-		store.account.set(updatedSender.address, updatedSender);
+		store.account.set(sender.address, sender);
 
 		const dappTransaction = store.transaction.get(this.asset.inTransfer.dappId);
 
-		const recipient = store.account.get(cryptography.getAddressFromPublicKey(dappTransaction.senderPublicKey));
-
-		const updatedRecipientBalance = new BigNum(recipient.balance).add(
-			this.asset.amount
-		);
-		const updatedRecipient = {
-			...recipient,
-			balance: updatedRecipientBalance.toString(),
-		};
-
-		store.account.set(updatedRecipient.address, updatedRecipient);
+		const recipient = await store.account.get(cryptography.getAddressFromPublicKey(dappTransaction.senderPublicKey));
+		recipient.balance += this.asset.amount;
+		store.account.set(recipient.address, recipient);
 
 		return errors;
 	}
 
-	protected undoAsset(store: transactions.StateStore): ReadonlyArray<transactions.TransactionError> {
+	protected async undoAsset(store: transactions.StateStore): Promise<ReadonlyArray<transactions.TransactionError>> {
 		const errors: transactions.TransactionError[] = [];
-		const sender = store.account.get(this.senderId);
-		const updatedBalance = new BigNum(sender.balance).add(this.asset.amount);
-		const updatedSender = { ...sender, balance: updatedBalance.toString() };
-
-		store.account.set(updatedSender.address, updatedSender);
+		const sender = await store.account.get(this.senderId);
+		sender.balance += this.asset.amount;
+		store.account.set(sender.address, sender);
 
 		const dappTransaction = store.transaction.get(this.asset.inTransfer.dappId);
 
-		const recipient = store.account.get(cryptography.getAddressFromPublicKey(dappTransaction.senderPublicKey));
+		const recipient = await store.account.get(cryptography.getAddressFromPublicKey(dappTransaction.senderPublicKey));
+		recipient.balance -= this.asset.amount;
 
-		const updatedRecipientBalance = new BigNum(recipient.balance).sub(
-			this.asset.amount
-		);
-
-		if (updatedRecipientBalance.lt(0)) {
+		if (recipient.balance < BigInt(0)) {
 			errors.push(
 				new TransactionError(
 					`Account does not have enough LSK: ${
 						recipient.address
-					}, balance: ${convertBeddowsToLSK(recipient.balance)}.`,
+					}, balance: ${convertBeddowsToLSK(recipient.balance.toString())}.`,
 					this.id
 				)
 			);
 		}
-		const updatedRecipient = {
-			...recipient,
-			balance: updatedRecipientBalance.toString(),
-		};
 
-		store.account.set(updatedRecipient.address, updatedRecipient);
+		store.account.set(recipient.address, recipient);
 
 		return errors;
 	}
