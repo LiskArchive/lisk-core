@@ -3,7 +3,11 @@
 # Lisk Core
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
-[![Join the chat at https://gitter.im/LiskHQ/lisk-core](https://badges.gitter.im/LiskHQ/lisk-core.svg)](https://gitter.im/LiskHQ/lisk-core?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/liskHQ/lisk-core)
+![GitHub repo size](https://img.shields.io/github/repo-size/liskhq/lisk-core)
+[![DeepScan grade](https://deepscan.io/api/teams/6759/projects/8870/branches/113510/badge/grade.svg)](https://deepscan.io/dashboard/#view=project&tid=6759&pid=8870&bid=113510)
+![GitHub issues](https://img.shields.io/github/issues-raw/liskhq/lisk-core)
+![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/liskhq/lisk-core)
 
 Lisk is a next-generation crypto-currency and decentralized application platform, written entirely in JavaScript. The official documentation about the whole ecosystem can be found in https://lisk.io/documentation.
 
