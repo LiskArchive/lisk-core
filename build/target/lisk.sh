@@ -499,7 +499,7 @@ case $1 in
 "logs")
 	tail_logs
 	;;
-"lisky|lisk|commander")
+"lisky"|"lisk"|"commander")
 	lisk
 	;;
 "help")
