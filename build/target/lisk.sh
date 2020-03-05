@@ -387,7 +387,7 @@ check_pid() {
 }
 
 lisk() {
-	node "$PWD/bin/lisk"
+	node "$PWD/bin/lisk" $@
 }
 
 tail_logs() {
@@ -499,8 +499,13 @@ case $1 in
 "logs")
 	tail_logs
 	;;
-"lisky|lisk|commander")
-	lisk
+"lisky"|"lisk"|"commander")
+	echo
+	echo "Note: invoking Lisk Commander from lisk.sh is deprecated and will be removed in a future version"
+	echo "      To run the included version of Lisk Commander directly, 'source env.sh' and then"
+	echo "      'bin/lisk'"
+	echo
+	lisk "${@:2}"
 	;;
 "help")
 	help
