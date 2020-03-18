@@ -39,10 +39,6 @@
 					"description": "Peers related API Calls"
 			},
 			{
-					"name": "Signatures",
-					"description": "Signatures related API calls"
-			},
-			{
 					"name": "Transactions",
 					"description": "Transactions related API calls"
 			},
@@ -80,9 +76,6 @@
 											"$ref": "#/parameters/publicKey"
 									},
 									{
-											"$ref": "#/parameters/secondPublicKey"
-									},
-									{
 											"$ref": "#/parameters/username"
 									},
 									{
@@ -109,116 +102,6 @@
 											"description": "List of accounts",
 											"schema": {
 													"$ref": "#/definitions/AccountsResponse"
-											}
-									},
-									"400": {
-											"description": "Malformed query or parameters",
-											"schema": {
-													"$ref": "#/definitions/ParamErrorResponse"
-											}
-									},
-									"429": {
-											"description": "Too many requests, exceeded rate limit",
-											"schema": {
-													"$ref": "#/definitions/RequestLimitError"
-											}
-									},
-									"500": {
-											"description": "Unexpected error",
-											"schema": {
-													"$ref": "#/definitions/UnexpectedError"
-											}
-									}
-							}
-					}
-			},
-			"/accounts/{address}/multisignature_groups": {
-					"x-swagger-router-controller": "accounts",
-					"get": {
-							"tags": [
-									"Accounts"
-							],
-							"summary": "Requests multisignature groups data",
-							"operationId": "getMultisignatureGroups",
-							"description": "Searches for the specified account in the system and responds with a list of the multisignature groups that this account is member of.",
-							"produces": [
-									"application/json"
-							],
-							"parameters": [
-									{
-											"name": "address",
-											"in": "path",
-											"description": "Lisk address of an account",
-											"type": "string",
-											"format": "address",
-											"required": true,
-											"minLength": 2,
-											"maxLength": 22
-									}
-							],
-							"responses": {
-									"200": {
-											"description": "List of multisignature accounts",
-											"schema": {
-													"$ref": "#/definitions/MultisignatureGroupsResponse"
-											}
-									},
-									"400": {
-											"description": "Malformed query or parameters",
-											"schema": {
-													"$ref": "#/definitions/ParamErrorResponse"
-											}
-									},
-									"404": {
-											"description": "Multisignature account not found",
-											"schema": {
-													"$ref": "#/definitions/NotFoundError"
-											}
-									},
-									"429": {
-											"description": "Too many requests, exceeded rate limit",
-											"schema": {
-													"$ref": "#/definitions/RequestLimitError"
-											}
-									},
-									"500": {
-											"description": "Unexpected error",
-											"schema": {
-													"$ref": "#/definitions/UnexpectedError"
-											}
-									}
-							}
-					}
-			},
-			"/accounts/{address}/multisignature_memberships": {
-					"x-swagger-router-controller": "accounts",
-					"get": {
-							"tags": [
-									"Accounts"
-							],
-							"summary": "Requests multisignature membership data",
-							"operationId": "getMultisignatureMemberships",
-							"description": "Searches for the specified multisignature group and responds with a list of all members of this particular multisignature group.",
-							"produces": [
-									"application/json"
-							],
-							"parameters": [
-									{
-											"name": "address",
-											"in": "path",
-											"description": "Lisk address of a multisignature account",
-											"type": "string",
-											"format": "address",
-											"required": true,
-											"minLength": 2,
-											"maxLength": 22
-									}
-							],
-							"responses": {
-									"200": {
-											"description": "List of multisignature accounts",
-											"schema": {
-													"$ref": "#/definitions/MultisignatureGroupsResponse"
 											}
 									},
 									"400": {
@@ -615,7 +498,7 @@
 							}
 					}
 			},
-			"/node/transactions/{state}": {
+			"/node/transactions": {
 					"x-swagger-router-controller": "node",
 					"get": {
 							"tags": [
@@ -629,25 +512,7 @@
 							],
 							"parameters": [
 									{
-											"in": "path",
-											"name": "state",
-											"description": "State of transactions to query",
-											"required": true,
-											"type": "string",
-											"enum": [
-													"pending",
-													"ready",
-													"received",
-													"validated",
-													"verified"
-											],
-											"default": "verified"
-									},
-									{
 											"$ref": "#/parameters/transactionId"
-									},
-									{
-											"$ref": "#/parameters/recipientId"
 									},
 									{
 											"$ref": "#/parameters/senderId"
@@ -671,16 +536,12 @@
 											"required": false,
 											"type": "string",
 											"enum": [
-													"amount:asc",
-													"amount:desc",
 													"fee:asc",
 													"fee:desc",
 													"type:asc",
-													"type:desc",
-													"timestamp:asc",
-													"timestamp:desc"
+													"type:desc"
 											],
-											"default": "amount:desc"
+											"default": "fee:desc"
 									}
 							],
 							"responses": {
@@ -730,9 +591,6 @@
 									},
 									{
 											"$ref": "#/parameters/publicKey"
-									},
-									{
-											"$ref": "#/parameters/secondPublicKey"
 									},
 									{
 											"$ref": "#/parameters/username"
@@ -1035,9 +893,6 @@
 											"$ref": "#/parameters/publicKey"
 									},
 									{
-											"$ref": "#/parameters/secondPublicKey"
-									},
-									{
 											"$ref": "#/parameters/offset"
 									},
 									{
@@ -1117,9 +972,6 @@
 											"$ref": "#/parameters/publicKey"
 									},
 									{
-											"$ref": "#/parameters/secondPublicKey"
-									},
-									{
 											"$ref": "#/parameters/offset"
 									},
 									{
@@ -1181,66 +1033,6 @@
 							}
 					}
 			},
-			"/signatures": {
-					"x-swagger-router-controller": "signatures",
-					"post": {
-							"tags": [
-									"Signatures"
-							],
-							"summary": "Submits a signature object to sign multisignature transactions",
-							"operationId": "postSignature",
-							"description": "Submits signature to sign a multisignature transaction.\nSignature objects can be generated locally either by using Lisk Commander or with Lisk Elements.\n",
-							"consumes": [
-									"application/json"
-							],
-							"produces": [
-									"application/json"
-							],
-							"parameters": [
-									{
-											"in": "body",
-											"name": "signature",
-											"description": "Signature object to submit to the network",
-											"required": true,
-											"schema": {
-													"$ref": "#/definitions/Signature"
-											}
-									}
-							],
-							"responses": {
-									"200": {
-											"description": "Signature is accepted by the node for processing",
-											"schema": {
-													"$ref": "#/definitions/SignatureResponse"
-											}
-									},
-									"400": {
-											"description": "Malformed query or parameters",
-											"schema": {
-													"$ref": "#/definitions/ParamErrorResponse"
-											}
-									},
-									"409": {
-											"description": "Some error related to processing of request",
-											"schema": {
-													"$ref": "#/definitions/ProcessingError"
-											}
-									},
-									"429": {
-											"description": "Too many requests, exceeded rate limit",
-											"schema": {
-													"$ref": "#/definitions/RequestLimitError"
-											}
-									},
-									"500": {
-											"description": "Unexpected error",
-											"schema": {
-													"$ref": "#/definitions/UnexpectedError"
-											}
-									}
-							}
-					}
-			},
 			"/transactions": {
 					"x-swagger-router-controller": "transactions",
 					"get": {
@@ -1283,12 +1075,6 @@
 											"$ref": "#/parameters/maxAmount"
 									},
 									{
-											"$ref": "#/parameters/fromTimestamp"
-									},
-									{
-											"$ref": "#/parameters/toTimestamp"
-									},
-									{
 											"$ref": "#/parameters/blockId"
 									},
 									{
@@ -1309,9 +1095,7 @@
 													"fee:asc",
 													"fee:desc",
 													"type:asc",
-													"type:desc",
-													"timestamp:asc",
-													"timestamp:desc"
+													"type:desc"
 											],
 											"default": "amount:asc"
 									},
@@ -1508,13 +1292,6 @@
 					"type": "string",
 					"format": "publicKey"
 			},
-			"secondPublicKey": {
-					"name": "secondPublicKey",
-					"in": "query",
-					"description": "Second public key to query",
-					"type": "string",
-					"format": "publicKey"
-			},
 			"username": {
 					"name": "username",
 					"in": "query",
@@ -1656,9 +1433,10 @@
 							"id",
 							"type",
 							"senderPublicKey",
-							"timestamp",
+							"nonce",
+							"fee",
 							"asset",
-							"signature"
+							"signatures"
 					],
 					"properties": {
 							"id": {
@@ -1674,10 +1452,15 @@
 									"minimum": 0,
 									"description": "Describes the Transaction type.\n"
 							},
-							"timestamp": {
-									"type": "integer",
-									"example": 28227090,
-									"description": "Time when the transaction was created.\nUnix Timestamp.\n"
+							"nonce": {
+									"type": "string",
+									"example": "0",
+									"description": "Unique sequence of number per account\n"
+							},
+							"fee": {
+									"type": "string",
+									"example": "1000000",
+									"description": "Fee for the transaction.\n"
 							},
 							"senderPublicKey": {
 									"type": "string",
@@ -1685,21 +1468,9 @@
 									"example": "2ca9a7143fc721fdc540fef893b27e8d648d2288efa61e56264edf01a2c23079",
 									"description": "The public key of the Senders' account.\n"
 							},
-							"signature": {
-									"type": "string",
-									"format": "signature",
-									"example": "2821d93a742c4edf5fd960efad41a4def7bf0fd0f7c09869aed524f6f52bf9c97a617095e2c712bd28b4279078a29509b339ac55187854006591aa759784c205",
-									"description": "Derived from a SHA-256 hash of the transaction object,\nthat is signed by the private key of the account who created the transaction.\n"
-							},
-							"signSignature": {
-									"type": "string",
-									"format": "signature",
-									"example": "2821d93a742c4edf5fd960efad41a4def7bf0fd0f7c09869aed524f6f52bf9c97a617095e2c712bd28b4279078a29509b339ac55187854006591aa759784c205",
-									"description": "Contains the second signature, if the transaction is sent from an account with second passphrase activated."
-							},
 							"signatures": {
 									"type": "array",
-									"description": "If the transaction is a multisignature transaction, all signatures of the members of the corresponding multisignature group will be listed here.",
+									"description": "Derived from a SHA-256 hash of the transaction object, that is signed by the private key of the account who created the transaction.",
 									"items": {
 											"type": "string",
 											"format": "signature",
@@ -1821,29 +1592,6 @@
 							},
 							"meta": {
 									"$ref": "#/definitions/Meta"
-							},
-							"links": {
-									"type": "object"
-							}
-					}
-			},
-			"MultisignatureGroupsResponse": {
-					"type": "object",
-					"required": [
-							"data",
-							"meta",
-							"links"
-					],
-					"properties": {
-							"data": {
-									"description": "List of multisignature groups",
-									"type": "array",
-									"items": {
-											"$ref": "#/definitions/MultisignatureGroup"
-									}
-							},
-							"meta": {
-									"type": "object"
 							},
 							"links": {
 									"type": "object"
@@ -2049,45 +1797,6 @@
 							}
 					}
 			},
-			"SignatureResponse": {
-					"description": "Signature response",
-					"type": "object",
-					"required": [
-							"data",
-							"meta",
-							"links"
-					],
-					"properties": {
-							"data": {
-									"type": "object",
-									"required": [
-											"message"
-									],
-									"properties": {
-											"message": {
-													"type": "string",
-													"minLength": 1
-											}
-									}
-							},
-							"meta": {
-									"type": "object",
-									"required": [
-											"status"
-									],
-									"properties": {
-											"status": {
-													"description": "Acceptance status for the signature",
-													"type": "boolean",
-													"example": true
-											}
-									}
-							},
-							"links": {
-									"type": "object"
-							}
-					}
-			},
 			"TransactionsResponse": {
 					"description": "Transactions response",
 					"type": "object",
@@ -2174,9 +1883,9 @@
 							"type",
 							"fee",
 							"senderPublicKey",
-							"timestamp",
+							"nonce",
 							"asset",
-							"signature"
+							"signatures"
 					],
 					"properties": {
 							"id": {
@@ -2210,10 +1919,10 @@
 									"example": "6258354802676165798",
 									"description": "The Id of the block, this transaction is included in.\n"
 							},
-							"timestamp": {
-									"type": "integer",
-									"example": 28227090,
-									"description": "Time when the transaction was created.\nUnix Timestamp.\n"
+							"nonce": {
+									"type": "string",
+									"example": "1",
+									"description": "Unique sequence of number per account\n"
 							},
 							"senderId": {
 									"type": "string",
@@ -2227,31 +1936,13 @@
 									"example": "2ca9a7143fc721fdc540fef893b27e8d648d2288efa61e56264edf01a2c23079",
 									"description": "The public key of the Senders' account.\n"
 							},
-							"senderSecondPublicKey": {
-									"type": "string",
-									"format": "publicKey",
-									"example": "2ca9a7143fc721fdc540fef893b27e8d648d2288efa61e56264edf01a2c23079",
-									"description": "The second public key of the Senders' account, if it exists.\n"
-							},
-							"signature": {
-									"type": "string",
-									"format": "signature",
-									"example": "2821d93a742c4edf5fd960efad41a4def7bf0fd0f7c09869aed524f6f52bf9c97a617095e2c712bd28b4279078a29509b339ac55187854006591aa759784c205",
-									"description": "Derived from a SHA-256 hash of the transaction object,\nthat is signed by the private key of the account who created the transaction.\n"
-							},
-							"signSignature": {
-									"type": "string",
-									"format": "signature",
-									"example": "2821d93a742c4edf5fd960efad41a4def7bf0fd0f7c09869aed524f6f52bf9c97a617095e2c712bd28b4279078a29509b339ac55187854006591aa759784c205",
-									"description": "Contains the second signature, if the transaction is sent from an account with second passphrase activated."
-							},
 							"signatures": {
 									"type": "array",
 									"items": {
 											"type": "string",
 											"format": "signature",
 											"example": "72c9b2aa734ec1b97549718ddf0d4737fd38a7f0fd105ea28486f2d989e9b3e399238d81a93aa45c27309d91ce604a5db9d25c9c90a138821f2011bc6636c60a",
-											"description": "If the transaction is a multisignature transaction, all signatures of the members of the corresponding multisignature group will be listed here."
+											"description": "Derived from a SHA-256 hash of the transaction object, that is signed by the private key of the account who created the transaction."
 									}
 							},
 							"confirmations": {
@@ -2271,36 +1962,6 @@
 									"type": "boolean",
 									"example": false,
 									"description": "Only present in transactions sent from a multisignature account, or transactions type 4 (multisignature registration).\nFalse, if the minimum amount of signatures to sign this transaction has not been reached yet.\nTrue, if the minimum amount of signatures has been reached.\n"
-							}
-					}
-			},
-			"Signature": {
-					"type": "object",
-					"required": [
-							"transactionId",
-							"publicKey",
-							"signature"
-					],
-					"properties": {
-							"transactionId": {
-									"type": "string",
-									"format": "id",
-									"example": "222675625422353767",
-									"minLength": 1,
-									"maxLength": 20,
-									"description": "Unique identifier of the multisignature transaction to sign."
-							},
-							"publicKey": {
-									"type": "string",
-									"format": "publicKey",
-									"example": "2ca9a7143fc721fdc540fef893b27e8d648d2288efa61e56264edf01a2c23079",
-									"description": "Public key of the account that intends to sign the multisignature transaction."
-							},
-							"signature": {
-									"type": "string",
-									"format": "signature",
-									"example": "2821d93a742c4edf5fd960efad41a4def7bf0fd0f7c09869aed524f6f52bf9c97a617095e2c712bd28b4279078a29509b339ac55187854006591aa759784c205",
-									"description": "Signature to sign the transaction.\nThe signature can be generated locally, either by using Lisk Commander or with Lisk Elements.\n"
 							}
 					}
 			},
@@ -2681,53 +2342,6 @@
 							}
 					}
 			},
-			"Fees": {
-					"type": "object",
-					"required": [
-							"send",
-							"vote",
-							"secondSignature",
-							"delegate",
-							"multisignature",
-							"dappRegistration",
-							"dappWithdrawal",
-							"dappDeposit"
-					],
-					"properties": {
-							"send": {
-									"type": "string",
-									"example": "10000000"
-							},
-							"vote": {
-									"type": "string",
-									"example": "100000000"
-							},
-							"secondSignature": {
-									"type": "string",
-									"example": "500000000"
-							},
-							"delegate": {
-									"type": "string",
-									"example": "2500000000"
-							},
-							"multisignature": {
-									"type": "string",
-									"example": "500000000"
-							},
-							"dappRegistration": {
-									"type": "string",
-									"example": "2500000000"
-							},
-							"dappWithdrawal": {
-									"type": "string",
-									"example": "10000000"
-							},
-							"dappDeposit": {
-									"type": "string",
-									"example": "10000000"
-							}
-					}
-			},
 			"NodeConstants": {
 					"type": "object",
 					"required": [
@@ -2738,8 +2352,7 @@
 							"supply",
 							"build",
 							"commit",
-							"version",
-							"fees"
+							"version"
 					],
 					"properties": {
 							"epoch": {
@@ -2791,9 +2404,6 @@
 									"type": "string",
 									"example": "500000000",
 									"description": "The reward a delegate will get for forging a block.\nDepends on the slot height.\n"
-							},
-							"fees": {
-									"$ref": "#/definitions/Fees"
 							}
 					}
 			},
@@ -2804,7 +2414,8 @@
 							"height",
 							"chainMaxHeightFinalized",
 							"secondsSinceEpoch",
-							"syncing"
+							"syncing",
+							"unconfirmedTransactions"
 					],
 					"properties": {
 							"currentTime": {
@@ -2832,6 +2443,12 @@
 									"type": "boolean",
 									"example": false,
 									"description": "True if the node syncing with other peers."
+							},
+							"unconfirmedTransactions": {
+									"type": "integer",
+									"example": 1,
+									"minimum": 0,
+									"description": "Number of unprocessed transactions in the pool.\n"
 							}
 					}
 			},
@@ -3057,12 +2674,6 @@
 									"format": "publicKey",
 									"example": "968ba2fa993ea9dc27ed740da0daf49eddd740dbd7cb1cb4fc5db3a20baf341b",
 									"description": "The public key is derived from the private key of the owner of the account.\nIt can be used to validate that the private key belongs to the owner, but not provide access to the owners private key.\n"
-							},
-							"secondPublicKey": {
-									"type": "string",
-									"format": "publicKey",
-									"example": "968ba2fa993ea9dc27ed740da0daf49eddd740dbd7cb1cb4fc5db3a20baf341b",
-									"description": "The second public key is derived from the second private key of an account, if the owner activated a second passphrase for her/his account."
 							}
 					}
 			},
@@ -3071,7 +2682,8 @@
 					"required": [
 							"address",
 							"publicKey",
-							"balance"
+							"balance",
+							"nonce"
 					],
 					"properties": {
 							"address": {
@@ -3091,11 +2703,10 @@
 									"example": 1081560729258,
 									"description": "The current balance of the account in Beddows."
 							},
-							"secondPublicKey": {
+							"nonce": {
 									"type": "string",
-									"format": "publicKey",
-									"example": "968ba2fa993ea9dc27ed740da0daf49eddd740dbd7cb1cb4fc5db3a20baf341b",
-									"description": "The second public key is derived from the second private key of an account, if the owner activated a second passphrase for her/his account."
+									"example": 154,
+									"description": "The current nonce associated to account for transaction processing"
 							},
 							"asset": {
 									"type": "object",
@@ -3107,58 +2718,6 @@
 							},
 							"delegate": {
 									"$ref": "#/definitions/Delegate"
-							}
-					}
-			},
-			"MultisignatureGroup": {
-					"type": "object",
-					"required": [
-							"address",
-							"publicKey",
-							"balance",
-							"min",
-							"lifetime",
-							"members"
-					],
-					"properties": {
-							"address": {
-									"type": "string",
-									"format": "address",
-									"example": "12668885769632475474L",
-									"description": "The Lisk Address is the human readable representation of the accounts owners' public key.\nIt consists of 21 numbers followed by a big 'L' at the end.\n"
-							},
-							"publicKey": {
-									"type": "string",
-									"format": "publicKey",
-									"example": "968ba2fa993ea9dc27ed740da0daf49eddd740dbd7cb1cb4fc5db3a20baf341b",
-									"description": "The public key is derived from the private key of the owner of the account.\nIt can be used to validate that the private key belongs to the owner, but not provide access to the owners private key.\n"
-							},
-							"balance": {
-									"type": "string",
-									"example": 1081560729258,
-									"description": "The current balance of the account in Beddows."
-							},
-							"secondPublicKey": {
-									"type": "string",
-									"format": "publicKey",
-									"example": "968ba2fa993ea9dc27ed740da0daf49eddd740dbd7cb1cb4fc5db3a20baf341b",
-									"description": "The second public key is derived from the second private key of an account, if the owner activated a second passphrase for her/his account."
-							},
-							"min": {
-									"type": "integer",
-									"example": 3,
-									"description": "Minimum amount of signatures a transaction needs to be signed successfully by this multisignature account."
-							},
-							"lifetime": {
-									"type": "integer",
-									"example": 72,
-									"description": "The maximum amount of hours, that a transaction will wait for the minimum amount of signatures to be reached.\nIf not enough members of a multisignature group sign the transaction in the defined lifespan, the transaction will be invalid.\n"
-							},
-							"members": {
-									"type": "array",
-									"items": {
-											"$ref": "#/definitions/Account"
-									}
 							}
 					}
 			},
