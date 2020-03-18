@@ -57,8 +57,7 @@ Given('{int} lisk accounts exists with minimum balance', async count => {
 			transfers.push(trx);
 		});
 
-		const NUMBER_OF_BLOCKS = Math.ceil(count / TRS_PER_BLOCK);
-		await I.waitForBlock(NUMBER_OF_BLOCKS);
+		await I.waitUntilTransactionsConfirmed();
 
 		transfers.forEach(async ({ id, recipientId }) =>
 			I.validateTransaction(id, recipientId, amount)

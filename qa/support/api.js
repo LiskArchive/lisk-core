@@ -85,33 +85,16 @@ class API {
 		return true;
 	}
 
-	async getTransactionsByState(state, params, node) {
+	async getTransactionsFromPool(params, node) {
 		try {
 			const client = this.getClientByAddress(node);
-			return client.node.getTransactions(state, params);
-		} catch (error) {
-			output.print(
-				'API.getTransactionsByState: Error while processing request'
-			);
-			output.error(error);
-			await this.getTransactionsByState(state, params, node);
-		}
-		return true;
-	}
-
-	async getTransactionsFromPool(
-		params,
-		states = ['pending', 'ready', 'received', 'validated', 'verified']
-	) {
-		try {
-			return Promise.all(
-				states.map(state => this.getTransactionsByState(state, params, ''))
-			);
+			return client.node.getTransactions(params);
 		} catch (error) {
 			output.print(
 				'API.getTransactionsFromPool: Error while processing request'
 			);
 			output.error(error);
+			await this.getTransactionsFromPool(params, node);
 		}
 		return true;
 	}

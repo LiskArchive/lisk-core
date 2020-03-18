@@ -85,49 +85,25 @@ class LiskUtil extends Helper {
 	}
 
 	/**
-	 * wait until the network reaches the specific block height
-	 * @param {number} numberOfBlocks - number of blocks to wait
-	 */
-	async waitForBlock(numberOfBlocks = 1) {
-		if (numberOfBlocks > 0) {
-			const {
-				data: { height },
-			} = await this.call().getNodeStatus();
-			await this.waitUntilBlock(height + numberOfBlocks);
-		}
-		return true;
-	}
-
-	/**
 	 * check node height and wait until it reaches the expected height
-	 * @param {number} expectedHeight - expected height to reach
 	 */
-	async waitUntilBlock(expectedHeight, counter) {
+	async waitUntilTransactionsConfirmed(counter) {
 		const {
-			data: { height },
+			data: { height, unconfirmedTransactions },
 		} = await this.call().getNodeStatus();
-		const pendingTrxCnt = await this.getPendingTransactionCount();
 
 		counter = counter ? (counter += 1) : 1;
 
 		output.print(
-			`Counter: ${counter}, Timestamp: ${new Date().toISOString()}, current height: ${height}, expected height: ${expectedHeight}, pending trxs: ${pendingTrxCnt}`
+			`Counter: ${counter}, Timestamp: ${new Date().toISOString()}, current height: ${height}, unconfirmed transactions: ${unconfirmedTransactions}`
 		);
 
-		if (counter >= 20) {
-			return true;
-		}
-
-		if (height >= expectedHeight) {
-			// Remove the buffer time when network is stable
-			if (pendingTrxCnt >= 0) {
-				await this.wait(BLOCK_TIME);
-			}
+		if (unconfirmedTransactions !== 0) {
+			await this.wait(BLOCK_TIME);
+			await this.waitUntilTransactionsConfirmed(counter);
 			return height;
 		}
 
-		await this.wait(BLOCK_TIME);
-		await this.waitUntilBlock(expectedHeight, counter);
 		return true;
 	}
 
@@ -200,9 +176,9 @@ class LiskUtil extends Helper {
 	 * @param {Number} blocksToWait - Number of blocks to wait, default 1 block
 	 * @returns {Object} transaction
 	 */
-	async broadcastAndValidateTransactionAndWait(transaction, blocksToWait = 1) {
+	async broadcastAndValidateTransactionAndWait(transaction) {
 		await this.broadcastAndValidateTransaction(transaction);
-		await this.waitForBlock(blocksToWait);
+		await this.waitUntilTransactionsConfirmed();
 	}
 
 	/**
@@ -211,9 +187,9 @@ class LiskUtil extends Helper {
 	 * @param {Number} blocksToWait - Number of blocks to wait, default 1 block
 	 * @param {*} signature
 	 */
-	async broadcastAndValidateSignatureAndWait(signature, blocksToWait = 1) {
+	async broadcastAndValidateSignatureAndWait(signature) {
 		await this.broadcastAndValidateSignature(signature);
-		await this.waitForBlock(blocksToWait);
+		await this.waitUntilTransactionsConfirmed();
 	}
 
 	/**
@@ -269,10 +245,10 @@ class LiskUtil extends Helper {
 	 * @param {string} accounts.secondPassphrase - The sender second passphrase
 	 * @returns {Object} transaction
 	 */
-	async transferToMultipleAccounts(accounts) {
+	async transferToMultipleAccounts(accounts, passphrase = GENESIS_ACCOUNT.password) {
 		const trxs = accounts.map(a => {
 			if (!a.passphrase) {
-				a.passphrase = GENESIS_ACCOUNT.password;
+				a.passphrase = passphrase;
 			}
 			a.networkIdentifier = networkIdentifier;
 
@@ -292,7 +268,7 @@ class LiskUtil extends Helper {
 	 * @param {array} contracts signers required to approve the transaction
 	 * @param {number} blocksToWait number of blocks to wait for the transaction to confirm
 	 */
-	async sendSignaturesForMultisigTrx(transaction, contracts, blocksToWait) {
+	async sendSignaturesForMultisigTrx(transaction, contracts) {
 		const signatures = contracts.map(s => ({
 			transactionId: transaction.id,
 			networkIdentifier,
@@ -307,26 +283,7 @@ class LiskUtil extends Helper {
 		await Promise.all(
 			signatures.map(s => this.broadcastAndValidateSignature(s))
 		);
-		await this.waitForBlock(blocksToWait);
-	}
-
-	/**
-	 * Register second passphrase on an account
-	 * @param {string} passphrase - User account passphrase
-	 * @param {string} secondPassphrase - New secondPassphrase to register on account
-	 * @param {Number} blocksToWait - Number of blocks to wait
-	 * @returns {Object} transaction
-	 */
-	async registerSecondPassphrase(passphrase, secondPassphrase, blocksToWait) {
-		const trx = transactions.registerSecondPassphrase({
-			passphrase,
-			secondPassphrase,
-			networkIdentifier,
-		});
-
-		await from(this.broadcastAndValidateTransactionAndWait(trx, blocksToWait));
-
-		return trx;
+		await this.waitUntilTransactionsConfirmed();
 	}
 
 	/**
@@ -335,18 +292,32 @@ class LiskUtil extends Helper {
 	 * @param {string} params.username - Username for registering as delegate
 	 * @param {string} params.passphrase - User account passphrase
 	 * @param {string} params.secondPassphrase - User secondPassphrase
-	 * @param {Number} blocksToWait - Number of blocks to wait
 	 * @returns {Object} transaction
 	 */
-	async registerAsDelegate(params, blocksToWait) {
+	async registerAsDelegate(params) {
 		const trx = transactions.registerDelegate({
 			...params,
 			networkIdentifier,
 		});
 
-		await from(this.broadcastAndValidateTransactionAndWait(trx, blocksToWait));
+		await from(this.broadcastAndValidateTransactionAndWait(trx));
 
 		return trx;
+	}
+
+	async registerMultipleDelegate(accounts) {
+		const trxs = accounts.map(a =>
+			transactions.registerDelegate({
+				...a,
+				networkIdentifier,
+			})
+		);
+
+		await from(
+			Promise.all(trxs.map(t => this.broadcastAndValidateTransaction(t)))
+		);
+
+		return trxs;
 	}
 
 	/**
@@ -363,6 +334,21 @@ class LiskUtil extends Helper {
 			networkIdentifier,
 		});
 		await from(this.broadcastAndValidateTransactionAndWait(trx, blocksToWait));
+	}
+
+	async castMultipleVotes(accounts) {
+		const trxs = accounts.map(a =>
+			transactions.castVotes({
+				...a,
+				networkIdentifier,
+			})
+		);
+
+		await from(
+			Promise.all(trxs.map(t => this.broadcastAndValidateTransaction(t)))
+		);
+
+		return trxs;
 	}
 
 	/**
@@ -392,7 +378,7 @@ class LiskUtil extends Helper {
 	 * @param {Number} blocksToWait - Number of blocks to wait
 	 * @returns
 	 */
-	async registerMultisignature(accounts, params, blocksToWait) {
+	async registerMultisignature(accounts, params) {
 		const keysgroup = accounts.map(account => account.publicKey);
 
 		const registerMultisignatureTrx = transactions.registerMultisignature(
@@ -405,15 +391,14 @@ class LiskUtil extends Helper {
 		);
 
 		await this.broadcastAndValidateTransactionAndWait(
-			registerMultisignatureTrx,
-			blocksToWait
+			registerMultisignatureTrx
 		);
 
 		await Promise.all(
 			signatures.map(s => this.broadcastAndValidateSignature(s))
 		);
 
-		await this.waitForBlock(blocksToWait);
+		await this.waitUntilTransactionsConfirmed();
 		return registerMultisignatureTrx;
 	}
 
@@ -456,7 +441,7 @@ class LiskUtil extends Helper {
 		amount,
 		senderId = GENESIS_ACCOUNT.address
 	) {
-		const response = await from(
+		const { result, error } = await from(
 			this.call().getTransactions({
 				id,
 				senderId,
@@ -464,14 +449,14 @@ class LiskUtil extends Helper {
 			})
 		);
 
-		expect(response.error).to.be.null;
+		expect(error).to.be.null;
 		this.helpers.ValidateHelper.expectResponseToBeValid(
-			response.result,
+			result,
 			'TransactionsResponse'
 		);
 
-		expect(response.result.data).to.be.an('array').that.is.not.empty;
-		return expect(response.result.data[0].asset.amount).to.deep.equal(
+		expect(result.data).to.be.an('array').that.is.not.empty;
+		return expect(result.data[0].asset.amount).to.deep.equal(
 			TO_BEDDOWS(amount)
 		);
 	}
@@ -513,15 +498,6 @@ class LiskUtil extends Helper {
 		}
 		output.print(error);
 		return false;
-	}
-
-	/**
-	 * returns count of transactions in queue
-	 */
-	async getPendingTransactionCount() {
-		const { result } = await from(this.call().getTransactionsFromPool({}));
-
-		return result.reduce((acc, curr) => acc + curr.meta.count, 0);
 	}
 
 	/**
@@ -621,9 +597,9 @@ class LiskUtil extends Helper {
 	 */
 	async checkIfNetworkIsMoving() {
 		let heights = await this.getAllNodeHeights();
-		const previousHeight = 	heights.reduce((a, b) => Math.max(a, b));
+		const previousHeight = heights.reduce((a, b) => Math.max(a, b));
 
-		await this.waitForBlock();
+		await this.waitUntilTransactionsConfirmed();
 
 		heights = await this.getAllNodeHeights();
 		const currentHeight = heights.reduce((a, b) => Math.max(a, b));
@@ -647,7 +623,7 @@ class LiskUtil extends Helper {
 	 * Waits until the transaction is confirmed on the network
 	 * @param {string} id transaction id
 	 */
-	async waitForTransactionToConfirm(id, numberOfBlocks = 1, counter) {
+	async waitForTransactionToConfirm(id, counter) {
 		counter = counter ? (counter += 1) : 1;
 		const { result, error } = await from(this.call().getTransactions({ id }));
 
@@ -662,8 +638,8 @@ class LiskUtil extends Helper {
 		if (result.data.length) {
 			return result;
 		}
-		await this.waitForBlock(numberOfBlocks);
-		await this.waitForTransactionToConfirm(id, numberOfBlocks, counter);
+		await this.wait();
+		await this.waitForTransactionToConfirm(id, counter);
 		return true;
 	}
 
@@ -681,7 +657,7 @@ class LiskUtil extends Helper {
 			);
 			return;
 		}
-		await this.waitForBlock(10);
+		await this.waitUntilTransactionsConfirmed();
 		await this.waitUntilNodeSyncWithNetwork(height, expectedHeight);
 	}
 }

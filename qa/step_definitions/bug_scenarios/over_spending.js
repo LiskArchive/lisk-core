@@ -132,9 +132,9 @@ Then('I register second passphrase on account {string}', async user => {
 
 Then(
 	'I wait for {string} blocks to make sure consicutive transactions included in one block',
-	async blocksToWait => {
+	async () => {
 		try {
-			await I.waitForBlock(parseInt(blocksToWait));
+			await I.waitUntilTransactionsConfirmed();
 		} catch (error) {
 			output.error(error);
 			throw error;

@@ -47,8 +47,7 @@ Given(
 			}));
 
 			const trxs = await I.transferToMultipleAccounts(transfers);
-			const NUMBER_OF_BLOCKS = Math.ceil(trxs.length / TRS_PER_BLOCK);
-			await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
+			await I.waitUntilTransactionsConfirmed();
 
 			await trxs.map(t =>
 				I.validateTransaction(
