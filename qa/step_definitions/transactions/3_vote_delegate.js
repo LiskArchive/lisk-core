@@ -49,7 +49,9 @@ Then(
 			const voter = getFixtureUser('username', sender);
 			const api = await I.call();
 
-			const { data: { unconfirmedTransactions } } = await api.getNodeStatus();
+			const {
+				data: { unconfirmedTransactions },
+			} = await api.getNodeStatus();
 			if (unconfirmedTransactions > 0) {
 				await I.waitUntilTransactionsConfirmed();
 			}

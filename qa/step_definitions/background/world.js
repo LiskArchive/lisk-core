@@ -2,8 +2,8 @@ const output = require('codeceptjs').output;
 const {
 	TO_BEDDOWS,
 	getFixtureUser,
+	GENESIS_ACCOUNT: { address: genesisAddress },
 	from,
-	TRS_PER_BLOCK,
 } = require('../../utils');
 
 const I = actor();
@@ -48,11 +48,18 @@ Given('{int} lisk accounts exists with minimum balance', async count => {
 		const randomAccounts = new Array(count)
 			.fill(0)
 			.map(() => I.createAccount());
+		const api = await I.call();
+		const {
+			result: {
+				data: [{ nonce }],
+			},
+		} = await from(api.getAccounts({ address: genesisAddress }));
 
 		randomAccounts.forEach(async account => {
 			const trx = await I.transfer({
 				recipientId: account.address,
 				amount: TO_BEDDOWS(amount),
+				nonce: (parseInt(nonce, 10) + 1).toString(),
 			});
 			transfers.push(trx);
 		});
@@ -81,23 +88,6 @@ Given(
 	}
 );
 
-Given('{string} has a account with second signature', async userName => {
-	try {
-		const { address, passphrase, secondPassphrase } = getFixtureUser(
-			'username',
-			userName
-		);
-		await I.haveAccountWithSecondSignature(
-			address,
-			passphrase,
-			secondPassphrase
-		);
-	} catch (error) {
-		output.error(error);
-		throw error;
-	}
-});
-
 Given('{string} has a account registered as delegate', async userName => {
 	try {
 		const { username, address, passphrase } = getFixtureUser(
@@ -108,6 +98,7 @@ Given('{string} has a account registered as delegate', async userName => {
 			username,
 			address,
 			passphrase,
+			nonce: '1',
 		});
 	} catch (error) {
 		output.error(error);
@@ -122,16 +113,26 @@ Given(
 			const { passphrase, address } = getFixtureUser('username', user1);
 			const signer1 = getFixtureUser('username', user2);
 			const signer2 = getFixtureUser('username', user3);
-			const contracts = [signer1, signer2];
-			const params = {
-				lifetime: 1,
-				minimum: 2,
-				passphrase,
+			const multiSigRegistrationAccount = {
+				numberOfSignatures: 2,
+				mandatoryKeys: [signer1.publicKey],
+				optionalKeys: [signer2.publicKey],
+				senderPassphrase: passphrase,
+				passphrases: [signer1.passphrase, signer2.passphrase],
+				nonce: '2',
+				fee: '100000000',
 			};
 
-			const isExists = await I.checkIfMultisigAccountExists(address, contracts);
-			if (!isExists) {
-				await from(I.registerMultisignature(contracts, params));
+			const api = await I.call();
+			const account = await api.getAccounts({ address });
+
+			if (
+				!(
+					account.data[0].keys.mandatoryKeys[0] ===
+					multiSigRegistrationAccount.mandatoryKeys[0]
+				)
+			) {
+				await I.registerMultipleMultisignature(multiSigRegistrationAccount);
 			}
 		} catch (error) {
 			output.error(error);
