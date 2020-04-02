@@ -76,42 +76,12 @@ Then('I should get account details according to {string}', async params => {
 	}
 });
 
-When('{string} requests {string}', async username => {
-	try {
-		const api = await I.call();
-		const account = getFixtureUser('username', username);
-
-		response = await from(api.getMultisignatureGroups(account.address));
-	} catch (error) {
-		output.error(error);
-		throw error;
-	}
-});
-
 Then('{string} should get {string} account', async username => {
 	try {
 		const account = getFixtureUser('username', username);
 
 		expect(response.error).to.be.null;
 		expect(response.result.data[0].address).to.deep.equal(account.address);
-
-		await I.expectResponseToBeValid(
-			response.result,
-			'MultisignatureGroupsResponse'
-		);
-	} catch (error) {
-		output.error(error);
-		throw error;
-	}
-});
-
-When('{string} and {string} requests {string} account', async user1 => {
-	try {
-		const api = await I.call();
-		const account = getFixtureUser('username', user1);
-
-		response = await from(api.getMultisignatureMemberships(account.address));
-		expect(response.error).to.be.null;
 
 		await I.expectResponseToBeValid(
 			response.result,

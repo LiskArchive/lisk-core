@@ -58,8 +58,7 @@ Then(
 			expect(response.error).to.be.null;
 			await I.expectResponseToBeValid(response.result, 'TransactionsResponse');
 
-			const pendingTrxCount = await I.getPendingTransactionCount();
-			await I.waitForBlock(Math.ceil(pendingTrxCount / TRS_PER_BLOCK));
+			await I.waitUntilTransactionsConfirmed();
 		} catch (error) {
 			output.error(error);
 			throw error;

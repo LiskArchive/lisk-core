@@ -6,18 +6,9 @@ const { ASGARD_FIXTURE, GENESIS_ACCOUNT, config } = require('../fixtures');
 
 const BLOCK_TIME = 10000;
 
-const TRS_PER_BLOCK = 25;
-
 const TRS_POOL_LIMIT = 1000;
 
-const TRS_TYPE = {
-	TRANSFER: 0,
-	SECOND_PASSPHRASE: 1,
-	DELEGATE_REGISTRATION: 2,
-	VOTE: 3,
-	MULTI_SIGNATURE: 4,
-	DAPP: 5,
-};
+const TRANSACTIONS_PER_ACCOUNT = 64;
 
 const getFixtureUser = (propertyName, value) =>
 	ASGARD_FIXTURE.find(user => user[propertyName] === value);
@@ -80,9 +71,8 @@ const getIpByDns = async dnsName => {
 module.exports = {
 	config,
 	BLOCK_TIME,
-	TRS_PER_BLOCK,
+	TRANSACTIONS_PER_ACCOUNT,
 	GENESIS_ACCOUNT,
-	TRS_TYPE,
 	TRS_POOL_LIMIT,
 	getFixtureUser,
 	from,

@@ -14,7 +14,7 @@
 	"teardown": null,
 	"hooks": [],
 	"gherkin": {
-		"features": "./features/**/*.feature",
+		"features": "./features/**/list_account.feature",
 		"steps": [
 			"./step_definitions/background/world.js",
 			"./step_definitions/accounts/create_account.js",
@@ -28,11 +28,9 @@
 			"./step_definitions/node/transaction_pool.js",
 			"./step_definitions/peers/list_peers.js",
 			"./step_definitions/transactions/0_transfer.js",
-			"./step_definitions/transactions/1_register_second_signature.js",
 			"./step_definitions/transactions/2_register_delegate.js",
 			"./step_definitions/transactions/3_vote_delegate.js",
 			"./step_definitions/transactions/4_register_multi_signature_account.js",
-			"./step_definitions/transactions/5_register_dapp.js",
 			"./step_definitions/transactions/list_transactions.js",
 			"./step_definitions/votes_voters/list_votes.js",
 			"./step_definitions/votes_voters/list_voters.js"

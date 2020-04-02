@@ -49,10 +49,11 @@ Then(
 			const voter = getFixtureUser('username', sender);
 			const api = await I.call();
 
-			const pendingTrx = await I.getPendingTransactionCount();
-			if (pendingTrx > 0) {
-				const NUMBER_OF_BLOCKS = Math.ceil(pendingTrx / TRS_PER_BLOCK);
-				await I.waitForBlock(NUMBER_OF_BLOCKS);
+			const {
+				data: { unconfirmedTransactions },
+			} = await api.getNodeStatus();
+			if (unconfirmedTransactions > 0) {
+				await I.waitUntilTransactionsConfirmed();
 			}
 
 			const { result, error } = await from(
