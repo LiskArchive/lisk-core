@@ -63,18 +63,15 @@ const appSchema = {
 configurator.registerSchema(appSchema);
 
 const appConfig = {
-	app: {
-		version: packageJSON.version,
-		minVersion: packageJSON.lisk.minVersion,
-		protocolVersion: packageJSON.lisk.protocolVersion,
-		lastCommitId,
-		buildVersion,
-	},
+	version: packageJSON.version,
+	protocolVersion: packageJSON.lisk.protocolVersion,
+	lastCommitId,
+	buildVersion,
 };
 
 // Support for PROTOCOL_VERSION only for tests
 if (process.env.NODE_ENV === 'test' && process.env.PROTOCOL_VERSION) {
-	appConfig.app.protocolVersion = process.env.PROTOCOL_VERSION;
+	appConfig.protocolVersion = process.env.PROTOCOL_VERSION;
 }
 
 configurator.loadConfig(appConfig);
@@ -95,6 +92,6 @@ if (CUSTOM_CONFIG_FILE) {
 const config = configurator.getConfig();
 
 // To run multiple applications for same network for integration tests
-config.app.label = `lisk-${NETWORK}-${config.modules.http_api.httpPort}`;
+config.label = `lisk-${NETWORK}-${config.modules.http_api.httpPort}`;
 
 export { config };
