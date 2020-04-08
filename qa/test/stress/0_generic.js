@@ -119,9 +119,7 @@ Scenario('Delegate Registration', async () => {
 				const api = await I.call();
 
 				const account = await api.getAccounts({ username: a.asset.username });
-				expect(account.data[0].delegate.username).to.deep.equal(
-					a.asset.username
-				);
+				expect(account.data[0].username).to.deep.equal(a.asset.username);
 			})
 		);
 		output.print(
@@ -136,25 +134,35 @@ Scenario('Cast vote', async () => {
 	output.print('==========Start Cast vote transaction Stress Test==========');
 
 	try {
-		const delegateAccounts = accounts.map(a => ({
-			votes: [a.publicKey],
-			passphrase: a.passphrase,
-			fee: '100000000',
-			nonce: '1',
-		}));
+		const voteAmount = '1000000000';
+		const totalAccounts = accounts.length - 1;
 
-		const result = await I.castMultipleVotes(delegateAccounts);
+		const votingAccounts = accounts.map((a, i) => {
+			const accountToVote = accounts[totalAccounts - i];
+
+			return {
+				votes: [{ delegateAddress: accountToVote.address, amount: voteAmount }],
+				passphrase: a.passphrase,
+				fee: '100000000',
+				nonce: '1',
+			};
+		});
+
+		const result = await I.castMultipleVotes(votingAccounts);
 
 		await I.waitUntilTransactionsConfirmed();
 
 		await Promise.all(
-			result.map(async a => {
+			result.map(async (a, i) => {
 				const api = await I.call();
+				const accountVoted = accounts[totalAccounts - i];
 
-				const account = await api.getAccounts({ address: a.senderId });
-				expect(account.data[0].balance).to.equal(
-					account.data[0].delegate.voteWeight
-				);
+				const account = await api.getAccounts({
+					address: accountVoted.address,
+				});
+				expect(account.data[0].votes).to.equal([
+					{ amount: voteAmount, delegateAddress: accountVoted.address },
+				]);
 			})
 		);
 		output.print('==========End Cast vote transaction Stress Test==========');

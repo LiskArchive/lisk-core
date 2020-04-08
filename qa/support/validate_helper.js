@@ -225,7 +225,7 @@ class ValidateHelper extends Helper {
 	handleOtherParams(response, key, value) {
 		switch (key) {
 			case 'username': {
-				expect(response.data[0].delegate.username).to.deep.equal(value);
+				expect(response.data[0].username).to.deep.equal(value);
 				break;
 			}
 			case 'limit':
