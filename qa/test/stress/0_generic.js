@@ -119,9 +119,7 @@ Scenario('Delegate Registration', async () => {
 				const api = await I.call();
 
 				const account = await api.getAccounts({ username: a.asset.username });
-				expect(account.data[0].delegate.username).to.deep.equal(
-					a.asset.username
-				);
+				expect(account.data[0].username).to.deep.equal(a.asset.username);
 			})
 		);
 		output.print(
@@ -132,32 +130,70 @@ Scenario('Delegate Registration', async () => {
 	}
 }).tag('@stress');
 
-Scenario('Cast vote', async () => {
+Scenario('Cast vote and unVote', async () => {
 	output.print('==========Start Cast vote transaction Stress Test==========');
 
 	try {
-		const delegateAccounts = accounts.map(a => ({
-			votes: [a.publicKey],
-			passphrase: a.passphrase,
-			fee: '100000000',
-			nonce: '1',
-		}));
+		const voteAmount = '1000000000';
+		const totalAccounts = accounts.length - 1;
 
-		const result = await I.castMultipleVotes(delegateAccounts);
+		const votingAccounts = accounts.map((a, i) => {
+			const accountToVote = accounts[totalAccounts - i];
+
+			return {
+				votes: [{ delegateAddress: accountToVote.address, amount: voteAmount }],
+				passphrase: a.passphrase,
+				fee: '100000000',
+				nonce: '1',
+			};
+		});
+
+		const result = await I.castMultipleVotes(votingAccounts);
 
 		await I.waitUntilTransactionsConfirmed();
 
 		await Promise.all(
-			result.map(async a => {
+			result.map(async (a, i) => {
 				const api = await I.call();
+				const accountVoted = accounts[totalAccounts - i];
 
-				const account = await api.getAccounts({ address: a.senderId });
-				expect(account.data[0].balance).to.equal(
-					account.data[0].delegate.voteWeight
+				const account = await api.getAccounts({
+					address: a.senderId,
+				});
+				expect(account.data[0].votes).to.deep.include(
+					{ amount: voteAmount, delegateAddress: accountVoted.address }
 				);
 			})
 		);
 		output.print('==========End Cast vote transaction Stress Test==========');
+		output.print('==========Start Cast unVote transaction Stress Test==========');
+
+		const unVotingAccounts = accounts.map((a, i) => {
+			const accountToUnVote = accounts[totalAccounts - i];
+
+			return {
+				votes: [{ delegateAddress: accountToUnVote.address, amount: `-${voteAmount}` }],
+				passphrase: a.passphrase,
+				fee: '100000000',
+				nonce: '2',
+			};
+		});
+
+		const unVoteResult = await I.castMultipleVotes(unVotingAccounts);
+
+		await I.waitUntilTransactionsConfirmed();
+
+		await Promise.all(
+			unVoteResult.map(async a => {
+				const api = await I.call();
+
+				const account = await api.getAccounts({
+					address: a.senderId,
+				});
+				expect(account.data[0].votes).to.be.empty;
+			})
+		);
+		output.print('==========End Cast unVote transaction Stress Test==========');
 	} catch (error) {
 		output.print('Error while processing cast vote transaction', error);
 	}
@@ -179,7 +215,7 @@ Scenario('Register and transfer from Multi-signature account', async () => {
 				optionalKeys: [signer2.publicKey],
 				senderPassphrase: passphrase,
 				passphrases: [signer1.passphrase, signer2.passphrase],
-				nonce: '2',
+				nonce: '3',
 				fee: '100000000',
 			};
 			contractsByAddress[address] = params;

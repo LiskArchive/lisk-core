@@ -1,8 +1,8 @@
 {
 	"swagger": "2.0",
 	"info": {
-		"title": "Lisk API Documentation",
-		"description": "# Welcome!\n\n## Access Restrictions\nThe API endpoints are by default restricted to a whitelist of IPs that can be found in `config.json` in the section [`api.access.whitelist`](https://github.com/LiskHQ/lisk/blob/1.0.0/config.json#L35).\nIf you want your API to be accessable by the public, you can do this by changing `api.access.public` to `true`.\nThis will allow anyone to make requests to your Lisk Core node.\nHowever some endpoints stay private, that means only a list of whitelisted IPs can successfully make API calls to that particular endpoint;\nThis includes all forging related API calls.\nBy default, only the nodes' local IP is included in the whitelist, you can change the setting in `config.json` in the section [`forging.access.whitelist`](https://github.com/LiskHQ/lisk/blob/1.0.0/config.json#L114).\nFor more details, see the descriptions at the respective endpoint.\n\n## Requests\nChained filter parameters are logically connected with `AND`.\n`HTTP` is the supported URL schema by default.\nTo enable `HTTPS`, please adjust the the [`ssl`](https://github.com/LiskHQ/lisk/blob/1.0.0/config.json#L124) section in `config.json`.\n\n## Responses\nThe general response format is JSON (`application/json`).\nThe responses for each API request have a common basic structure:\n```javascript\n{\n    \"data\": {}, //Contains the requested data\n    \"meta\": {}, //Contains additional metadata, e.g. the values of `limit` and `offset`\n    \"links\": {} //Will contain links to connected API calls from here, e.g. pagination links\n}\n```\n\n## Date Formats\nMost of the timestamp parameters are in the Lisk Timestamp format, which is similar to the Unix Timestamp format.\nThe **Lisk Timestamp** is the number of seconds that have elapsed since the Lisk epoch time (2016-05-24T17:00:00.000Z), not counting leap seconds.\nThe **Lisk Epoch Time** is returned in the [ISO8601](https://en.wikipedia.org/wiki/ISO_8601) format, combined date and time: `YYYY-MM-DDThh:mm:ssZ`.\nFor details, see the descriptions and examples at the respective endpoint.\n\n## Pagination\nOne can paginate nicely through the results by providing `limit` and `offset` parameters to the requests.\n`limit` and `offset` can be found in the `meta`-object of the response of an API request.\nIf no limit and offset are provided, they are set to 10 and 0 by default, what will display the first 10 results.\n\n## List of Endpoints\nAll possible API endpoints for Lisk Core are listed below.\nClick on an endpoint to show descriptions, details and examples.\n",
+		"title": "Lisk API documentation",
+		"description": "# Welcome!\n\n## Access restrictions\nThe API endpoints are by default restricted to a whitelist of IPs that can be found under `modules.http_api.access.whiteList` in the config.\nIf it is required for your API to be accessible by the public, this can be achieved by changing `modules.http_api.access.public` to `true`.\nThis will allow anyone to make requests to your Lisk Core node.\nHowever some endpoints will stay private, hence this means that only a list of whitelisted IPs can successfully make API calls to that particular endpoint;\nthis includes all forging related API calls.\nBy default, only the nodes' local IP is also included in the whitelist, nevertheless it is possible to change the setting in `config` under `modules.http_api.forging.access.whiteList`.\nFor more details, see the [Lisk Core management docs](https://lisk.io/documentation/lisk-core/3.0.0/management/) or the descriptions at the respective endpoint below.\n\n## Requests\nChained filter parameters are logically connected with `AND`.\n`HTTP` is the supported URL schema by default.\nTo enable `HTTPS`, please adjust the `modules.http_api.ssl` section in the config.\n\n## Responses\nThe general response format is JSON (`application/json`).\nThe responses for each API request have a common basic structure as shown below:\n```javascript\n{\n    \"data\": {}, //Contains the requested data.\n    \"meta\": {}, //Contains additional metadata, e.g. the values of `limit` and `offset`.\n    \"links\": {} //Will contain links to connected API calls from here, e.g. pagination links.\n}\n```\n\n## Date formats\nMost of the timestamp parameters are in the Lisk timestamp format, which is similar to the Unix timestamp format.\nThe **Lisk timestamp** is the number of seconds that have elapsed since the Lisk epoch time (2016-05-24T17:00:00.000Z), not counting leap seconds.\nThe **Lisk epoch time** is returned in the [ISO8601](https://en.wikipedia.org/wiki/ISO_8601) format, combined with the date and time: `YYYY-MM-DDThh:mm:ssZ`.\nFor details, see the descriptions and examples at the respective endpoint.\n\n## Pagination\nIt is possible to easily paginate through the results by providing `limit` and `offset` parameters to the requests.\n`limit` and `offset` can be found in the `meta`-object of the response of an API request.\nIf no limit and offset are provided they are set to 10 and 0 by default, which in turn will display the first 10 results.\n\n## List of endpoints\nAll possible API endpoints for Lisk Core are listed below.\nClick on an endpoint to show the descriptions, details and examples.\n",
 		"version": "1.0.32",
 		"contact": {
 			"email": "admin@lisk.io"
@@ -16,39 +16,39 @@
 	"tags": [
 		{
 			"name": "Accounts",
-			"description": "Account related API calls"
+			"description": "Account related API endpoints."
 		},
 		{
 			"name": "Blocks",
-			"description": "Block related API calls"
+			"description": "Block related API endpoints."
 		},
 		{
 			"name": "Dapps",
-			"description": "Dapps related API calls"
+			"description": "Dapps related API endpoints."
 		},
 		{
 			"name": "Delegates",
-			"description": "Delegates related API calls"
+			"description": "Delegates related API endpoints."
 		},
 		{
 			"name": "Node",
-			"description": "Node related API calls"
+			"description": "Node related API endpoints."
 		},
 		{
 			"name": "Peers",
-			"description": "Peers related API Calls"
+			"description": "Peers related API endpoints."
 		},
 		{
 			"name": "Transactions",
-			"description": "Transactions related API calls"
+			"description": "Transactions related API endpoints."
 		},
 		{
 			"name": "Voters",
-			"description": "Votes related API calls"
+			"description": "Votes related API endpoints."
 		},
 		{
 			"name": "Votes",
-			"description": "Votes related API calls"
+			"description": "Votes related API endpoints."
 		}
 	],
 	"schemes": ["http", "https"],
@@ -80,7 +80,7 @@
 					{
 						"name": "sort",
 						"in": "query",
-						"description": "Fields to sort results by",
+						"description": "Fields to sort results by.",
 						"required": false,
 						"type": "string",
 						"enum": ["balance:asc", "balance:desc"],
@@ -89,7 +89,7 @@
 				],
 				"responses": {
 					"200": {
-						"description": "List of accounts",
+						"description": "List of accounts.",
 						"schema": {
 							"$ref": "#/definitions/AccountsResponse"
 						}
@@ -101,13 +101,13 @@
 						}
 					},
 					"429": {
-						"description": "Too many requests, exceeded rate limit",
+						"description": "Too many requests, exceeded rate limit.",
 						"schema": {
 							"$ref": "#/definitions/RequestLimitError"
 						}
 					},
 					"500": {
-						"description": "Unexpected error",
+						"description": "Unexpected error.",
 						"schema": {
 							"$ref": "#/definitions/UnexpectedError"
 						}
@@ -127,7 +127,7 @@
 					{
 						"name": "transactionId",
 						"in": "query",
-						"description": "Dapp registration transaction ID",
+						"description": "Dapp registration transaction ID.",
 						"required": false,
 						"type": "string",
 						"format": "id",
@@ -137,7 +137,7 @@
 					{
 						"name": "name",
 						"in": "query",
-						"description": "Name to query - Fuzzy search",
+						"description": "Name to query - Fuzzy search.",
 						"type": "string",
 						"minLength": 1,
 						"maxLength": 32
@@ -145,7 +145,7 @@
 					{
 						"name": "sort",
 						"in": "query",
-						"description": "Fields to sort results by",
+						"description": "Fields to sort results by.",
 						"required": false,
 						"type": "string",
 						"enum": ["name:asc", "name:desc"],
@@ -160,25 +160,25 @@
 				],
 				"responses": {
 					"200": {
-						"description": "Search results matching criteria",
+						"description": "Search results matching criteria.",
 						"schema": {
 							"$ref": "#/definitions/DappsResponse"
 						}
 					},
 					"400": {
-						"description": "Malformed query or parameters",
+						"description": "Malformed query or parameters.",
 						"schema": {
 							"$ref": "#/definitions/ParamErrorResponse"
 						}
 					},
 					"429": {
-						"description": "Too many requests, exceeded rate limit",
+						"description": "Too many requests, exceeded rate limit.",
 						"schema": {
 							"$ref": "#/definitions/RequestLimitError"
 						}
 					},
 					"500": {
-						"description": "Unexpected error",
+						"description": "Unexpected error.",
 						"schema": {
 							"$ref": "#/definitions/UnexpectedError"
 						}
@@ -228,7 +228,7 @@
 					{
 						"in": "query",
 						"name": "sort",
-						"description": "Fields to sort results by",
+						"description": "Fields to sort results by.",
 						"required": false,
 						"type": "string",
 						"enum": [
@@ -242,25 +242,25 @@
 				],
 				"responses": {
 					"200": {
-						"description": "List of peers",
+						"description": "List of peers.",
 						"schema": {
 							"$ref": "#/definitions/PeersResponse"
 						}
 					},
 					"400": {
-						"description": "Malformed query or parameters",
+						"description": "Malformed query or parameters.",
 						"schema": {
 							"$ref": "#/definitions/ParamErrorResponse"
 						}
 					},
 					"429": {
-						"description": "Too many requests, exceeded rate limit",
+						"description": "Too many requests, exceeded rate limit.",
 						"schema": {
 							"$ref": "#/definitions/RequestLimitError"
 						}
 					},
 					"500": {
-						"description": "Unexpected error",
+						"description": "Unexpected error.",
 						"schema": {
 							"$ref": "#/definitions/UnexpectedError"
 						}
@@ -278,19 +278,19 @@
 				"produces": ["application/json"],
 				"responses": {
 					"200": {
-						"description": "Node constants response",
+						"description": "Node constants response.",
 						"schema": {
 							"$ref": "#/definitions/NodeConstantsResponse"
 						}
 					},
 					"429": {
-						"description": "Too many requests, exceeded rate limit",
+						"description": "Too many requests, exceeded rate limit.",
 						"schema": {
 							"$ref": "#/definitions/RequestLimitError"
 						}
 					},
 					"500": {
-						"description": "Unexpected error",
+						"description": "Unexpected error.",
 						"schema": {
 							"$ref": "#/definitions/UnexpectedError"
 						}
@@ -308,19 +308,19 @@
 				"produces": ["application/json"],
 				"responses": {
 					"200": {
-						"description": "Node status response",
+						"description": "Node status response.",
 						"schema": {
 							"$ref": "#/definitions/NodeStatusResponse"
 						}
 					},
 					"429": {
-						"description": "Too many requests, exceeded rate limit",
+						"description": "Too many requests, exceeded rate limit.",
 						"schema": {
 							"$ref": "#/definitions/RequestLimitError"
 						}
 					},
 					"500": {
-						"description": "Unexpected error",
+						"description": "Unexpected error.",
 						"schema": {
 							"$ref": "#/definitions/UnexpectedError"
 						}
@@ -332,9 +332,9 @@
 			"x-swagger-router-controller": "node",
 			"get": {
 				"tags": ["Node"],
-				"summary": "Requests forging status of a delegate",
+				"summary": "Requests forging status of a delegate.",
 				"operationId": "getForgingStatus",
-				"description": "*Attention! This is a **private endpoint only authorized to whitelisted IPs.**\nTo edit the whitelist, please edit the `forging.access.whitelist` section in `config.json`*<br>\nResponds with the forging status of a delegate on a node.\n",
+				"description": "*Attention! This is a **private endpoint only authorized to whitelisted IPs.**\nTo edit the whitelist, please edit the `modules.http_api.forging.access.whiteList` section in the config. *<br>\nResponds with the forging status of a delegate on a node.\n",
 				"produces": ["application/json"],
 				"parameters": [
 					{
@@ -346,31 +346,31 @@
 				],
 				"responses": {
 					"200": {
-						"description": "Search results matching criteria",
+						"description": "Search results matching criteria.",
 						"schema": {
 							"$ref": "#/definitions/ForgingStatusResponse"
 						}
 					},
 					"400": {
-						"description": "Malformed query or parameters",
+						"description": "Malformed query or parameters.",
 						"schema": {
 							"$ref": "#/definitions/ParamErrorResponse"
 						}
 					},
 					"403": {
-						"description": "Access denied",
+						"description": "Access denied.",
 						"schema": {
 							"$ref": "#/definitions/AccessDeniedError"
 						}
 					},
 					"429": {
-						"description": "Too many requests, exceeded rate limit",
+						"description": "Too many requests, exceeded rate limit.",
 						"schema": {
 							"$ref": "#/definitions/RequestLimitError"
 						}
 					},
 					"500": {
-						"description": "Unexpected error",
+						"description": "Unexpected error.",
 						"schema": {
 							"$ref": "#/definitions/UnexpectedError"
 						}
@@ -379,16 +379,16 @@
 			},
 			"put": {
 				"tags": ["Node"],
-				"summary": "Toggles the forging status of a delegate",
+				"summary": "Toggles the forging status of a delegate.",
 				"operationId": "updateForgingStatus",
-				"description": "*Attention! This is a **private endpoint only authorized to whitelisted IPs.**\nTo edit the whitelist, please edit the `forging.access.whitelist` section in `config.json`*<br>\nUpon passing the correct password and publicKey, forging will be enabled or disabled for the delegate of this particular node.\nThe password can be generated locally by encrypting your passphrase, either by using Lisk Commander or with Lisk Elements.\n",
+				"description": "*Attention! This is a **private endpoint only authorized to whitelisted IPs.**\nTo edit the whitelist, please edit the `modules.http_api.forging.access.whiteList` section in the config. *<br>\nUpon passing the correct password and publicKey, forging will be enabled or disabled for the delegate of this particular node.\nThe password can be generated locally by encrypting your passphrase, either by using Lisk Commander or with Lisk Elements.\n",
 				"produces": ["application/json"],
 				"consumes": ["application/json"],
 				"parameters": [
 					{
 						"in": "body",
 						"name": "data",
-						"description": "Password for decrypting passphrase of delegate with corresponding public key",
+						"description": "Password for decrypting passphrase of delegate with corresponding public key.",
 						"required": true,
 						"schema": {
 							"type": "object",
@@ -397,7 +397,7 @@
 								"forging": {
 									"type": "boolean",
 									"example": true,
-									"description": "Forging status of the delegate"
+									"description": "Forging status of the delegate."
 								},
 								"password": {
 									"type": "string",
@@ -417,37 +417,37 @@
 				],
 				"responses": {
 					"200": {
-						"description": "Delegate forging toggled on or off",
+						"description": "Delegate forging toggled on or off.",
 						"schema": {
 							"$ref": "#/definitions/ForgingStatusResponse"
 						}
 					},
 					"400": {
-						"description": "Malformed query or parameters",
+						"description": "Malformed query or parameters.",
 						"schema": {
 							"$ref": "#/definitions/ParamErrorResponse"
 						}
 					},
 					"403": {
-						"description": "Access denied",
+						"description": "Access denied.",
 						"schema": {
 							"$ref": "#/definitions/AccessDeniedError"
 						}
 					},
 					"404": {
-						"description": "Provided public key not found",
+						"description": "Provided public key not found.",
 						"schema": {
 							"$ref": "#/definitions/NotFoundError"
 						}
 					},
 					"429": {
-						"description": "Too many requests, exceeded rate limit",
+						"description": "Too many requests, exceeded rate limit.",
 						"schema": {
 							"$ref": "#/definitions/RequestLimitError"
 						}
 					},
 					"500": {
-						"description": "Unexpected error",
+						"description": "Unexpected error.",
 						"schema": {
 							"$ref": "#/definitions/UnexpectedError"
 						}
@@ -459,9 +459,9 @@
 			"x-swagger-router-controller": "node",
 			"get": {
 				"tags": ["Node"],
-				"summary": "Requests unprocessed transactions data",
+				"summary": "Requests unprocessed transactions data.",
 				"operationId": "getPooledTransactions",
-				"description": "By specifying the state of the transactions, you get a list of unprocessed transactions matching this state.\nSearch for specific transactions by providing the appropriate parameters.\nIf you post a batch of transactions, they will appear in the unprocessed list after a small delay, depending on server load.\n",
+				"description": "By specifying the state of the transactions, a list of unprocessed transactions matching this state can be seen.\nSearch for specific transactions by providing the appropriate parameters.\nIf a batch of transactions is posted, they will appear in the unprocessed list after a small delay depending on server load.\n",
 				"produces": ["application/json"],
 				"parameters": [
 					{
@@ -485,7 +485,7 @@
 					{
 						"in": "query",
 						"name": "sort",
-						"description": "Fields to sort results by",
+						"description": "Fields to sort results by.`",
 						"required": false,
 						"type": "string",
 						"enum": ["fee:asc", "fee:desc", "type:asc", "type:desc"],
@@ -494,25 +494,25 @@
 				],
 				"responses": {
 					"200": {
-						"description": "Transactions list",
+						"description": "Transactions list.",
 						"schema": {
 							"$ref": "#/definitions/TransactionsResponse"
 						}
 					},
 					"400": {
-						"description": "Malformed query or parameters",
+						"description": "Malformed query or parameters.",
 						"schema": {
 							"$ref": "#/definitions/ParamErrorResponse"
 						}
 					},
 					"429": {
-						"description": "Too many requests, exceeded rate limit",
+						"description": "Too many requests, exceeded rate limit.",
 						"schema": {
 							"$ref": "#/definitions/RequestLimitError"
 						}
 					},
 					"500": {
-						"description": "Unexpected error",
+						"description": "Unexpected error.",
 						"schema": {
 							"$ref": "#/definitions/UnexpectedError"
 						}
@@ -524,7 +524,7 @@
 			"x-swagger-router-controller": "delegates",
 			"get": {
 				"tags": ["Delegates"],
-				"summary": "Requests delegates data",
+				"summary": "Requests delegates data.",
 				"operationId": "getDelegates",
 				"x-lisk-cache-enabled": true,
 				"description": "Search for a specified delegate in the system.",
@@ -545,17 +545,17 @@
 					{
 						"name": "limit",
 						"in": "query",
-						"description": "Limit applied to results",
+						"description": "Limit applied to results.",
 						"type": "integer",
 						"format": "int32",
 						"minimum": 1,
-						"maximum": 101,
+						"maximum": 103,
 						"default": 10
 					},
 					{
 						"name": "search",
 						"in": "query",
-						"description": "Fuzzy delegate username to query",
+						"description": "Fuzzy delegate username to query.",
 						"type": "string",
 						"minLength": 1,
 						"maxLength": 20
@@ -563,7 +563,7 @@
 					{
 						"in": "query",
 						"name": "sort",
-						"description": "Fields to sort results by",
+						"description": "Fields to sort results by.",
 						"required": false,
 						"type": "string",
 						"enum": [
@@ -576,32 +576,32 @@
 							"producedBlocks:asc",
 							"producedBlocks:desc",
 							"voteWeight:asc",
-							"voteWeight:desc"
+							"totalVotesReceived:desc"
 						],
-						"default": "voteWeight:desc"
+						"default": "totalVotesReceived:desc"
 					}
 				],
 				"responses": {
 					"200": {
-						"description": "Search results matching criteria",
+						"description": "Search results matching criteria.",
 						"schema": {
 							"$ref": "#/definitions/DelegatesResponse"
 						}
 					},
 					"400": {
-						"description": "Malformed query or parameters",
+						"description": "Malformed query or parameters.",
 						"schema": {
 							"$ref": "#/definitions/ParamErrorResponse"
 						}
 					},
 					"429": {
-						"description": "Too many requests, exceeded rate limit",
+						"description": "Too many requests, exceeded rate limit.",
 						"schema": {
 							"$ref": "#/definitions/RequestLimitError"
 						}
 					},
 					"500": {
-						"description": "Unexpected error",
+						"description": "Unexpected error.",
 						"schema": {
 							"$ref": "#/definitions/UnexpectedError"
 						}
@@ -613,7 +613,7 @@
 			"x-swagger-router-controller": "delegates",
 			"get": {
 				"tags": ["Delegates"],
-				"summary": "Requests next forgers data",
+				"summary": "Requests next forgers data.",
 				"operationId": "getForgers",
 				"description": "Returns a list of the next forgers in this delegate round.\n",
 				"produces": ["application/json"],
@@ -621,17 +621,17 @@
 					{
 						"name": "limit",
 						"in": "query",
-						"description": "Limit applied to results",
+						"description": "Limit applied to results.",
 						"type": "integer",
 						"format": "int32",
 						"minimum": 1,
-						"maximum": 101,
+						"maximum": 103,
 						"default": 10
 					},
 					{
 						"name": "offset",
 						"in": "query",
-						"description": "Offset value for results",
+						"description": "Offset value for results.",
 						"type": "integer",
 						"format": "int32",
 						"minimum": 0,
@@ -641,25 +641,25 @@
 				],
 				"responses": {
 					"200": {
-						"description": "Search results matching criteria",
+						"description": "Search results matching criteria.",
 						"schema": {
 							"$ref": "#/definitions/ForgersResponse"
 						}
 					},
 					"400": {
-						"description": "Malformed query or parameters",
+						"description": "Malformed query or parameters.",
 						"schema": {
 							"$ref": "#/definitions/ParamErrorResponse"
 						}
 					},
 					"429": {
-						"description": "Too many requests, exceeded rate limit",
+						"description": "Too many requests, exceeded rate limit.",
 						"schema": {
 							"$ref": "#/definitions/RequestLimitError"
 						}
 					},
 					"500": {
-						"description": "Unexpected error",
+						"description": "Unexpected error.",
 						"schema": {
 							"$ref": "#/definitions/UnexpectedError"
 						}
@@ -671,16 +671,16 @@
 			"x-swagger-router-controller": "delegates",
 			"get": {
 				"tags": ["Delegates"],
-				"summary": "Requests forging stats by delegate",
+				"summary": "Requests forging stats by delegate.",
 				"operationId": "getForgingStatistics",
 				"x-lisk-cache-enabled": true,
-				"description": "By passing an existing delegate address and the desired unix timestamps, you can get its forging statistics within the specified timespan.\nIf no timestamps are provided, it will use the timestamps from Lisk epoch to current date.\n",
+				"description": "By passing an existing delegate address and the desired unix timestamps, it is possible to acquire the forging statistics within the specified timespan.\nIf no timestamps are provided, the timestamps from Lisk epoch to the current date will be used.\n",
 				"produces": ["application/json"],
 				"parameters": [
 					{
 						"in": "path",
 						"name": "address",
-						"description": "Lisk address of a delegate",
+						"description": "Lisk address of a delegate.",
 						"required": true,
 						"type": "string",
 						"format": "address"
@@ -694,25 +694,25 @@
 				],
 				"responses": {
 					"200": {
-						"description": "Results matching specified delegate address",
+						"description": "Results matching specified delegate address.",
 						"schema": {
 							"$ref": "#/definitions/ForgingStatsResponse"
 						}
 					},
 					"400": {
-						"description": "Malformed query or parameters",
+						"description": "Malformed query or parameters.",
 						"schema": {
 							"$ref": "#/definitions/ParamErrorResponse"
 						}
 					},
 					"429": {
-						"description": "Too many requests, exceeded rate limit",
+						"description": "Too many requests, exceeded rate limit.",
 						"schema": {
 							"$ref": "#/definitions/RequestLimitError"
 						}
 					},
 					"500": {
-						"description": "Unexpected error",
+						"description": "Unexpected error.",
 						"schema": {
 							"$ref": "#/definitions/UnexpectedError"
 						}
@@ -751,14 +751,14 @@
 					{
 						"in": "query",
 						"name": "generatorPublicKey",
-						"description": "Public key of the forger of the block",
+						"description": "Public key of the forger of the block.",
 						"type": "string",
 						"format": "publicKey"
 					},
 					{
 						"in": "query",
 						"name": "sort",
-						"description": "Fields to sort results by",
+						"description": "Fields to sort results by.",
 						"required": false,
 						"type": "string",
 						"enum": [
@@ -776,25 +776,25 @@
 				],
 				"responses": {
 					"200": {
-						"description": "Search results matching criteria",
+						"description": "Search results matching criteria.",
 						"schema": {
 							"$ref": "#/definitions/BlocksResponse"
 						}
 					},
 					"400": {
-						"description": "Malformed query or parameters",
+						"description": "Malformed query or parameters.",
 						"schema": {
 							"$ref": "#/definitions/ParamErrorResponse"
 						}
 					},
 					"429": {
-						"description": "Too many requests, exceeded rate limit",
+						"description": "Too many requests, exceeded rate limit.",
 						"schema": {
 							"$ref": "#/definitions/RequestLimitError"
 						}
 					},
 					"500": {
-						"description": "Unexpected error",
+						"description": "Unexpected error.",
 						"schema": {
 							"$ref": "#/definitions/UnexpectedError"
 						}
@@ -806,7 +806,7 @@
 			"x-swagger-router-controller": "voters",
 			"get": {
 				"tags": ["Voters"],
-				"summary": "Requests voters data for a delegate",
+				"summary": "Requests voters data for a delegate.",
 				"operationId": "getVoters",
 				"description": "*Attention: At least **one of the filter parameters must be provided.***\nReturns all votes received by a delegate.\n",
 				"produces": ["application/json"],
@@ -829,7 +829,7 @@
 					{
 						"in": "query",
 						"name": "sort",
-						"description": "Fields to sort results by",
+						"description": "Fields to sort results by.",
 						"required": false,
 						"type": "string",
 						"enum": [
@@ -845,31 +845,31 @@
 				],
 				"responses": {
 					"200": {
-						"description": "Voters list",
+						"description": "Voters list.",
 						"schema": {
 							"$ref": "#/definitions/VotersResponse"
 						}
 					},
 					"400": {
-						"description": "Malformed query or parameters",
+						"description": "Malformed query or parameters.",
 						"schema": {
 							"$ref": "#/definitions/ParamErrorResponse"
 						}
 					},
 					"404": {
-						"description": "Requested resource not found based on provided filters",
+						"description": "Requested resource not found based on provided filters.",
 						"schema": {
 							"$ref": "#/definitions/NotFoundError"
 						}
 					},
 					"429": {
-						"description": "Too many requests, exceeded rate limit",
+						"description": "Too many requests, exceeded rate limit.",
 						"schema": {
 							"$ref": "#/definitions/RequestLimitError"
 						}
 					},
 					"500": {
-						"description": "Unexpected error",
+						"description": "Unexpected error.",
 						"schema": {
 							"$ref": "#/definitions/UnexpectedError"
 						}
@@ -881,7 +881,7 @@
 			"x-swagger-router-controller": "voters",
 			"get": {
 				"tags": ["Votes"],
-				"summary": "Requests votes data for an account",
+				"summary": "Requests votes data for an account.",
 				"operationId": "getVotes",
 				"description": "*Attention: At least **one of the filter parameters must be provided.***\nReturns all votes placed by an account.\n",
 				"produces": ["application/json"],
@@ -901,17 +901,17 @@
 					{
 						"name": "limit",
 						"in": "query",
-						"description": "Limit applied to results",
+						"description": "Limit applied to results.",
 						"type": "integer",
 						"format": "int32",
 						"minimum": 1,
-						"maximum": 101,
+						"maximum": 10,
 						"default": 10
 					},
 					{
 						"in": "query",
 						"name": "sort",
-						"description": "Fields to sort results by",
+						"description": "Fields to sort results by.",
 						"required": false,
 						"type": "string",
 						"enum": [
@@ -925,31 +925,31 @@
 				],
 				"responses": {
 					"200": {
-						"description": "Votes list",
+						"description": "Votes list.",
 						"schema": {
 							"$ref": "#/definitions/VotesResponse"
 						}
 					},
 					"400": {
-						"description": "Malformed query or parameters",
+						"description": "Malformed query or parameters.",
 						"schema": {
 							"$ref": "#/definitions/ParamErrorResponse"
 						}
 					},
 					"404": {
-						"description": "Requested resource not found based on provided filters",
+						"description": "Requested resource not found based on provided filters.",
 						"schema": {
 							"$ref": "#/definitions/NotFoundError"
 						}
 					},
 					"429": {
-						"description": "Too many requests, exceeded rate limit",
+						"description": "Too many requests, exceeded rate limit.",
 						"schema": {
 							"$ref": "#/definitions/RequestLimitError"
 						}
 					},
 					"500": {
-						"description": "Unexpected error",
+						"description": "Unexpected error.",
 						"schema": {
 							"$ref": "#/definitions/UnexpectedError"
 						}
@@ -961,7 +961,7 @@
 			"x-swagger-router-controller": "transactions",
 			"get": {
 				"tags": ["Transactions"],
-				"summary": "Requests transactions data",
+				"summary": "Requests transactions data.",
 				"operationId": "getTransactions",
 				"x-lisk-cache-enabled": true,
 				"description": "Search for a specified transaction in the system.\n",
@@ -1006,7 +1006,7 @@
 					{
 						"in": "query",
 						"name": "sort",
-						"description": "Fields to sort results by",
+						"description": "Fields to sort results by.",
 						"required": false,
 						"type": "string",
 						"enum": [
@@ -1022,7 +1022,7 @@
 					{
 						"name": "data",
 						"in": "query",
-						"description": "Fuzzy additional data field to query",
+						"description": "Fuzzy additional data field to query.",
 						"type": "string",
 						"format": "additionalData",
 						"minLength": 1,
@@ -1031,25 +1031,25 @@
 				],
 				"responses": {
 					"200": {
-						"description": "Transactions list",
+						"description": "Transactions list.",
 						"schema": {
 							"$ref": "#/definitions/TransactionsResponse"
 						}
 					},
 					"400": {
-						"description": "Malformed query or parameters",
+						"description": "Malformed query or parameters.",
 						"schema": {
 							"$ref": "#/definitions/ParamErrorResponse"
 						}
 					},
 					"429": {
-						"description": "Too many requests, exceeded rate limit",
+						"description": "Too many requests, exceeded rate limit.",
 						"schema": {
 							"$ref": "#/definitions/RequestLimitError"
 						}
 					},
 					"500": {
-						"description": "Unexpected error",
+						"description": "Unexpected error.",
 						"schema": {
 							"$ref": "#/definitions/UnexpectedError"
 						}
@@ -1058,7 +1058,7 @@
 			},
 			"post": {
 				"tags": ["Transactions"],
-				"summary": "Submits signed transaction for processing",
+				"summary": "Submits signed transaction for processing.",
 				"operationId": "postTransaction",
 				"description": "Submits signed transaction object for processing by the transaction pool.\nTransaction objects can be generated locally either by using Lisk Commander or with Lisk Elements.\n",
 				"consumes": ["application/json"],
@@ -1067,7 +1067,7 @@
 					{
 						"in": "body",
 						"name": "transaction",
-						"description": "Transaction object to submit to the network",
+						"description": "Transaction object to submit to the network.",
 						"required": true,
 						"schema": {
 							"$ref": "#/definitions/TransactionRequest"
@@ -1076,25 +1076,25 @@
 				],
 				"responses": {
 					"200": {
-						"description": "Transaction accepted by the node for processing",
+						"description": "Transaction accepted by the node for processing.",
 						"schema": {
 							"$ref": "#/definitions/GeneralStatusResponse"
 						}
 					},
 					"400": {
-						"description": "Malformed query or parameters",
+						"description": "Malformed query or parameters.",
 						"schema": {
 							"$ref": "#/definitions/ParamErrorResponse"
 						}
 					},
 					"409": {
-						"description": "Some error related to processing of request",
+						"description": "Some error related to processing of request.",
 						"schema": {
 							"$ref": "#/definitions/ProcessingError"
 						}
 					},
 					"429": {
-						"description": "Too many requests, exceeded rate limit",
+						"description": "Too many requests, exceeded rate limit.",
 						"schema": {
 							"$ref": "#/definitions/RequestLimitError"
 						}
@@ -1110,14 +1110,14 @@
 		"ip": {
 			"name": "ip",
 			"in": "query",
-			"description": "IP of the node or delegate",
+			"description": "IP of the node or delegate.",
 			"type": "string",
 			"format": "ip"
 		},
 		"httpPort": {
 			"name": "httpPort",
 			"in": "query",
-			"description": "Http port of the node or delegate",
+			"description": "Http port of the node or delegate.",
 			"type": "integer",
 			"format": "int32",
 			"minimum": 1,
@@ -1126,7 +1126,7 @@
 		"wsPort": {
 			"name": "wsPort",
 			"in": "query",
-			"description": "Web socket port for the node or delegate",
+			"description": "Web socket port for the node or delegate.",
 			"type": "integer",
 			"format": "int32",
 			"minimum": 1,
@@ -1135,34 +1135,34 @@
 		"os": {
 			"name": "os",
 			"in": "query",
-			"description": "OS of the node",
+			"description": "OS of the node.",
 			"type": "string"
 		},
 		"version": {
 			"name": "version",
 			"in": "query",
-			"description": "Lisk version of the node",
+			"description": "Lisk version of the node.",
 			"type": "string",
 			"format": "version"
 		},
 		"protocolVersion": {
 			"name": "protocolVersion",
 			"in": "query",
-			"description": "Protocol version of the node",
+			"description": "Protocol version of the node.",
 			"type": "string",
 			"format": "protocolVersion"
 		},
 		"state": {
 			"name": "state",
 			"in": "query",
-			"description": "Current state of the network",
+			"description": "Current state of the network.",
 			"type": "string",
 			"enum": ["connected", "disconnected"]
 		},
 		"height": {
 			"name": "height",
 			"in": "query",
-			"description": "Current height of the network",
+			"description": "Current height of the network.",
 			"type": "integer",
 			"format": "int32",
 			"minimum": 1
@@ -1170,7 +1170,7 @@
 		"limit": {
 			"in": "query",
 			"name": "limit",
-			"description": "Limit applied to results",
+			"description": "Limit applied to results.",
 			"type": "integer",
 			"format": "int32",
 			"minimum": 1,
@@ -1180,7 +1180,7 @@
 		"offset": {
 			"name": "offset",
 			"in": "query",
-			"description": "Offset value for results",
+			"description": "Offset value for results.",
 			"type": "integer",
 			"format": "int32",
 			"minimum": 0,
@@ -1189,7 +1189,7 @@
 		"address": {
 			"name": "address",
 			"in": "query",
-			"description": "Address of an account",
+			"description": "Address of an account.",
 			"required": false,
 			"type": "string",
 			"format": "address",
@@ -1199,14 +1199,14 @@
 		"publicKey": {
 			"name": "publicKey",
 			"in": "query",
-			"description": "Public key to query",
+			"description": "Public key to query.",
 			"type": "string",
 			"format": "publicKey"
 		},
 		"username": {
 			"name": "username",
 			"in": "query",
-			"description": "Delegate username to query",
+			"description": "Delegate username to query.",
 			"type": "string",
 			"format": "username",
 			"minLength": 1,
@@ -1215,7 +1215,7 @@
 		"blockId": {
 			"name": "blockId",
 			"in": "query",
-			"description": "Block id to query",
+			"description": "Block ID to query.",
 			"type": "string",
 			"format": "id",
 			"minLength": 1,
@@ -1224,7 +1224,7 @@
 		"transactionId": {
 			"name": "id",
 			"in": "query",
-			"description": "Transaction id to query",
+			"description": "Transaction ID to query.",
 			"type": "string",
 			"format": "id",
 			"minLength": 1,
@@ -1233,7 +1233,7 @@
 		"recipientId": {
 			"name": "recipientId",
 			"in": "query",
-			"description": "Recipient lisk address",
+			"description": "Recipients Lisk address.",
 			"type": "string",
 			"format": "address",
 			"minLength": 1,
@@ -1242,7 +1242,7 @@
 		"senderId": {
 			"name": "senderId",
 			"in": "query",
-			"description": "Sender lisk address",
+			"description": "Senders Lisk address.",
 			"type": "string",
 			"format": "address",
 			"minLength": 1,
@@ -1251,7 +1251,7 @@
 		"senderPublicKey": {
 			"name": "senderPublicKey",
 			"in": "query",
-			"description": "Sender public key",
+			"description": "Senders public key.",
 			"type": "string",
 			"format": "publicKey",
 			"minLength": 1
@@ -1259,7 +1259,7 @@
 		"senderIdOrRecipientId": {
 			"name": "senderIdOrRecipientId",
 			"in": "query",
-			"description": "Lisk address",
+			"description": "Lisk address.",
 			"type": "string",
 			"format": "address",
 			"minLength": 1,
@@ -1275,35 +1275,35 @@
 		"minAmount": {
 			"name": "minAmount",
 			"in": "query",
-			"description": "Minimum transaction amount in Beddows",
+			"description": "Minimum transaction amount in Beddows.",
 			"type": "integer",
 			"minimum": 0
 		},
 		"maxAmount": {
 			"name": "maxAmount",
 			"in": "query",
-			"description": "Maximum transaction amount in Beddows",
+			"description": "Maximum transaction amount in Beddows.",
 			"type": "integer",
 			"minimum": 0
 		},
 		"fromTimestamp": {
 			"name": "fromTimestamp",
 			"in": "query",
-			"description": "Starting unix timestamp",
+			"description": "Starting unix timestamp.",
 			"type": "integer",
 			"minimum": 0
 		},
 		"toTimestamp": {
 			"name": "toTimestamp",
 			"in": "query",
-			"description": "Ending unix timestamp",
+			"description": "Ending unix timestamp.",
 			"type": "integer",
 			"minimum": 1
 		},
 		"forging": {
 			"name": "forging",
 			"in": "query",
-			"description": "Forging status to filter",
+			"description": "Forging status to filter.",
 			"type": "boolean"
 		}
 	},
@@ -1321,7 +1321,7 @@
 			}
 		},
 		"Limit": {
-			"description": "Limit applied to results",
+			"description": "Limit applied to results.",
 			"type": "integer",
 			"format": "int32",
 			"minimum": 1,
@@ -1329,7 +1329,7 @@
 			"default": 10
 		},
 		"Offset": {
-			"description": "Offset value for results",
+			"description": "Offset value for results.",
 			"type": "integer",
 			"format": "int32",
 			"minimum": 0,
@@ -1338,7 +1338,6 @@
 		"TransactionRequest": {
 			"type": "object",
 			"required": [
-				"id",
 				"type",
 				"senderPublicKey",
 				"nonce",
@@ -1347,14 +1346,6 @@
 				"signatures"
 			],
 			"properties": {
-				"id": {
-					"type": "string",
-					"format": "id",
-					"example": "222675625422353767",
-					"minLength": 1,
-					"maxLength": 20,
-					"description": "Unique identifier of the transaction.\nDerived from the transaction signature.\n"
-				},
 				"type": {
 					"type": "integer",
 					"minimum": 0,
@@ -1363,7 +1354,7 @@
 				"nonce": {
 					"type": "string",
 					"example": "0",
-					"description": "Unique sequence of number per account\n"
+					"description": "Unique sequence of number per account.\n"
 				},
 				"fee": {
 					"type": "string",
@@ -1374,7 +1365,7 @@
 					"type": "string",
 					"format": "publicKey",
 					"example": "2ca9a7143fc721fdc540fef893b27e8d648d2288efa61e56264edf01a2c23079",
-					"description": "The public key of the Senders' account.\n"
+					"description": "The public key of the Senders account.\n"
 				},
 				"signatures": {
 					"type": "array",
@@ -1387,7 +1378,7 @@
 				},
 				"asset": {
 					"type": "object",
-					"description": "Displays additional transaction data.\nCan include e.g. vote data or delegate username.\n",
+					"description": "Displays additional transaction data.\nFor example, this can include the vote data or delegate username.\n",
 					"properties": {
 						"amount": {
 							"type": "string",
@@ -1398,7 +1389,7 @@
 							"type": "string",
 							"format": "address",
 							"example": "12668885769632475474L",
-							"description": "Lisk Address of the Recipients' account.\n"
+							"description": "Lisk address of the recipients account.\n"
 						}
 					}
 				}
@@ -1435,7 +1426,7 @@
 			}
 		},
 		"PeersResponse": {
-			"description": "Peers response",
+			"description": "Peers response.",
 			"type": "object",
 			"required": ["data", "meta", "links"],
 			"properties": {
@@ -1456,7 +1447,7 @@
 							"$ref": "#/definitions/Limit"
 						},
 						"count": {
-							"description": "Number of peers in the response",
+							"description": "Number of peers in the response.",
 							"type": "integer",
 							"example": 100
 						}
@@ -1472,7 +1463,7 @@
 			"required": ["data", "meta", "links"],
 			"properties": {
 				"data": {
-					"description": "List of accounts",
+					"description": "List of accounts.",
 					"type": "array",
 					"items": {
 						"$ref": "#/definitions/AccountExtended"
@@ -1487,7 +1478,7 @@
 			}
 		},
 		"DappsResponse": {
-			"description": "Dapps endpoint response",
+			"description": "Dapps endpoint response.",
 			"type": "object",
 			"required": ["data", "meta", "links"],
 			"properties": {
@@ -1510,7 +1501,7 @@
 			"required": ["data", "meta", "links"],
 			"properties": {
 				"data": {
-					"description": "List of delegates",
+					"description": "List of delegates.",
 					"type": "array",
 					"items": {
 						"$ref": "#/definitions/DelegateWithAccount"
@@ -1527,7 +1518,7 @@
 							"type": "integer",
 							"format": "int32",
 							"minimum": 1,
-							"maximum": 101,
+							"maximum": 103,
 							"default": 10
 						}
 					}
@@ -1542,7 +1533,7 @@
 			"required": ["data", "meta", "links"],
 			"properties": {
 				"data": {
-					"description": "List of forgers",
+					"description": "List of forgers.",
 					"type": "array",
 					"items": {
 						"$ref": "#/definitions/Forger"
@@ -1565,21 +1556,21 @@
 							"type": "integer",
 							"format": "int32",
 							"minimum": 1,
-							"maximum": 101,
+							"maximum": 103,
 							"default": 10
 						},
 						"currentSlot": {
-							"description": "Currently active slot",
+							"description": "Currently active slot.",
 							"type": "integer",
 							"example": 10
 						},
 						"lastBlockSlot": {
-							"description": "Slot of the last processed block",
+							"description": "Slot of the last processed block.",
 							"type": "integer",
 							"example": 10
 						},
 						"lastBlock": {
-							"description": "ID of the last processed block",
+							"description": "ID of the last processed block.",
 							"type": "integer",
 							"example": 10
 						}
@@ -1620,12 +1611,12 @@
 					"required": ["fromTimestamp", "toTimestamp"],
 					"properties": {
 						"fromTimestamp": {
-							"description": "Starting unix timestamp",
+							"description": "Starting unix timestamp.",
 							"type": "integer",
 							"example": 0
 						},
 						"toTimestamp": {
-							"description": "Ending unix timestamp",
+							"description": "Ending unix timestamp.",
 							"type": "integer",
 							"example": 1525861914
 						}
@@ -1637,7 +1628,7 @@
 			}
 		},
 		"BlocksResponse": {
-			"description": "Blocks response",
+			"description": "Blocks response.",
 			"type": "object",
 			"required": ["data", "meta", "links"],
 			"properties": {
@@ -1656,7 +1647,7 @@
 			}
 		},
 		"TransactionsResponse": {
-			"description": "Transactions response",
+			"description": "Transactions response.",
 			"type": "object",
 			"required": ["data", "meta", "links"],
 			"properties": {
@@ -1677,7 +1668,7 @@
 							"$ref": "#/definitions/Limit"
 						},
 						"count": {
-							"description": "Number of transactions in the response",
+							"description": "Number of transactions in the response.",
 							"type": "integer",
 							"example": 100
 						}
@@ -1707,7 +1698,7 @@
 					"required": ["status"],
 					"properties": {
 						"status": {
-							"description": "Acceptance status for transactions",
+							"description": "Acceptance status for transactions.",
 							"type": "boolean",
 							"example": true
 						}
@@ -1751,7 +1742,7 @@
 				"height": {
 					"type": "integer",
 					"minimum": 1,
-					"description": "The height of the network, at the moment where this transaction was included in the blockchain.\n"
+					"description": "The height of the network, at the exact point in time when this transaction was included in the blockchain.\n"
 				},
 				"blockId": {
 					"type": "string",
@@ -1759,24 +1750,24 @@
 					"minLength": 1,
 					"maxLength": 20,
 					"example": "6258354802676165798",
-					"description": "The Id of the block, this transaction is included in.\n"
+					"description": "The ID of the block which this transaction is included in.\n"
 				},
 				"nonce": {
 					"type": "string",
 					"example": "1",
-					"description": "Unique sequence of number per account\n"
+					"description": "Unique sequence of number per account.\n"
 				},
 				"senderId": {
 					"type": "string",
 					"format": "address",
 					"example": "12668885769632475474L",
-					"description": "Lisk Address of the Senders' account.\n"
+					"description": "Lisk Address of the Senders account.\n"
 				},
 				"senderPublicKey": {
 					"type": "string",
 					"format": "publicKey",
 					"example": "2ca9a7143fc721fdc540fef893b27e8d648d2288efa61e56264edf01a2c23079",
-					"description": "The public key of the Senders' account.\n"
+					"description": "The public key of the Senders account.\n"
 				},
 				"signatures": {
 					"type": "array",
@@ -1798,7 +1789,7 @@
 				"receivedAt": {
 					"type": "string",
 					"format": "date-time",
-					"description": "The timestamp of the moment, where a node discovered a transaction for the first time."
+					"description": "The timestamp of the exact point in time where a node discovered a transaction for the first time."
 				},
 				"ready": {
 					"type": "boolean",
@@ -1833,30 +1824,30 @@
 					"type": "integer",
 					"example": 0,
 					"minimum": 0,
-					"description": "Versioning for future upgrades of the lisk protocol."
+					"description": "Versioning for future upgrades of the Lisk protocol."
 				},
 				"height": {
 					"type": "integer",
 					"example": 123,
 					"minimum": 1,
-					"description": "Height of the network, when the block got forged.\nThe height of the networks represents the number of blocks,\nthat have been forged on the network since Genesis Block.\n"
+					"description": "Height of the network, when the block was forged.\nThe height of the network represents the number of blocks\nthat have been forged on the network since the genesis block.\n"
 				},
 				"timestamp": {
 					"type": "integer",
 					"example": 28227090,
-					"description": "Unix Timestamp"
+					"description": "Unix timestamp."
 				},
 				"generatorAddress": {
 					"type": "string",
 					"format": "address",
 					"example": "12668885769632475474L",
-					"description": "Lisk Address of the delegate who forged the block."
+					"description": "Lisk address of the delegate who forged the block."
 				},
 				"generatorPublicKey": {
 					"type": "string",
 					"format": "publicKey",
 					"example": "968ba2fa993ea9dc27ed740da0daf49eddd740dbd7cb1cb4fc5db3a20baf341b",
-					"description": "Public key of th edelagte who forged the block."
+					"description": "Public key of the delegate who forged the block."
 				},
 				"payloadLength": {
 					"type": "integer",
@@ -1868,7 +1859,7 @@
 					"type": "string",
 					"format": "hex",
 					"example": "4e4d91be041e09a2e54bb7dd38f1f2a02ee7432ec9f169ba63cd1f193a733dd2",
-					"description": "Hash of the payload of the block.\nThe payload of a block is comprised of the transactions the block contains.\nFor each type of transaction exists a different maximum size for the payload.\n"
+					"description": "Hash of the payload of the block.\nThe payload of a block is comprised of the transactions that the block contains.\nFor each type of transaction there is a different maximum size which exists for the payload.\n"
 				},
 				"blockSignature": {
 					"type": "string",
@@ -1879,13 +1870,13 @@
 				"confirmations": {
 					"type": "integer",
 					"example": 200,
-					"description": "Number of times that this Block has been confirmed by the network.\nBy forging a new block on a chain, all former blocks in the chain get confirmed by the forging delegate.\n"
+					"description": "Number of times that this block has been confirmed by the network.\nBy forging a new block on a chain, all former blocks in the chain are then confirmed by the forging delegate.\n"
 				},
 				"previousBlockId": {
 					"type": "string",
 					"format": "id",
 					"example": "15918760246746894806",
-					"description": "The id of the previous block of the chain."
+					"description": "The ID of the previous block of the chain."
 				},
 				"numberOfTransactions": {
 					"type": "integer",
@@ -1910,7 +1901,7 @@
 				"totalForged": {
 					"type": "string",
 					"example": "65000000",
-					"description": "Total amount of LSK that have been forged in this Block.\nConsists of fees and the reward.\n"
+					"description": "Total amount of LSK that has been forged in this block.\nConsists of fees and the reward.\n"
 				},
 				"maxHeightPreviouslyForged": {
 					"type": "integer",
@@ -1942,7 +1933,7 @@
 			}
 		},
 		"VotersResponse": {
-			"description": "Voters endpoint response",
+			"description": "Voters endpoint response.",
 			"type": "object",
 			"required": ["data", "meta", "links"],
 			"properties": {
@@ -1958,12 +1949,12 @@
 			}
 		},
 		"VotesResponse": {
-			"description": "Votes endpoint response",
+			"description": "Votes endpoint response.",
 			"type": "object",
 			"required": ["data", "meta", "links"],
 			"properties": {
 				"data": {
-					"$ref": "#/definitions/DelegateWithVotes"
+					"$ref": "#/definitions/AccountWithVotes"
 				},
 				"meta": {
 					"type": "object",
@@ -1976,7 +1967,7 @@
 							"type": "integer",
 							"format": "int32",
 							"minimum": 1,
-							"maximum": 101,
+							"maximum": 10,
 							"default": 10
 						}
 					}
@@ -1994,7 +1985,7 @@
 					"type": "string",
 					"format": "username",
 					"example": "isabella",
-					"description": "The delegates' username.\nA delegate chooses the username by registering a delegate on the Lisk network.\nIt is unique and cannot be changed later.\n"
+					"description": "The delegates username.\nA delegate chooses the username by registering a delegate on the Lisk network.\nIt is unique and cannot be changed later.\n"
 				},
 				"publicKey": {
 					"type": "string",
@@ -2006,12 +1997,12 @@
 					"type": "string",
 					"format": "address",
 					"example": "6251001604903637008L",
-					"description": "The Lisk Address is the human readable representation of the accounts owners' public key.\nIt consists of 21 numbers followed by a big 'L' at the end.\n"
+					"description": "The Lisk address is the human readable representation of the accounts owners public key.\nIt consists of 21 numbers followed by a capital 'L' at the end.\n"
 				},
 				"nextSlot": {
 					"type": "number",
 					"example": 4368793,
-					"description": "Returns the slot number in which the forger will be able to forge the next block.\nEach slot has a timespan of 10 seconds.\nThe first slot began directly after the Lisk Epoch Time.\n"
+					"description": "Returns the slot number in which the forger will be able to forge the next block.\nEach slot has a timespan of 10 seconds.\nThe first slot began directly after the Lisk epoch time.\n"
 				}
 			}
 		},
@@ -2022,22 +2013,22 @@
 				"fees": {
 					"type": "string",
 					"example": "15000000",
-					"description": "Amount of fees, the delegate earned during the timespan."
+					"description": "Amount of fees that the delegate earned during the timespan."
 				},
 				"rewards": {
 					"type": "string",
 					"example": "50000000",
-					"description": "Amount of rewards, the delegate earned during the timespan."
+					"description": "Amount of rewards that the delegate earned during the timespan."
 				},
 				"forged": {
 					"type": "string",
 					"example": "65000000",
-					"description": "Amount of Lisk, that have been transferred inside the forged blocks of a delegate, during the timespan."
+					"description": "Amount of Lisk that has been transferred inside the forged blocks of a delegate, during the timespan."
 				},
 				"count": {
 					"type": "string",
 					"example": "100",
-					"description": "Amount of blocks, that the delegate has forged during the timespan."
+					"description": "Amount of blocks that the delegate has forged during the timespan."
 				}
 			}
 		},
@@ -2051,7 +2042,7 @@
 					"example": "15359945250124697273",
 					"minLength": 1,
 					"maxLength": 20,
-					"description": "Unique Identifier of the Register Dapp Transaction.\nDerived from the transaction signature.\n"
+					"description": "Unique identifier of the Register Dapp Transaction.\nDerived from the transaction signature.\n"
 				},
 				"icon": {
 					"type": "string",
@@ -2101,8 +2092,8 @@
 				},
 				"networkId": {
 					"type": "string",
-					"example": "11a254dc30db5eb1ce4001acde35fd5a14d62584f886d30df161e4e883220eb7",
-					"description": "The network identifier as per LIP-0009"
+					"example": "93d00fe5be70d90e7ae247936a2e7d83b50809c79b73fa14285f02c842348b3e",
+					"description": "The network identifier as per LIP-0009."
 				},
 				"httpPort": {
 					"type": "integer",
@@ -2118,12 +2109,12 @@
 					"format": "int32",
 					"minimum": 1,
 					"maximum": 65535,
-					"description": "The port the peer node uses for Websocket Connections, e.g. P2P broadcasts."
+					"description": "The port the peer node uses for websocket connections, e.g. P2P broadcasts."
 				},
 				"os": {
 					"type": "string",
 					"example": "debian",
-					"description": "The Operating System, that the peer node runs on."
+					"description": "The operating system that the peer node runs on."
 				},
 				"version": {
 					"type": "string",
@@ -2141,7 +2132,7 @@
 					"type": "string",
 					"example": "connected",
 					"enum": ["connected", "disconnected"],
-					"description": "The state of the Peer.\n"
+					"description": "The state of the peer.\n"
 				},
 				"height": {
 					"type": "integer",
@@ -2172,7 +2163,7 @@
 				"milestone": {
 					"type": "string",
 					"example": "500000000",
-					"description": "The Reward, each forger will get for forging a block at the current slot.\nAfter a certain amount of slots, the reward will be reduced.\n"
+					"description": "The reward that each forger will receive for forging a block at the current slot.\nAfter a certain amount of slots, the reward will be reduced.\n"
 				},
 				"build": {
 					"type": "string",
@@ -2190,13 +2181,13 @@
 					"type": "string",
 					"format": "version",
 					"example": "v0.8.0",
-					"description": "The Lisk Core version, that the node is running on."
+					"description": "The Lisk Core version that the node is running on."
 				},
 				"protocolVersion": {
 					"type": "string",
 					"format": "protocolVersion",
 					"example": 1,
-					"description": "The Lisk Core protocol version, that the node is running on."
+					"description": "The Lisk Core protocol version that the node is running on."
 				},
 				"networkId": {
 					"type": "string",
@@ -2211,7 +2202,7 @@
 				"reward": {
 					"type": "string",
 					"example": "500000000",
-					"description": "The reward a delegate will get for forging a block.\nDepends on the slot height.\n"
+					"description": "The reward a delegate will receive for forging a block.\nDepends on the slot height.\n"
 				}
 			}
 		},
@@ -2229,7 +2220,7 @@
 				"currentTime": {
 					"type": "integer",
 					"example": 1533558858128,
-					"description": "Current time of the node in miliseconds (Unix Timestamp)."
+					"description": "Current time of the node in milliseconds (Unix timestamp)."
 				},
 				"height": {
 					"type": "integer",
@@ -2245,12 +2236,12 @@
 				"secondsSinceEpoch": {
 					"type": "integer",
 					"example": 1533558858,
-					"description": "Number of seconds that have elapsed since the Lisk epoch time (Lisk Timestamp)."
+					"description": "Number of seconds that have elapsed since the Lisk epoch time (Lisk timestamp)."
 				},
 				"syncing": {
 					"type": "boolean",
 					"example": false,
-					"description": "True if the node syncing with other peers."
+					"description": "True if the node is syncing with other peers."
 				},
 				"unconfirmedTransactions": {
 					"type": "integer",
@@ -2265,28 +2256,28 @@
 			"required": ["message", "id", "dataPath"],
 			"properties": {
 				"message": {
-					"description": "Error message",
+					"description": "Error message.",
 					"type": "string"
 				},
 				"name": {
-					"description": "Type of Error",
+					"description": "Type of Error.",
 					"type": "string"
 				},
 				"id": {
-					"description": "Transaction ID",
+					"description": "Transaction ID.",
 					"type": "string",
 					"minLength": 1
 				},
 				"dataPath": {
-					"description": "Transaction field with error",
+					"description": "Transaction field with error.",
 					"type": "string"
 				},
 				"expected": {
-					"description": "Expected value",
+					"description": "Expected value.",
 					"type": ["string", "number"]
 				},
 				"actual": {
-					"description": "Actual value",
+					"description": "Actual value.",
 					"type": ["string", "number"]
 				}
 			}
@@ -2296,16 +2287,16 @@
 			"required": ["message"],
 			"properties": {
 				"message": {
-					"description": "Error message containing details of the error",
+					"description": "Error message containing details of the error.",
 					"type": "string",
 					"minLength": 1
 				},
 				"code": {
-					"description": "Error code containing details on status",
+					"description": "Error code containing details on status.",
 					"type": "integer"
 				},
 				"errors": {
-					"description": "Array containing TransactionError objects",
+					"description": "Array containing TransactionError objects.",
 					"type": "array",
 					"items": {
 						"$ref": "#/definitions/TransactionError"
@@ -2318,7 +2309,7 @@
 			"required": ["message"],
 			"properties": {
 				"message": {
-					"description": "Error message containing details of the error",
+					"description": "Error message containing details of the error.",
 					"type": "string",
 					"minLength": 1
 				}
@@ -2329,7 +2320,7 @@
 			"required": ["message"],
 			"properties": {
 				"message": {
-					"description": "Error message containing details of the error",
+					"description": "Error message containing details of the error.",
 					"type": "string",
 					"minLength": 1
 				}
@@ -2340,7 +2331,7 @@
 			"required": ["message"],
 			"properties": {
 				"message": {
-					"description": "Error message containing details of the error",
+					"description": "Error message containing details of the error.",
 					"type": "string",
 					"minLength": 1
 				}
@@ -2351,23 +2342,23 @@
 			"properties": {
 				"error": {
 					"type": "string",
-					"example": "Request limit exceeded. Please try again later"
+					"example": "Request limit exceeded. Please try again later."
 				}
 			}
 		},
 		"ParamErrorResponse": {
 			"type": "object",
-			"description": "Response generated in case of parameters validation",
+			"description": "Response generated in case of parameters validation.",
 			"required": ["message", "errors"],
 			"properties": {
 				"message": {
 					"type": "string",
-					"description": "Message stating some valdiation error occurred",
-					"example": "Validation errors"
+					"description": "Message stating a validation error occurred.",
+					"example": "Validation errors."
 				},
 				"errors": {
 					"type": "array",
-					"description": "Array of individual parameter errors",
+					"description": "Array of individual parameter errors.",
 					"items": {
 						"$ref": "#/definitions/ParamError"
 					}
@@ -2376,32 +2367,32 @@
 		},
 		"ParamError": {
 			"type": "object",
-			"description": "Collection of errors on a particular parameter",
+			"description": "Collection of errors in a particular parameter.",
 			"required": ["code", "name", "message"],
 			"properties": {
 				"code": {
 					"type": "string",
-					"description": "Valid error code explaining error",
+					"description": "Valid error code explaining error.",
 					"example": "INVALID_REQUEST_PARAMETER"
 				},
 				"name": {
 					"type": "string",
-					"description": "Parameter name for which error triggered",
+					"description": "Parameter name for which error was triggered.",
 					"example": "offset"
 				},
 				"in": {
 					"type": "string",
-					"description": "Where the param was specified, e.g. path, query, form-data",
+					"description": "Where the param was specified, e.g. path, query, form-data.",
 					"example": "query"
 				},
 				"message": {
 					"type": "string",
-					"description": "Detailed message explaining the error",
-					"example": "Invalid parameter (offset) value failed JSON schema validation"
+					"description": "Detailed message explaining the error.",
+					"example": "Invalid parameter (offset), value failed JSON schema validation."
 				},
 				"errors": {
 					"type": "array",
-					"description": "Array of individual validation error for a particular param",
+					"description": "Array of individual validation error for a particular param.",
 					"items": {
 						"$ref": "#/definitions/ParamErrorMessage"
 					}
@@ -2410,26 +2401,26 @@
 		},
 		"ParamErrorMessage": {
 			"type": "object",
-			"description": "Singular error detail for a parameter",
+			"description": "Singular error detail for a parameter.",
 			"required": ["message"],
 			"properties": {
 				"code": {
 					"type": "string",
-					"description": "Valid error code explaining error",
+					"description": "Valid error code explaining error.",
 					"example": "MINIMUM"
 				},
 				"message": {
 					"type": "string",
-					"description": "Detailed message explaining error",
+					"description": "Detailed message explaining error.",
 					"example": "Value -1 is less than minimum 0"
 				},
 				"description": {
 					"type": "string",
-					"description": "Param description specified in schema"
+					"description": "Param description specified in schema."
 				},
 				"path": {
 					"type": "array",
-					"description": "The array/object paths which identify the param associated with the error",
+					"description": "The array/object paths which identify the param associated with the error.",
 					"items": {
 						"type": "string",
 						"example": "publicKey"
@@ -2445,7 +2436,7 @@
 					"type": "string",
 					"format": "address",
 					"example": "12668885769632475474L",
-					"description": "The Lisk Address is the human readable representation of the accounts owners' public key.\nIt consists of multiple numbers followed by a big 'L' at the end.\n"
+					"description": "The Lisk address is the human readable representation of the accounts owners public key.\nIt consists of multiple numbers followed by a capital 'L' at the end.\n"
 				},
 				"publicKey": {
 					"type": "string",
@@ -2457,13 +2448,21 @@
 		},
 		"AccountExtended": {
 			"type": "object",
-			"required": ["address", "publicKey", "balance", "nonce"],
+			"required": [
+				"address",
+				"publicKey",
+				"balance",
+				"nonce",
+				"votes",
+				"delegate",
+				"unlocking"
+			],
 			"properties": {
 				"address": {
 					"type": "string",
 					"format": "address",
 					"example": "12668885769632475474L",
-					"description": "The Lisk Address is the human readable representation of the accounts owners' public key.\nIt consists of 21 numbers followed by a big 'L' at the end.\n"
+					"description": "The Lisk address is the human readable representation of the accounts owners public key.\nIt consists of 21 numbers followed by a capital 'L' at the end.\n"
 				},
 				"publicKey": {
 					"type": "string",
@@ -2479,7 +2478,7 @@
 				"nonce": {
 					"type": "string",
 					"example": 154,
-					"description": "The current nonce associated to account for transaction processing"
+					"description": "The current nonce associated to account for transaction processing."
 				},
 				"asset": {
 					"type": "object",
@@ -2489,8 +2488,32 @@
 					},
 					"description": "Any JSON stored in the account's asset field."
 				},
+				"votes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Vote"
+					}
+				},
 				"delegate": {
 					"$ref": "#/definitions/Delegate"
+				},
+				"isDelegate": {
+					"type": "boolean",
+					"description": "The value indicating if the account is a deleage or not."
+				},
+				"username": {
+					"type": "string",
+					"example": "onedelegate",
+					"description": "If the account is a delegate, it displays the username for it."
+				},
+				"unlocking": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Unlocking"
+					}
+				},
+				"keys": {
+					"$ref": "#/definitions/MultisignatureAsset"
 				}
 			}
 		},
@@ -2502,12 +2525,12 @@
 					"type": "string",
 					"example": "isabella",
 					"format": "username",
-					"description": "The delegates' username.\nA delegate chooses the username by registering a delegate on the Lisk network.\nIt is unique and cannot be changed later.\n"
+					"description": "The delegates username.\nA delegate chooses the username by registering a delegate on the Lisk network.\nIt is unique and cannot be changed later.\n"
 				},
 				"voteWeight": {
 					"type": "string",
 					"example": 1081560729258,
-					"description": "The voters weight of the delegate.\nRepresents the total amount of Lisk (in Beddows) that the delegates' voters own.\nThe voters weight decides which rank the delegate gets in relation to the other delegates and their voters weights.\n"
+					"description": "The voters weight of the delegate.\nRepresents the total amount of Lisk (in Beddows), that the delegates voters own.\nThe voters weight decides which rank the delegate gets in relation to the other delegates and their voters weights.\n"
 				},
 				"rewards": {
 					"type": "string",
@@ -2517,39 +2540,39 @@
 				"producedBlocks": {
 					"type": "integer",
 					"example": 20131,
-					"description": "Total number of blocks the delegate has forged."
+					"description": "Total number of blocks that the delegate has forged."
 				},
 				"missedBlocks": {
 					"type": "integer",
 					"example": 427,
-					"description": "Total number of blocks the delegate has missed."
+					"description": "Total number of blocks that the delegate has missed."
 				},
 				"approval": {
 					"type": "number",
 					"example": 14.22,
-					"description": "Percentage of the voters weight, that the delegate owns in relation to the total supply of Lisk."
+					"description": "Percentage of the voters weight that the delegate owns in relation to the total supply of Lisk."
 				},
 				"productivity": {
 					"type": "number",
 					"example": 96.41,
-					"description": "Productivity rate.\nPercentage of successfully forged blocks (not missed) by the delegate.\n"
+					"description": "Productivity rate.\nPercentage of successfully forged blocks (not missed), by the delegate.\n"
 				}
 			}
 		},
 		"DelegateWithAccount": {
 			"type": "object",
-			"required": ["username", "voteWeight", "account"],
+			"required": ["username", "totalVotesReceived"],
 			"properties": {
 				"username": {
 					"type": "string",
 					"example": "isabella",
 					"format": "username",
-					"description": "The delegates' username.\nA delegate chooses the username by registering a delegate on the Lisk network.\nIt is unique and cannot be changed later.\n"
+					"description": "The delegates username.\nA delegate chooses the username by registering a delegate on the Lisk network.\nIt is unique and cannot be changed later.\n"
 				},
-				"voteWeight": {
+				"totalVotesReceived": {
 					"type": "string",
 					"example": 1081560729258,
-					"description": "The voters weight of the delegate.\nRepresents the total amount of Lisk (in Beddows) that the delegates' voters own.\nThe voters weight decides which rank the delegate gets in relation to the other delegates and their voters weights.\n"
+					"description": "The total votes received by the delegate.\nRepresents the total amount of Lisk (in Beddows), that the delegates voters voted this delegate.\n"
 				},
 				"rewards": {
 					"type": "string",
@@ -2559,25 +2582,66 @@
 				"producedBlocks": {
 					"type": "integer",
 					"example": 20131,
-					"description": "Total number of blocks the delegate has forged."
+					"description": "Total number of blocks that the delegate has forged."
 				},
 				"missedBlocks": {
 					"type": "integer",
 					"example": 427,
-					"description": "Total number of blocks the delegate has missed."
-				},
-				"approval": {
-					"type": "number",
-					"example": 14.22,
-					"description": "Percentage of the voters weight, that the delegate owns in relation to the total supply of Lisk."
+					"description": "Total number of blocks that the delegate has missed."
 				},
 				"productivity": {
 					"type": "number",
 					"example": 96.41,
-					"description": "Productivity rate.\nPercentage of successfully forged blocks (not missed) by the delegate.\n"
+					"description": "Productivity rate.\nPercentage of successfully forged blocks (not missed), by the delegate.\n"
 				},
-				"account": {
-					"$ref": "#/definitions/Account"
+				"address": {
+					"type": "string",
+					"example": "10016685355739180605L",
+					"description": "The LISK address for the delegate."
+				},
+				"publicKey": {
+					"type": "string",
+					"example": "c678d19210ebf71914652d6644da5ee42e0c80948c4b520dba9f3d4514b213b2",
+					"description": "The public key for the delegate."
+				},
+				"balance": {
+					"type": "string",
+					"example": 7000000000,
+					"description": "The LISK balance for the delegate."
+				},
+				"nonce": {
+					"type": "string",
+					"example": 154,
+					"description": "The current nonce associated to account for transaction processing."
+				},
+				"asset": {
+					"type": "object",
+					"description": "The asset object for the account."
+				},
+				"keys": {
+					"type": "object",
+					"description": "Multisignature information for the account."
+				},
+				"votes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Vote"
+					}
+				},
+				"delegate": {
+					"type": "object",
+					"description": "Delegate propertiees associated with the account."
+				},
+				"approval": {
+					"type": "number",
+					"example": 14.22,
+					"description": "Percentage of the voters weight that the delegate owns in relation to the total supply of Lisk."
+				},
+				"unlocking": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Unlocking"
+					}
 				}
 			}
 		},
@@ -2589,7 +2653,7 @@
 					"type": "string",
 					"example": "isabella",
 					"format": "username",
-					"description": "The delegates' username.\nA delegate chooses the username by registering a delegate on the Lisk network.\nIt is unique and cannot be changed later.\n"
+					"description": "The delegates username.\nA delegate chooses the username by registering a delegate on the Lisk network.\nIt is unique and cannot be changed later.\n"
 				},
 				"publicKey": {
 					"type": "string",
@@ -2598,15 +2662,17 @@
 					"description": "The public key of the delegate."
 				},
 				"votes": {
-					"type": "integer",
-					"example": 108877,
-					"description": "The voters weight of the delegate.\nRepresents the total amount of Lisk (in Beddows) that the delegates' voters own.\nThe voters weight decides which rank the delegate gets in relation to the other delegates and their voters weights.\n"
+					"type": "array",
+					"description": "Accounts this delegate voted for.",
+					"items": {
+						"$ref": "#/definitions/Vote"
+					}
 				},
 				"address": {
 					"type": "string",
 					"format": "address",
 					"example": "12668885769632475474L",
-					"description": "The Lisk Address of a delegate."
+					"description": "The Lisk address of a delegate."
 				},
 				"balance": {
 					"type": "string",
@@ -2624,13 +2690,13 @@
 		},
 		"Voter": {
 			"type": "object",
-			"required": ["address", "publicKey", "balance"],
+			"required": ["address", "publicKey", "votes"],
 			"properties": {
 				"address": {
 					"type": "string",
 					"format": "address",
 					"example": "12668885769632475474L",
-					"description": "The Lisk Address of the account that voted for the queried delegate."
+					"description": "The Lisk address of the account that voted for the queried delegate."
 				},
 				"publicKey": {
 					"type": "string",
@@ -2638,29 +2704,24 @@
 					"example": "968ba2fa993ea9dc27ed740da0daf49eddd740dbd7cb1cb4fc5db3a20baf341b",
 					"description": "Public key of the account that voted for the queried delegate."
 				},
-				"balance": {
-					"type": "string",
-					"example": 1081560729258,
-					"description": "Balance of the account that voted for the queried delegate."
+				"votes": {
+					"type": "array",
+					"description": "All votes the voter for the queried delegate voted for.",
+					"items": {
+						"$ref": "#/definitions/Vote"
+					}
 				}
 			}
 		},
-		"DelegateWithVotes": {
+		"AccountWithVotes": {
 			"type": "object",
-			"required": [
-				"username",
-				"address",
-				"votesUsed",
-				"votesAvailable",
-				"balance",
-				"votes"
-			],
+			"required": ["username", "address", "votesAvailable", "balance", "votes"],
 			"properties": {
 				"address": {
 					"type": "string",
 					"format": "address",
 					"example": "12668885769632475474L",
-					"description": "The Lisk Address of the queried account."
+					"description": "The Lisk address of the queried account."
 				},
 				"balance": {
 					"type": "string",
@@ -2671,7 +2732,7 @@
 					"type": "string",
 					"example": "isabella",
 					"format": "username",
-					"description": "Username of the account, if the queried account is a delegate"
+					"description": "Username of the account, if the queried account is a delegate."
 				},
 				"publicKey": {
 					"type": "string",
@@ -2679,51 +2740,100 @@
 					"example": "968ba2fa993ea9dc27ed740da0daf49eddd740dbd7cb1cb4fc5db3a20baf341b",
 					"description": "Public key of the queried account."
 				},
-				"votesUsed": {
-					"type": "integer",
-					"example": 2,
-					"description": "Number of votes that are already placed by the queried account."
-				},
 				"votesAvailable": {
 					"type": "integer",
-					"example": 40,
-					"description": "Number of votes that are available for the queried account.\nDerives from 101(max possible votes) - votesUsed(alreadu used votes)\n"
+					"example": 8,
+					"description": "Number of votes that are available for the queried account.\nDerives from 101(max possible votes) - votesUsed(already used votes).\n"
 				},
 				"votes": {
 					"type": "array",
 					"description": "List of placed votes by the queried account.",
 					"items": {
-						"$ref": "#/definitions/Vote"
+						"$ref": "#/definitions/VoteWithDelegateProperties"
 					}
 				}
 			}
 		},
 		"Vote": {
 			"type": "object",
-			"required": ["address", "publicKey", "balance", "username"],
+			"required": ["delegateAddress", "amount"],
 			"properties": {
-				"address": {
+				"delegateAddress": {
 					"type": "string",
 					"format": "address",
 					"example": "12668885769632475474L",
-					"description": "Lisk Address of the delegate the queried account voted for."
+					"description": "Lisk address of the delegate the queried account voted for."
 				},
-				"publicKey": {
+				"amount": {
 					"type": "string",
-					"format": "publicKey",
-					"example": "968ba2fa993ea9dc27ed740da0daf49eddd740dbd7cb1cb4fc5db3a20baf341b",
-					"description": "Public key of the delegate the queried account voted for."
+					"example": 1000000000000,
+					"description": "Amount the account voted the delegate for in multiples of 10 Lisk."
+				}
+			}
+		},
+		"VoteWithDelegateProperties": {
+			"type": "object",
+			"required": ["delegateAddress", "amount", "delegate"],
+			"properties": {
+				"delegateAddress": {
+					"type": "string",
+					"format": "address",
+					"example": "12668885769632475474L",
+					"description": "Lisk address of the delegate the queried account voted for."
 				},
-				"balance": {
+				"amount": {
 					"type": "string",
-					"example": 1081560729258,
-					"description": "Balance of the delegate the queried account voted for."
+					"example": 1000000000000,
+					"description": "Amount the account voted the delegate for in multiples of 10 Lisk."
 				},
-				"username": {
+				"delegate": {
+					"type": "object",
+					"description": "Delegate properties of the delegate for this vote."
+				}
+			}
+		},
+		"Unlocking": {
+			"type": "object",
+			"required": ["delegateAddress", "amount", "unvoteHeight"],
+			"properties": {
+				"delegateAddress": {
 					"type": "string",
-					"format": "username",
-					"example": "liskhq",
-					"description": "Username of the delegate the queried account voted for."
+					"format": "address",
+					"example": "12668885769632475474L",
+					"description": "Lisk address of the delegate the queried account unvoted."
+				},
+				"amount": {
+					"type": "string",
+					"example": 1000000000000,
+					"description": "Amount the account voted the delegate for in multiples of 10 Lisk."
+				},
+				"unvoteHeight": {
+					"type": "number",
+					"example": 50000,
+					"description": "Height at which the unvote should be valid."
+				}
+			}
+		},
+		"MultisignatureAsset": {
+			"type": "object",
+			"properties": {
+				"mandatoryKeys": {
+					"type": "array",
+					"description": "Mandatory multi-signature account members",
+					"items": {
+						"type": "string"
+					}
+				},
+				"optionalKeys": {
+					"type": "array",
+					"description": "Optional multi-signature account members",
+					"items": {
+						"type": "string"
+					}
+				},
+				"numberOfSignatures": {
+					"type": "number",
+					"description": "Number of required signatures"
 				}
 			}
 		}
