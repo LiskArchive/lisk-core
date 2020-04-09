@@ -1,43 +1,45 @@
+/* eslint-disable no-await-in-loop */
 const output = require('codeceptjs').output;
 const crypto = require('crypto');
 const {
 	TO_BEDDOWS,
-	getKeys,
-	generateMnemonic,
 	createAccounts,
-	TRS_TYPE,
-	TRS_PER_BLOCK,
+	TRANSACTIONS_PER_ACCOUNT,
+	from,
+	chunkArray,
 } = require('../../utils');
+const { GENESIS_ACCOUNT } = require('../../fixtures');
 
 const I = actor();
 const contractsByAddress = {};
-const STRESS_COUNT = parseInt(process.env.STRESS_COUNT) || 25;
-const NUMBER_OF_BLOCKS = Math.ceil(STRESS_COUNT / TRS_PER_BLOCK);
-const EXTRA_LIMIT = Math.ceil(NUMBER_OF_BLOCKS + NUMBER_OF_BLOCKS * 0.1);
+const STRESS_COUNT = parseInt(process.env.STRESS_COUNT) || 64;
 
 const accounts = createAccounts(STRESS_COUNT);
+const chunkedAccounts = chunkArray([...accounts], TRANSACTIONS_PER_ACCOUNT);
 
-Feature('Generic stress test');
+const transferFundsFromGenesisAccount = async accountsToFund => {
+	const LSK_TOKEN = 50000;
+	// Get genesis account latest nonce
+	const api = await I.call();
+	const {
+		result: {
+			data: [{ nonce }],
+		},
+	} = await from(api.getAccounts({ address: GENESIS_ACCOUNT.address }));
 
-Scenario('Transfer funds', async () => {
-	output.print(
-		`==========Running Stress Test, Transaction Type: ${
-			TRS_TYPE.TRANSFER
-		}==========`
-	);
-
-	const LSK_TOKEN = 100;
-	const transferTrx = accounts.map(a => ({
+	const transferToAccounts = accountsToFund.map((a, i) => ({
 		recipientId: a.address,
 		amount: TO_BEDDOWS(LSK_TOKEN),
+		fee: Math.floor(100000000 * 100 * Math.random()).toString(),
+		nonce: (parseInt(nonce, 10) + i).toString(),
 	}));
 
 	try {
 		const transferTransactions = await I.transferToMultipleAccounts(
-			transferTrx
+			transferToAccounts
 		);
 
-		await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
+		await I.waitUntilTransactionsConfirmed();
 
 		await Promise.all(
 			transferTransactions.map(trx =>
@@ -47,176 +49,232 @@ Scenario('Transfer funds', async () => {
 	} catch (error) {
 		output.print('Error while processing transfer fund transaction', error);
 	}
-})
-	.tag('@slow')
-	.tag('@generic')
-	.tag('@stress');
+};
 
-Scenario('Second passphrase on an account', async () => {
+Feature('Generic stress test');
+
+Scenario('Transfer funds', async () => {
+	const initialAccounts = createAccounts(TRANSACTIONS_PER_ACCOUNT);
+	await transferFundsFromGenesisAccount(initialAccounts);
 	output.print(
-		`==========Running Stress Test, Transaction Type: ${
-			TRS_TYPE.SECOND_PASSPHRASE
-		}==========`
+		'==========Initialized funds to 64 accounts from genesis account=========='
 	);
 
+	const LSK_TOKEN = 100;
+	const transferToAccounts = [];
+
 	try {
+		for (let i = 0; i < chunkedAccounts.length; i++) {
+			const transferAccounts = chunkedAccounts[i].map((a, j) => ({
+				recipientId: a.address,
+				amount: TO_BEDDOWS(LSK_TOKEN),
+				passphrase: initialAccounts[i].passphrase,
+				fee: Math.floor(100000000 * 100 * Math.random()).toString(),
+				nonce: j.toString(),
+			}));
+
+			transferToAccounts.push(...transferAccounts);
+		}
+
+		output.print('==========Start Transfer transaction Stress Test==========');
+		const result = await I.transferToMultipleAccounts(transferToAccounts);
+
+		await I.waitUntilTransactionsConfirmed();
+
 		await Promise.all(
-			accounts.map(async a => {
-				a.secondPassphrase = generateMnemonic();
-				await I.registerSecondPassphrase(a.passphrase, a.secondPassphrase, 0);
-			})
+			result.map(trx =>
+				I.validateTransaction(
+					trx.id,
+					trx.asset.recipientId,
+					LSK_TOKEN,
+					trx.senderId
+				)
+			)
 		);
-
-		await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
-
-		await Promise.all(
-			accounts.map(async a => {
-				const { publicKey } = getKeys(a.secondPassphrase);
-				const api = await I.call();
-
-				const account = await api.getAccounts({ publicKey: a.publicKey });
-				expect(account.data[0].secondPublicKey).to.deep.equal(publicKey);
-			})
-		);
+		output.print('==========End Transfer transaction Stress Test==========');
 	} catch (error) {
-		output.print(
-			'Error while processing second passphrase on an account',
-			error
-		);
+		output.print('Error while processing transfer fund transaction', error);
 	}
-})
-	.tag('@slow')
-	.tag('@generic')
-	.tag('@stress');
+}).tag('@stress');
 
 Scenario('Delegate Registration', async () => {
 	output.print(
-		`==========Running Stress Test, Transaction Type: ${
-			TRS_TYPE.DELEGATE_REGISTRATION
-		}==========`
+		'==========Start Delegate Registration transaction Stress Test=========='
 	);
 
 	try {
-		await Promise.all(
-			accounts.map(async a => {
-				a.username = crypto.randomBytes(9).toString('hex');
+		const delegateAccounts = accounts.map(a => ({
+			username: crypto.randomBytes(9).toString('hex'),
+			passphrase: a.passphrase,
+			fee: '2500000000',
+			nonce: '0',
+		}));
 
-				await I.registerAsDelegate(
-					{
-						username: a.username,
-						passphrase: a.passphrase,
-						secondPassphrase: a.secondPassphrase,
-					},
-					0
-				);
-			})
-		);
+		const result = await I.registerMultipleDelegate(delegateAccounts);
 
-		await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
+		await I.waitUntilTransactionsConfirmed();
 
 		await Promise.all(
-			accounts.map(async a => {
+			result.map(async a => {
 				const api = await I.call();
 
-				const account = await api.getDelegates({ publicKey: a.publicKey });
-				expect(account.data[0].username).to.deep.equal(a.username);
+				const account = await api.getAccounts({ username: a.asset.username });
+				expect(account.data[0].username).to.deep.equal(a.asset.username);
 			})
+		);
+		output.print(
+			'==========End Delegate Registration transaction Stress Test=========='
 		);
 	} catch (error) {
 		output.print('Error while processing delegate registration', error);
 	}
-})
-	.tag('@slow')
-	.tag('@generic')
-	.tag('@stress');
+}).tag('@stress');
 
-Scenario('Cast vote', async () => {
-	output.print(
-		`==========Running Stress Test, Transaction Type: ${
-			TRS_TYPE.VOTE
-		}==========`
-	);
+Scenario('Cast vote and unVote', async () => {
+	output.print('==========Start Cast vote transaction Stress Test==========');
 
 	try {
-		await Promise.all(
-			accounts.map(a =>
-				I.castVotes(
-					{
-						votes: [a.publicKey],
-						passphrase: a.passphrase,
-						secondPassphrase: a.secondPassphrase,
-					},
-					0
-				)
-			)
-		);
+		const voteAmount = '1000000000';
+		const totalAccounts = accounts.length - 1;
 
-		await I.waitForBlock(NUMBER_OF_BLOCKS + 1);
+		const votingAccounts = accounts.map((a, i) => {
+			const accountToVote = accounts[totalAccounts - i];
+
+			return {
+				votes: [{ delegateAddress: accountToVote.address, amount: voteAmount }],
+				passphrase: a.passphrase,
+				fee: '100000000',
+				nonce: '1',
+			};
+		});
+
+		const result = await I.castMultipleVotes(votingAccounts);
+
+		await I.waitUntilTransactionsConfirmed();
 
 		await Promise.all(
-			accounts.map(async a => {
+			result.map(async (a, i) => {
 				const api = await I.call();
+				const accountVoted = accounts[totalAccounts - i];
 
-				const account = await api.getVoters({ publicKey: a.publicKey });
-				expect(
-					account.data.voters.some(v => v.address === a.address)
-				).to.deep.equal(true);
-			})
-		);
-	} catch (error) {
-		output.print('Error while processing cast vote transaction', error);
-	}
-})
-	.tag('@slow')
-	.tag('@generic')
-	.tag('@stress');
-
-Scenario('Register Multi-signature account', async () => {
-	output.print(
-		`==========Running Stress Test, Transaction Type: ${
-			TRS_TYPE.MULTI_SIGNATURE
-		}==========`
-	);
-
-	try {
-		await Promise.all(
-			accounts.map(async (a, index) => {
-				const { passphrase, secondPassphrase, address } = a;
-				const signer1 = accounts[(index + 1) % accounts.length];
-				const signer2 = accounts[(index + 2) % accounts.length];
-				const contracts = [signer1, signer2];
-				const params = {
-					lifetime: 1,
-					minimum: 2,
-					passphrase,
-					secondPassphrase,
-				};
-				contractsByAddress[address] = contracts;
-
-				await I.registerMultisignature(contracts, params, 0);
-			})
-		);
-
-		await I.waitForBlock(EXTRA_LIMIT);
-
-		await Promise.all(
-			accounts.map(async a => {
-				const api = await I.call();
-
-				const account = await api.getMultisignatureGroups(a.address);
-				await I.expectMultisigAccountToHaveContracts(
-					account,
-					contractsByAddress[a.address]
+				const account = await api.getAccounts({
+					address: a.senderId,
+				});
+				expect(account.data[0].votes).to.deep.include(
+					{ amount: voteAmount, delegateAddress: accountVoted.address }
 				);
 			})
 		);
+		output.print('==========End Cast vote transaction Stress Test==========');
+		output.print('==========Start Cast unVote transaction Stress Test==========');
+
+		const unVotingAccounts = accounts.map((a, i) => {
+			const accountToUnVote = accounts[totalAccounts - i];
+
+			return {
+				votes: [{ delegateAddress: accountToUnVote.address, amount: `-${voteAmount}` }],
+				passphrase: a.passphrase,
+				fee: '100000000',
+				nonce: '2',
+			};
+		});
+
+		const unVoteResult = await I.castMultipleVotes(unVotingAccounts);
+
+		await I.waitUntilTransactionsConfirmed();
+
+		await Promise.all(
+			unVoteResult.map(async a => {
+				const api = await I.call();
+
+				const account = await api.getAccounts({
+					address: a.senderId,
+				});
+				expect(account.data[0].votes).to.be.empty;
+			})
+		);
+		output.print('==========End Cast unVote transaction Stress Test==========');
+	} catch (error) {
+		output.print('Error while processing cast vote transaction', error);
+	}
+}).tag('@stress');
+
+Scenario('Register and transfer from Multi-signature account', async () => {
+	output.print(
+		'==========Start multi signature transaction Stress Test=========='
+	);
+
+	try {
+		const multiSigRegistrationAccounts = accounts.map((a, index) => {
+			const { passphrase, address } = a;
+			const signer1 = accounts[(index + 1) % accounts.length];
+			const signer2 = accounts[(index + 2) % accounts.length];
+			const params = {
+				numberOfSignatures: 2,
+				mandatoryKeys: [signer1.publicKey],
+				optionalKeys: [signer2.publicKey],
+				senderPassphrase: passphrase,
+				passphrases: [signer1.passphrase, signer2.passphrase],
+				nonce: '3',
+				fee: '100000000',
+			};
+			contractsByAddress[address] = params;
+			return params;
+		});
+
+		const result = await I.registerMultipleMultisignature(
+			multiSigRegistrationAccounts
+		);
+
+		await I.waitUntilTransactionsConfirmed();
+
+		await Promise.all(
+			result.map(async a => {
+				const api = await I.call();
+
+				const account = await api.getAccounts({ address: a.senderId });
+				expect(account.data[0].keys).to.deep.equal({
+					optionalKeys: a.asset.optionalKeys,
+					mandatoryKeys: a.asset.mandatoryKeys,
+					numberOfSignatures: a.asset.numberOfSignatures,
+				});
+			})
+		);
+		output.print(
+			'==========End multi signature transaction Stress Test=========='
+		);
+
+		// output.print('==========Start transfer from multi signature account Stress Test==========');
+		// const LSK_TOKEN = 1;
+		// const transferToAccounts = accounts.map(a => ({
+		// 	recipientId: a.address,
+		// 	amount: TO_BEDDOWS(LSK_TOKEN),
+		// 	fee: '1000000000',
+		// 	nonce: '65',
+		// 	passphrases: [...contractsByAddress[a.address].passphrases],
+		// 	keys: {
+		// 		mandatoryKeys: contractsByAddress[a.address].mandatoryKeys,
+		// 		optionalKeys: contractsByAddress[a.address].optionalKeys,
+		// 	},
+		// }));
+
+		// const transferTransactions = await I.transferToMultipleAccounts(
+		// 	transferToAccounts
+		// );
+
+		// await I.waitUntilTransactionsConfirmed();
+
+		// await Promise.all(
+		// 	transferTransactions.map(trx =>
+		// 		I.validateTransaction(trx.id, trx.asset.recipientId, LSK_TOKEN)
+		// 	)
+		// );
+
+		// output.print('==========End transfer from multi signature account Stress Test==========');
 	} catch (error) {
 		output.print(
 			'Error while processing register multi-signature account transaction',
 			error
 		);
 	}
-})
-	.tag('@slow')
-	.tag('@generic')
-	.tag('@stress');
+}).tag('@stress');

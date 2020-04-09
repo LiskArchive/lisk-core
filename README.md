@@ -3,7 +3,11 @@
 # Lisk Core
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
-[![Join the chat at https://gitter.im/LiskHQ/lisk-core](https://badges.gitter.im/LiskHQ/lisk-core.svg)](https://gitter.im/LiskHQ/lisk-core?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/liskHQ/lisk-core)
+![GitHub repo size](https://img.shields.io/github/repo-size/liskhq/lisk-core)
+[![DeepScan grade](https://deepscan.io/api/teams/6759/projects/8870/branches/113510/badge/grade.svg)](https://deepscan.io/dashboard/#view=project&tid=6759&pid=8870&bid=113510)
+![GitHub issues](https://img.shields.io/github/issues-raw/liskhq/lisk-core)
+![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/liskhq/lisk-core)
 
 Lisk is a next-generation crypto-currency and decentralized application platform, written entirely in JavaScript. The official documentation about the whole ecosystem can be found in https://lisk.io/documentation.
 
@@ -38,7 +42,7 @@ The following dependencies need to be installed in order to run applications cre
 
 | Dependencies     | Version |
 | ---------------- | ------- |
-| NodeJS           | 12.14.0 |
+| NodeJS           | 12.16.1 |
 | PostgreSQL       | 10.x    |
 | Redis (optional) | 5+      |
 
@@ -64,7 +68,7 @@ node dist/index.js
 To pretty-print the console logs:
 
 ```
-node dist/index.js | npx bunyan -o short
+node dist/index.js
 ```
 
 This will start the lisk instance with `devnet` configuration. Once the process is verified as running correctly, use `CTRL+C` to quit the running application.
@@ -199,42 +203,6 @@ Options:
 ```
 
 Argument `network` is required and can by `devnet`, `testnet`, `mainnet` or any other network folder available under `./config` directory.
-
-#### Update Config
-
-This script keeps track of all changes introduced in Lisk over time in different versions. If you have one config file in any of specific version and you want to make it compatible with other versions of the Lisk, this scripts will do it for you.
-
-```
-Usage: update_config [options] <input_file> <from_version> [to_version]
-
-Options:
-
--h, --help               output usage information
--V, --version            output the version number
--n, --network [network]  specify the network or use LISK_NETWORK
--o, --output [output]    output file path
-```
-
-As you can see from the usage guide, `input_file` and `from_version` are required. If you skip `to_version` argument changes in config.json will be applied up to the latest version of Lisk Core. If you do not specify `--output` path the final config.json will be printed to stdout. If you do not specify `--network` argument you will have to load it from `LISK_NETWORK` env variable.
-
-#### Console (Unmaintained)
-
-This script is useful in development. It will initialize the components of Lisk and load these into Node.js REPL.
-
-```bash
-node framework/src/modules/chain/scripts/console.js
-
-initApplication: Application initialization inside test environment started...
-initApplication: Target database - lisk_dev
-initApplication: Rewired modules available
-initApplication: Fake onBlockchainReady event called
-initApplication: Loading delegates...
-initApplication: Delegates loaded from config file - 101
-initApplication: Done
-lisk-core [lisk_dev] >
-```
-
-Once you get the prompt, you can use `modules`, `helpers`, `logic`, `storage` and `config` objects and play with these in REPL.
 
 ## Contributors
 

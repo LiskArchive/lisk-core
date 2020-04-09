@@ -1,5 +1,9 @@
 const chai = require('chai');
-const { cryptography, passphrase: passphraseUtil, transactions } = require('lisk-elements');
+const {
+	cryptography,
+	passphrase: passphraseUtil,
+	transactions,
+} = require('lisk-elements');
 const output = require('codeceptjs').output;
 const API = require('./api.js');
 const {
@@ -85,49 +89,25 @@ class LiskUtil extends Helper {
 	}
 
 	/**
-	 * wait until the network reaches the specific block height
-	 * @param {number} numberOfBlocks - number of blocks to wait
-	 */
-	async waitForBlock(numberOfBlocks = 1) {
-		if (numberOfBlocks > 0) {
-			const {
-				data: { height },
-			} = await this.call().getNodeStatus();
-			await this.waitUntilBlock(height + numberOfBlocks);
-		}
-		return true;
-	}
-
-	/**
 	 * check node height and wait until it reaches the expected height
-	 * @param {number} expectedHeight - expected height to reach
 	 */
-	async waitUntilBlock(expectedHeight, counter) {
+	async waitUntilTransactionsConfirmed(counter) {
 		const {
-			data: { height },
+			data: { height, unconfirmedTransactions },
 		} = await this.call().getNodeStatus();
-		const pendingTrxCnt = await this.getPendingTransactionCount();
 
 		counter = counter ? (counter += 1) : 1;
 
 		output.print(
-			`Counter: ${counter}, Timestamp: ${new Date().toISOString()}, current height: ${height}, expected height: ${expectedHeight}, pending trxs: ${pendingTrxCnt}`
+			`Counter: ${counter}, Timestamp: ${new Date().toISOString()}, current height: ${height}, unconfirmed transactions: ${unconfirmedTransactions}`
 		);
 
-		if (counter >= 20) {
-			return true;
-		}
-
-		if (height >= expectedHeight) {
-			// Remove the buffer time when network is stable
-			if (pendingTrxCnt >= 0) {
-				await this.wait(BLOCK_TIME);
-			}
+		if (unconfirmedTransactions !== 0) {
+			await this.wait(BLOCK_TIME);
+			await this.waitUntilTransactionsConfirmed(counter);
 			return height;
 		}
 
-		await this.wait(BLOCK_TIME);
-		await this.waitUntilBlock(expectedHeight, counter);
 		return true;
 	}
 
@@ -196,24 +176,22 @@ class LiskUtil extends Helper {
 
 	/**
 	 * Broadcast a transaction, validate response and wait for a block to forge
-	 * @param {Object} transaction - The transaction to be broadcasted
-	 * @param {Number} blocksToWait - Number of blocks to wait, default 1 block
+	 * @param {Object} transaction - The transaction to be broadcasted, default 1 block
 	 * @returns {Object} transaction
 	 */
-	async broadcastAndValidateTransactionAndWait(transaction, blocksToWait = 1) {
+	async broadcastAndValidateTransactionAndWait(transaction) {
 		await this.broadcastAndValidateTransaction(transaction);
-		await this.waitForBlock(blocksToWait);
+		await this.waitUntilTransactionsConfirmed();
 	}
 
 	/**
 	 * Broadcast a signature transaction, validate response and wait for a block to forge
-	 * @param {Object} signature - The signature transaction to be broadcasted
-	 * @param {Number} blocksToWait - Number of blocks to wait, default 1 block
+	 * @param {Object} signature - The signature transaction to be broadcasted, default 1 block
 	 * @param {*} signature
 	 */
-	async broadcastAndValidateSignatureAndWait(signature, blocksToWait = 1) {
+	async broadcastAndValidateSignatureAndWait(signature) {
 		await this.broadcastAndValidateSignature(signature);
-		await this.waitForBlock(blocksToWait);
+		await this.waitUntilTransactionsConfirmed();
 	}
 
 	/**
@@ -243,19 +221,24 @@ class LiskUtil extends Helper {
 	 * @param {string} account.recipientId - The recipient address
 	 * @param {string} account.amount - The amount sender wants to transfer to recipient
 	 * @param {string} account.passphrase - The sender passphrase, default is genesis account
-	 * @param {string} account.secondPassphrase - The sender second passphrase
-	 * @param {Number} blocksToWait - Number of blocks to wait
+	 * @param {string} account.passphrases - The passphrases for multi signature account
 	 * @returns {Object} transaction
 	 */
-	async transfer(account, blocksToWait) {
+	async transfer(account) {
 		if (!account.passphrase) {
 			account.passphrase = GENESIS_ACCOUNT.password;
+		}
+		if (!account.nonce) {
+			account.nonce = '0';
+		}
+		if (!account.fee) {
+			account.fee = '100000000';
 		}
 		account.networkIdentifier = networkIdentifier;
 
 		const trx = transactions.transfer(account);
 
-		await from(this.broadcastAndValidateTransactionAndWait(trx, blocksToWait));
+		await from(this.broadcastAndValidateTransactionAndWait(trx));
 
 		return trx;
 	}
@@ -269,10 +252,13 @@ class LiskUtil extends Helper {
 	 * @param {string} accounts.secondPassphrase - The sender second passphrase
 	 * @returns {Object} transaction
 	 */
-	async transferToMultipleAccounts(accounts) {
+	async transferToMultipleAccounts(
+		accounts,
+		passphrase = GENESIS_ACCOUNT.password
+	) {
 		const trxs = accounts.map(a => {
 			if (!a.passphrase) {
-				a.passphrase = GENESIS_ACCOUNT.password;
+				a.passphrase = passphrase;
 			}
 			a.networkIdentifier = networkIdentifier;
 
@@ -292,7 +278,7 @@ class LiskUtil extends Helper {
 	 * @param {array} contracts signers required to approve the transaction
 	 * @param {number} blocksToWait number of blocks to wait for the transaction to confirm
 	 */
-	async sendSignaturesForMultisigTrx(transaction, contracts, blocksToWait) {
+	async sendSignaturesForMultisigTrx(transaction, contracts) {
 		const signatures = contracts.map(s => ({
 			transactionId: transaction.id,
 			networkIdentifier,
@@ -307,26 +293,7 @@ class LiskUtil extends Helper {
 		await Promise.all(
 			signatures.map(s => this.broadcastAndValidateSignature(s))
 		);
-		await this.waitForBlock(blocksToWait);
-	}
-
-	/**
-	 * Register second passphrase on an account
-	 * @param {string} passphrase - User account passphrase
-	 * @param {string} secondPassphrase - New secondPassphrase to register on account
-	 * @param {Number} blocksToWait - Number of blocks to wait
-	 * @returns {Object} transaction
-	 */
-	async registerSecondPassphrase(passphrase, secondPassphrase, blocksToWait) {
-		const trx = transactions.registerSecondPassphrase({
-			passphrase,
-			secondPassphrase,
-			networkIdentifier,
-		});
-
-		await from(this.broadcastAndValidateTransactionAndWait(trx, blocksToWait));
-
-		return trx;
+		await this.waitUntilTransactionsConfirmed();
 	}
 
 	/**
@@ -335,18 +302,32 @@ class LiskUtil extends Helper {
 	 * @param {string} params.username - Username for registering as delegate
 	 * @param {string} params.passphrase - User account passphrase
 	 * @param {string} params.secondPassphrase - User secondPassphrase
-	 * @param {Number} blocksToWait - Number of blocks to wait
 	 * @returns {Object} transaction
 	 */
-	async registerAsDelegate(params, blocksToWait) {
+	async registerAsDelegate(params) {
 		const trx = transactions.registerDelegate({
 			...params,
 			networkIdentifier,
 		});
 
-		await from(this.broadcastAndValidateTransactionAndWait(trx, blocksToWait));
+		await from(this.broadcastAndValidateTransactionAndWait(trx));
 
 		return trx;
+	}
+
+	async registerMultipleDelegate(accounts) {
+		const trxs = accounts.map(a =>
+			transactions.registerDelegate({
+				...a,
+				networkIdentifier,
+			})
+		);
+
+		await from(
+			Promise.all(trxs.map(t => this.broadcastAndValidateTransaction(t)))
+		);
+
+		return trxs;
 	}
 
 	/**
@@ -355,7 +336,6 @@ class LiskUtil extends Helper {
 	 * @param {Array} params.votes - list of publickeys for upvote
 	 * @param {string} params.passphrase - User account passphrase
 	 * @param {string} params.secondPassphrase - User account second passphrase
-	 * @param {Number} blocksToWait - Number of blocks to wait
 	 */
 	async castVotes(params, blocksToWait) {
 		const trx = transactions.castVotes({
@@ -365,13 +345,27 @@ class LiskUtil extends Helper {
 		await from(this.broadcastAndValidateTransactionAndWait(trx, blocksToWait));
 	}
 
+	async castMultipleVotes(accounts) {
+		const trxs = accounts.map(a =>
+			transactions.castVotes({
+				...a,
+				networkIdentifier,
+			})
+		);
+
+		await from(
+			Promise.all(trxs.map(t => this.broadcastAndValidateTransaction(t)))
+		);
+
+		return trxs;
+	}
+
 	/**
 	 * Cast unvotes to delegates
 	 * @param {Object} params - parameters to cast vote for delegate
 	 * @param {Array} params.unvotes - list of publickeys for downvote
 	 * @param {string} params.passphrase - User account passphrase
 	 * @param {string} params.secondPassphrase - User account second passphrase
-	 * @param {Number} blocksToWait - Number of blocks to wait
 	 */
 	async castUnvotes(params, blocksToWait) {
 		const trx = transactions.castUnvotes({
@@ -383,38 +377,26 @@ class LiskUtil extends Helper {
 
 	/**
 	 * Register multisignature account
-	 * @param {Array} accounts - List of accounts for register multisignature account
 	 * @param {Object} params - parameters to register for multisignature account
 	 * @param {number} params.lifetime - Timeframe in which a multisignature transaction will exist in memory before the transaction is confirmed
 	 * @param {number} params.minimum - Minimum signatures required to confirm multisignature transaction
 	 * @param {string} params.passphrase - Passphrase of the multisignature account creator
 	 * @param {string} params.secondPassphrase - Second passphrase of the multisignature account creator
-	 * @param {Number} blocksToWait - Number of blocks to wait
 	 * @returns
 	 */
-	async registerMultisignature(accounts, params, blocksToWait) {
-		const keysgroup = accounts.map(account => account.publicKey);
-
-		const registerMultisignatureTrx = transactions.registerMultisignature(
-			{ ...params, keysgroup, networkIdentifier }
+	async registerMultipleMultisignature(accounts) {
+		const trxs = accounts.map(a =>
+			transactions.registerMultisignature({
+				...a,
+				networkIdentifier,
+			})
 		);
 
-		const signatures = this.createSignatures(
-			accounts,
-			registerMultisignatureTrx
+		await from(
+			Promise.all(trxs.map(t => this.broadcastAndValidateTransaction(t)))
 		);
 
-		await this.broadcastAndValidateTransactionAndWait(
-			registerMultisignatureTrx,
-			blocksToWait
-		);
-
-		await Promise.all(
-			signatures.map(s => this.broadcastAndValidateSignature(s))
-		);
-
-		await this.waitForBlock(blocksToWait);
-		return registerMultisignatureTrx;
+		return trxs;
 	}
 
 	/**
@@ -423,7 +405,6 @@ class LiskUtil extends Helper {
 	 * @param {string} data.passphrase Passphrase of the dApp registrar
 	 * @param {string} data.secondPassphrase second passphrase of the dApp registrar
 	 * @param {Object} data.options Options for registering dApp
-	 * @param {Number} blocksToWait - Number of blocks to wait
 	 */
 	async registerDapp(data, blocksToWait) {
 		const dAppTrx = transactions.createDapp({
@@ -456,7 +437,7 @@ class LiskUtil extends Helper {
 		amount,
 		senderId = GENESIS_ACCOUNT.address
 	) {
-		const response = await from(
+		const { result, error } = await from(
 			this.call().getTransactions({
 				id,
 				senderId,
@@ -464,14 +445,14 @@ class LiskUtil extends Helper {
 			})
 		);
 
-		expect(response.error).to.be.null;
+		expect(error).to.be.null;
 		this.helpers.ValidateHelper.expectResponseToBeValid(
-			response.result,
+			result,
 			'TransactionsResponse'
 		);
 
-		expect(response.result.data).to.be.an('array').that.is.not.empty;
-		return expect(response.result.data[0].asset.amount).to.deep.equal(
+		expect(result.data).to.be.an('array').that.is.not.empty;
+		return expect(result.data[0].asset.amount).to.deep.equal(
 			TO_BEDDOWS(amount)
 		);
 	}
@@ -491,37 +472,6 @@ class LiskUtil extends Helper {
 			result.data.voters.some(v => votesOrUnvotes.includes(v.publicKey));
 
 		return isVoted;
-	}
-
-	/**
-	 * Check if the multisignature transaction confirmed in the network
-	 * @param {string} address multisignature account address
-	 * @param {array} contracts multisignature contracts
-	 */
-	async checkIfMultisigAccountExists(address, contracts) {
-		const { result, error } = await from(
-			this.call().getMultisignatureGroups(address)
-		);
-
-		if (error && error.message === 'Multisignature account not found') {
-			output.print(error.message);
-			return false;
-		}
-		if (result.data && result.data.length && result.data[0].members) {
-			const members = contracts.map(c => c.address);
-			return result.data[0].members.some(m => members.includes(m.address));
-		}
-		output.print(error);
-		return false;
-	}
-
-	/**
-	 * returns count of transactions in queue
-	 */
-	async getPendingTransactionCount() {
-		const { result } = await from(this.call().getTransactionsFromPool({}));
-
-		return result.reduce((acc, curr) => acc + curr.meta.count, 0);
 	}
 
 	/**
@@ -621,12 +571,12 @@ class LiskUtil extends Helper {
 	 */
 	async checkIfNetworkIsMoving() {
 		let heights = await this.getAllNodeHeights();
-		const previousHeight = Math.max(heights.filter(h => h));
+		const previousHeight = heights.reduce((a, b) => Math.max(a, b));
 
-		await this.waitForBlock();
+		await this.waitUntilTransactionsConfirmed();
 
 		heights = await this.getAllNodeHeights();
-		const currentHeight = Math.max(heights.filter(h => h));
+		const currentHeight = heights.reduce((a, b) => Math.max(a, b));
 
 		expect(currentHeight).to.be.above(previousHeight);
 	}
@@ -647,7 +597,7 @@ class LiskUtil extends Helper {
 	 * Waits until the transaction is confirmed on the network
 	 * @param {string} id transaction id
 	 */
-	async waitForTransactionToConfirm(id, numberOfBlocks = 1, counter) {
+	async waitForTransactionToConfirm(id, counter) {
 		counter = counter ? (counter += 1) : 1;
 		const { result, error } = await from(this.call().getTransactions({ id }));
 
@@ -662,8 +612,8 @@ class LiskUtil extends Helper {
 		if (result.data.length) {
 			return result;
 		}
-		await this.waitForBlock(numberOfBlocks);
-		await this.waitForTransactionToConfirm(id, numberOfBlocks, counter);
+		await this.wait();
+		await this.waitForTransactionToConfirm(id, counter);
 		return true;
 	}
 
@@ -676,12 +626,12 @@ class LiskUtil extends Helper {
 		if (nodeStatus.data.height >= expectedHeight) {
 			output.print(
 				`Reached expected height: ${expectedHeight}, Node current height: ${
-				nodeStatus.data.height
+					nodeStatus.data.height
 				}`
 			);
 			return;
 		}
-		await this.waitForBlock(10);
+		await this.waitUntilTransactionsConfirmed();
 		await this.waitUntilNodeSyncWithNetwork(height, expectedHeight);
 	}
 }

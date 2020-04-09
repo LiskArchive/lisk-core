@@ -3,6 +3,7 @@ const chai = require('chai');
 const apiSchema = require('../api_schema');
 const { TO_LISK, TO_BEDDOWS, from, sortBy, flattern } = require('../utils');
 const LiskUtil = require('./lisk_util');
+const { GENESIS_ACCOUNT } = require('../fixtures');
 
 /* eslint camelcase: ["error", {allow: ["codecept_helper"]}] */
 const Helper = codecept_helper;
@@ -63,32 +64,24 @@ class ValidateHelper extends Helper {
 					balance = Math.ceil(balance - TO_LISK(account.balance));
 				}
 
+				const {
+					result: {
+						data: [{ nonce }],
+					},
+				} = await from(
+					liskUtil.call().getAccounts({ address: GENESIS_ACCOUNT.address })
+				);
+
 				await liskUtil.transfer({
 					recipientId: address,
 					amount: TO_BEDDOWS(balance),
+					nonce: (parseInt(nonce, 10) + 1).toString(),
+					fee: '100000000',
 				});
 			}
 			await this.haveAccount({ address });
 		} catch (error) {
 			output.error(error);
-		}
-	}
-
-	async haveAccountWithSecondSignature(address, passphrase, secondPassphrase) {
-		try {
-			const account = await this.haveAccount({ address });
-
-			if (account && account.secondPublicKey) {
-				expect(account.secondPublicKey)
-					.to.be.an('string')
-					.to.have.lengthOf(64);
-			} else {
-				await liskUtil.registerSecondPassphrase(passphrase, secondPassphrase);
-			}
-			return account;
-		} catch (error) {
-			output.error(error);
-			throw error;
 		}
 	}
 
@@ -99,23 +92,10 @@ class ValidateHelper extends Helper {
 			if (account && account.delegate) {
 				this.expectResponseToBeValid(account.delegate, 'Delegate');
 			} else {
-				if (account && account.secondPublicKey) {
-					delete params.secondPassphrase;
-				}
+				params.fee = '2500000000';
+				params.nonce = '0';
 				await liskUtil.registerAsDelegate(params);
 			}
-			return account;
-		} catch (error) {
-			output.error(error);
-			throw error;
-		}
-	}
-
-	async haveMultiSignatureAccount(requester, keepers, params) {
-		try {
-			const account = await this.haveAccountWithBalance(requester.address, 100);
-
-			await liskUtil.registerMultisignature(keepers, params);
 			return account;
 		} catch (error) {
 			output.error(error);
@@ -245,7 +225,7 @@ class ValidateHelper extends Helper {
 	handleOtherParams(response, key, value) {
 		switch (key) {
 			case 'username': {
-				expect(response.data[0].delegate.username).to.deep.equal(value);
+				expect(response.data[0].username).to.deep.equal(value);
 				break;
 			}
 			case 'limit':

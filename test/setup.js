@@ -20,7 +20,6 @@ const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const chaiAsPromised = require('chai-as-promised');
-const _ = require('lodash');
 
 coMocha(mocha);
 
@@ -32,4 +31,3 @@ chai.use(chaiAsPromised);
 // Cloning the constants object to remove immutability
 global.expect = chai.expect;
 global.sinonSandbox = sinon.createSandbox();
-global._ = _;

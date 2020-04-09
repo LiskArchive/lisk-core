@@ -1,7 +1,5 @@
 const output = require('codeceptjs').output;
-const {
-	validator,
-} = require('lisk-elements');
+const { validator } = require('lisk-elements');
 const liskUtils = require('../../utils');
 
 const I = actor();
@@ -29,6 +27,7 @@ Then(/transfer (\d+)LSK to account from genesis account/, async amount => {
 		const trx = await I.transfer({
 			recipientId: account.address,
 			amount: liskUtils.TO_BEDDOWS(amount),
+			nonce: '1',
 		});
 
 		await I.waitForTransactionToConfirm(trx.id);
@@ -41,12 +40,16 @@ Then(/transfer (\d+)LSK to account from genesis account/, async amount => {
 Then(/lisk account should be created with balance (\d+)LSK/, async amount => {
 	try {
 		const api = await I.call();
-		const response = await liskUtils.from(api.getAccounts({ address: account.address }));
+		const response = await liskUtils.from(
+			api.getAccounts({ address: account.address })
+		);
 
 		expect(response.error).to.be.null;
 		await I.expectResponseToBeValid(response.result, 'AccountsResponse');
 		expect(response.result.data[0].address).to.deep.equal(account.address);
-		expect(response.result.data[0].balance).to.deep.equal(liskUtils.TO_BEDDOWS(amount));
+		expect(response.result.data[0].balance).to.deep.equal(
+			liskUtils.TO_BEDDOWS(amount)
+		);
 	} catch (error) {
 		output.error(error);
 		throw error;

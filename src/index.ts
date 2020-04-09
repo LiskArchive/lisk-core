@@ -12,16 +12,6 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import { Application } from 'lisk-sdk';
-import {
-	TransferTransaction,
-	SecondSignatureTransaction,
-	DelegateTransaction,
-	VoteTransaction,
-	MultisignatureTransaction,
-	DappTransaction,
-	InTransferTransaction,
-	OutTransferTransaction,
-} from './transactions';
 
 try {
 	/**
@@ -37,44 +27,6 @@ try {
 	const genesisBlock = require(`../config/${NETWORK}/genesis_block.json`);
 
 	const app = new Application(genesisBlock, config);
-
-	const {
-		disableV1Transactions,
-		disableDappTransaction,
-		disableDappTransfer,
-	} = app.config.modules.chain.exceptions.precedent;
-
-	app.registerTransaction(TransferTransaction, {
-		matcher: context => context.blockHeight < disableV1Transactions,
-	});
-
-	app.registerTransaction(SecondSignatureTransaction, {
-		matcher: context => context.blockHeight < disableV1Transactions,
-	});
-
-	app.registerTransaction(DelegateTransaction, {
-		matcher: context => context.blockHeight < disableV1Transactions,
-	});
-
-	app.registerTransaction(VoteTransaction, {
-		matcher: context => context.blockHeight < disableV1Transactions,
-	});
-
-	app.registerTransaction(MultisignatureTransaction, {
-		matcher: context => context.blockHeight < disableV1Transactions,
-	});
-
-	app.registerTransaction(DappTransaction, {
-		matcher: context => context.blockHeight < disableDappTransaction,
-	});
-
-	app.registerTransaction(InTransferTransaction, {
-		matcher: context => context.blockHeight < disableDappTransfer,
-	});
-
-	app.registerTransaction(OutTransferTransaction, {
-		matcher: context => context.blockHeight < disableDappTransfer,
-	});
 
 	app
 		.run()
