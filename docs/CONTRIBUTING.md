@@ -46,9 +46,8 @@ to get help. These are some of them:
 
 If you prefer to chat with LiskHQ and other developers directly:
 
-* [Join the LiskHQ Gitter](https://gitter.im/LiskHQ/lisk)
-* Even though Gitter is a chat service, sometimes it takes several hours for
-  community members to respond &mdash; please be patient!
+* [Join the LiskHQ Discord](https://discordapp.com/invite/7EKWJ7b)
+* Even though Discord is a chat service, sometimes it takes several hours for community members to respond &mdash; please be patient!
 
 ## How Can I Contribute?
 
@@ -157,7 +156,7 @@ the problem:
   described steps and clearly demonstrate the problem. You can use
   [this tool](http://www.cockos.com/licecap/) to record GIFs on macOS and
   Windows, and [this tool](https://github.com/colinkeenan/silentcast) or
-  [this tool](https://github.com/GNOME/byzanz) on Linux.
+  [this tool](https://github.com/cgoodrich/byzanz) on Linux.
 * **If the problem wasn’t triggered by a specific action**, describe what you
   were doing before the problem happened and share more information using the
   guidelines below.
@@ -170,7 +169,7 @@ Provide more context by answering these questions:
 * If the problem started happening recently, **can you reproduce the problem in
   an older version of Lisk Core?** What’s the most recent version in which
   the problem doesn’t happen? You can download older versions of Lisk Core
-  from [the releases page](https://github.com/LiskHQ/Lisk Core/releases).
+  from [the releases page](https://github.com/LiskHQ/Lisk-Core/releases).
 * **Can you reliably reproduce the issue?** If not, provide details about how
   often the problem happens and under which conditions it normally happens.
 
@@ -183,7 +182,7 @@ community understand your suggestion :pencil: and find related suggestions
 :mag_right:.
 
 When you are creating an enhancement suggestion, please include as many details
-as possible. Fill in [the template](ISSUE_TEMPLATE.md), including the steps that
+as possible. Fill in [the template](../.github/ISSUE_TEMPLATE/feature-request.md), including the steps that
 you imagine you would take if the feature you’re requesting existed.
 
 #### How Do I Submit A (Good) Enhancement Suggestion?
@@ -207,7 +206,7 @@ following information:
   or point out the part of Lisk Core which the suggestion is related to. You
   can use [this tool](http://www.cockos.com/licecap/) to record GIFs on macOS
   and Windows, and [this tool](https://github.com/colinkeenan/silentcast) or
-  [this tool](https://github.com/GNOME/byzanz) on Linux.
+  [this tool](https://github.com/cgoodrich/byzanz) on Linux.
 * **Explain why this enhancement would be useful** to most Lisk and
   Lisk Core users.
 * **Specify which version of Lisk and Lisk Core you’re using.**
