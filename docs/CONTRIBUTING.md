@@ -182,7 +182,7 @@ community understand your suggestion :pencil: and find related suggestions
 :mag_right:.
 
 When you are creating an enhancement suggestion, please include as many details
-as possible. Fill in [the template](../.github/feature-request.md), including the steps that
+as possible. Fill in [the template](../.github/ISSUE_TEMPLATE/feature-request.md), including the steps that
 you imagine you would take if the feature you’re requesting existed.
 
 #### How Do I Submit A (Good) Enhancement Suggestion?
