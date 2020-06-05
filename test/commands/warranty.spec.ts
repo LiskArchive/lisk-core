@@ -16,11 +16,11 @@
 
 import { expect, test } from '@oclif/test';
 
-describe('copyright', () => {
+describe('warranty', () => {
 	test
 		.stdout()
-		.command(['copyright'])
-		.it('should show copyright', ctx => {
-			expect(ctx.stdout).to.contain('Lisk Core Copyright (C) ');
+		.command(['warranty'])
+		.it('should show warranty', ctx => {
+			expect(ctx.stdout).to.contain('THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY');
 		});
 });
