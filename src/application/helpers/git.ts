@@ -16,8 +16,7 @@ import childProcess from 'child_process';
 import fs from 'fs';
 
 const getLastCommitIdFromGit = (): string => {
-	const spawn = childProcess
-		.spawnSync('git', ['rev-parse', 'HEAD']);
+	const spawn = childProcess.spawnSync('git', ['rev-parse', 'HEAD']);
 
 	if (!spawn.stderr.toString().trim()) {
 		return spawn.stdout.toString().trim();

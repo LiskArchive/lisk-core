@@ -84,7 +84,7 @@ const { NETWORK, CUSTOM_CONFIG_FILE } = configurator.getConfig();
 process.env.LISK_NETWORK = NETWORK;
 
 configurator.loadConfigFile(
-	path.resolve(__dirname, `../../config/${NETWORK}/config`)
+	path.resolve(__dirname, `../../config/${NETWORK}/config`),
 );
 
 if (CUSTOM_CONFIG_FILE) {

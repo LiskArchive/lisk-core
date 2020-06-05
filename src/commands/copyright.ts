@@ -37,6 +37,6 @@ export default class CopyrightCommand extends Command {
 
 	// eslint-disable-next-line @typescript-eslint/require-await
 	async run(): Promise<void> {
-    this.log(copyright);
+		this.log(copyright);
 	}
 }

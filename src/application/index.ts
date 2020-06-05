@@ -17,8 +17,8 @@ import { Application } from 'lisk-sdk';
 /* eslint-disable */
 export const getApplication = (genesisBlock: any, config: any): Application => {
 	/**
-		 * We have to keep it in try/catch block as it can throw
-		 * exception while validating the configuration
-		 */
+	 * We have to keep it in try/catch block as it can throw
+	 * exception while validating the configuration
+	 */
 	return new Application(genesisBlock, config);
-}
+};

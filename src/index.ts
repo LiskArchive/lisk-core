@@ -11,4 +11,4 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-export default {}
+export default {};

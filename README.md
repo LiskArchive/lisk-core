@@ -40,9 +40,9 @@ If you have satisfied the requirements from the Pre-Installation section, you ca
 
 The following dependencies need to be installed in order to run applications created with the Lisk SDK:
 
-| Dependencies     | Version |
-| ---------------- | ------- |
-| NodeJS           | 12.18.0 |
+| Dependencies | Version |
+| ------------ | ------- |
+| NodeJS       | 12.18.0 |
 
 You can find further details on installing these dependencies in our [pre-installation setup guide](https://lisk.io/documentation/lisk-core/setup/source#pre-install).
 Clone the Lisk Core repository using Git and initialize the modules.
@@ -56,7 +56,9 @@ npm run build
 ```
 
 ## Usage
+
 <!-- usage -->
+
 ```sh-session
 $ npm install -g lisk-core
 $ core COMMAND
@@ -68,13 +70,17 @@ USAGE
   $ core COMMAND
 ...
 ```
+
 <!-- usagestop -->
+
 ## Commands
+
 <!-- commands -->
+
 # Command Topics
 
-* [`core copyright`](docs/commands/copyright.md) - Displays copyright notice.
-* [`core help`](docs/commands/help.md) - display help for core
+- [`core copyright`](docs/commands/copyright.md) - Displays copyright notice.
+- [`core help`](docs/commands/help.md) - display help for core
 
 <!-- commandsstop -->
 
