@@ -1,5 +1,6 @@
 /*
- * Copyright © 2019 Lisk Foundation
+ * LiskHQ/lisk-commander
+ * Copyright © 2020 Lisk Foundation
  *
  * See the LICENSE file at the top-level directory of this distribution
  * for licensing information.
@@ -10,5 +11,16 @@
  * LICENSE file.
  *
  * Removal or modification of this copyright notice is prohibited.
+ *
  */
-export default {}
+
+import { expect, test } from '@oclif/test';
+
+describe('copyright', () => {
+	test
+		.stdout()
+		.command(['copyright'])
+		.it('should show copyright', ctx => {
+			expect(ctx.stdout).to.contain('Lisk Commander  Copyright (C) ');
+		});
+});

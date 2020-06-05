@@ -12,8 +12,6 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-'use strict';
-
 import childProcess from 'child_process';
 import fs from 'fs';
 

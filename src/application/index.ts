@@ -11,20 +11,14 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import { Application } from 'lisk-sdk';
 
-'use strict';
-
-import fs from 'fs';
-import path from 'path';
-
-export const getBuildVersion = (): string => {
-	// .build file is being created in the root folder during build process.
-	try {
-		return fs
-			.readFileSync(path.join(__dirname, '../../', '.build'), 'utf8')
-			.toString()
-			.trim();
-	} catch (error) {
-		throw new Error('.build file not found.');
-	}
-};
+// Temporally disable eslint
+/* eslint-disable */
+export const getApplication = (genesisBlock: any, config: any): Application => {
+	/**
+		 * We have to keep it in try/catch block as it can throw
+		 * exception while validating the configuration
+		 */
+	return new Application(genesisBlock, config);
+}

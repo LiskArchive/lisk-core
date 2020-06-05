@@ -42,9 +42,7 @@ The following dependencies need to be installed in order to run applications cre
 
 | Dependencies     | Version |
 | ---------------- | ------- |
-| NodeJS           | 12.16.1 |
-| PostgreSQL       | 10.x    |
-| Redis (optional) | 5+      |
+| NodeJS           | 12.18.0 |
 
 You can find further details on installing these dependencies in our [pre-installation setup guide](https://lisk.io/documentation/lisk-core/setup/source#pre-install).
 Clone the Lisk Core repository using Git and initialize the modules.
@@ -56,6 +54,29 @@ git checkout master
 npm ci
 npm run build
 ```
+
+## Usage
+<!-- usage -->
+```sh-session
+$ npm install -g lisk-core
+$ core COMMAND
+running command...
+$ core (-v|--version|version)
+lisk-core/3.0.0-beta.1 darwin-x64 node-v12.18.0
+$ core --help [COMMAND]
+USAGE
+  $ core COMMAND
+...
+```
+<!-- usagestop -->
+## Commands
+<!-- commands -->
+# Command Topics
+
+* [`core copyright`](docs/commands/copyright.md) - Displays copyright notice.
+* [`core help`](docs/commands/help.md) - display help for core
+
+<!-- commandsstop -->
 
 ## Managing Lisk
 
@@ -167,21 +188,6 @@ For a more detailed understanding of configuration read this [online documentati
 Update the `redis.port` configuration attribute in `config/devnet/config.json` or any other network you want to configure.
 
 ## Tests
-
-### Preparing Node
-
-1. Recreate the database to run the tests against a new blockchain:
-
-```
-dropdb lisk_dev
-createdb lisk_dev
-```
-
-2. Launch Lisk (runs on port 4000):
-
-```
-NODE_ENV=test node dist/index.js
-```
 
 ## Utility Scripts
 
