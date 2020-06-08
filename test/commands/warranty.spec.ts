@@ -1,5 +1,4 @@
 /*
- * LiskHQ/lisk-commander
  * Copyright © 2020 Lisk Foundation
  *
  * See the LICENSE file at the top-level directory of this distribution
