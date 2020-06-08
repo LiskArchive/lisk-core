@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Lisk Foundation
+ * Copyright © 2020 Lisk Foundation
  *
  * See the LICENSE file at the top-level directory of this distribution
  * for licensing information.
@@ -10,21 +10,16 @@
  * LICENSE file.
  *
  * Removal or modification of this copyright notice is prohibited.
+ *
  */
 
-'use strict';
+import { expect, test } from '@oclif/test';
 
-import fs from 'fs';
-import path from 'path';
-
-export const getBuildVersion = (): string => {
-	// .build file is being created in the root folder during build process.
-	try {
-		return fs
-			.readFileSync(path.join(__dirname, '../../', '.build'), 'utf8')
-			.toString()
-			.trim();
-	} catch (error) {
-		throw new Error('.build file not found.');
-	}
-};
+describe('copyright', () => {
+	test
+		.stdout()
+		.command(['copyright'])
+		.it('should show copyright', ctx => {
+			expect(ctx.stdout).to.contain('Lisk Core Copyright (C) ');
+		});
+});

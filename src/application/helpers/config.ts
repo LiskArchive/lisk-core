@@ -11,13 +11,15 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+/* eslint-disable */
 import { configurator } from 'lisk-sdk';
 import path from 'path';
 import { getBuildVersion } from './build';
 import { getLastCommitId } from './git';
 
-// tslint:disable-next-line no-var-requires no-require-imports
-const packageJSON = require('../../package.json');
+// eslint-disable-next-line
+const packageJSON = require('../../../package.json');
+
 let lastCommitId; // tslint:disable-line no-let
 let buildVersion; // tslint:disable-line no-let
 
@@ -82,7 +84,7 @@ const { NETWORK, CUSTOM_CONFIG_FILE } = configurator.getConfig();
 process.env.LISK_NETWORK = NETWORK;
 
 configurator.loadConfigFile(
-	path.resolve(__dirname, `../../config/${NETWORK}/config`)
+	path.resolve(__dirname, `../../config/${NETWORK}/config`),
 );
 
 if (CUSTOM_CONFIG_FILE) {

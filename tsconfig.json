@@ -5,6 +5,7 @@
 		"module": "commonjs",
 		"moduleResolution": "node",
 		"newLine": "lf",
+		"importHelpers": true,
 		"noFallthroughCasesInSwitch": true,
 		"noImplicitReturns": true,
 		"noUnusedLocals": true,

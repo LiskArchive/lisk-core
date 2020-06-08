@@ -10,13 +10,11 @@
  * LICENSE file.
  *
  * Removal or modification of this copyright notice is prohibited.
- *
  */
-/* eslint-disable @typescript-eslint/no-var-requires */
-const chai = require('chai');
-const chaiAsPromised = require('chai-as-promised');
-const sinonChai = require('sinon-chai');
+import { Application } from 'lisk-sdk';
 
-process.env.NODE_ENV = 'test';
-
-[sinonChai, chaiAsPromised].forEach(chai.use);
+// Temporally disable eslint
+/* eslint-disable */
+export const getApplication = (genesisBlock: any, config: any): Application => {
+	return new Application(genesisBlock, config);
+};

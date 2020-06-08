@@ -10,13 +10,19 @@
  * LICENSE file.
  *
  * Removal or modification of this copyright notice is prohibited.
- *
  */
-/* eslint-disable @typescript-eslint/no-var-requires */
-const chai = require('chai');
-const chaiAsPromised = require('chai-as-promised');
-const sinonChai = require('sinon-chai');
 
-process.env.NODE_ENV = 'test';
+import fs from 'fs';
+import path from 'path';
 
-[sinonChai, chaiAsPromised].forEach(chai.use);
+export const getBuildVersion = (): string => {
+	// .build file is being created in the root folder during build process.
+	try {
+		return fs
+			.readFileSync(path.join(__dirname, '../../', '.build'), 'utf8')
+			.toString()
+			.trim();
+	} catch (error) {
+		throw new Error('.build file not found.');
+	}
+};
