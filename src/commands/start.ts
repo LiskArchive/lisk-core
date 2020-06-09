@@ -16,6 +16,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Command, flags as flagParser } from '@oclif/command';
 import * as fs from 'fs-extra';
+import { ApplicationConfig } from 'lisk-sdk';
 import { getDefaultPath, splitPath, getConfigPath, getDefaultConfigPath, getNetworkConfigFilesPath, getFullPath } from '../utils/path';
 import { getApplication } from '../application';
 
@@ -101,9 +102,10 @@ export default class StartCommand extends Command {
 		const genesisBlock = await fs.readJSON(networkConfigs.genesisBlockFilePath);
 		// Get config from network config or config specifeid
 		const configFilePath = flags.config ?? networkConfigs.configFilePath;
-		const config = await fs.readJSON(configFilePath);
+		const config: ApplicationConfig = (await fs.readJSON(configFilePath));
 		config.rootPath = pathConfig.rootPath;
 		config.label = pathConfig.label;
+		config.protocolVersion = this.config.pjson.lisk.version;
 		// Inject other properties specified
 		if (flags["enable-ipc"]) {
 			config.ipc = { enabled: flags["enable-ipc"] };
@@ -125,16 +127,18 @@ export default class StartCommand extends Command {
 			config.network = config.network ?? {};
 			config.network.seedPeers = [];
 			for (const seed of flags.seed) {
-				config.network.seedPeers.push(seed);
+				const [ip, wsPort] = seed.split(':');
+				config.network.seedPeers.push({ ip, wsPort: Number(wsPort) });
 			}
 		}
 		// Get application
 		// Start
 		try {
 			const app = getApplication(genesisBlock, config);
+			// eslint-disable-next-line @typescript-eslint/unbound-method
 			await app.run();
-		} catch (error) {
-			this.error(error);
+		} catch (errors) {
+			this.error(Array.isArray(errors) ? errors.map(err => (err as Error).message).join(',') : errors);
 		}
 	}
 }
