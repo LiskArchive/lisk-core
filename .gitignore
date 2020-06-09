@@ -51,3 +51,4 @@ helm/**/charts/*tgz
 
 # Build Directory
 dist
+data
