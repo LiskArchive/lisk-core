@@ -16,7 +16,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Command, flags as flagParser } from '@oclif/command';
 import fs from 'fs-extra';
-import { ApplicationConfig } from 'lisk-sdk';
+import { ApplicationConfig, GenesisBlockJSON } from 'lisk-sdk';
 import {
 	getDefaultPath,
 	splitPath,
@@ -89,28 +89,17 @@ export default class StartCommand extends Command {
 		const pathConfig = splitPath(dataPath);
 		// Make sure data path exists
 		await fs.ensureDir(dataPath);
+
 		// Copy all default configs to datapath if not exist
-		const configPath = getConfigPath(dataPath);
-		if (!fs.existsSync(configPath)) {
-			const defaultConfigPath = getDefaultConfigPath();
-			this.log(`Copying files from ${defaultConfigPath} to ${configPath}`);
-			await fs.ensureDir(configPath);
-			await fs.copy(defaultConfigPath, configPath, { recursive: true });
-		}
-		const configDirs = await fs.readdir(configPath);
-		// Choose network (default to main)
-		const network = flags.network ?? DEFAULT_NETWORK;
-		// If network is specified, check if the config folder exists
-		if (!configDirs.includes(network)) {
-			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-			this.error(new Error(`Network must be one of ${configDirs.join(',')}`));
-		}
+		const configPath = await this._getConfigPath(dataPath);
+		const networkConfigs = await this._getNetworkConfigPath(dataPath, configPath, flags.network);
+
 		// Get genesis block using the network config
-		const networkConfigs = getNetworkConfigFilesPath(dataPath, network);
-		const genesisBlock = await fs.readJSON(networkConfigs.genesisBlockFilePath);
+		const genesisBlock: GenesisBlockJSON = await fs.readJSON(networkConfigs.genesisBlockFilePath);
 		// Get config from network config or config specifeid
 		const configFilePath = flags.config ?? networkConfigs.configFilePath;
 		const config: ApplicationConfig = await fs.readJSON(configFilePath);
+
 		config.rootPath = pathConfig.rootPath;
 		config.label = pathConfig.label;
 		config.protocolVersion = this.config.pjson.lisk.protocolVersion;
@@ -142,6 +131,7 @@ export default class StartCommand extends Command {
 				config.network.seedPeers.push({ ip, wsPort: Number(wsPort) });
 			}
 		}
+
 		// Get application and start
 		try {
 			const app = getApplication(genesisBlock, config);
@@ -153,5 +143,27 @@ export default class StartCommand extends Command {
 					: errors,
 			);
 		}
+	}
+
+	private async _getConfigPath(dataPath: string): Promise<string> {
+		const configPath = getConfigPath(dataPath);
+		if (!fs.existsSync(configPath)) {
+			const defaultConfigPath = getDefaultConfigPath();
+			this.log(`Copying files from ${defaultConfigPath} to ${configPath}`);
+			await fs.ensureDir(configPath);
+			await fs.copy(defaultConfigPath, configPath, { recursive: true });
+		}
+		return configPath
+	}
+
+	private async _getNetworkConfigPath(dataPath: string, configPath: string, networkInput?: string): Promise<{ genesisBlockFilePath: string, configFilePath: string }> {
+		const configDirs = await fs.readdir(configPath);
+		const network = networkInput ?? DEFAULT_NETWORK;
+		// If network is specified, check if the config folder exists
+		if (!configDirs.includes(network)) {
+			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+			this.error(new Error(`Network must be one of ${configDirs.join(',')}`));
+		}
+		return getNetworkConfigFilesPath(dataPath, network);
 	}
 }
