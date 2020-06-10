@@ -142,11 +142,9 @@ export default class StartCommand extends Command {
 				config.network.seedPeers.push({ ip, wsPort: Number(wsPort) });
 			}
 		}
-		// Get application
-		// Start
+		// Get application and start
 		try {
 			const app = getApplication(genesisBlock, config);
-			// eslint-disable-next-line @typescript-eslint/unbound-method
 			await app.run();
 		} catch (errors) {
 			this.error(
