@@ -31,7 +31,7 @@ const LOG_OPTIONS = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
 const DEFAULT_NETWORK = 'mainnet';
 
 export default class StartCommand extends Command {
-	static description = 'Start Lisk Core Node with given configs';
+	static description = 'Start Lisk Core Node with given config parameters';
 
 	static examples = [
 		'start',

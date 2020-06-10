@@ -1,13 +1,13 @@
 `core start`
 ============
 
-Start Lisk Core Node with given configs
+Start Lisk Core Node with given config parameters
 
 * [`core start`](#core-start)
 
 ## `core start`
 
-Start Lisk Core Node with given configs
+Start Lisk Core Node with given config parameters
 
 ```
 USAGE
