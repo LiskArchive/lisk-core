@@ -15,7 +15,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Command, flags as flagParser } from '@oclif/command';
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import { ApplicationConfig } from 'lisk-sdk';
 import { getDefaultPath, splitPath, getConfigPath, getDefaultConfigPath, getNetworkConfigFilesPath, getFullPath } from '../utils/path';
 import { getApplication } from '../application';
@@ -84,7 +84,7 @@ export default class StartCommand extends Command {
 		// Copy all default configs to datapath if not exist
 		const configPath = getConfigPath(dataPath);
 		if (!fs.existsSync(configPath)) {
-			const defaultConfigPath = getDefaultConfigPath()
+			const defaultConfigPath = getDefaultConfigPath();
 			this.log(`Copying files from ${defaultConfigPath} to ${configPath}`);
 			await fs.ensureDir(configPath);
 			await fs.copy(defaultConfigPath, configPath, { recursive: true });
@@ -105,7 +105,7 @@ export default class StartCommand extends Command {
 		const config: ApplicationConfig = (await fs.readJSON(configFilePath));
 		config.rootPath = pathConfig.rootPath;
 		config.label = pathConfig.label;
-		config.protocolVersion = this.config.pjson.lisk.version;
+		config.protocolVersion = this.config.pjson.lisk.protocolVersion;
 		// Inject other properties specified
 		if (flags["enable-ipc"]) {
 			config.ipc = { enabled: flags["enable-ipc"] };
@@ -128,6 +128,9 @@ export default class StartCommand extends Command {
 			config.network.seedPeers = [];
 			for (const seed of flags.seed) {
 				const [ip, wsPort] = seed.split(':');
+				if (!ip || !wsPort || Number.isNaN(Number(wsPort))) {
+					this.error('Invalid ip or port is specified.');
+				}
 				config.network.seedPeers.push({ ip, wsPort: Number(wsPort) });
 			}
 		}

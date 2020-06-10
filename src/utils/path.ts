@@ -12,8 +12,8 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import * as path from 'path';
-import * as os from 'os';
+import path from 'path';
+import os from 'os';
 
 const defaultDir = '.lisk';
 const defaultFolder = 'default';
