@@ -21,17 +21,18 @@ const defaultFolder = 'default';
 export const getDefaultPath = (): string =>
 	path.join(os.homedir(), defaultDir, defaultFolder);
 
-export const getFullPath = (dataPath: string): string =>
-	path.resolve(dataPath);
+export const getFullPath = (dataPath: string): string => path.resolve(dataPath);
 
-export const splitPath = (dataPath: string): { rootPath: string, label: string } => {
-	const rootPath = path.resolve(path.join(dataPath, '../'))
+export const splitPath = (
+	dataPath: string,
+): { rootPath: string; label: string } => {
+	const rootPath = path.resolve(path.join(dataPath, '../'));
 	const label = path.parse(dataPath).name;
 	return {
 		rootPath,
 		label,
 	};
-}
+};
 
 export const getDefaultConfigPath = (): string =>
 	path.join(__dirname, '../../config');
@@ -39,12 +40,15 @@ export const getDefaultConfigPath = (): string =>
 export const getConfigPath = (dataPath: string): string =>
 	path.join(dataPath, 'config');
 
-export const getNetworkConfigFilesPath = (dataPath: string, network: string): { genesisBlockFilePath: string, configFilePath: string } => {
+export const getNetworkConfigFilesPath = (
+	dataPath: string,
+	network: string,
+): { genesisBlockFilePath: string; configFilePath: string } => {
 	const basePath = path.join(dataPath, 'config', network);
 	return {
 		genesisBlockFilePath: path.join(basePath, 'genesis_block.json'),
 		configFilePath: path.join(basePath, 'config.json'),
-	}
+	};
 };
 
 export const getConfigFilePath = (dataPath: string, network: string): string =>

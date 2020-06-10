@@ -15,6 +15,9 @@ import { Application, ApplicationConfig, GenesisBlockJSON } from 'lisk-sdk';
 
 // Temporally disable eslint
 /* eslint-disable */
-export const getApplication = (genesisBlock: GenesisBlockJSON, config: ApplicationConfig): Application => {
+export const getApplication = (
+	genesisBlock: GenesisBlockJSON,
+	config: ApplicationConfig,
+): Application => {
 	return new Application(genesisBlock, config);
 };

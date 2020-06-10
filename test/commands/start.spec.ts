@@ -25,17 +25,22 @@ describe('start', () => {
 	const defaultDataPath = '~/.lisk/default';
 	const defaultGenesisBlock = { height: 1 };
 	const readJSONStub = sandbox.stub();
-	readJSONStub.withArgs(`${defaultDataPath}/config/mainnet/genesis_block.json`)
+	readJSONStub
+		.withArgs(`${defaultDataPath}/config/mainnet/genesis_block.json`)
 		.resolves(defaultGenesisBlock);
-	readJSONStub.withArgs(`${defaultDataPath}/config/mainnet/config.json`)
-		.resolves(mainnetConfig)
+	readJSONStub
+		.withArgs(`${defaultDataPath}/config/mainnet/config.json`)
+		.resolves(mainnetConfig);
 
 	const setupTest = () =>
 		test
-			.stub(application, 'getApplication', sandbox.stub().returns({
-				run: async () => Promise.resolve(),
-			} as Application,
-			))
+			.stub(
+				application,
+				'getApplication',
+				sandbox.stub().returns({
+					run: async () => Promise.resolve(),
+				} as Application),
+			)
 			.stub(fs, 'ensureDir', sandbox.stub().returns({}))
 			.stub(fs, 'copy', sandbox.stub().returns({}))
 			.stub(fs, 'readdir', sandbox.stub().returns(['mainnet', 'testnet']))
@@ -49,11 +54,22 @@ describe('start', () => {
 			.command(['start'])
 			.it('should start with default mainnet config', () => {
 				expect(fs.ensureDir).to.have.been.calledWithExactly(defaultDataPath);
-				expect(fs.copy).to.have.been.calledWithExactly(sandbox.match.string, `${defaultDataPath}/config`, { recursive: true });
-				expect(fs.readJSON).to.have.been.calledWithExactly(`${defaultDataPath}/config/mainnet/genesis_block.json`);
-				expect(fs.readJSON).to.have.been.calledWithExactly(`${defaultDataPath}/config/mainnet/config.json`);
+				expect(fs.copy).to.have.been.calledWithExactly(
+					sandbox.match.string,
+					`${defaultDataPath}/config`,
+					{ recursive: true },
+				);
+				expect(fs.readJSON).to.have.been.calledWithExactly(
+					`${defaultDataPath}/config/mainnet/genesis_block.json`,
+				);
+				expect(fs.readJSON).to.have.been.calledWithExactly(
+					`${defaultDataPath}/config/mainnet/config.json`,
+				);
 
-				const [usedGenesisBlock, usedConfig] = (application.getApplication as sinon.SinonStub).getCall(0).args;
+				const [
+					usedGenesisBlock,
+					usedConfig,
+				] = (application.getApplication as sinon.SinonStub).getCall(0).args;
 				expect(usedGenesisBlock).to.equal(defaultGenesisBlock);
 				expect(usedConfig).to.equal(mainnetConfig);
 				expect(usedConfig.protocolVersion).to.equal('2.0');
@@ -64,7 +80,11 @@ describe('start', () => {
 	describe('when unknown network is specidied', () => {
 		setupTest()
 			.command(['start', '--network=unknown'])
-			.catch(err => expect(err.message).to.include('Network must be one of mainnet,testnet'))
+			.catch(err =>
+				expect(err.message).to.include(
+					'Network must be one of mainnet,testnet',
+				),
+			)
 			.it('should throw an error');
 	});
 
@@ -72,7 +92,10 @@ describe('start', () => {
 		setupTest()
 			.command(['start', '--enable-ipc'])
 			.it('should update the config value', () => {
-				const [, usedConfig] = (application.getApplication as sinon.SinonStub).getCall(0).args;
+				const [
+					,
+					usedConfig,
+				] = (application.getApplication as sinon.SinonStub).getCall(0).args;
 				expect(usedConfig.ipc.enabled).to.equal(true);
 			});
 	});
@@ -81,15 +104,21 @@ describe('start', () => {
 		setupTest()
 			.command(['start', '--log=trace'])
 			.it('should update the config value', () => {
-				const [, usedConfig] = (application.getApplication as sinon.SinonStub).getCall(0).args;
+				const [
+					,
+					usedConfig,
+				] = (application.getApplication as sinon.SinonStub).getCall(0).args;
 				expect(usedConfig.logger.consoleLogLevel).to.equal('trace');
 			});
 
-			setupTest()
+		setupTest()
 			.env({ LISK_CONSOLE_LOG_LEVEL: 'error' })
 			.command(['start'])
 			.it('should update the config value', () => {
-				const [, usedConfig] = (application.getApplication as sinon.SinonStub).getCall(0).args;
+				const [
+					,
+					usedConfig,
+				] = (application.getApplication as sinon.SinonStub).getCall(0).args;
 				expect(usedConfig.logger.consoleLogLevel).to.equal('error');
 			});
 	});
@@ -98,15 +127,21 @@ describe('start', () => {
 		setupTest()
 			.command(['start', '--flog=trace'])
 			.it('should update the config value', () => {
-				const [, usedConfig] = (application.getApplication as sinon.SinonStub).getCall(0).args;
+				const [
+					,
+					usedConfig,
+				] = (application.getApplication as sinon.SinonStub).getCall(0).args;
 				expect(usedConfig.logger.fileLogLevel).to.equal('trace');
 			});
 
-			setupTest()
+		setupTest()
 			.env({ LISK_FILE_LOG_LEVEL: 'trace' })
 			.command(['start'])
 			.it('should update the config value', () => {
-				const [, usedConfig] = (application.getApplication as sinon.SinonStub).getCall(0).args;
+				const [
+					,
+					usedConfig,
+				] = (application.getApplication as sinon.SinonStub).getCall(0).args;
 				expect(usedConfig.logger.fileLogLevel).to.equal('trace');
 			});
 	});
@@ -115,15 +150,21 @@ describe('start', () => {
 		setupTest()
 			.command(['start', '--port=1111'])
 			.it('should update the config value', () => {
-				const [, usedConfig] = (application.getApplication as sinon.SinonStub).getCall(0).args;
+				const [
+					,
+					usedConfig,
+				] = (application.getApplication as sinon.SinonStub).getCall(0).args;
 				expect(usedConfig.network.wsPort).to.equal(1111);
 			});
 
-			setupTest()
+		setupTest()
 			.env({ LISK_PORT: '1234' })
 			.command(['start'])
 			.it('should update the config value', () => {
-				const [, usedConfig] = (application.getApplication as sinon.SinonStub).getCall(0).args;
+				const [
+					,
+					usedConfig,
+				] = (application.getApplication as sinon.SinonStub).getCall(0).args;
 				expect(usedConfig.network.wsPort).to.equal(1234);
 			});
 	});
@@ -132,15 +173,26 @@ describe('start', () => {
 		setupTest()
 			.command(['start', '--seed=localhost:12234'])
 			.it('should update the config value', () => {
-				const [, usedConfig] = (application.getApplication as sinon.SinonStub).getCall(0).args;
-				expect(usedConfig.network.seedPeers).to.eql([{ ip: 'localhost', wsPort: 12234 }]);
+				const [
+					,
+					usedConfig,
+				] = (application.getApplication as sinon.SinonStub).getCall(0).args;
+				expect(usedConfig.network.seedPeers).to.eql([
+					{ ip: 'localhost', wsPort: 12234 },
+				]);
 			});
 
-			setupTest()
+		setupTest()
 			.command(['start', '--seed=localhost:12234', '-s=74.49.3.35:2238'])
 			.it('should update the config value', () => {
-				const [, usedConfig] = (application.getApplication as sinon.SinonStub).getCall(0).args;
-				expect(usedConfig.network.seedPeers).to.eql([{ ip: 'localhost', wsPort: 12234 }, { ip: '74.49.3.35', wsPort: 2238 }]);
+				const [
+					,
+					usedConfig,
+				] = (application.getApplication as sinon.SinonStub).getCall(0).args;
+				expect(usedConfig.network.seedPeers).to.eql([
+					{ ip: 'localhost', wsPort: 12234 },
+					{ ip: '74.49.3.35', wsPort: 2238 },
+				]);
 			});
 	});
 });

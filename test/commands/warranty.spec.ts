@@ -20,6 +20,8 @@ describe('warranty', () => {
 		.stdout()
 		.command(['warranty'])
 		.it('should show warranty', ctx => {
-			expect(ctx.stdout).to.contain('THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY');
+			expect(ctx.stdout).to.contain(
+				'THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY',
+			);
 		});
 });

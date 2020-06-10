@@ -17,7 +17,14 @@
 import { Command, flags as flagParser } from '@oclif/command';
 import fs from 'fs-extra';
 import { ApplicationConfig } from 'lisk-sdk';
-import { getDefaultPath, splitPath, getConfigPath, getDefaultConfigPath, getNetworkConfigFilesPath, getFullPath } from '../utils/path';
+import {
+	getDefaultPath,
+	splitPath,
+	getConfigPath,
+	getDefaultConfigPath,
+	getNetworkConfigFilesPath,
+	getFullPath,
+} from '../utils/path';
 import { getApplication } from '../application';
 
 const LOG_OPTIONS = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
@@ -26,7 +33,10 @@ const DEFAULT_NETWORK = 'mainnet';
 export default class StartCommand extends Command {
 	static description = 'Start Lisk Core Node with given configs';
 
-	static examples = ['start', 'start --network dev --data-path ./data --log debug'];
+	static examples = [
+		'start',
+		'start --network dev --data-path ./data --log debug',
+	];
 
 	static flags = {
 		'data-path': flagParser.string({
@@ -73,9 +83,7 @@ export default class StartCommand extends Command {
 
 	// eslint-disable-next-line @typescript-eslint/require-await
 	async run(): Promise<void> {
-		const {
-			flags,
-		} = this.parse(StartCommand);
+		const { flags } = this.parse(StartCommand);
 		const dataPath = flags['data-path'] ? flags['data-path'] : getDefaultPath();
 		this.log(`Starting Lisk Core at ${getFullPath(dataPath)}`);
 		const pathConfig = splitPath(dataPath);
@@ -102,13 +110,13 @@ export default class StartCommand extends Command {
 		const genesisBlock = await fs.readJSON(networkConfigs.genesisBlockFilePath);
 		// Get config from network config or config specifeid
 		const configFilePath = flags.config ?? networkConfigs.configFilePath;
-		const config: ApplicationConfig = (await fs.readJSON(configFilePath));
+		const config: ApplicationConfig = await fs.readJSON(configFilePath);
 		config.rootPath = pathConfig.rootPath;
 		config.label = pathConfig.label;
 		config.protocolVersion = this.config.pjson.lisk.protocolVersion;
 		// Inject other properties specified
-		if (flags["enable-ipc"]) {
-			config.ipc = { enabled: flags["enable-ipc"] };
+		if (flags['enable-ipc']) {
+			config.ipc = { enabled: flags['enable-ipc'] };
 		}
 		if (flags.log) {
 			config.logger = config.logger ?? {};
@@ -141,7 +149,11 @@ export default class StartCommand extends Command {
 			// eslint-disable-next-line @typescript-eslint/unbound-method
 			await app.run();
 		} catch (errors) {
-			this.error(Array.isArray(errors) ? errors.map(err => (err as Error).message).join(',') : errors);
+			this.error(
+				Array.isArray(errors)
+					? errors.map(err => (err as Error).message).join(',')
+					: errors,
+			);
 		}
 	}
 }
