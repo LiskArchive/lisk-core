@@ -14,14 +14,14 @@ USAGE
   $ core start
 
 OPTIONS
-  -c, --config=config                          File path to a custom config.
-  -d, --data-path=data-path                    Directory path to specify where node data is stored.
-  -l, --log=trace|debug|info|warn|error|fatal  Console log level.
-  -n, --network=network                        Default network config to use.
-  -p, --port=port                              Open port for the peer to peer incoming connections.
-  -s, --seed=seed                              Seed peer to initially connect to in format of "ip:port".
-  --enable-ipc                                 Enable IPC communication.
-  --flog=trace|debug|info|warn|error|fatal     File log level.
+  -c, --config=config                              File path to a custom config.
+  -d, --data-path=data-path                        Directory path to specify where node data is stored.
+  -l, --log=trace|debug|info|warn|error|fatal      File log level.
+  -n, --network=network                            Default network config to use.
+  -p, --port=port                                  Open port for the peer to peer incoming connections.
+  -x, --peer=peer                                  Seed peer to initially connect to in format of "ip:port".
+  --console-log=trace|debug|info|warn|error|fatal  Console log level.
+  --enable-ipc                                     Enable IPC communication.
 
 EXAMPLES
   start

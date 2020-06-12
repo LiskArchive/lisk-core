@@ -63,19 +63,19 @@ export default class StartCommand extends Command {
 			description: 'Enable IPC communication.',
 			default: false,
 		}),
-		log: flagParser.string({
-			char: 'l',
+		'console-log': flagParser.string({
 			description: 'Console log level.',
 			env: 'LISK_CONSOLE_LOG_LEVEL',
 			options: LOG_OPTIONS,
 		}),
-		flog: flagParser.string({
+		log: flagParser.string({
+			char: 'l',
 			description: 'File log level.',
 			env: 'LISK_FILE_LOG_LEVEL',
 			options: LOG_OPTIONS,
 		}),
-		seed: flagParser.string({
-			char: 's',
+		peer: flagParser.string({
+			char: 'x',
 			description: 'Seed peer to initially connect to in format of "ip:port".',
 			multiple: true,
 		}),
@@ -107,23 +107,23 @@ export default class StartCommand extends Command {
 		if (flags['enable-ipc']) {
 			config.ipc = { enabled: flags['enable-ipc'] };
 		}
+		if (flags['console-log']) {
+			config.logger = config.logger ?? {};
+			config.logger.consoleLogLevel = flags['console-log'];
+		}
 		if (flags.log) {
 			config.logger = config.logger ?? {};
-			config.logger.consoleLogLevel = flags.log;
-		}
-		if (flags.flog) {
-			config.logger = config.logger ?? {};
-			config.logger.fileLogLevel = flags.flog;
+			config.logger.fileLogLevel = flags.log;
 		}
 		if (flags.port) {
 			config.network = config.network ?? {};
 			config.network.wsPort = flags.port;
 		}
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		if (flags.seed) {
+		if (flags.peer) {
 			config.network = config.network ?? {};
 			config.network.seedPeers = [];
-			for (const seed of flags.seed) {
+			for (const seed of flags.peer) {
 				const [ip, wsPort] = seed.split(':');
 				if (!ip || !wsPort || Number.isNaN(Number(wsPort))) {
 					this.error('Invalid ip or port is specified.');
