@@ -11,10 +11,13 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { Application } from 'lisk-sdk';
+import { Application, ApplicationConfig, GenesisBlockJSON } from 'lisk-sdk';
 
 // Temporally disable eslint
 /* eslint-disable */
-export const getApplication = (genesisBlock: any, config: any): Application => {
+export const getApplication = (
+	genesisBlock: GenesisBlockJSON,
+	config: ApplicationConfig,
+): Application => {
 	return new Application(genesisBlock, config);
 };

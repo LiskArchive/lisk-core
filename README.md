@@ -58,7 +58,6 @@ npm run build
 ## Usage
 
 <!-- usage -->
-
 ```sh-session
 $ npm install -g lisk-core
 $ core COMMAND
@@ -70,17 +69,17 @@ USAGE
   $ core COMMAND
 ...
 ```
-
 <!-- usagestop -->
 
 ## Commands
 
 <!-- commands -->
-
 # Command Topics
 
-- [`core copyright`](docs/commands/copyright.md) - Displays copyright notice.
-- [`core help`](docs/commands/help.md) - display help for core
+* [`core copyright`](docs/commands/copyright.md) - Displays copyright notice.
+* [`core help`](docs/commands/help.md) - display help for core
+* [`core start`](docs/commands/start.md) - Start Lisk Core Node with given config parameters
+* [`core warranty`](docs/commands/warranty.md) - Displays warranty notice.
 
 <!-- commandsstop -->
 
