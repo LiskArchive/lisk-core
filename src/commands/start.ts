@@ -41,22 +41,22 @@ export default class StartCommand extends Command {
 	static flags = {
 		'data-path': flagParser.string({
 			char: 'd',
-			description: 'Directory path to specify where node data is stored.',
+			description: 'Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.',
 			env: 'LISK_DATA_PATH',
 		}),
 		network: flagParser.string({
 			char: 'n',
-			description: 'Default network config to use.',
+			description: 'Default network config to use. Environment variable "LISK_NETWORK" can also be used.',
 			env: 'LISK_NETWORK',
 		}),
 		config: flagParser.string({
 			char: 'c',
-			description: 'File path to a custom config.',
+			description: 'File path to a custom config. Environment variable "LISK_CONFIG_FILE" can also be used.',
 			env: 'LISK_CONFIG_FILE',
 		}),
 		port: flagParser.integer({
 			char: 'p',
-			description: 'Open port for the peer to peer incoming connections.',
+			description: 'Open port for the peer to peer incoming connections. Environment variable "LISK_PORT" can also be used.',
 			env: 'LISK_PORT',
 		}),
 		'enable-ipc': flagParser.boolean({
@@ -64,13 +64,13 @@ export default class StartCommand extends Command {
 			default: false,
 		}),
 		'console-log': flagParser.string({
-			description: 'Console log level.',
+			description: 'Console log level. Environment variable "LISK_CONSOLE_LOG_LEVEL" can also be used.',
 			env: 'LISK_CONSOLE_LOG_LEVEL',
 			options: LOG_OPTIONS,
 		}),
 		log: flagParser.string({
 			char: 'l',
-			description: 'File log level.',
+			description: 'File log level. Environment variable "LISK_FILE_LOG_LEVEL" can also be used.',
 			env: 'LISK_FILE_LOG_LEVEL',
 			options: LOG_OPTIONS,
 		}),
