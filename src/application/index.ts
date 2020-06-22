@@ -11,13 +11,29 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { Application, ApplicationConfig, GenesisBlockJSON } from 'lisk-sdk';
+import {
+	Application,
+	ApplicationConfig,
+	GenesisBlockJSON,
+	HTTPAPIPlugin,
+} from 'lisk-sdk';
+
+export interface Options {
+	enableHTTPAPI: boolean;
+}
 
 // Temporally disable eslint
 /* eslint-disable */
 export const getApplication = (
 	genesisBlock: GenesisBlockJSON,
 	config: ApplicationConfig,
+	options: Options,
 ): Application => {
-	return new Application(genesisBlock, config);
+	const app = new Application(genesisBlock, config);
+
+	if (options.enableHTTPAPI) {
+		app.registerModule(HTTPAPIPlugin);
+	}
+
+	return app;
 };
