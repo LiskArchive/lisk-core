@@ -79,6 +79,10 @@ export default class StartCommand extends Command {
 			description: 'Seed peer to initially connect to in format of "ip:port".',
 			multiple: true,
 		}),
+		'enable-http-api': flagParser.boolean({
+			description: 'Enable HTTP API Plugin.',
+			default: false,
+		}),
 	};
 
 	// eslint-disable-next-line @typescript-eslint/require-await
@@ -134,7 +138,7 @@ export default class StartCommand extends Command {
 
 		// Get application and start
 		try {
-			const app = getApplication(genesisBlock, config);
+			const app = getApplication(genesisBlock, config, { enableHTTPAPI: flags['enable-http-api'] });
 			await app.run();
 		} catch (errors) {
 			this.error(
