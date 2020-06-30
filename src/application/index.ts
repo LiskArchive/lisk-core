@@ -32,7 +32,7 @@ export const getApplication = (
 	const app = new Application(genesisBlock, config);
 
 	if (options.enableHTTPAPI) {
-		app.registerModule(HTTPAPIPlugin);
+		app.registerPlugin(HTTPAPIPlugin);
 	}
 
 	return app;
