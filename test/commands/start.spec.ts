@@ -159,7 +159,7 @@ describe('start', () => {
 
 	describe('when peer is specified', () => {
 		setupTest()
-			.command(['start', '--peer=localhost:12234'])
+			.command(['start', '--peers=localhost:12234'])
 			.it('should update the config value', () => {
 				const [,
 					usedConfig,
@@ -170,7 +170,7 @@ describe('start', () => {
 			});
 
 		setupTest()
-			.command(['start', '--peer=localhost:12234', '-x=74.49.3.35:2238'])
+			.command(['start', '--peers=localhost:12234,74.49.3.35:2238'])
 			.it('should update the config value', () => {
 				const [,
 					usedConfig,
