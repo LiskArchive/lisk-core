@@ -16,10 +16,12 @@ import {
 	ApplicationConfig,
 	GenesisBlockJSON,
 	HTTPAPIPlugin,
+	ForgerPlugin,
 } from 'lisk-sdk';
 
 export interface Options {
 	enableHTTPAPI: boolean;
+	enableForger: boolean;
 }
 
 // Temporally disable eslint
@@ -33,6 +35,9 @@ export const getApplication = (
 
 	if (options.enableHTTPAPI) {
 		app.registerPlugin(HTTPAPIPlugin);
+	}
+	if (options.enableForger) {
+		app.registerPlugin(ForgerPlugin);
 	}
 
 	return app;
