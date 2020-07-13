@@ -17,7 +17,6 @@
 		"strict": true,
 		"composite": true,
 		"declaration": true,
-		"esModuleInterop": true,
 		"noImplicitAny": false,
 		"rootDir": "./src",
 		"outDir": "./dist"

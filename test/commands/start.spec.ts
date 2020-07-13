@@ -15,8 +15,8 @@
 
 import { expect, test } from '@oclif/test';
 import * as sandbox from 'sinon';
-import fs from 'fs-extra';
-import os from 'os';
+import * as fs from 'fs-extra';
+import * as os from 'os';
 import { Application } from 'lisk-sdk';
 import * as application from '../../src/application';
 import * as mainnetGenesisBlock from '../../src/config/mainnet/genesis_block.json';

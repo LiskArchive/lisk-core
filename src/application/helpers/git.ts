@@ -12,8 +12,8 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-import childProcess from 'child_process';
-import fs from 'fs';
+import * as childProcess from 'child_process';
+import * as fs from 'fs';
 
 const getLastCommitIdFromGit = (): string => {
 	const spawn = childProcess.spawnSync('git', ['rev-parse', 'HEAD']);

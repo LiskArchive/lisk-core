@@ -15,7 +15,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Command, flags as flagParser } from '@oclif/command';
-import fs from 'fs-extra';
+import * as fs from 'fs-extra';
 import { ApplicationConfig, utils, GenesisBlockJSON } from 'lisk-sdk';
 import {
 	getDefaultPath,
