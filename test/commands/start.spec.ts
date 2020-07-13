@@ -154,7 +154,7 @@ describe('start', () => {
 					,
 					usedConfig,
 				] = (application.getApplication as sinon.SinonStub).getCall(0).args;
-				expect(usedConfig.network.wsPort).to.equal(1111);
+				expect(usedConfig.network.port).to.equal(1111);
 			});
 
 		setupTest()
@@ -165,7 +165,7 @@ describe('start', () => {
 					,
 					usedConfig,
 				] = (application.getApplication as sinon.SinonStub).getCall(0).args;
-				expect(usedConfig.network.wsPort).to.equal(1234);
+				expect(usedConfig.network.port).to.equal(1234);
 			});
 	});
 
@@ -178,7 +178,7 @@ describe('start', () => {
 					usedConfig,
 				] = (application.getApplication as sinon.SinonStub).getCall(0).args;
 				expect(usedConfig.network.seedPeers).to.eql([
-					{ ip: 'localhost', wsPort: 12234 },
+					{ ip: 'localhost', port: 12234 },
 				]);
 			});
 
@@ -190,8 +190,8 @@ describe('start', () => {
 					usedConfig,
 				] = (application.getApplication as sinon.SinonStub).getCall(0).args;
 				expect(usedConfig.network.seedPeers).to.eql([
-					{ ip: 'localhost', wsPort: 12234 },
-					{ ip: '74.49.3.35', wsPort: 2238 },
+					{ ip: 'localhost', port: 12234 },
+					{ ip: '74.49.3.35', port: 2238 },
 				]);
 			});
 	});

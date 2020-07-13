@@ -106,7 +106,7 @@ export default class StartCommand extends Command {
 
 		config.rootPath = pathConfig.rootPath;
 		config.label = pathConfig.label;
-		config.protocolVersion = this.config.pjson.lisk.protocolVersion;
+		config.version = this.config.pjson.version;
 		// Inject other properties specified
 		if (flags['enable-ipc']) {
 			config.ipc = { enabled: flags['enable-ipc'] };
@@ -121,18 +121,18 @@ export default class StartCommand extends Command {
 		}
 		if (flags.port) {
 			config.network = config.network ?? {};
-			config.network.wsPort = flags.port;
+			config.network.port = flags.port;
 		}
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (flags.peer) {
 			config.network = config.network ?? {};
 			config.network.seedPeers = [];
 			for (const seed of flags.peer) {
-				const [ip, wsPort] = seed.split(':');
-				if (!ip || !wsPort || Number.isNaN(Number(wsPort))) {
+				const [ip, port] = seed.split(':');
+				if (!ip || !port || Number.isNaN(Number(port))) {
 					this.error('Invalid ip or port is specified.');
 				}
-				config.network.seedPeers.push({ ip, wsPort: Number(wsPort) });
+				config.network.seedPeers.push({ ip, port: Number(port) });
 			}
 		}
 
