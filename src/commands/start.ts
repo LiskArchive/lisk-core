@@ -76,7 +76,7 @@ export default class StartCommand extends Command {
 		}),
 		peers: flagParser.string({
 			env: 'LISK_PEERS',
-			description: 'Seed peers to initially connect to in format of comma separated "ip:port". Environment variable "LISK_PEERS" can also be used.',
+			description: 'Seed peers to initially connect to in format of comma separated "ip:port". IP can be DNS name or IPV4 format. Environment variable "LISK_PEERS" can also be used.',
 		}),
 		'enable-http-api': flagParser.boolean({
 			description: 'Enable HTTP API Plugin.',
