@@ -15,17 +15,16 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Command, flags as flagParser } from '@oclif/command';
-import fs from 'fs-extra';
-import { ApplicationConfig, GenesisBlockJSON } from 'lisk-sdk';
+import * as fs from 'fs-extra';
+import { ApplicationConfig, utils, GenesisBlockJSON } from 'lisk-sdk';
 import {
 	getDefaultPath,
 	splitPath,
-	getConfigPath,
-	getDefaultConfigPath,
-	getNetworkConfigFilesPath,
 	getFullPath,
 } from '../utils/path';
 import { getApplication } from '../application';
+// eslint-disable-next-line import/namespace
+import * as configs from '../config';
 
 const LOG_OPTIONS = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
 const DEFAULT_NETWORK = 'mainnet';
@@ -48,6 +47,7 @@ export default class StartCommand extends Command {
 			char: 'n',
 			description: 'Default network config to use. Environment variable "LISK_NETWORK" can also be used.',
 			env: 'LISK_NETWORK',
+			default: DEFAULT_NETWORK,
 		}),
 		config: flagParser.string({
 			char: 'c',
@@ -92,17 +92,20 @@ export default class StartCommand extends Command {
 		this.log(`Starting Lisk Core at ${getFullPath(dataPath)}`);
 		const pathConfig = splitPath(dataPath);
 		// Make sure data path exists
-		await fs.ensureDir(dataPath);
 
 		// Copy all default configs to datapath if not exist
-		const configPath = await this._getConfigPath(dataPath);
-		const networkConfigs = await this._getNetworkConfigPath(dataPath, configPath, flags.network);
-
-		// Get genesis block using the network config
-		const genesisBlock: GenesisBlockJSON = await fs.readJSON(networkConfigs.genesisBlockFilePath);
+		// eslint-disable-next-line import/namespace
+		const networkConfigs = configs[flags.network] as { config: ApplicationConfig, genesisBlock: GenesisBlockJSON } | undefined;
+		if (networkConfigs === undefined) {
+			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+			throw new Error(`Network must be one of ${Object.keys(configs)}.`);
+		}
 		// Get config from network config or config specifeid
-		const configFilePath = flags.config ?? networkConfigs.configFilePath;
-		const config: ApplicationConfig = await fs.readJSON(configFilePath);
+		let { config } = networkConfigs;
+		if (flags.config) {
+			const customConfig: ApplicationConfig = await fs.readJSON(flags.config);
+			config = utils.objects.mergeDeep({}, config, customConfig) as ApplicationConfig;
+		}
 
 		config.rootPath = pathConfig.rootPath;
 		config.label = pathConfig.label;
@@ -112,19 +115,23 @@ export default class StartCommand extends Command {
 			config.ipc = { enabled: flags['enable-ipc'] };
 		}
 		if (flags['console-log']) {
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			config.logger = config.logger ?? {};
 			config.logger.consoleLogLevel = flags['console-log'];
 		}
 		if (flags.log) {
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			config.logger = config.logger ?? {};
 			config.logger.fileLogLevel = flags.log;
 		}
 		if (flags.port) {
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			config.network = config.network ?? {};
 			config.network.port = flags.port;
 		}
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (flags.peer) {
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			config.network = config.network ?? {};
 			config.network.seedPeers = [];
 			for (const seed of flags.peer) {
@@ -138,7 +145,7 @@ export default class StartCommand extends Command {
 
 		// Get application and start
 		try {
-			const app = getApplication(genesisBlock, config, { enableHTTPAPI: flags['enable-http-api'] });
+			const app = getApplication(networkConfigs.genesisBlock, config, { enableHTTPAPI: flags['enable-http-api'] });
 			await app.run();
 		} catch (errors) {
 			this.error(
@@ -147,27 +154,5 @@ export default class StartCommand extends Command {
 					: errors,
 			);
 		}
-	}
-
-	private async _getConfigPath(dataPath: string): Promise<string> {
-		const configPath = getConfigPath(dataPath);
-		if (!fs.existsSync(configPath)) {
-			const defaultConfigPath = getDefaultConfigPath();
-			this.log(`Copying files from ${defaultConfigPath} to ${configPath}`);
-			await fs.ensureDir(configPath);
-			await fs.copy(defaultConfigPath, configPath, { recursive: true });
-		}
-		return configPath
-	}
-
-	private async _getNetworkConfigPath(dataPath: string, configPath: string, networkInput?: string): Promise<{ genesisBlockFilePath: string, configFilePath: string }> {
-		const configDirs = await fs.readdir(configPath);
-		const network = networkInput ?? DEFAULT_NETWORK;
-		// If network is specified, check if the config folder exists
-		if (!configDirs.includes(network)) {
-			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-			this.error(new Error(`Network must be one of ${configDirs.join(',')}`));
-		}
-		return getNetworkConfigFilesPath(dataPath, network);
 	}
 }
