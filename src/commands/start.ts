@@ -16,7 +16,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Command, flags as flagParser } from '@oclif/command';
 import * as fs from 'fs-extra';
-import { ApplicationConfig, utils, GenesisBlockJSON } from 'lisk-sdk';
+import { ApplicationConfig, utils, GenesisBlockJSON, HTTPAPIPlugin } from 'lisk-sdk';
 import {
 	getDefaultPath,
 	splitPath,
@@ -74,14 +74,21 @@ export default class StartCommand extends Command {
 			env: 'LISK_FILE_LOG_LEVEL',
 			options: LOG_OPTIONS,
 		}),
-		peer: flagParser.string({
-			char: 'x',
-			description: 'Seed peer to initially connect to in format of "ip:port".',
-			multiple: true,
+		peers: flagParser.string({
+			env: 'LISK_PEERS',
+			description: 'Seed peers to initially connect to in format of comma separated "ip:port". IP can be DNS name or IPV4 format. Environment variable "LISK_PEERS" can also be used.',
 		}),
 		'enable-http-api': flagParser.boolean({
 			description: 'Enable HTTP API Plugin.',
 			default: false,
+		}),
+		'http-api-port': flagParser.integer({
+			description: 'Port to be used for HTTP API Plugin. Environment variable "LISK_HTTP_API_PORT" can also be used.',
+			dependsOn: ['enable-http-api'],
+		}),
+		'http-api-whitelist': flagParser.string({
+			description: 'List of IPs in comma separated value to allow the connection. Environment variable "LISK_HTTP_API_WHITELIST" can also be used.',
+			dependsOn: ['enable-http-api'],
 		}),
 	};
 
@@ -130,11 +137,12 @@ export default class StartCommand extends Command {
 			config.network.port = flags.port;
 		}
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		if (flags.peer) {
+		if (flags.peers) {
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			config.network = config.network ?? {};
 			config.network.seedPeers = [];
-			for (const seed of flags.peer) {
+			const peers = flags.peers.split(',');
+			for (const seed of peers) {
 				const [ip, port] = seed.split(':');
 				if (!ip || !port || Number.isNaN(Number(port))) {
 					this.error('Invalid ip or port is specified.');
@@ -142,7 +150,17 @@ export default class StartCommand extends Command {
 				config.network.seedPeers.push({ ip, port: Number(port) });
 			}
 		}
-
+		// Plugin configs
+		if (flags['http-api-port'] !== undefined) {
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			config.plugins[HTTPAPIPlugin.alias] = config.plugins[HTTPAPIPlugin.alias] ?? {};
+			config.plugins[HTTPAPIPlugin.alias].port = flags['http-api-port'];
+		}
+		if (flags['http-api-whitelist'] !== undefined) {
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			config.plugins[HTTPAPIPlugin.alias] = config.plugins[HTTPAPIPlugin.alias] ?? {};
+			config.plugins[HTTPAPIPlugin.alias].whiteList = flags['http-api-whitelist'].split(',');
+		}
 		// Get application and start
 		try {
 			const app = getApplication(networkConfigs.genesisBlock, config, { enableHTTPAPI: flags['enable-http-api'] });

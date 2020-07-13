@@ -23,18 +23,28 @@ OPTIONS
   -l, --log=trace|debug|info|warn|error|fatal      File log level. Environment variable "LISK_FILE_LOG_LEVEL" can also
                                                    be used.
 
-  -n, --network=network                            Default network config to use. Environment variable "LISK_NETWORK"
-                                                   can also be used.
+  -n, --network=network                            [default: mainnet] Default network config to use. Environment
+                                                   variable "LISK_NETWORK" can also be used.
 
   -p, --port=port                                  Open port for the peer to peer incoming connections. Environment
                                                    variable "LISK_PORT" can also be used.
 
-  -x, --peer=peer                                  Seed peer to initially connect to in format of "ip:port".
-
   --console-log=trace|debug|info|warn|error|fatal  Console log level. Environment variable "LISK_CONSOLE_LOG_LEVEL" can
                                                    also be used.
 
+  --enable-http-api                                Enable HTTP API Plugin.
+
   --enable-ipc                                     Enable IPC communication.
+
+  --http-api-port=http-api-port                    Port to be used for HTTP API Plugin. Environment variable
+                                                   "LISK_HTTP_API_PORT" can also be used.
+
+  --http-api-whitelist=http-api-whitelist          List of IPs in comma separated value to allow the connection.
+                                                   Environment variable "LISK_HTTP_API_WHITELIST" can also be used.
+
+  --peers=peers                                    Seed peers to initially connect to in format of comma separated
+                                                   "ip:port". IP can be DNS name or IPV4 format. Environment variable
+                                                   "LISK_PEERS" can also be used.
 
 EXAMPLES
   start
