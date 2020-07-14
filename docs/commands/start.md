@@ -32,9 +32,19 @@ OPTIONS
   --console-log=trace|debug|info|warn|error|fatal  Console log level. Environment variable "LISK_CONSOLE_LOG_LEVEL" can
                                                    also be used.
 
-  --enable-http-api                                Enable HTTP API Plugin.
+  --enable-forger                                  Enable Forger Plugin. Environment variable "LISK_ENABLE_FORGER" can
+                                                   also be used.
+
+  --enable-http-api                                Enable HTTP API Plugin. Environment variable "LISK_ENABLE_HTTP_API"
+                                                   can also be used.
 
   --enable-ipc                                     Enable IPC communication.
+
+  --forger-port=forger-port                        Port to be used for Forger Plugin. Environment variable
+                                                   "LISK_FORGER_PORT" can also be used.
+
+  --forger-whitelist=forger-whitelist              List of IPs in comma separated value to allow the connection.
+                                                   Environment variable "LISK_FORGER_WHITELIST" can also be used.
 
   --http-api-port=http-api-port                    Port to be used for HTTP API Plugin. Environment variable
                                                    "LISK_HTTP_API_PORT" can also be used.
