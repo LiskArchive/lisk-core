@@ -16,7 +16,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Command, flags as flagParser } from '@oclif/command';
 import * as fs from 'fs-extra';
-import { ApplicationConfig, utils, GenesisBlockJSON, HTTPAPIPlugin } from 'lisk-sdk';
+import { ApplicationConfig, utils, GenesisBlockJSON, HTTPAPIPlugin, ForgerPlugin } from 'lisk-sdk';
 import {
 	getDefaultPath,
 	splitPath,
@@ -79,16 +79,34 @@ export default class StartCommand extends Command {
 			description: 'Seed peers to initially connect to in format of comma separated "ip:port". IP can be DNS name or IPV4 format. Environment variable "LISK_PEERS" can also be used.',
 		}),
 		'enable-http-api': flagParser.boolean({
-			description: 'Enable HTTP API Plugin.',
+			description: 'Enable HTTP API Plugin. Environment variable "LISK_ENABLE_HTTP_API" can also be used.',
+			env: 'LISK_ENABLE_HTTP_API',
 			default: false,
 		}),
 		'http-api-port': flagParser.integer({
 			description: 'Port to be used for HTTP API Plugin. Environment variable "LISK_HTTP_API_PORT" can also be used.',
+			env: 'LISK_HTTP_API_PORT',
 			dependsOn: ['enable-http-api'],
 		}),
 		'http-api-whitelist': flagParser.string({
 			description: 'List of IPs in comma separated value to allow the connection. Environment variable "LISK_HTTP_API_WHITELIST" can also be used.',
+			env: 'LISK_HTTP_API_WHITELIST',
 			dependsOn: ['enable-http-api'],
+		}),
+		'enable-forger': flagParser.boolean({
+			description: 'Enable Forger Plugin. Environment variable "LISK_ENABLE_FORGER" can also be used.',
+			env: 'LISK_ENABLE_FORGER',
+			default: false,
+		}),
+		'forger-port': flagParser.integer({
+			description: 'Port to be used for Forger Plugin. Environment variable "LISK_FORGER_PORT" can also be used.',
+			env: 'LISK_FORGER_PORT',
+			dependsOn: ['enable-forger'],
+		}),
+		'forger-whitelist': flagParser.string({
+			description: 'List of IPs in comma separated value to allow the connection. Environment variable "LISK_FORGER_WHITELIST" can also be used.',
+			env: 'LISK_FORGER_WHITELIST',
+			dependsOn: ['enable-forger'],
 		}),
 	};
 
@@ -161,9 +179,19 @@ export default class StartCommand extends Command {
 			config.plugins[HTTPAPIPlugin.alias] = config.plugins[HTTPAPIPlugin.alias] ?? {};
 			config.plugins[HTTPAPIPlugin.alias].whiteList = flags['http-api-whitelist'].split(',');
 		}
+		if (flags['forger-port'] !== undefined) {
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			config.plugins[ForgerPlugin.alias] = config.plugins[ForgerPlugin.alias] ?? {};
+			config.plugins[ForgerPlugin.alias].port = flags['forger-port'];
+		}
+		if (flags['forger-whitelist'] !== undefined) {
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			config.plugins[ForgerPlugin.alias] = config.plugins[ForgerPlugin.alias] ?? {};
+			config.plugins[ForgerPlugin.alias].whiteList = flags['forger-whitelist'].split(',');
+		}
 		// Get application and start
 		try {
-			const app = getApplication(networkConfigs.genesisBlock, config, { enableHTTPAPI: flags['enable-http-api'] });
+			const app = getApplication(networkConfigs.genesisBlock, config, { enableHTTPAPI: flags['enable-http-api'], enableForger: flags['enable-forger'] });
 			await app.run();
 		} catch (errors) {
 			this.error(
