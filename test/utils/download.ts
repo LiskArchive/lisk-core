@@ -40,5 +40,44 @@ describe('download utils', () => {
 
 			return expect(downloadUtil.download(url, outDir)).returned;
 		});
+    });
+    
+    describe('#downloadLiskAndValidate', () => {
+		let readFileSyncStub: SinonStub;
+        let verifyChecksumStub: SinonStub;
+
+		beforeEach(() => {
+			sandbox.stub(downloadUtil, 'download');
+			verifyChecksumStub = sandbox.stub(downloadUtil, 'verifyChecksum');
+			sandbox
+				.stub(downloadUtil, 'getDownloadedFileInfo')
+				.returns({ fileDir: '', fileName: '', filePath: '' });
+			readFileSyncStub = sandbox.stub(fs, 'readFileSync');
+        });
+
+		it('should download lisk and validate release', async () => {
+			readFileSyncStub
+				.onCall(0)
+				.returns(
+					'7607d6792843d6003c12495b54e34517a508d2a8622526aff1884422c5478971 tar filename here',
+				);
+
+			await downloadUtil.downloadAndValidate(url, outDir);
+			expect(downloadUtil.download).to.be.calledTwice;
+			return expect(downloadUtil.getDownloadedFileInfo).to.be.calledOnce;
+		});
+
+		it('should throw error when validation fails', async () => {
+			readFileSyncStub
+				.onCall(0)
+				.returns(
+					'9897d6792843d6003c12495b54e34517a508d2a8622526aff1884422c5478971 tar filename here',
+				);
+			verifyChecksumStub.rejects(new Error('Checksum did not match'));
+
+			return expect(downloadUtil.downloadAndValidate(url, outDir)).to.rejectedWith(
+				'Checksum did not match',
+			);
+		});
 	});
 });
