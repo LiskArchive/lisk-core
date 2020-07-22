@@ -15,7 +15,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 
-import BaseIPCCommand from '../base_ipc';
+import BaseIPCCommand from '../../base_ipc';
 
 interface Args {
   readonly address: string;
@@ -36,17 +36,15 @@ export default class GetCommand extends BaseIPCCommand {
     'account:get qwBBp9P3ssKQtbg01Gvce364WBU=',
   ];
 
-  // eslint-disable-next-line @typescript-eslint/require-await
   async run(): Promise<void> {
     const { args } = this.parse(GetCommand);
     const { address } = args as Args;
 
-    // Get account by address
     try {
-      const account = await this.channel.invoke<Buffer>('app:getAccount', {
+      const account = await this.channel.invoke<string>('app:getAccount', {
         address,
       });
-      this.log(account.toString('base64'));
+      this.log(JSON.stringify(this.codec.decodeAccount(account)));
     } catch (errors) {
       this.error(
         Array.isArray(errors)
