@@ -22,3 +22,16 @@ export interface FileInfo {
 	readonly fileDir: string;
 	readonly filePath: string;
 }
+
+export const getDownloadedFileInfo = (url: string, downloadDir: string): FileInfo => {
+	const pathWithoutProtocol = url.replace(/(^\w+:|^)\/\//, '').split('/');
+	const fileName = pathWithoutProtocol.pop() as string;
+	const fileDir = `${downloadDir}/${pathWithoutProtocol.join('/')}`;
+	const filePath = `${fileDir}/${fileName}`;
+
+	return {
+		fileName,
+		fileDir,
+		filePath,
+	};
+};
