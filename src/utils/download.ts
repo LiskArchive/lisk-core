@@ -58,3 +58,27 @@ export const download = async (url: string, dir: string): Promise<void> => {
 		writeStream.on('error', reject);
 	});
 };
+
+export const verifyChecksum = async (filePath: string, expectedChecksum: string): Promise<void> => {
+	const fileStream = fs.createReadStream(filePath);
+
+	const fileBuffer = await new Promise<Buffer>((resolve, reject) => {
+		const bufferArray: Buffer[] = [];
+		fileStream.on('data', (d: Buffer) => {
+			bufferArray.push(d);
+		});
+		fileStream.on('error', error => {
+			reject(error);
+		});
+		fileStream.on('end', () => {
+			resolve(Buffer.concat(bufferArray));
+		});
+	});
+
+    const fileChecksum = bufferToHex(hash(fileBuffer));
+	if (fileChecksum !== expectedChecksum) {
+		throw new Error(
+			`File checksum: ${fileChecksum} mismatched with expected checksum: ${expectedChecksum}`,
+		);
+	}
+};
