@@ -82,3 +82,20 @@ export const verifyChecksum = async (filePath: string, expectedChecksum: string)
 		);
 	}
 };
+
+export const downloadAndValidate = async (url: string, dir: string): Promise<void> => {
+	await download(url, dir);
+	await download(`${url}.SHA256`, dir);
+
+	const { filePath } = getDownloadedFileInfo(url, dir);
+    const content = fs.readFileSync(`${filePath}.SHA256`, 'utf8');
+
+    if(!content) {
+        throw new Error(
+			`Invalid filepath: ${filePath}`,
+		);
+    }
+	const checksum = content.split(' ')[0];
+
+	await verifyChecksum(filePath, checksum);
+};
