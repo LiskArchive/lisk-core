@@ -14,15 +14,19 @@
  */
 
 import { Command, flags as flagParser } from '@oclif/command';
-import { codec, Schema } from '@liskhq/lisk-codec';
-import { hash } from '@liskhq/lisk-cryptography';
-import { IPCChannel } from 'lisk-sdk';
+import { codec, cryptography, IPCChannel } from 'lisk-sdk';
 import { getDefaultPath, getSocketsPath, splitPath } from './utils/path';
 import { flags as commonFlags } from './utils/flags';
 
 interface BaseIPCFlags {
   readonly pretty?: boolean;
   readonly 'data-path'?: string;
+}
+
+interface Schema {
+  readonly $id: string;
+  readonly type: string;
+  readonly properties: object;
 }
 
 interface CodecSchema {
@@ -135,7 +139,7 @@ export default abstract class BaseIPCCommand extends Command {
           this._codec.decodeTransaction(transactionBuffer),
         );
 
-        const blockId = hash(header);
+        const blockId = cryptography.hash(header);
 
         return {
           header: { ...baseHeaderJSON, asset: { ...blockAssetJSON }, id: blockId.toString('base64') },
@@ -153,7 +157,7 @@ export default abstract class BaseIPCCommand extends Command {
 
         return {
           ...baseTransaction,
-          id: hash(transactionBuffer).toString('base64'),
+          id: cryptography.hash(transactionBuffer).toString('base64'),
           asset: transactionAsset,
         };
       },
