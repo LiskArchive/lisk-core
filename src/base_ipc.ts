@@ -17,9 +17,11 @@ import { Command, flags as flagParser } from '@oclif/command';
 import { codec, Schema } from '@liskhq/lisk-codec';
 import { hash } from '@liskhq/lisk-cryptography';
 import { IPCChannel } from 'lisk-sdk';
-import { splitPath, getDefaultPath, getSocketsPath } from './utils/path';
+import { getDefaultPath, getSocketsPath, splitPath } from './utils/path';
+import { flags as commonFlags } from './utils/flags';
 
 interface BaseIPCFlags {
+  readonly pretty?: boolean;
   readonly 'data-path'?: string;
 }
 
@@ -42,28 +44,34 @@ interface Codec {
   decodeTransaction: (data: Buffer | string) => object;
 }
 
+const prettyDescription =
+  'Prints JSON in pretty format rather than condensed.';
+
 const convertStrToBuffer = (data: Buffer | string) => Buffer.isBuffer(data) ? data : Buffer.from(data, 'base64');
 
 export default abstract class BaseIPCCommand extends Command {
   static flags = {
+    pretty: flagParser.boolean({
+      description: prettyDescription,
+      allowNo: true,
+    }),
     'data-path': flagParser.string({
-      char: 'd',
-      description: 'Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.',
+      ...commonFlags.dataPath,
       env: 'LISK_DATA_PATH',
     }),
   };
 
-  public channel!: IPCChannel;
   public baseIPCFlags: BaseIPCFlags = {};
-  public schema!: CodecSchema;
-  public codec!: Codec;
+  protected _codec!: Codec;
+  protected _channel!: IPCChannel;
+  protected _schema!: CodecSchema;
 
   // eslint-disable-next-line @typescript-eslint/require-await
   async finally(error?: Error | string): Promise<void> {
     if (error) {
       this.error(error instanceof Error ? error.message : error);
     }
-    this.channel.cleanup();
+    this._channel.cleanup();
   }
 
   async init(): Promise<void> {
@@ -75,36 +83,44 @@ export default abstract class BaseIPCCommand extends Command {
     this.baseIPCFlags = flags as BaseIPCFlags;
 
     const dataPath = this.baseIPCFlags['data-path'] ? this.baseIPCFlags['data-path'] : getDefaultPath();
-
     await this._createIPCChannel(dataPath);
     await this._setAppSchema();
     this._setCodec();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  printJSON(message?: string | object): void {
+    if (this.baseIPCFlags.pretty) {
+      this.log(JSON.stringify(message, undefined, '  '));
+    } else {
+      this.log(JSON.stringify(message));
+    }
+  }
+
   private async _createIPCChannel(dataPath: string): Promise<void> {
     const { rootPath, label } = splitPath(dataPath);
 
-    this.channel = new IPCChannel('CoreCLI', [], {}, {
+    this._channel = new IPCChannel('CoreCLI', [], {}, {
       socketsPath: getSocketsPath(rootPath, label),
     });
 
-    await this.channel.startAndListen();
+    await this._channel.startAndListen();
   }
 
   private async _setAppSchema(): Promise<void> {
-    this.schema = await this.channel.invoke('app:getSchema');
+    this._schema = await this._channel.invoke('app:getSchema');
   }
 
   private _setCodec(): void {
-    this.codec = {
-      decodeAccount: (data: Buffer | string) => codec.decodeJSON(this.schema.account, convertStrToBuffer(data)),
+    this._codec = {
+      decodeAccount: (data: Buffer | string) => codec.decodeJSON(this._schema.account, convertStrToBuffer(data)),
       decodeBlock: (data: Buffer | string) => {
         const blockBuffer: Buffer = Buffer.isBuffer(data) ? data : Buffer.from(data, 'base64');
         const {
           blockSchema,
           blockHeaderSchema,
           blockHeadersAssets,
-        } = this.schema;
+        } = this._schema;
         const { header, payload }: {
           header: Buffer;
           payload: ReadonlyArray<Buffer>;
@@ -116,7 +132,7 @@ export default abstract class BaseIPCCommand extends Command {
           Buffer.from(baseHeaderJSON.asset, 'base64'),
         );
         const payloadJSON = payload.map(transactionBuffer =>
-          this.codec.decodeTransaction(transactionBuffer),
+          this._codec.decodeTransaction(transactionBuffer),
         );
 
         const blockId = hash(header);
@@ -128,8 +144,8 @@ export default abstract class BaseIPCCommand extends Command {
       },
       decodeTransaction: (data: Buffer | string) => {
         const transactionBuffer = Buffer.isBuffer(data) ? data : Buffer.from(data, 'base64');
-        const baseTransaction: { type: number; asset: string } = codec.decodeJSON(this.schema.baseTransaction, transactionBuffer);
-        const transactionTypeAssetSchema = this.schema.transactionsAssets[baseTransaction.type];
+        const baseTransaction: { type: number; asset: string } = codec.decodeJSON(this._schema.baseTransaction, transactionBuffer);
+        const transactionTypeAssetSchema = this._schema.transactionsAssets[baseTransaction.type];
         const transactionAsset = codec.decodeJSON<object>(
           transactionTypeAssetSchema,
           Buffer.from(baseTransaction.asset, 'base64'),

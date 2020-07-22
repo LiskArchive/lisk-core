@@ -14,8 +14,9 @@
  */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-
+import { flags as flagParser } from '@oclif/command';
 import BaseIPCCommand from '../../base_ipc';
+import { flags as commonFlags } from '../../utils/flags';
 
 interface Args {
   readonly address: string;
@@ -36,21 +37,36 @@ export default class GetCommand extends BaseIPCCommand {
     'account:get qwBBp9P3ssKQtbg01Gvce364WBU=',
   ];
 
+  static flags = {
+		pretty: flagParser.boolean({
+			...BaseIPCCommand.flags.pretty,
+			hidden: true,
+    }),
+    'data-path': flagParser.string({
+      ...commonFlags.dataPath,
+			hidden: true,
+    }),
+	};
+
   async run(): Promise<void> {
     const { args } = this.parse(GetCommand);
     const { address } = args as Args;
 
     try {
-      const account = await this.channel.invoke<string>('app:getAccount', {
+      const account = await this._channel.invoke<string>('app:getAccount', {
         address,
       });
-      this.log(JSON.stringify(this.codec.decodeAccount(account)));
+      this.printJSON(this._codec.decodeAccount(account));
     } catch (errors) {
-      this.error(
-        Array.isArray(errors)
-          ? errors.map(err => (err as Error).message).join(',')
-          : errors,
-      );
+      const errorMessage = Array.isArray(errors)
+        ? errors.map(err => (err as Error).message).join(',')
+        : errors;
+
+      if (/^Specified key accounts:address:(.*)does not exist/.test((errors as Error).message)) {
+        this.error(`Account with address '${address}' was not found`);
+      } else {
+        this.error(errorMessage);
+      }
     }
   }
 }
