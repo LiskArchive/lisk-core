@@ -35,3 +35,26 @@ export const getDownloadedFileInfo = (url: string, downloadDir: string): FileInf
 		filePath,
 	};
 };
+
+export const download = async (url: string, dir: string): Promise<void> => {
+    const { filePath, fileDir } = getDownloadedFileInfo(url,  dir);
+    
+    if (fs.existsSync(filePath)) {
+		fs.unlinkSync(filePath);
+	}
+
+	fs.ensureDirSync(fileDir);
+	const writeStream = fs.createWriteStream(filePath);
+	const response = await axios.default({
+		url,
+		method: 'GET',
+		responseType: 'stream',
+    });
+
+    response.data.pipe(writeStream);
+
+	return new Promise<void>((resolve, reject) => {
+		writeStream.on('finish', resolve);
+		writeStream.on('error', reject);
+	});
+};
