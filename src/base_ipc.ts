@@ -73,6 +73,9 @@ export default abstract class BaseIPCCommand extends Command {
   // eslint-disable-next-line @typescript-eslint/require-await
   async finally(error?: Error | string): Promise<void> {
     if (error) {
+      if (/^IPC Socket client connection timeout./.test((error as Error).message)) {
+        this.error('Please ensure the core server is up and running before using the command!');
+      }
       this.error(error instanceof Error ? error.message : error);
     }
     this._channel.cleanup();
