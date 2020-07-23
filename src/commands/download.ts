@@ -51,7 +51,7 @@ export default class DownloadCommand extends Command {
 		'url': flagParser.string({
 			char: 'u',
 			description: 'The url to the official Lisk HQ snapshot download.',
-			default: 'https://downloads.lisk.io/lisk/betanet/blockchain.db.gz',
+			default: 'https://downloads.lisk.io/lisk/mainnet/blockchain.db.gz',
 		}),
 		
 	};

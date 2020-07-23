@@ -13,7 +13,8 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import { bufferToHex, hash } from '@liskhq/lisk-cryptography';
+import * as crypto from 'crypto';
+import { bufferToHex } from '@liskhq/lisk-cryptography';
 import * as axios from 'axios';
 import * as fs from 'fs-extra';
 
@@ -48,7 +49,8 @@ export const download = async (url: string, dir: string): Promise<void> => {
 	const response = await axios.default({
 		url,
 		method: 'GET',
-		responseType: 'stream',
+        responseType: 'stream',
+        maxContentLength: 5000,
     });
 
     response.data.pipe(writeStream);
@@ -61,21 +63,20 @@ export const download = async (url: string, dir: string): Promise<void> => {
 
 export const verifyChecksum = async (filePath: string, expectedChecksum: string): Promise<void> => {
 	const fileStream = fs.createReadStream(filePath);
-
-	const fileBuffer = await new Promise<Buffer>((resolve, reject) => {
-		const bufferArray: Buffer[] = [];
-		fileStream.on('data', (d: Buffer) => {
-			bufferArray.push(d);
+    const dataHash = crypto.createHash('sha256');
+	const fileHash = await new Promise<Buffer>((resolve, reject) => {
+		fileStream.on('data', (datum: Buffer) => {
+            dataHash.update(datum);
 		});
 		fileStream.on('error', error => {
 			reject(error);
 		});
 		fileStream.on('end', () => {
-			resolve(Buffer.concat(bufferArray));
+			resolve(dataHash.digest());
 		});
 	});
 
-    const fileChecksum = bufferToHex(hash(fileBuffer));
+    const fileChecksum = bufferToHex(fileHash);
 	if (fileChecksum !== expectedChecksum) {
 		throw new Error(
 			`File checksum: ${fileChecksum} mismatched with expected checksum: ${expectedChecksum}`,
