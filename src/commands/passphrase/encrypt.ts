@@ -17,10 +17,9 @@ import {
 	getKeys,
 	stringifyEncryptedPassphrase,
 } from '@liskhq/lisk-cryptography';
-import { flags as flagParser, Command, flags } from '@oclif/command';
-import { flags as commonFlags } from '../../utils/flags';
-import { print, StringMap } from '../../utils/print';
+import { flags as flagParser, Command } from '@oclif/command';
 
+import { flags as commonFlags } from '../../utils/flags';
 import { getPassphraseFromPrompt } from '../../utils/reader';
 
 const outputPublicKeyOptionDescription =
@@ -62,10 +61,14 @@ export default class EncryptCommand extends Command {
 		const password = passwordSource ?? (await getPassphraseFromPrompt('password', true));
         const result = processInputs(passphrase, password, outputPublicKey);
     
-        print({
-            json: true,
-            pretty: true,
-            ...flags,
-        }).call(this, (result as unknown) as StringMap);
+        this._printJSON(result);
+	}
+
+	private _printJSON(message?: object, pretty = false): void {
+		if (pretty) {
+			this.log(JSON.stringify(message, undefined, '  '));
+		} else {
+			this.log(JSON.stringify(message));
+		}
 	}
 }

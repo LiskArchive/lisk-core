@@ -15,10 +15,9 @@
 
 import { generateHashOnionSeed, hashOnion } from '@liskhq/lisk-cryptography';
 import { isValidInteger } from '@liskhq/lisk-validator';
-import Command, { flags as flagParser, flags } from '@oclif/command';
+import Command, { flags as flagParser } from '@oclif/command';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { print, StringMap } from '../utils/print';
 
 export default class HashOnionCommand extends Command {
 	static description = `
@@ -73,11 +72,15 @@ export default class HashOnionCommand extends Command {
 		if (output) {
 			fs.writeJSONSync(output, result);
 		} else {
-            print({
-                json: true,
-                pretty: true,
-                ...flags,
-            }).call(this, (result as unknown) as StringMap);
+            this._printJSON(result);
+		}
+	}
+
+	private _printJSON(message?: object, pretty = false): void {
+		if (pretty) {
+			this.log(JSON.stringify(message, undefined, '  '));
+		} else {
+			this.log(JSON.stringify(message));
 		}
 	}
 }

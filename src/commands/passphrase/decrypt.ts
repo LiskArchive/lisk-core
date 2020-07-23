@@ -17,7 +17,6 @@ import Command, { flags as flagParser } from '@oclif/command';
 
 import { flags as commonFlags } from '../../utils/flags';
 import { getPassphraseFromPrompt } from '../../utils/reader';
-import { print, StringMap } from '../../utils/print';
 
 interface Args {
 	readonly encryptedPassphrase?: string;
@@ -56,17 +55,21 @@ export default class DecryptCommand extends Command {
 			args,
 			flags: { password: passwordSource },
 		} = this.parse(DecryptCommand);
-
+		
 		const { encryptedPassphrase }: Args = args;
-
+		
 		const password = passwordSource ?? (await getPassphraseFromPrompt('password', true));
-
+		
         const result = processInputs(password, encryptedPassphrase as string);
-        
-		print({
-            json: true,
-            pretty: true,
-            ...{ password: passwordSource },
-        }).call(this, (result as unknown) as StringMap);
+		
+		this._printJSON(result);
+	}
+
+	private _printJSON(message?: object, pretty = false): void {
+		if (pretty) {
+			this.log(JSON.stringify(message, undefined, '  '));
+		} else {
+			this.log(JSON.stringify(message));
+		}
 	}
 }
