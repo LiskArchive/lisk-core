@@ -13,14 +13,12 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import {
-	NETWORK,
-	RELEASE_URL,
-	SNAPSHOT_URL,
-} from '../constants';
+import { NETWORK, RELEASE_URL } from '../constants';
 
 export const liskSnapshotUrl = (url: string, network: NETWORK): string => {
-	if (!['testnet', 'mainnet', 'betanet'].includes(network.toLowerCase()) && url === SNAPSHOT_URL) {
+	if (
+		!['testnet', 'mainnet', 'betanet'].includes(network.toLowerCase())
+	) {
 		return '';
 	}
 	if (url && url.search(RELEASE_URL) >= 0) {

@@ -14,7 +14,7 @@
  */
 import { Command, flags as flagParser } from '@oclif/command';
 import { ApplicationConfig, GenesisBlockJSON } from 'lisk-sdk';
-import { NETWORK, RELEASE_URL } from '../constants'
+import { NETWORK, RELEASE_URL, SNAPSHOT_URL } from '../constants'
 import {
 	liskSnapshotUrl
 } from '../utils/commons';
@@ -51,7 +51,7 @@ export default class DownloadCommand extends Command {
 		'url': flagParser.string({
 			char: 'u',
 			description: 'The url to the official Lisk HQ snapshot download.',
-			default: 'https://downloads.lisk.io/lisk/mainnet/blockchain.db.gz',
+			default: SNAPSHOT_URL,
 		}),
 		
 	};
