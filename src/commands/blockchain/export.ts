@@ -16,37 +16,38 @@
 import * as tar from 'tar';
 import { join } from 'path';
 import { Command, flags as flagParser } from '@oclif/command';
-import { getDefaultPath, getFullPath } from '../../utils/path';
-
+import { getBlockchainDBPath, getDefaultPath, getFullPath } from '../../utils/path';
 
 export default class ExportCommand extends Command {
 	static description = 'Export blockchain data for given data path';
 
 	static examples = [
 		'blockchain:export',
-		'start --network dev --data-path ./data --log debug',
+		'blockchain:export --data-path ./data --output ./my/path/',
 	];
 
 	static flags = {
 		'data-path': flagParser.string({
 			char: 'd',
-			description: 'Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.',
+			description:
+				'Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.',
 			env: 'LISK_DATA_PATH',
 		}),
 		output: flagParser.string({
 			char: 'o',
-			description: 'The output directory. Default will set to current working directory.'
+			description:
+				'The output directory. Default will set to current working directory.',
 		}),
-	}
+	};
 
 	async run(): Promise<void> {
 		const { flags } = this.parse(ExportCommand);
 		const dataPath = flags['data-path'] ? flags['data-path'] : getDefaultPath();
-		const blockchainPath = join(dataPath, 'data', 'blockchain.db');
+		const blockchainPath = getBlockchainDBPath(dataPath);
 		const exportPath = flags.output ? flags.output : process.cwd();
 
 		this.log('Exporting blockchain:');
-		this.log(`   ${getFullPath(blockchainPath)}`)
+		this.log(`   ${getFullPath(blockchainPath)}`);
 		await tar.create(
 			{
 				gzip: true,
@@ -57,6 +58,6 @@ export default class ExportCommand extends Command {
 		);
 
 		this.log('Export completed:');
-		this.log(`   ${getFullPath(exportPath)}`)
+		this.log(`   ${getFullPath(exportPath)}`);
 	}
 }

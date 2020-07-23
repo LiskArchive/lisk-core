@@ -28,7 +28,7 @@ describe('blockchain:export', () => {
 
 	afterEach(() => {
 		tarCreateStub.reset();
-	})
+	});
 
 	describe('when starting without flag', () => {
 		setupTest()

@@ -53,3 +53,6 @@ export const getNetworkConfigFilesPath = (
 
 export const getConfigFilePath = (dataPath: string, network: string): string =>
 	path.join(dataPath, 'config', network, 'config.json');
+
+export const getBlockchainDBPath = (dataPath: string): string =>
+	path.join(dataPath, 'data', 'blockchain.db');
