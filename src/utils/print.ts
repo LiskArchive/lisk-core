@@ -16,8 +16,6 @@
 // eslint-disable-next-line camelcase
 import strip_ansi from 'strip-ansi';
 
-import { tablify } from './tablify';
-
 export interface StringMap {
 	readonly [key: string]: string;
 }
@@ -53,7 +51,7 @@ export const print = ({ json, pretty }: PrintInput = {}) =>
 
 		const output = json
 			? JSON.stringify(resultToPrint, undefined, pretty ? '\t' : undefined)
-			: tablify(resultToPrint).toString();
+			: resultToPrint.toString();
 
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		const logger = this && this.log ? this : console;
