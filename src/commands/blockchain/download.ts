@@ -14,18 +14,19 @@
  */
 import { Command, flags as flagParser } from '@oclif/command';
 import { ApplicationConfig, GenesisBlockJSON } from 'lisk-sdk';
-import { NETWORK, RELEASE_URL, SNAPSHOT_URL } from '../constants'
+import { NETWORK, RELEASE_URL } from '../../constants'
 import {
 	liskSnapshotUrl
-} from '../utils/commons';
+} from '../../utils/commons';
 import {
 	getDefaultPath,
 	getFullPath,
-} from '../utils/path';
+} from '../../utils/path';
 import {
 	downloadAndValidate,
-} from '../utils/download';
-import * as configs from '../config';
+} from '../../utils/download';
+import * as configs from '../../config';
+import { DEFAULT_NETWORK } from '../../constants';
 
 export default class DownloadCommand extends Command {
 	static description = 'Download blockchain data from a provided snapshot.';
@@ -41,7 +42,7 @@ export default class DownloadCommand extends Command {
 			char: 'n',
 			description: 'Default network config to use. Environment variable "LISK_NETWORK" can also be used.',
 			env: 'LISK_NETWORK',
-			default: NETWORK.MAINNET,
+			default: DEFAULT_NETWORK,
 		}),
 		'output': flagParser.string({
 			char: 'o',
@@ -50,15 +51,14 @@ export default class DownloadCommand extends Command {
 		}),
 		'url': flagParser.string({
 			char: 'u',
-			description: 'The url to the official Lisk HQ snapshot download.',
-			default: SNAPSHOT_URL,
+			description: 'The url to the snapshot.',
 		}),
 		
 	};
 
 	async run(): Promise<void> {
 		const { flags } = this.parse(DownloadCommand);
-		const network = flags['network'] ? flags['network'] as NETWORK : NETWORK.MAINNET;
+		const network = flags['network'] ? flags['network'] as NETWORK : DEFAULT_NETWORK; 
 		const url = flags['url'] ? flags['url'] : liskSnapshotUrl(RELEASE_URL, network);
 		const dataPath = flags['output'] ? flags['output'] : getDefaultPath();
 		this.log(`Downloading snapshot from ${url} to ${getFullPath(dataPath)}`);
