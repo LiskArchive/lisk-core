@@ -13,7 +13,7 @@
  *
  */
 
-import { generateHashOnionSeed, hashOnion } from '@liskhq/lisk-cryptography';
+import { cryptography } from 'lisk-sdk';
 import { isValidInteger } from '@liskhq/lisk-validator';
 import Command, { flags as flagParser } from '@oclif/command';
 import * as fs from 'fs-extra';
@@ -62,9 +62,9 @@ export default class HashOnionCommand extends Command {
 			fs.ensureDirSync(dir);
 		}
 
-		const seed = generateHashOnionSeed();
+		const seed = cryptography.generateHashOnionSeed();
 
-		const hashBuffers = hashOnion(seed, count, distance);
+		const hashBuffers = cryptography.hashOnion(seed, count, distance);
 		const hashes = hashBuffers.map(buf => buf.toString('base64'));
 
 		const result = { count, distance, hashes };
@@ -72,11 +72,11 @@ export default class HashOnionCommand extends Command {
 		if (output) {
 			fs.writeJSONSync(output, result);
 		} else {
-            this._printJSON(result);
+            this.printJSON(result);
 		}
 	}
 
-	private _printJSON(message?: object, pretty = false): void {
+	public printJSON(message?: object, pretty = false): void {
 		if (pretty) {
 			this.log(JSON.stringify(message, undefined, '  '));
 		} else {

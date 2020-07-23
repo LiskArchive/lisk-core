@@ -15,9 +15,9 @@
 
 import * as sandbox from 'sinon';
 import { expect, test } from '@oclif/test';
-import * as cryptography from '@liskhq/lisk-cryptography';
-import * as printUtils from '../../../src/utils/print';
+import { cryptography } from 'lisk-sdk';
 import * as readerUtils from '../../../src/utils/reader';
+import EncryptCommand from '../../../src/commands/passphrase/encrypt';
 
 describe('passphrase:encrypt', () => {
 	const encryptedPassphraseString =
@@ -40,7 +40,7 @@ describe('passphrase:encrypt', () => {
 	const printMethodStub = sandbox.stub();
 	const setupTest = () =>
 		test
-			.stub(printUtils, 'print', sandbox.stub().returns(printMethodStub))
+			.stub(EncryptCommand.prototype, 'printJSON', printMethodStub)
 			.stub(cryptography, 'getKey', sandbox.stub().returns(defaultKeys))
 			.stub(
 				cryptography,

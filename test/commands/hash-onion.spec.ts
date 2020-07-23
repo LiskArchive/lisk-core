@@ -16,15 +16,15 @@
 import * as sandbox from 'sinon';
 import * as fs from 'fs-extra';
 import { expect, test } from '@oclif/test';
-import { hash } from '@liskhq/lisk-cryptography';
-import * as printUtils from '../../src/utils/print';
+import { cryptography } from 'lisk-sdk';
+import HashOnionCommand from '../../src/commands/hash-onion';
 
 describe('hash-onion command', () => {
 	const printMethodStub = sandbox.stub();
 
 	const setupTest = () =>
 		test
-			.stub(printUtils, 'print', sandbox.stub().returns(printMethodStub))
+			.stub(HashOnionCommand.prototype, 'printJSON', printMethodStub)
 			.stub(fs, 'ensureDirSync', sandbox.stub().returns({}))
 			.stub(fs, 'writeJSONSync', sandbox.stub().returns({}))
 			.stdout();
@@ -37,7 +37,7 @@ describe('hash-onion command', () => {
 				for (let i = 0; i < result.hashes.length - 1; i += 1) {
 					let nextHash = Buffer.from(result.hashes[i + 1], 'base64');
 					for (let j = 0; j < result.distance; j += 1) {
-						nextHash = hash(nextHash).slice(0, 16);
+						nextHash = cryptography.hash(nextHash).slice(0, 16);
 					}
 					expect(result.hashes[i]).to.equal(nextHash.toString('base64'));
 				}

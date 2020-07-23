@@ -12,11 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import {
-	encryptPassphraseWithPassword,
-	getKeys,
-	stringifyEncryptedPassphrase,
-} from '@liskhq/lisk-cryptography';
+import { cryptography } from 'lisk-sdk';
 import { flags as flagParser, Command } from '@oclif/command';
 
 import { flags as commonFlags } from '../../utils/flags';
@@ -26,13 +22,13 @@ const outputPublicKeyOptionDescription =
 	'Includes the public key in the output. This option is provided for the convenience of node operators.';
 
 const processInputs = (passphrase: string, password: string, outputPublicKey: boolean) => {
-	const encryptedPassphraseObject = encryptPassphraseWithPassword(passphrase, password);
-	const encryptedPassphrase = stringifyEncryptedPassphrase(encryptedPassphraseObject);
+	const encryptedPassphraseObject = cryptography.encryptPassphraseWithPassword(passphrase, password);
+	const encryptedPassphrase = cryptography.stringifyEncryptedPassphrase(encryptedPassphraseObject);
 
 	return outputPublicKey
 		? {
 				encryptedPassphrase,
-				publicKey: getKeys(passphrase).publicKey.toString('base64'),
+				publicKey: cryptography.getKeys(passphrase).publicKey.toString('base64'),
 		  }
 		: { encryptedPassphrase };
 };
@@ -61,10 +57,10 @@ export default class EncryptCommand extends Command {
 		const password = passwordSource ?? (await getPassphraseFromPrompt('password', true));
         const result = processInputs(passphrase, password, outputPublicKey);
     
-        this._printJSON(result);
+        this.printJSON(result);
 	}
 
-	private _printJSON(message?: object, pretty = false): void {
+	public printJSON(message?: object, pretty = false): void {
 		if (pretty) {
 			this.log(JSON.stringify(message, undefined, '  '));
 		} else {

@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import { decryptPassphraseWithPassword, parseEncryptedPassphrase } from '@liskhq/lisk-cryptography';
+import { cryptography } from 'lisk-sdk';
 import Command, { flags as flagParser } from '@oclif/command';
 
 import { flags as commonFlags } from '../../utils/flags';
@@ -23,8 +23,8 @@ interface Args {
 }
 
 const processInputs = (password: string, encryptedPassphrase: string) => {
-	const encryptedPassphraseObject = parseEncryptedPassphrase(encryptedPassphrase);
-	const passphrase = decryptPassphraseWithPassword(encryptedPassphraseObject, password);
+	const encryptedPassphraseObject = cryptography.parseEncryptedPassphrase(encryptedPassphrase);
+	const passphrase = cryptography.decryptPassphraseWithPassword(encryptedPassphraseObject, password);
 
 	return { passphrase };
 };
@@ -62,10 +62,10 @@ export default class DecryptCommand extends Command {
 		
         const result = processInputs(password, encryptedPassphrase as string);
 		
-		this._printJSON(result);
+		this.printJSON(result);
 	}
 
-	private _printJSON(message?: object, pretty = false): void {
+	public printJSON(message?: object, pretty = false): void {
 		if (pretty) {
 			this.log(JSON.stringify(message, undefined, '  '));
 		} else {
