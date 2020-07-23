@@ -1,0 +1,66 @@
+properties([
+	parameters([
+		string(name: 'COMMITISH_SDK', description: 'Commit-ish of LiskHQ/lisk-sdk to use', defaultValue: 'development' ),
+		string(name: 'COMMITISH_CORE', description: 'Commit-ish of LiskHQ/lisk-core to use', defaultValue: 'development' ),
+	])
+])
+
+pipeline {
+	agent { node { label 'lisk-core' } }
+	options { skipDefaultCheckout() }
+	stages {
+		stage('Checkout SCM') {
+			steps {
+				cleanWs()
+				dir('lisk-sdk') {
+					checkout([$class: 'GitSCM', branches: [[name: "${params.COMMITISH_SDK}" ]], userRemoteConfigs: [[url: 'https://github.com/LiskHQ/lisk-sdk']]])
+				}
+				dir('lisk-core') {
+					checkout([$class: 'GitSCM', branches: [[name: "${params.COMMITISH_CORE}" ]], userRemoteConfigs: [[url: 'https://github.com/LiskHQ/lisk-core']]])
+				}
+			}
+		}
+		stage('Build SDK') {
+			steps {
+				dir('lisk-sdk') {
+					nvm(readFile(".nvmrc").trim()) {
+						sh '''
+						npm install --global yarn
+						yarn
+						yarn build
+						'''
+						dir('sdk') {
+							sh '''
+							yarn link
+							'''
+						}
+					}
+				}
+			}
+		}
+		stage('Build Core') {
+			steps {
+				dir('lisk-core') {
+					nvm(readFile(".nvmrc").trim()) {
+						sh '''
+						npm install --registry https://npm.lisk.io/
+						npm install --global yarn
+						yarn link lisk-sdk
+						npm run build
+						'''
+					}
+				}
+			}
+		}
+		stage('Test Core') {
+			steps {
+				dir('lisk-core') {
+					nvm(readFile(".nvmrc").trim()) {
+						sh 'npm test'
+					}
+				}
+			}
+		}
+	}
+}
+// vim: filetype=groovy
