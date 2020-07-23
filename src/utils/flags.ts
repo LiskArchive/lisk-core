@@ -13,6 +13,16 @@
  *
  */
 
+const passphraseDescription = `Specifies a source for your secret passphrase. Command will prompt you for input if this option is not set.
+	Examples:
+	- --passphrase='my secret passphrase' (should only be used where security is not important)
+`;
+
+const passwordDescription = `Specifies a source for your secret password. Command will prompt you for input if this option is not set.
+	Examples:
+	- --password=pass:password123 (should only be used where security is not important)
+`;
+
 export type AlphabetLowercase =
 	| 'a'
 	| 'b'
@@ -49,8 +59,12 @@ export interface FlagMap {
 }
 
 export const flags: FlagMap = {
-	dataPath: {
-		char: 'd',
-		description: 'Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.',
+	passphrase: {
+		char: 'p',
+		description: passphraseDescription,
+	},
+	password: {
+		char: 'w',
+		description: passwordDescription,
 	},
 };
