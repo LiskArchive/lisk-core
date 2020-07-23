@@ -14,7 +14,8 @@
  */
 
 import { Command, flags as flagParser } from '@oclif/command';
-import { codec, cryptography, IPCChannel } from 'lisk-sdk';
+import * as fs from 'fs-extra';
+import { codec, cryptography, IPCChannel, systemDirs } from 'lisk-sdk';
 import { getDefaultPath, getSocketsPath, splitPath } from './utils/path';
 import { flags as commonFlags } from './utils/flags';
 
@@ -74,7 +75,7 @@ export default abstract class BaseIPCCommand extends Command {
   async finally(error?: Error | string): Promise<void> {
     if (error) {
       if (/^IPC Socket client connection timeout./.test((error as Error).message)) {
-        this.error('Please ensure the core server is up and running before using the command!');
+        this.error('Please ensure the core server is up and running with ipc enabled before using the command!');
       }
       this.error(error instanceof Error ? error.message : error);
     }
@@ -82,7 +83,7 @@ export default abstract class BaseIPCCommand extends Command {
   }
 
   async init(): Promise<void> {
-    // Typing problem where constructor is not allow as Input<any> but it requires to be the type
+    // Typing problem where constructor is not allowed as Input<any> but it requires to be the type
     const { flags } = this.parse(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.constructor as unknown) as flagParser.Input<any>,
@@ -91,11 +92,9 @@ export default abstract class BaseIPCCommand extends Command {
 
     const dataPath = this.baseIPCFlags['data-path'] ? this.baseIPCFlags['data-path'] : getDefaultPath();
     await this._createIPCChannel(dataPath);
-    await this._setAppSchema();
-    this._setCodec();
+    await this._setCodec();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   printJSON(message?: string | object): void {
     if (this.baseIPCFlags.pretty) {
       this.log(JSON.stringify(message, undefined, '  '));
@@ -106,7 +105,11 @@ export default abstract class BaseIPCCommand extends Command {
 
   private async _createIPCChannel(dataPath: string): Promise<void> {
     const { rootPath, label } = splitPath(dataPath);
+    const socketsPath = systemDirs(label, rootPath);
 
+    if (!fs.existsSync(socketsPath.root) || !fs.existsSync(socketsPath.tmp) || !fs.existsSync(socketsPath.sockets)) {
+      throw new Error(`Socket directory: ${socketsPath.sockets} does not exists!! \n Please ensure the core server is up and running with ipc enabled before using the command!`)
+    }
     this._channel = new IPCChannel('CoreCLI', [], {}, {
       socketsPath: getSocketsPath(rootPath, label),
     });
@@ -114,11 +117,9 @@ export default abstract class BaseIPCCommand extends Command {
     await this._channel.startAndListen();
   }
 
-  private async _setAppSchema(): Promise<void> {
+  private async _setCodec(): Promise<void> {
     this._schema = await this._channel.invoke('app:getSchema');
-  }
 
-  private _setCodec(): void {
     this._codec = {
       decodeAccount: (data: Buffer | string) => codec.decodeJSON(this._schema.account, convertStrToBuffer(data)),
       decodeBlock: (data: Buffer | string) => {
@@ -142,10 +143,10 @@ export default abstract class BaseIPCCommand extends Command {
           this._codec.decodeTransaction(transactionBuffer),
         );
 
-        const blockId = cryptography.hash(header);
+        const blockId = cryptography.hash(header).toString('base64');
 
         return {
-          header: { ...baseHeaderJSON, asset: { ...blockAssetJSON }, id: blockId.toString('base64') },
+          header: { ...baseHeaderJSON, asset: { ...blockAssetJSON }, id: blockId },
           payload: payloadJSON,
         };
       },

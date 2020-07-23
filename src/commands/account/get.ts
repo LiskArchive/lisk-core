@@ -14,9 +14,7 @@
  */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { flags as flagParser } from '@oclif/command';
 import BaseIPCCommand from '../../base_ipc';
-import { flags as commonFlags } from '../../utils/flags';
 
 interface Args {
   readonly address: string;
@@ -29,7 +27,7 @@ export default class GetCommand extends BaseIPCCommand {
     {
       name: 'address',
       required: true,
-      description: 'Base32 address to get information about.',
+      description: 'Address of an account in a base32 format.',
     },
   ];
 
@@ -38,14 +36,7 @@ export default class GetCommand extends BaseIPCCommand {
   ];
 
   static flags = {
-		pretty: flagParser.boolean({
-			...BaseIPCCommand.flags.pretty,
-			hidden: true,
-    }),
-    'data-path': flagParser.string({
-      ...commonFlags.dataPath,
-			hidden: true,
-    }),
+    ...BaseIPCCommand.flags,
 	};
 
   async run(): Promise<void> {

@@ -57,6 +57,7 @@ export const getConfigFilePath = (dataPath: string, network: string): string =>
 
 export const getBlockchainDBPath = (dataPath: string): string =>
 	path.join(dataPath, 'data', 'blockchain.db');
+
 export interface SocketPaths {
 	readonly pub: string;
 	readonly sub: string;
