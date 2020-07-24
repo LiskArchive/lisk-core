@@ -61,6 +61,7 @@ export default class HashCommand extends Command {
 			{
 				gzip: false,
 				portable: true,
+				noMtime: true,
 				sync: true,
 				cwd: join(dataPath, 'data'),
 			},
