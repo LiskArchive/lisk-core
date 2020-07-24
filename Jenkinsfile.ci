@@ -16,7 +16,7 @@ pipeline {
 					checkout([$class: 'GitSCM', branches: [[name: "${params.COMMITISH_SDK}" ]], userRemoteConfigs: [[url: 'https://github.com/LiskHQ/lisk-sdk']]])
 				}
 				dir('lisk-core') {
-					checkout([$class: 'GitSCM', branches: [[name: "${params.COMMITISH_CORE}" ]], userRemoteConfigs: [[url: 'https://github.com/LiskHQ/lisk-core']]])
+					checkout scm
 				}
 			}
 		}
@@ -28,12 +28,8 @@ pipeline {
 						npm install --global yarn
 						yarn
 						yarn build
+						npx lerna exec yarn link
 						'''
-						dir('sdk') {
-							sh '''
-							yarn link
-							'''
-						}
 					}
 				}
 			}
@@ -46,6 +42,8 @@ pipeline {
 						npm install --registry https://npm.lisk.io/
 						npm install --global yarn
 						yarn link lisk-sdk
+						yarn link lisk-framework
+						yarn link @liskhq/lisk-framework-http-api-plugin
 						npm run build
 						'''
 					}

@@ -63,7 +63,7 @@
 		"@oclif/config": "1.15.1",
 		"@oclif/plugin-help": "3.1.0",
 		"fs-extra": "9.0.1",
-		"lisk-sdk": "canary",
+		"lisk-sdk": "5.0.0-alpha.2",
 		"tar": "6.0.2",
 		"tslib": "1.13.0",
 		"axios": "0.19.2"
