@@ -21,7 +21,7 @@ pipeline {
 				dir('lisk-core') {
 					checkout([$class: 'GitSCM', branches: [[name: "${params.COMMITISH_CORE}" ]], userRemoteConfigs: [[url: 'https://github.com/LiskHQ/lisk-core']]])
 					sh '''
-					jq '.version="'"$( jq --raw-output .version package.json )-$( git rev-parse HEAD )"'"' package.json >package.json_
+					jq '.version="'"$( jq --raw-output .version package.json )-$( cd ../lisk-sdk && git rev-parse HEAD )-$( git rev-parse HEAD )"'"' package.json >package.json_
 					mv package.json_ package.json
 					if s3cmd --quiet info "s3://lisk-releases/core/core-v$( jq --raw-output .version package.json )-linux-x64.tar.gz" 2>/dev/null; then
 						echo "Build already exists."
