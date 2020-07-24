@@ -13,10 +13,7 @@
  *
  */
 
-import * as tar from 'tar';
-import { PackStream } from 'tar';
-import { join } from 'path';
-import { cryptography } from 'lisk-sdk';
+import * as crypto from 'crypto';
 import { Command, flags as flagParser } from '@oclif/command';
 import {
 	getBlockchainDBPath,
@@ -24,6 +21,7 @@ import {
 	getFullPath,
 } from '../../utils/path';
 import { getPid, isApplicationRunning } from '../../utils/application';
+import { getBlockchainDB } from '../../utils/db';
 
 export default class HashCommand extends Command {
 	static description = 'Generate hash for blockchain data for given data path';
@@ -57,21 +55,30 @@ export default class HashCommand extends Command {
 		this.debug('Compressing data to generate hash.');
 		this.debug(`   ${getFullPath(blockchainPath)}`);
 
-		const data = (tar.create(
-			{
-				gzip: false,
-				portable: true,
-				noMtime: true,
-				sync: true,
-				cwd: join(dataPath, 'data'),
-			},
-			['blockchain.db'],
-		) as unknown) as PackStream;
+		const db = getBlockchainDB(dataPath);
+		const stream = db.createReadStream({
+			keys: false,
+			values: true,
+		});
 
-		const hash = cryptography.hash(data.read()).toString('base64');
+		const dbHash = crypto.createHash('sha256');
+
+		const hash: Buffer = await new Promise((resolve, reject) => {
+			stream.on('data', (chunk: Buffer) => {
+				dbHash.update(chunk);
+			});
+
+			stream.on('error', (error) => {
+				reject(error);
+			});
+
+			stream.on('end', () => {
+				resolve(dbHash.digest());
+			});
+		});
 
 		this.debug('Hash generation completed.');
 
-		this.log(hash);
+		this.log(hash.toString('base64'));
 	}
 }

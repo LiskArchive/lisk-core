@@ -59,6 +59,7 @@
 		}
 	},
 	"dependencies": {
+		"@liskhq/lisk-db": "0.1.0-alpha.0",
 		"@oclif/command": "1.6.1",
 		"@oclif/config": "1.15.1",
 		"@oclif/plugin-help": "3.1.0",

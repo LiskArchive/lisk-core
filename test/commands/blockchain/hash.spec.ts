@@ -13,33 +13,48 @@
  *
  */
 
-import { cryptography } from 'lisk-sdk';
-import * as tar from 'tar';
+import { Readable } from 'stream';
+import * as crypto from 'crypto';
 import { expect, test } from '@oclif/test';
 import * as sandbox from 'sinon';
 import { homedir } from 'os';
 import { join } from 'path';
 import * as appUtils from '../../../src/utils/application';
+import * as dbUtils from '../../../src/utils/db';
 
 const defaultDataPath = join(homedir(), '.lisk', 'default');
 
 describe('blockchain:hash', () => {
 	const pid = 56869;
-	const fileContentBuffer = Buffer.from('dasfadsfdsaf787899afffadsfadsf');
-	const fileContentHash = cryptography.hash(fileContentBuffer);
-	const fileStreamReadStub = sandbox.stub().returns(fileContentBuffer);
-	const tarCreateStub = sandbox.stub().returns({ read: fileStreamReadStub });
+	const hashBuffer = Buffer.from('dasfadsfdsaf787899afffadsfadsf');
+	const KVStoreStubInstance = {
+		createReadStream: sandbox.stub().returns(Readable.from([hashBuffer])),
+	};
+	const hashStub = {
+		update: sandbox.stub(),
+		digest: sandbox.stub().returns(hashBuffer),
+	};
 
 	const setupTest = () =>
 		test
-			.stub(tar, 'create', tarCreateStub)
+			.stub(
+				dbUtils,
+				'getBlockchainDB',
+				sandbox.stub().returns(KVStoreStubInstance),
+			)
 			.stub(appUtils, 'getPid', sandbox.stub().returns(pid))
+			.stub(crypto, 'createHash', sandbox.stub().returns(hashStub))
 			.stdout()
 			.stderr();
 
 	afterEach(() => {
-		tarCreateStub.resetHistory();
-		fileStreamReadStub.resetHistory();
+		// To rewind readable stream have to override value every test
+		KVStoreStubInstance.createReadStream = sandbox
+			.stub()
+			.returns(Readable.from([hashBuffer]));
+
+		hashStub.update.resetHistory();
+		hashStub.digest.resetHistory();
 	});
 
 	describe('when application is running', () => {
@@ -74,17 +89,11 @@ describe('blockchain:hash', () => {
 				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
 				.command(['blockchain:hash'])
 				.it(
-					'should generate tarball of "blockchain.db" for default data path without compression',
+					'should create db object for "blockchain.db" for default data',
 					() => {
-						expect(tarCreateStub).to.have.been.calledOnce;
-						expect(tarCreateStub).to.have.been.calledWithExactly(
-							{
-								cwd: join(defaultDataPath, 'data'),
-								gzip: false,
-								portable: true,
-								sync: true,
-							},
-							['blockchain.db'],
+						expect(dbUtils.getBlockchainDB).to.have.been.calledOnce;
+						expect(dbUtils.getBlockchainDB).to.have.been.calledWithExactly(
+							defaultDataPath,
 						);
 					},
 				);
@@ -92,10 +101,19 @@ describe('blockchain:hash', () => {
 			setupTest()
 				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
 				.command(['blockchain:hash'])
+				.it('should hash the value read from db stream', () => {
+					expect(crypto.createHash).to.have.been.calledOnce;
+					expect(crypto.createHash).to.have.been.calledWithExactly('sha256');
+					expect(hashStub.update).to.have.been.calledOnce;
+					expect(hashStub.update).to.have.been.calledWithExactly(hashBuffer);
+					expect(hashStub.digest).to.have.been.calledOnce;
+				});
+
+			setupTest()
+				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
+				.command(['blockchain:hash'])
 				.it('should output the hash of tarball file content', (ctx) => {
-					expect(ctx.stdout).to.equal(
-						`${fileContentHash.toString('base64')}\n`,
-					);
+					expect(ctx.stdout).to.equal(`${hashBuffer.toString('base64')}\n`);
 				});
 		});
 
@@ -106,59 +124,30 @@ describe('blockchain:hash', () => {
 				.it(
 					'should generate tarball of "blockchain.db" for a given data path without compression',
 					() => {
-						expect(tarCreateStub).to.have.been.calledOnce;
-						expect(tarCreateStub).to.have.been.calledWithExactly(
-							{
-								cwd: '/my/app/data',
-								gzip: false,
-								portable: true,
-								sync: true,
-							},
-							['blockchain.db'],
+						expect(dbUtils.getBlockchainDB).to.have.been.calledOnce;
+						expect(dbUtils.getBlockchainDB).to.have.been.calledWithExactly(
+							'/my/app/',
 						);
 					},
 				);
 
 			setupTest()
 				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
+				.command(['blockchain:hash'])
+				.it('should hash the value read from db stream', () => {
+					expect(crypto.createHash).to.have.been.calledOnce;
+					expect(crypto.createHash).to.have.been.calledWithExactly('sha256');
+					expect(hashStub.update).to.have.been.calledOnce;
+					expect(hashStub.update).to.have.been.calledWithExactly(hashBuffer);
+					expect(hashStub.digest).to.have.been.calledOnce;
+				});
+
+			setupTest()
+				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
 				.command(['blockchain:hash', '--data-path=/my/app/'])
 				.it('should output the hash of tarball file content', (ctx) => {
-					expect(ctx.stdout).to.equal(
-						`${fileContentHash.toString('base64')}\n`,
-					);
+					expect(ctx.stdout).to.equal(`${hashBuffer.toString('base64')}\n`);
 				});
 		});
 	});
-
-	// describe.skip('when starting with particular data-path', () => {
-	// 	setupTest()
-	// 		.command(['blockchain:export', '--data-path=/my/app/'])
-	// 		.it('should compress "blockchain.db" for given data path', () => {
-	// 			expect(tarCreateStub).to.have.been.calledOnce;
-	// 			expect(tarCreateStub).to.have.been.calledWithExactly(
-	// 				{
-	// 					cwd: join('/my/app/', 'data'),
-	// 					file: join(process.cwd(), 'blockchain.db.gz'),
-	// 					gzip: true,
-	// 				},
-	// 				['blockchain.db'],
-	// 			);
-	// 		});
-	// });
-	//
-	// describe('when starting with particular export path', () => {
-	// 	setupTest()
-	// 		.command(['blockchain:export', '--output=/my/dir/'])
-	// 		.it('should compress "blockchain.db" for given data path', () => {
-	// 			expect(tarCreateStub).to.have.been.calledOnce;
-	// 			expect(tarCreateStub).to.have.been.calledWithExactly(
-	// 				{
-	// 					cwd: join(defaultDataPath, 'data'),
-	// 					file: join('/my/dir/', 'blockchain.db.gz'),
-	// 					gzip: true,
-	// 				},
-	// 				['blockchain.db'],
-	// 			);
-	// 		});
-	// });
 });
