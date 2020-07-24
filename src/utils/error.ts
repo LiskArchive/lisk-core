@@ -12,9 +12,19 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
+// eslint-disable-next-line max-classes-per-file
+export class FileSystemError extends Error {
+	public constructor(message: string) {
+		super(message);
+		this.message = message;
+		this.name = 'FileSystemError';
+	}
+}
 
-export * as devnet from './devnet';
-export * as alphanet from './alphanet';
-export * as betanet from './betanet';
-export * as testnet from './testnet';
-export * as mainnet from './mainnet';
+export class ValidationError extends Error {
+	public constructor(message: string) {
+		super(message);
+		this.message = message;
+		this.name = 'ValidationError';
+	}
+}

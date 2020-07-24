@@ -12,20 +12,19 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
+
 import * as path from 'path';
 import * as os from 'os';
+import { systemDirs } from 'lisk-sdk';
 
 const defaultDir = '.lisk';
 const defaultFolder = 'default';
 
-export const getDefaultPath = (): string =>
-	path.join(os.homedir(), defaultDir, defaultFolder);
+export const getDefaultPath = (): string => path.join(os.homedir(), defaultDir, defaultFolder);
 
 export const getFullPath = (dataPath: string): string => path.resolve(dataPath);
 
-export const splitPath = (
-	dataPath: string,
-): { rootPath: string; label: string } => {
+export const splitPath = (dataPath: string): { rootPath: string; label: string } => {
 	const rootPath = path.resolve(path.join(dataPath, '../'));
 	const label = path.parse(dataPath).name;
 	return {
@@ -34,11 +33,9 @@ export const splitPath = (
 	};
 };
 
-export const getDefaultConfigPath = (): string =>
-	path.join(__dirname, '../../config');
+export const getDefaultConfigPath = (): string => path.join(__dirname, '../../config');
 
-export const getConfigPath = (dataPath: string): string =>
-	path.join(dataPath, 'config');
+export const getConfigPath = (dataPath: string): string => path.join(dataPath, 'config');
 
 export const getNetworkConfigFilesPath = (
 	dataPath: string,
@@ -59,3 +56,20 @@ export const getBlockchainDBPath = (dataPath: string): string =>
 
 export const getPidPath = (dataPath: string): string =>
 	path.join(dataPath, 'tmp', 'pids', 'controller.pid');
+
+export interface SocketPaths {
+	readonly pub: string;
+	readonly sub: string;
+	readonly rpc: string;
+	readonly root: string;
+}
+
+export const getSocketsPath = (dataPath: string, network = defaultFolder): SocketPaths => {
+	const dirs = systemDirs(network, dataPath);
+	return {
+		root: `unix://${dirs.sockets}`,
+		pub: `unix://${dirs.sockets}/lisk_pub.sock`,
+		sub: `unix://${dirs.sockets}/lisk_sub.sock`,
+		rpc: `unix://${dirs.sockets}/bus_rpc_socket.sock`,
+	};
+};

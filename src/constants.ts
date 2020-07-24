@@ -1,4 +1,5 @@
 /*
+ * LiskHQ/lisk-commander
  * Copyright © 2020 Lisk Foundation
  *
  * See the LICENSE file at the top-level directory of this distribution
@@ -13,8 +14,12 @@
  *
  */
 
-export * as devnet from './devnet';
-export * as alphanet from './alphanet';
-export * as betanet from './betanet';
-export * as testnet from './testnet';
-export * as mainnet from './mainnet';
+export enum NETWORK {
+	MAINNET = 'mainnet',
+	TESTNET = 'testnet',
+	BETANET = 'betanet',
+	ALPHANET = 'alphanet',
+	DEVNET = 'devnet',
+}
+export const DEFAULT_NETWORK = NETWORK.MAINNET;
+export const RELEASE_URL = 'https://downloads.lisk.io/lisk';
