@@ -71,6 +71,6 @@ export const getSocketsPath = (dataPath: string, network = defaultFolder): Socke
 		root: `unix://${dirs.sockets}`,
 		pub: `unix://${dirs.sockets}/lisk_pub.sock`,
 		sub: `unix://${dirs.sockets}/lisk_sub.sock`,
-		rpc: `unix://${dirs.sockets}/lisk_rpc.sock`,
+		rpc: `unix://${dirs.sockets}/bus_rpc_socket.sock`,
 	};
 };

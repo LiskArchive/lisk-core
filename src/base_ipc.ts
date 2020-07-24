@@ -27,7 +27,7 @@ interface BaseIPCFlags {
 interface Schema {
   readonly $id: string;
   readonly type: string;
-  readonly properties: object;
+  readonly properties: Record<string, unknown>;
 }
 
 interface CodecSchema {
@@ -44,9 +44,9 @@ interface CodecSchema {
 }
 
 interface Codec {
-  decodeAccount: (data: Buffer | string) => object;
-  decodeBlock: (data: Buffer | string) => object;
-  decodeTransaction: (data: Buffer | string) => object;
+  decodeAccount: (data: Buffer | string) => Record<string, unknown>;
+  decodeBlock: (data: Buffer | string) => Record<string, unknown>;
+  decodeTransaction: (data: Buffer | string) => Record<string, unknown>;
 }
 
 const prettyDescription =
@@ -74,6 +74,7 @@ export default abstract class BaseIPCCommand extends Command {
   // eslint-disable-next-line @typescript-eslint/require-await
   async finally(error?: Error | string): Promise<void> {
     if (error) {
+      // TODO: replace this logic with isApplicationRunning util and log the error accordingly
       if (/^IPC Socket client connection timeout./.test((error as Error).message)) {
         this.error('Please ensure the core server is up and running with ipc enabled before using the command!');
       }
@@ -95,7 +96,7 @@ export default abstract class BaseIPCCommand extends Command {
     await this._setCodec();
   }
 
-  printJSON(message?: string | object): void {
+  printJSON(message?: string | Record<string, unknown>): void {
     if (this.baseIPCFlags.pretty) {
       this.log(JSON.stringify(message, undefined, '  '));
     } else {
@@ -107,6 +108,7 @@ export default abstract class BaseIPCCommand extends Command {
     const { rootPath, label } = splitPath(dataPath);
     const socketsPath = systemDirs(label, rootPath);
 
+    // TODO: replace this logic with isApplicationRunning util
     if (!fs.existsSync(socketsPath.root) || !fs.existsSync(socketsPath.tmp) || !fs.existsSync(socketsPath.sockets)) {
       throw new Error(`Socket directory: ${socketsPath.sockets} does not exists!! \n Please ensure the core server is up and running with ipc enabled before using the command!`)
     }
@@ -135,7 +137,7 @@ export default abstract class BaseIPCCommand extends Command {
         } = codec.decodeJSON(blockSchema, blockBuffer);
 
         const baseHeaderJSON: { asset: string, version: string } = codec.decodeJSON(blockHeaderSchema, header);
-        const blockAssetJSON: object = codec.decodeJSON(
+        const blockAssetJSON = codec.decodeJSON<Record<string, unknown>>(
           blockHeadersAssets[baseHeaderJSON.version],
           Buffer.from(baseHeaderJSON.asset, 'base64'),
         );
@@ -154,7 +156,7 @@ export default abstract class BaseIPCCommand extends Command {
         const transactionBuffer = Buffer.isBuffer(data) ? data : Buffer.from(data, 'base64');
         const baseTransaction: { type: number; asset: string } = codec.decodeJSON(this._schema.baseTransaction, transactionBuffer);
         const transactionTypeAssetSchema = this._schema.transactionsAssets[baseTransaction.type];
-        const transactionAsset = codec.decodeJSON<object>(
+        const transactionAsset = codec.decodeJSON<Record<string, unknown>>(
           transactionTypeAssetSchema,
           Buffer.from(baseTransaction.asset, 'base64'),
         );
