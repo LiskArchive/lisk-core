@@ -58,7 +58,6 @@ export default abstract class BaseIPCCommand extends Command {
   static flags = {
     pretty: flagParser.boolean({
       description: prettyDescription,
-      allowNo: true,
     }),
     'data-path': flagParser.string({
       ...commonFlags.dataPath,
