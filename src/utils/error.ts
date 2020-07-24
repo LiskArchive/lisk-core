@@ -13,12 +13,10 @@
  *
  */
 // eslint-disable-next-line max-classes-per-file
-import chalk from 'chalk';
-
 export class FileSystemError extends Error {
 	public constructor(message: string) {
 		super(message);
-		this.message = chalk.red(message);
+		this.message = message;
 		this.name = 'FileSystemError';
 	}
 }
@@ -26,7 +24,7 @@ export class FileSystemError extends Error {
 export class ValidationError extends Error {
 	public constructor(message: string) {
 		super(message);
-		this.message = chalk.red(message);
+		this.message = message;
 		this.name = 'ValidationError';
 	}
 }
