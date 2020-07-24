@@ -16,9 +16,7 @@
 import { NETWORK, RELEASE_URL } from '../constants';
 
 export const liskSnapshotUrl = (url: string, network: NETWORK): string => {
-	if (
-		!['testnet', 'mainnet', 'betanet'].includes(network.toLowerCase())
-	) {
+	if (!['testnet', 'mainnet', 'betanet'].includes(network.toLowerCase())) {
 		return '';
 	}
 	if (url && url.search(RELEASE_URL) >= 0) {
