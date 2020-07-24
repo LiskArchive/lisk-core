@@ -21,11 +21,12 @@ import * as downloadUtils from '../../../src/utils/download';
 import {
 	getDefaultPath,
 } from '../../../src/utils/path';
-import { SNAPSHOT_URL  } from '../../../src/constants';
+
+const SNAPSHOT_URL = 'https://downloads.lisk.io/lisk/mainnet/blockchain.db.gz';
 
 describe('blockchain:download', () => {
 	const dataPath = getDefaultPath();
-	const downloadAndValidateStub =  sandbox.stub().resolves(undefined);
+	const downloadAndValidateStub = sandbox.stub().resolves(undefined);
 
 	const setupTest = () =>
 		test
@@ -35,8 +36,8 @@ describe('blockchain:download', () => {
 				sandbox.stub().returns({
 					run: async () => Promise.resolve(),
 				} as Application),
-            )
-            .stub(downloadUtils, 'downloadAndValidate', downloadAndValidateStub)
+			)
+			.stub(downloadUtils, 'downloadAndValidate', downloadAndValidateStub)
 			.stdout();
 
 	afterEach(() => {
@@ -44,34 +45,34 @@ describe('blockchain:download', () => {
 	});
 
 	describe('when downloading without flags', () => {
-        setupTest()
+		setupTest()
 			.command(['blockchain:download'])
-			.it('should call downloadAndValidate', () => {	
+			.it('should call downloadAndValidate', () => {
 				expect(downloadAndValidateStub).to.be.calledOnceWithExactly(SNAPSHOT_URL, dataPath);
-            })
-    }); 
+			})
+	});
 
-    describe('when downloading with network flag', () => {
-        setupTest()
+	describe('when downloading with network flag', () => {
+		setupTest()
 			.command(['blockchain:download', '--network=betanet'])
-			.it('should call downloadAndValidate', () => {	
+			.it('should call downloadAndValidate', () => {
 				expect(downloadAndValidateStub).to.be.calledWithExactly(SNAPSHOT_URL.replace('mainnet', 'betanet'), dataPath);
-            })
-	}); 
-		
+			})
+	});
+
 	describe('when downloading with output flag', () => {
-        setupTest()
+		setupTest()
 			.command(['blockchain:download', '--output=yourpath'])
-			.it('should call downloadAndValidate', () => {	
+			.it('should call downloadAndValidate', () => {
 				expect(downloadAndValidateStub).to.be.calledWithExactly(SNAPSHOT_URL, 'yourpath');
-            })
-	}); 
-	
+			})
+	});
+
 	describe('when downloading with url flag', () => {
-        setupTest()
+		setupTest()
 			.command(['blockchain:download', '--url=yoururl'])
-			.it('should call downloadAndValidate', () => {	
+			.it('should call downloadAndValidate', () => {
 				expect(downloadAndValidateStub).to.be.calledWithExactly('yoururl', dataPath);
-            })
-	}); 
+			})
+	});
 });
