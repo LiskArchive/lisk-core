@@ -22,6 +22,7 @@ import {
 	splitPath,
 	getFullPath,
 } from '../utils/path';
+import { flags as commonFlags } from '../utils/flags';
 import { getApplication } from '../application';
 // eslint-disable-next-line import/namespace
 import * as configs from '../config';
@@ -39,8 +40,7 @@ export default class StartCommand extends Command {
 
 	static flags = {
 		'data-path': flagParser.string({
-			char: 'd',
-			description: 'Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.',
+			...commonFlags.dataPath,
 			env: 'LISK_DATA_PATH',
 		}),
 		network: flagParser.string({
