@@ -82,7 +82,7 @@ describe('blockchain:hash', () => {
 			setupTest()
 				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
 				.command(['blockchain:hash'])
-				.it('should create db object for "blockchain.db" for default data', () => {
+				.it('should create db object for "blockchain.db" for default data path', () => {
 					expect(dbUtils.getBlockchainDB).to.have.been.calledOnce;
 					expect(dbUtils.getBlockchainDB).to.have.been.calledWithExactly(defaultDataPath);
 				});
@@ -101,7 +101,7 @@ describe('blockchain:hash', () => {
 			setupTest()
 				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
 				.command(['blockchain:hash'])
-				.it('should output the hash of tarball file content', ctx => {
+				.it('should output the hash db values', ctx => {
 					expect(ctx.stdout).to.equal(`${hashBuffer.toString('base64')}\n`);
 				});
 		});
@@ -110,13 +110,10 @@ describe('blockchain:hash', () => {
 			setupTest()
 				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
 				.command(['blockchain:hash', '--data-path=/my/app/'])
-				.it(
-					'should generate tarball of "blockchain.db" for a given data path without compression',
-					() => {
-						expect(dbUtils.getBlockchainDB).to.have.been.calledOnce;
-						expect(dbUtils.getBlockchainDB).to.have.been.calledWithExactly('/my/app/');
-					},
-				);
+				.it('should create db object for "blockchain.db" for given data path', () => {
+					expect(dbUtils.getBlockchainDB).to.have.been.calledOnce;
+					expect(dbUtils.getBlockchainDB).to.have.been.calledWithExactly('/my/app/');
+				});
 
 			setupTest()
 				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
@@ -132,7 +129,7 @@ describe('blockchain:hash', () => {
 			setupTest()
 				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
 				.command(['blockchain:hash', '--data-path=/my/app/'])
-				.it('should output the hash of tarball file content', ctx => {
+				.it('should output the hash db values', ctx => {
 					expect(ctx.stdout).to.equal(`${hashBuffer.toString('base64')}\n`);
 				});
 		});
