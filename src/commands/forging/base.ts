@@ -55,18 +55,17 @@ export class BaseForgingCommand extends BaseIPCCommand {
 
 		if (flags.password) {
 			password = flags.password;
+		} else {
+			const answers = await inquirer.prompt([
+				{
+					type: 'password',
+					message: 'Enter password to decrypt the encrypted passphrase: ',
+					name: 'password',
+					mask: '*',
+				},
+			]);
+			password = answers.password;
 		}
-
-		const answers = await inquirer.prompt([
-			{
-				type: 'password',
-				message: 'Enter password decrypt the encrypted passphrase: ',
-				name: 'password',
-				mask: '*',
-			},
-		]);
-
-		password = answers.password;
 
 		try {
 			const result = await this._channel.invoke<{ address: string; forging: boolean }>(
