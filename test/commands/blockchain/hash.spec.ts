@@ -37,11 +37,7 @@ describe('blockchain:hash', () => {
 
 	const setupTest = () =>
 		test
-			.stub(
-				dbUtils,
-				'getBlockchainDB',
-				sandbox.stub().returns(KVStoreStubInstance),
-			)
+			.stub(dbUtils, 'getBlockchainDB', sandbox.stub().returns(KVStoreStubInstance))
 			.stub(appUtils, 'getPid', sandbox.stub().returns(pid))
 			.stub(crypto, 'createHash', sandbox.stub().returns(hashStub))
 			.stdout()
@@ -49,9 +45,7 @@ describe('blockchain:hash', () => {
 
 	afterEach(() => {
 		// To rewind readable stream have to override value every test
-		KVStoreStubInstance.createReadStream = sandbox
-			.stub()
-			.returns(Readable.from([hashBuffer]));
+		KVStoreStubInstance.createReadStream = sandbox.stub().returns(Readable.from([hashBuffer]));
 
 		hashStub.update.resetHistory();
 		hashStub.digest.resetHistory();
@@ -62,7 +56,7 @@ describe('blockchain:hash', () => {
 			setupTest()
 				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(true))
 				.command(['blockchain:hash'])
-				.catch((error) => {
+				.catch(error => {
 					expect(error.message).to.equal(
 						`Can't generate hash for a running application. Application at data path ${defaultDataPath} is running with pid ${pid}.`,
 					);
@@ -74,7 +68,7 @@ describe('blockchain:hash', () => {
 			setupTest()
 				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(true))
 				.command(['blockchain:hash', '--data-path=/my/app/'])
-				.catch((error) => {
+				.catch(error => {
 					expect(error.message).to.equal(
 						`Can't generate hash for a running application. Application at data path /my/app/ is running with pid ${pid}.`,
 					);
@@ -88,15 +82,10 @@ describe('blockchain:hash', () => {
 			setupTest()
 				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
 				.command(['blockchain:hash'])
-				.it(
-					'should create db object for "blockchain.db" for default data',
-					() => {
-						expect(dbUtils.getBlockchainDB).to.have.been.calledOnce;
-						expect(dbUtils.getBlockchainDB).to.have.been.calledWithExactly(
-							defaultDataPath,
-						);
-					},
-				);
+				.it('should create db object for "blockchain.db" for default data', () => {
+					expect(dbUtils.getBlockchainDB).to.have.been.calledOnce;
+					expect(dbUtils.getBlockchainDB).to.have.been.calledWithExactly(defaultDataPath);
+				});
 
 			setupTest()
 				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
@@ -112,7 +101,7 @@ describe('blockchain:hash', () => {
 			setupTest()
 				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
 				.command(['blockchain:hash'])
-				.it('should output the hash of tarball file content', (ctx) => {
+				.it('should output the hash of tarball file content', ctx => {
 					expect(ctx.stdout).to.equal(`${hashBuffer.toString('base64')}\n`);
 				});
 		});
@@ -125,9 +114,7 @@ describe('blockchain:hash', () => {
 					'should generate tarball of "blockchain.db" for a given data path without compression',
 					() => {
 						expect(dbUtils.getBlockchainDB).to.have.been.calledOnce;
-						expect(dbUtils.getBlockchainDB).to.have.been.calledWithExactly(
-							'/my/app/',
-						);
+						expect(dbUtils.getBlockchainDB).to.have.been.calledWithExactly('/my/app/');
 					},
 				);
 
@@ -145,7 +132,7 @@ describe('blockchain:hash', () => {
 			setupTest()
 				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
 				.command(['blockchain:hash', '--data-path=/my/app/'])
-				.it('should output the hash of tarball file content', (ctx) => {
+				.it('should output the hash of tarball file content', ctx => {
 					expect(ctx.stdout).to.equal(`${hashBuffer.toString('base64')}\n`);
 				});
 		});

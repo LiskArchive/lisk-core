@@ -15,11 +15,7 @@
 
 import * as crypto from 'crypto';
 import { Command, flags as flagParser } from '@oclif/command';
-import {
-	getBlockchainDBPath,
-	getDefaultPath,
-	getFullPath,
-} from '../../utils/path';
+import { getBlockchainDBPath, getDefaultPath, getFullPath } from '../../utils/path';
 import { getPid, isApplicationRunning } from '../../utils/application';
 import { getBlockchainDB } from '../../utils/db';
 
@@ -68,7 +64,7 @@ export default class HashCommand extends Command {
 				dbHash.update(chunk);
 			});
 
-			stream.on('error', (error) => {
+			stream.on('error', error => {
 				reject(error);
 			});
 
