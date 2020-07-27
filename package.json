@@ -59,6 +59,7 @@
 		}
 	},
 	"dependencies": {
+		"@liskhq/lisk-db": "0.1.0-alpha.0",
 		"@liskhq/lisk-passphrase": "3.0.0",
 		"@oclif/command": "1.6.1",
 		"@oclif/config": "1.15.1",
