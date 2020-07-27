@@ -12,53 +12,55 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import { flags as flagParser } from '@oclif/command';
 import BaseIPCCommand from '../../base_ipc';
 
+interface Args {
+	readonly arg: string;
+}
 export default class GetCommand extends BaseIPCCommand {
-  static description = 'Gets block information for a given block id or height from the blockchain';
+	static description = 'Gets block information for a given block id or height from the blockchain';
 
-  static examples = [
-    'block:get --id 4ILnnQEBZjLEUcnfknbkhst/Rg3Hk/9bENj3HuzsKLQ=',
-  ];
+	static args = [
+		{
+			name: 'arg',
+			required: true,
+			description: 'Height in number or block id in base64 format.',
+		},
+	];
 
-  static flags = {
-    ...BaseIPCCommand.flags,
-    'id': flagParser.string({
-      description: 'Block id in base64 format',
-    }),
-    'height': flagParser.string({
-      description: 'Height of the block in integer',
-    }),
+	static examples = ['block:get 4ILnnQEBZjLEUcnfknbkhst/Rg3Hk/9bENj3HuzsKLQ=', 'block:get 2'];
+
+	static flags = {
+		...BaseIPCCommand.flags,
 	};
 
-  async run(): Promise<void> {
-    const { flags } = this.parse(GetCommand);
-    const { id: blockId, height } = flags;
+	async run(): Promise<void> {
+		const { args } = this.parse(GetCommand);
+		const { arg } = args as Args;
 
-    if (!blockId && !height) {
-      throw new Error('Please provide id or height of the block to be fetched');
-    }
-    let block;
-    try {
-      if (blockId) {
-        block = await this._channel.invoke<string>('app:getBlockByID', { id: blockId });
+		let block;
+		try {
+			if (!Number.isNaN(Number(arg))) {
+				block = await this._channel.invoke<string>('app:getBlockByHeight', {
+					height: parseInt(arg, 10),
+				});
+			} else {
+				block = await this._channel.invoke<string>('app:getBlockByID', { id: arg });
+			}
 
-      } else if (height) {
-        block = await this._channel.invoke<string>('app:getBlockByHeight', { height: parseInt(height as string, 10) });
+			this.printJSON(this._codec.decodeBlock(block));
+		} catch (errors) {
+			const errorMessage = Array.isArray(errors)
+				? errors.map(err => (err as Error).message).join(',')
+				: errors;
 
-      }
-      this.printJSON(this._codec.decodeBlock(block));
-    } catch (errors) {
-      const errorMessage = Array.isArray(errors)
-        ? errors.map(err => (err as Error).message).join(',')
-        : errors;
-
-      if (/^Specified key block:id:(.*)does not exist/.test((errors as Error).message)) {
-        this.error(`Block with id '${blockId}' was not found`);
-      } else {
-        this.error(errorMessage);
-      }
-    }
-  }
+			if (/^Specified key block:id:(.*)does not exist/.test((errors as Error).message)) {
+				if (arg) {
+					this.error('Block with given id or height was not found');
+				}
+			} else {
+				this.error(errorMessage);
+			}
+		}
+	}
 }
