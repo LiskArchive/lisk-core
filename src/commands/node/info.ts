@@ -21,14 +21,14 @@ export default class InfoCommand extends BaseIPCCommand {
 
 	async run(): Promise<void> {
 		try {
-            const nodeInfo = await this._channel.invoke<any>('app:getNodeInfo');
+			const nodeInfo = await this._channel.invoke<any>('app:getNodeInfo');
 			this.printJSON(nodeInfo);
 		} catch (errors) {
 			const errorMessage = Array.isArray(errors)
 				? errors.map(err => (err as Error).message).join(',')
 				: errors;
 
-				this.error(errorMessage);
+			this.error(errorMessage);
 		}
 	}
 }
