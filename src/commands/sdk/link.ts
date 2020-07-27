@@ -19,25 +19,27 @@ import { symlinkSync, pathExistsSync, removeSync } from 'fs-extra';
 import { join } from 'path';
 
 export default class LinkCommand extends Command {
-  static description = 'Link an specific SDK folder given the parameter';
+	static description = 'Link an specific SDK folder given the parameter';
 
-  static examples = ['sdk:link /sdk/location/'];
+	static examples = ['sdk:link /sdk/location/'];
 
-  static args = [
-    { name: 'targetSDKFolder', required: true, description: 'The path to the lisk SDK folder' },
-  ]
+	static args = [
+		{ name: 'targetSDKFolder', required: true, description: 'The path to the lisk SDK folder' },
+	];
 
-  // eslint-disable-next-line class-methods-use-this, @typescript-eslint/require-await
-  async run(): Promise<void> {
-    const { args: { targetSDKFolder } } = this.parse(LinkCommand);
+	// eslint-disable-next-line class-methods-use-this, @typescript-eslint/require-await
+	async run(): Promise<void> {
+		const {
+			args: { targetSDKFolder },
+		} = this.parse(LinkCommand);
 
-    if (!pathExistsSync(targetSDKFolder)) {
-      throw new Error(`Path '${targetSDKFolder as string}' does not exist or no access allowed`);
-    }
+		if (!pathExistsSync(targetSDKFolder)) {
+			throw new Error(`Path '${targetSDKFolder as string}' does not exist or no access allowed`);
+		}
 
-    const sdkLocalPath = join(__dirname, '../../../', 'node_modules', 'lisk-sdk');
+		const sdkLocalPath = join(__dirname, '../../../', 'node_modules', 'lisk-sdk');
 
-    removeSync(sdkLocalPath);
-    symlinkSync(targetSDKFolder, sdkLocalPath);
-  }
+		removeSync(sdkLocalPath);
+		symlinkSync(targetSDKFolder, sdkLocalPath);
+	}
 }
