@@ -21,19 +21,15 @@ import { join } from 'path';
 export default class LinkCommand extends Command {
   static description = 'Link an specific SDK folder given the parameter';
 
-  static examples = ['sdk:link', 'sdk:link /sdk/location/'];
+  static examples = ['sdk:link /sdk/location/'];
 
   static args = [
-    { name: 'targetSDKFolder' },
+    { name: 'targetSDKFolder', required: true, description: 'The path to the lisk SDK folder' },
   ]
 
   // eslint-disable-next-line class-methods-use-this, @typescript-eslint/require-await
   async run(): Promise<void> {
     const { args: { targetSDKFolder } } = this.parse(LinkCommand);
-
-    if (targetSDKFolder === undefined) {
-      throw new Error('A path to the location of the SDK folder to be linked needs to be provided.');
-    }
 
     if (!pathExistsSync(targetSDKFolder)) {
       throw new Error(`Path '${targetSDKFolder as string}' does not exist or no access allowed`);
