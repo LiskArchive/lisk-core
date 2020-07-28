@@ -14,10 +14,10 @@
  */
 
 import { Command, flags as flagParser } from '@oclif/command';
-import * as fs from 'fs-extra';
-import { codec, cryptography, IPCChannel, systemDirs } from 'lisk-sdk';
+import { codec, cryptography, IPCChannel } from 'lisk-sdk';
 import { getDefaultPath, getSocketsPath, splitPath } from './utils/path';
 import { flags as commonFlags } from './utils/flags';
+import { isApplicationRunning } from './utils/application';
 
 interface BaseIPCFlags {
 	readonly pretty?: boolean;
@@ -76,7 +76,7 @@ export default abstract class BaseIPCCommand extends Command {
 			// TODO: replace this logic with isApplicationRunning util and log the error accordingly
 			if (/^IPC Socket client connection timeout./.test((error as Error).message)) {
 				this.error(
-					'Please ensure the core server is up and running with ipc enabled before using the command!',
+					'Please ensure the app is up and running with ipc enabled before using the command!',
 				);
 			}
 			this.error(error instanceof Error ? error.message : error);
@@ -109,18 +109,11 @@ export default abstract class BaseIPCCommand extends Command {
 
 	private async _createIPCChannel(dataPath: string): Promise<void> {
 		const { rootPath, label } = splitPath(dataPath);
-		const socketsPath = systemDirs(label, rootPath);
 
-		// TODO: replace this logic with isApplicationRunning util
-		if (
-			!fs.existsSync(socketsPath.root) ||
-			!fs.existsSync(socketsPath.tmp) ||
-			!fs.existsSync(socketsPath.sockets)
-		) {
-			throw new Error(
-				`Socket directory: ${socketsPath.sockets} does not exists!! \n Please ensure the core server is up and running with ipc enabled before using the command!`,
-			);
+		if (!isApplicationRunning(dataPath)) {
+			throw new Error(`Application at data path ${dataPath} is not running.`);
 		}
+
 		this._channel = new IPCChannel(
 			'CoreCLI',
 			[],
