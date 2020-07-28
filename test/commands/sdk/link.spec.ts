@@ -45,9 +45,7 @@ describe('sdk:link command', () => {
 				expect(fs.pathExistsSync).to.be.calledWith(fakeSDKPath);
 				expect(fs.removeSync).calledWith(targetSDKPath);
 				expect(fs.symlinkSync).calledWith(fakeSDKPath, targetSDKPath);
-				expect(out.stdout).to.contain(
-					"Linked '/path/exists' to '/Users/pablo/Documents/LISK/Repos/lisk-core/node_modules/lisk-sdk'",
-				);
+				expect(out.stdout).to.contain(`Linked '/path/exists' to '${targetSDKPath}'`);
 			});
 	});
 });
