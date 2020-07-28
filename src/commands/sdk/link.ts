@@ -40,6 +40,7 @@ export default class LinkCommand extends Command {
 		const sdkLocalPath = join(__dirname, '../../../', 'node_modules', 'lisk-sdk');
 
 		removeSync(sdkLocalPath);
-		symlinkSync(targetSDKFolder, sdkLocalPath);
+    symlinkSync(targetSDKFolder, sdkLocalPath);
+    this.log(`Linked '${targetSDKFolder as string}' to '${sdkLocalPath}'`);
 	}
 }

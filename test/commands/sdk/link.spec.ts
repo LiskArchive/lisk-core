@@ -39,10 +39,11 @@ describe.only('sdk:link command', () => {
     setupTest()
     .stub(fs, 'pathExistsSync', sandbox.stub().withArgs('/path/exists').returns(true))
     .command(['sdk:link', fakeSDKPath])
-    .it('should call file system functions with correct parameters', () => {
+    .it('should call file system functions with correct parameters', out => {
       expect(fs.pathExistsSync).to.be.calledWith(fakeSDKPath);
       expect(fs.removeSync).calledWith(targetSDKPath);
       expect(fs.symlinkSync).calledWith(fakeSDKPath, targetSDKPath);
+      expect(out.stdout).to.contain("Linked '/path/exists' to '/Users/pablo/Documents/LISK/Repos/lisk-core/node_modules/lisk-sdk'");
     });
   });
 });
