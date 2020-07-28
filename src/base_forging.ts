@@ -22,14 +22,6 @@ interface Args {
 }
 
 export class BaseForgingCommand extends BaseIPCCommand {
-	static description = 'Enable forging for given delegate public key';
-
-	static examples = [
-		'forging:enable address',
-		'forging:enable address --data-path ./data',
-		'forging:enable address --data-path ./data --password your_password',
-	];
-
 	static args = [
 		{
 			name: 'address',
