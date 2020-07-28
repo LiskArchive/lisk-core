@@ -21,7 +21,7 @@ export default class InfoCommand extends BaseIPCCommand {
 
 	async run(): Promise<void> {
 		try {
-			const nodeInfo = await this._channel.invoke<any>('app:getNodeInfo');
+			const nodeInfo = await this._channel.invoke<string>('app:getNodeInfo');
 			this.printJSON(nodeInfo);
 		} catch (errors) {
 			const errorMessage = Array.isArray(errors)
