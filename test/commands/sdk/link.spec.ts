@@ -3,7 +3,7 @@ import * as sandbox from 'sinon';
 import * as fs from 'fs-extra';
 import { join } from 'path';
 
-describe.only('sdk:link command', () => {
+describe('sdk:link command', () => {
 	const setupTest = () =>
     test
       .stub(fs, 'removeSync', sandbox.stub().returns(null))
