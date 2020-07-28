@@ -17,7 +17,11 @@ import BaseIPCCommand from '../../base_ipc';
 export default class InfoCommand extends BaseIPCCommand {
 	static description = 'Gets node information';
 
-	static examples = ['node:info'];
+	static examples = ['node:info', 'node:info --data-path ./lisk'];
+
+	static flags = {
+		...BaseIPCCommand.flags,
+	};
 
 	async run(): Promise<void> {
 		try {
