@@ -141,7 +141,7 @@ export default abstract class BaseIPCCommand extends Command {
 				}: {
 					header: Buffer;
 					payload: ReadonlyArray<Buffer>;
-				} = codec.decodeJSON(blockSchema, blockBuffer);
+				} = codec.decode(blockSchema, blockBuffer);
 
 				const baseHeaderJSON: {
 					asset: string;
