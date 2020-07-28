@@ -17,7 +17,7 @@ import { expect, test } from '@oclif/test';
 import * as sandbox from 'sinon';
 import * as inquirer from 'inquirer';
 import { IPCChannel } from 'lisk-sdk';
-import { BaseForgingCommand } from '../../src/commands/forging/base';
+import { BaseForgingCommand } from '../../src/base_forging';
 import * as appUtils from '../../src/utils/application';
 
 describe('forging', () => {
