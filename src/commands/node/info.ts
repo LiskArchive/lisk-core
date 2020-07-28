@@ -15,7 +15,7 @@
 import BaseIPCCommand from '../../base_ipc';
 
 export default class InfoCommand extends BaseIPCCommand {
-	static description = 'Gets node information';
+	static description = 'Gets node information from a running application';
 
 	static examples = ['node:info', 'node:info --data-path ./lisk'];
 
@@ -25,7 +25,7 @@ export default class InfoCommand extends BaseIPCCommand {
 
 	async run(): Promise<void> {
 		try {
-			const nodeInfo = await this._channel.invoke<string>('app:getNodeInfo');
+			const nodeInfo = await this._channel.invoke<Record<string, unknown>>('app:getNodeInfo');
 			this.printJSON(nodeInfo);
 		} catch (errors) {
 			const errorMessage = Array.isArray(errors)
