@@ -15,6 +15,7 @@
 
 import { expect, test } from '@oclif/test';
 import * as sandbox from 'sinon';
+import * as fs from 'fs-extra';
 import { IPCChannel } from 'lisk-sdk';
 import baseIPC from '../../../src/base_ipc';
 
@@ -43,13 +44,15 @@ describe('node:info command', () => {
 			delegateListRoundOffset: 2,
 		},
 	};
-	const printJSONStub = sandbox.stub().returns(queryResult);
+    const printJSONStub = sandbox.stub().returns(queryResult);
+    const fsStub = sandbox.stub().returns(true);
 	const ipcInvokeStub = sandbox.stub();
 	const ipcStartAndListenStub = sandbox.stub();
 	ipcInvokeStub.withArgs('app:getNodeInfo').resolves(queryResult);
 
 	const setupTest = () =>
-		test
+        test
+            .stub(fs, 'existsSync', fsStub)
 			.stub(baseIPC.prototype, 'printJSON', printJSONStub)
 			.stub(IPCChannel.prototype, 'startAndListen', ipcStartAndListenStub)
 			.stub(IPCChannel.prototype, 'invoke', ipcInvokeStub);
