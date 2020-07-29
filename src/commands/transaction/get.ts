@@ -45,7 +45,7 @@ export default class GetCommand extends BaseIPCCommand {
 		try {
 			const transaction = await this._channel.invoke<string>('app:getTransactionByID', {
 				id: transactionId,
-      });
+			});
 			this.printJSON(this._codec.decodeTransaction(transaction));
 		} catch (errors) {
 			const errorMessage = Array.isArray(errors)
