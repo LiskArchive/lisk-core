@@ -79,5 +79,39 @@ describe('blockchain:reset', () => {
                 })
                 .it('should log error and return');
         });
-	});
+    });
+    
+    describe('when application is not running', () => {
+        describe('when starting without flag', () => {
+            setupTest()
+                .stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
+                .command(['blockchain:reset'])
+                .it('should create db object for "blockchain.db" for default data path', () => {
+                    expect(dbUtils.getBlockchainDB).to.have.been.calledOnce;
+                    expect(dbUtils.getBlockchainDB).to.have.been.calledWithExactly(defaultDataPath);
+                });
+                
+            setupTest()
+                .stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
+                .command(['blockchain:reset'])
+                .it('should prompt user for confirmation', () => {
+                    expect(promptStub).to.be.calledOnce;
+                    expect(promptStub).to.be.calledWithExactly([
+                        {
+                            name: 'answer',
+                            message: 'Are you sure you want to clear the db?',
+                            type: 'list',
+                            choices: ['yes', 'no'],
+                        }
+                    ]);
+                });
+                
+            setupTest()
+                .stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
+                .command(['blockchain:reset'])
+                .it('should reset the blochchain db', () => {
+                    expect(KVStoreStubInstance.clear).to.have.been.calledOnce;
+                });
+        });
+    });
 });
