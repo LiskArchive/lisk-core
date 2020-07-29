@@ -13,10 +13,10 @@
  *
  */
 import { Command, flags as flagParser } from '@oclif/command';
+import * as inquirer from 'inquirer';
 import { getDefaultPath } from '../../utils/path';
 import { getPid, isApplicationRunning } from '../../utils/application';
 import { getBlockchainDB } from '../../utils/db';
-import * as inquirer from 'inquirer';
 
 export default class ResetCommand extends Command {
 	static description = 'Resets the blockchain data.';
@@ -43,7 +43,7 @@ export default class ResetCommand extends Command {
 	async run(): Promise<void> {
 		const { flags } = this.parse(ResetCommand);
 		const dataPath = flags['data-path'] ? flags['data-path'] : getDefaultPath();
-		const skipPrompt = flags['yes'] ?? false;
+		const skipPrompt = flags.yes ?? false;
 
 		if (isApplicationRunning(dataPath)) {
 			const errorMessage = `Can't clear db while running application. Application at data path ${dataPath} is running with pid ${getPid(
@@ -63,7 +63,7 @@ export default class ResetCommand extends Command {
 				},
 			]);
 
-			if (answer == 'no') {
+			if (answer === 'no') {
 				return;
 			}
 		}
