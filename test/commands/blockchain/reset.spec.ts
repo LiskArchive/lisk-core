@@ -54,6 +54,18 @@ describe('blockchain:reset', () => {
 					);
 				})
                 .it('should log error and return');
-		});
+        });
+        
+        describe('when reset with data-path', () => {
+			setupTest()
+				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(true))
+				.command(['blockchain:reset', '--data-path=/my/app/'])
+				.catch(error => {
+					expect(error.message).to.equal(
+						`Can't clear db while running application. Application at data path /my/app/ is running with pid ${pid}.`,
+					);
+				})
+				.it('should log error and return');
+        });
 	});
 });
