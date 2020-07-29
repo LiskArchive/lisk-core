@@ -82,7 +82,7 @@ describe('blockchain:reset', () => {
     });
     
     describe('when application is not running', () => {
-        describe('when starting without flag', () => {
+        describe('when reset without flag', () => {
             setupTest()
                 .stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
                 .command(['blockchain:reset'])
@@ -109,8 +109,40 @@ describe('blockchain:reset', () => {
             setupTest()
                 .stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
                 .command(['blockchain:reset'])
-                .it('should reset the blochchain db', () => {
+                .it('should reset the blockchain db', () => {
                     expect(KVStoreStubInstance.clear).to.have.been.calledOnce;
+                });
+        });
+
+        describe('when reset with data-path', () => {
+            setupTest()
+                .stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
+                .command(['blockchain:reset', '--data-path=/my/app/'])
+                .it('should create db object for "blockchain.db" for given data path', () => {
+                    expect(dbUtils.getBlockchainDB).to.have.been.calledOnce;
+                    expect(dbUtils.getBlockchainDB).to.have.been.calledWithExactly('/my/app/');
+                });
+            
+             setupTest()
+                .stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
+                .command(['blockchain:reset'])
+                .it('should prompt user for confirmation', () => {
+                    expect(promptStub).to.be.calledOnce;
+                    expect(promptStub).to.be.calledWithExactly([
+                        {
+                            name: 'answer',
+                            message: 'Are you sure you want to clear the db?',
+                            type: 'list',
+                            choices: ['yes', 'no'],
+                        }
+                    ]);
+                });
+    
+            setupTest()
+                .stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
+                .command(['blockchain:reset', '--data-path=/my/app/'])
+                .it('should reset the blockchain db', () => {
+                        expect(KVStoreStubInstance.clear).to.have.been.calledOnce;
                 });
         });
     });
