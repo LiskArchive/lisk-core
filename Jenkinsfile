@@ -1,62 +1,97 @@
-@Library('lisk-jenkins') _
+properties([
+	parameters([
+		string(name: 'COMMITISH_SDK', description: 'Commit-ish of LiskHQ/lisk-sdk to use', defaultValue: 'development' ),
+		string(name: 'COMMITISH_CORE', description: 'Commit-ish of LiskHQ/lisk-core to use', defaultValue: 'development' ),
+	])
+])
 
 pipeline {
 	agent { node { label 'lisk-build' } }
 	options {
 		skipDefaultCheckout()
-		timeout(time: 30, unit: 'MINUTES')
+		timeout(time: 10, unit: 'MINUTES')
 	}
 	stages {
 		stage('Checkout SCM') {
 			steps {
 				cleanWs()
-				checkout scm
-				sh '''
-				VERSION=$( jq --raw-output '.version' package.json )
-				SHORT_HASH=$( git rev-parse --short HEAD )
-				echo "$VERSION-$SHORT_HASH" >.lisk_version
-				OUTPUT_FILE="lisk-$( cat .lisk_version )-Linux-x86_64.tar.gz"
-				if s3cmd --quiet info "s3://lisk-releases/lisk-core/$OUTPUT_FILE" 2>/dev/null; then
-				  echo "Build already exists."
-				  exit 1
-				fi
-				'''
+				dir('lisk-sdk') {
+					checkout([$class: 'GitSCM', branches: [[name: "${params.COMMITISH_SDK}" ]], userRemoteConfigs: [[url: 'https://github.com/LiskHQ/lisk-sdk']]])
+				}
+				dir('lisk-core') {
+					checkout([$class: 'GitSCM', branches: [[name: "${params.COMMITISH_CORE}" ]], userRemoteConfigs: [[url: 'https://github.com/LiskHQ/lisk-core']]])
+					sh '''
+					jq '.version="'"$( jq --raw-output .version package.json )-$( cd ../lisk-sdk && git rev-parse HEAD )-$( git rev-parse HEAD )"'"' package.json >package.json_
+					mv package.json_ package.json
+					if s3cmd --quiet info "s3://lisk-releases/core/core-v$( jq --raw-output .version package.json )-linux-x64.tar.gz" 2>/dev/null; then
+						echo "Build already exists."
+						exit 1
+					fi
+					'''
+				}
+			}
+		}
+		stage('Build SDK') {
+			steps {
+				dir('lisk-sdk') {
+					nvm(readFile(".nvmrc").trim()) {
+						sh '''
+						npm install --global yarn
+						yarn
+						yarn build
+						npx lerna exec yarn link
+						npx lerna --loglevel error list >../packages
+						'''
+					}
+				}
 			}
 		}
 		stage('Build Core') {
 			steps {
-				withCredentials([string(credentialsId: 'npm-lisk-io-auth-token-jenkins', variable: 'REGISTRY_AUTH_TOKEN')]) {
-					sh '''
-					if [ "x$BRANCH_NAME" != "xmaster" ]; then
-					  echo 'registry=https://npm.lisk.io/\n//npm.lisk.io/:_authToken=$REGISTRY_AUTH_TOKEN"' >~/.npmrc
-					fi
-					'''
-				}
-				dir('build') {
-					sh 'make LISK_NETWORK=testnet'
+				dir('lisk-core') {
+					nvm(readFile(".nvmrc").trim()) {
+						sh '''
+						npm install --registry https://npm.lisk.io/
+						npm install --global yarn
+						for package in $( cat ../packages ); do
+						  yarn link "$package"
+						done
+						npm run build
+						'''
+					}
 				}
 			}
 		}
-		stage('Upload build') {
+		stage('Test Core') {
 			steps {
-				dir('build/release') {
-					sh '''
-					VERSION=$( jq --raw-output '.version' ../../package.json )
-					OUTPUT_FILE="lisk-$( cat ../../.lisk_version )-Linux-x86_64.tar.gz"
-					mkdir "${OUTPUT_FILE%.tar.gz}"
-					tar xf "lisk-$VERSION-Linux-x86_64.tar.gz" --strip-components=1 --directory="${OUTPUT_FILE%.tar.gz}"
-					tar czf "$OUTPUT_FILE" "${OUTPUT_FILE%.tar.gz}"
-					sha256sum "$OUTPUT_FILE" >"$OUTPUT_FILE.SHA256"
-					s3cmd put --acl-public "$OUTPUT_FILE" "s3://lisk-releases/lisk-core/$OUTPUT_FILE"
-					s3cmd put --acl-public "$OUTPUT_FILE.SHA256" "s3://lisk-releases/lisk-core/$OUTPUT_FILE.SHA256"
-					'''
+				dir('lisk-core') {
+					nvm(readFile(".nvmrc").trim()) {
+						sh 'npm test'
+					}
 				}
 			}
 		}
-	}
-	post {
-		always {
-			sh 'rm -f ~/.npmrc'
+		stage('Pack Core build') {
+			steps {
+				dir('lisk-core') {
+					nvm(readFile(".nvmrc").trim()) {
+						sh './node_modules/.bin/oclif-dev pack --targets=linux-x64'
+					}
+				}
+			}
+		}
+		stage('Upload Core build') {
+			steps {
+				dir('lisk-core') {
+					sh '''
+					core_version="$( jq --raw-output .version package.json )"
+					cd dist/channels/beta/core-v${core_version}
+					sha256sum "core-v${core_version}-linux-x64.tar.gz" >"core-v${core_version}-linux-x64.tar.gz.SHA256"
+					s3cmd put --acl-public "core-v${core_version}-linux-x64.tar.gz"        "s3://lisk-releases/core/core-v${core_version}-linux-x64.tar.gz"
+					s3cmd put --acl-public "core-v${core_version}-linux-x64.tar.gz.SHA256" "s3://lisk-releases/core/core-v${core_version}-linux-x64.tar.gz.SHA256"
+					'''
+				}
+			}
 		}
 	}
 }
