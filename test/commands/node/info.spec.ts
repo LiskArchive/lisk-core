@@ -18,6 +18,7 @@ import * as sandbox from 'sinon';
 import * as fs from 'fs-extra';
 import { IPCChannel } from 'lisk-sdk';
 import baseIPC from '../../../src/base_ipc';
+import * as appUtils from '../../../src/utils/application';
 
 describe('node:info command', () => {
 	const queryResult = {
@@ -52,6 +53,7 @@ describe('node:info command', () => {
 
 	const setupTest = () =>
 		test
+			.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(true))
 			.stub(fs, 'existsSync', fsStub)
 			.stub(baseIPC.prototype, 'printJSON', printJSONStub)
 			.stub(IPCChannel.prototype, 'startAndListen', ipcStartAndListenStub)
