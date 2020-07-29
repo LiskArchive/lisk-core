@@ -67,5 +67,17 @@ describe('blockchain:reset', () => {
 				})
 				.it('should log error and return');
         });
+
+        describe('when starting with skip confirmation', () => {
+            setupTest()
+                .stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(true))
+                .command(['blockchain:reset', '--yes'])
+                .catch(error => {
+                    expect(error.message).to.equal(
+                        `Can't clear db while running application. Application at data path ${defaultDataPath} is running with pid ${pid}.`,
+                    );
+                })
+                .it('should log error and return');
+        });
 	});
 });
