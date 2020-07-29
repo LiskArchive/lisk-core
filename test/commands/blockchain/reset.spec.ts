@@ -145,5 +145,21 @@ describe('blockchain:reset', () => {
                         expect(KVStoreStubInstance.clear).to.have.been.calledOnce;
                 });
         });
+
+        describe('when skipping confirmation prompt', () => {
+            setupTest()
+                .stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
+                .command(['blockchain:reset', '--yes'])
+                .it('should create db object for "blockchain.db" for given data path', () => {
+                    expect(dbUtils.getBlockchainDB).to.have.been.calledOnce;
+                });
+    
+            setupTest()
+                .stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
+                .command(['blockchain:reset', '--yes'])
+                .it('should reset the blochchain db', () => {
+                        expect(KVStoreStubInstance.clear).to.have.been.calledOnce;
+                });
+        });
     });
 });
