@@ -22,7 +22,7 @@ import { IPCChannel } from 'lisk-sdk';
 import * as appUtils from '../../../src/utils/application';
 import { createTransferTransaction, encodeTransactionFromJSON } from '../../utils/transactions';
 
-export const baseTransactionSchema = {
+const baseTransactionSchema = {
 	$id: 'lisk/base-transaction',
 	type: 'object',
 	required: ['type', 'nonce', 'fee', 'senderPublicKey', 'asset'],

@@ -21,7 +21,11 @@ export default class SendCommand extends BaseIPCCommand {
 	};
 
 	static args = [
-		{ name: 'transaction', required: true, description: 'The transaction to be sent to the node in base64 string' },
+		{
+			name: 'transaction',
+			required: true,
+			description: 'The transaction to be sent to the node encoded as base64 string',
+		},
 	];
 
 	async run(): Promise<void> {
