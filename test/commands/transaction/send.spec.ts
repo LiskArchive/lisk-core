@@ -86,7 +86,7 @@ const transactionsAssets = {
 	8: transferAssetSchema,
 };
 
-describe.only('transaction:send command', () => {
+describe('transaction:send command', () => {
 	const { id: transactionId, ...transferTransaction } = createTransferTransaction({
 		amount: '1',
 		fee: '0.2',
