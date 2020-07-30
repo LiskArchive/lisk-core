@@ -86,7 +86,7 @@ const transactionsAssets = {
 	8: transferAssetSchema,
 };
 
-describe('transaction:send command', () => {
+describe.only('transaction:send command', () => {
 	const { id: transactionId, ...transferTransaction } = createTransferTransaction({
 		amount: '1',
 		fee: '0.2',
@@ -126,7 +126,7 @@ describe('transaction:send command', () => {
 			.command(['transaction:send'])
 			.catch((error: Error) =>
 				expect(error.message).to.contain(
-					'Missing 1 required arg:\ntransaction  The transaction to be sent to the node\nSee more help with --help',
+					'Missing 1 required arg:\ntransaction  The transaction to be sent to the node encoded as base64 string\nSee more help with --help',
 				),
 			)
 			.it('should throw an error when transaction argument is not provided.');
