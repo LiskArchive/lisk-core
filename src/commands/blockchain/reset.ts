@@ -15,6 +15,7 @@
 import { Command, flags as flagParser } from '@oclif/command';
 import * as inquirer from 'inquirer';
 import { getDefaultPath } from '../../utils/path';
+import { flags as commonFlags } from '../../utils/flags';
 import { getPid, isApplicationRunning } from '../../utils/application';
 import { getBlockchainDB } from '../../utils/db';
 
@@ -29,9 +30,7 @@ export default class ResetCommand extends Command {
 
 	static flags = {
 		'data-path': flagParser.string({
-			char: 'd',
-			description:
-				'Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.',
+			...commonFlags.dataPath,
 			env: 'LISK_DATA_PATH',
 		}),
 		yes: flagParser.boolean({
