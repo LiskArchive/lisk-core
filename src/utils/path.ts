@@ -54,6 +54,9 @@ export const getConfigFilePath = (dataPath: string, network: string): string =>
 export const getBlockchainDBPath = (dataPath: string): string =>
 	path.join(dataPath, 'data', 'blockchain.db');
 
+export const getForgerDBPath = (dataPath: string): string =>
+	path.join(dataPath, 'data', 'forger.db');
+
 export const getPidPath = (dataPath: string): string =>
 	path.join(dataPath, 'tmp', 'pids', 'controller.pid');
 
