@@ -150,14 +150,14 @@ describe('blockchain:reset', () => {
 			setupTest()
 				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
 				.command(['blockchain:reset', '--yes'])
-				.it('should create db object for "blockchain.db" for given data path', () => {
+				.it('should create db object for "blockchain.db"', () => {
 					expect(dbUtils.getBlockchainDB).to.have.been.calledOnce;
 				});
 
 			setupTest()
 				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
 				.command(['blockchain:reset', '--yes'])
-				.it('should reset the blochchain db', () => {
+				.it('should reset the blockchain db', () => {
 					expect(KVStoreStubInstance.clear).to.have.been.calledOnce;
 				});
 		});
