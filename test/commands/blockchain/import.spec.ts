@@ -99,7 +99,7 @@ describe('blockchain:import', () => {
 				.command(['blockchain:import', pathToBlockchainGzip])
 				.catch((error: Error) =>
 					expect(error.message).to.contain(
-						`There is already a blockchain data file found at ${defaultDataPath}`,
+						`There is already a blockchain data file found at ${defaultDataPath}. Use --force to override.`,
 					),
 				)
 				.it('should log error and return');
