@@ -52,9 +52,9 @@ describe('blockchain:import', () => {
 			.command(['blockchain:import'])
 			.catch((error: Error) => expect(error.message).to.contain('Missing 1 required arg:'))
 			.it('should throw an error when no arguments are provided.');
-    });
-    
-    describe('when importing with no existing blockchain data', () => {
+	});
+
+	describe('when importing with no existing blockchain data', () => {
 		setupTest()
 			.command(['blockchain:import', pathToBlockchainGzip])
 			.it('should import "blockchain.db" from given path', () => {
@@ -69,9 +69,9 @@ describe('blockchain:import', () => {
 					defaultBlockchainDBPath,
 				);
 			});
-    });
-    
-    describe('when importing with --data-path flag', () => {
+	});
+
+	describe('when importing with --data-path flag', () => {
 		const dataPath = getBlockchainDBPath('/my/app/');
 		setupTest()
 			.command(['blockchain:import', pathToBlockchainGzip, '--data-path=/my/app/'])
@@ -87,9 +87,9 @@ describe('blockchain:import', () => {
 					dataPath,
 				);
 			});
-    });
-    
-    describe('when importing with existing blockchain data', () => {
+	});
+
+	describe('when importing with existing blockchain data', () => {
 		beforeEach(() => {
 			fsExistsSyncStub.returns(true);
 		});
@@ -103,9 +103,9 @@ describe('blockchain:import', () => {
 					),
 				)
 				.it('should log error and return');
-        });
+		});
 
-        describe('when importing with --force flag', () => {
+		describe('when importing with --force flag', () => {
 			setupTest()
 				.command(['blockchain:import', pathToBlockchainGzip, '--force'])
 				.it('should import "blockchain.db" to given data-path', () => {
@@ -119,5 +119,5 @@ describe('blockchain:import', () => {
 					);
 				});
 		});
-    });
+	});
 });
