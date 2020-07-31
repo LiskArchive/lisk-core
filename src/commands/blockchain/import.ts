@@ -24,7 +24,7 @@ export default class ImportCommand extends Command {
 
 	static args = [
 		{
-			name: 'arg',
+			name: 'filepath',
 			required: true,
 			description: 'Path to the gzipped blockchain data.',
 		},
@@ -51,26 +51,24 @@ export default class ImportCommand extends Command {
 
 	async run(): Promise<void> {
 		const { args, flags } = this.parse(ImportCommand);
-		const { arg } = args;
+		const { filepath } = args;
 		const dataPath = flags['data-path'] ? flags['data-path'] : getDefaultPath();
 		const blockchainDBPath = getBlockchainDBPath(dataPath);
 
-		if (path.extname(arg) !== '.gz') {
+		if (path.extname(filepath) !== '.gz') {
 			this.error('The blockchain data file must be a gzip file.');
-			return;
 		}
 
 		if (!flags.force && fs.existsSync(blockchainDBPath)) {
 			const errorMessage = `There is already a blockchain data file found at ${dataPath}.`;
 
 			this.error(errorMessage);
-			return;
 		}
 
 		fs.ensureDirSync(blockchainDBPath);
-		this.log(`Importing blockchain from ${getFullPath(arg)}`);
+		this.log(`Importing blockchain from ${getFullPath(filepath)}`);
 
-		await extract(path.dirname(arg), 'blockchain.db.gz', blockchainDBPath);
+		await extract(path.dirname(filepath), 'blockchain.db.gz', blockchainDBPath);
 
 		this.log('Import completed.');
 		this.log(`   ${getFullPath(dataPath)}`);
