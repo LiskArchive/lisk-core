@@ -45,7 +45,10 @@ export default class ImportCommand extends Command {
 				'Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.',
 			env: 'LISK_DATA_PATH',
 		}),
-		force: flagParser.boolean({ char: 'f' }),
+		force: flagParser.boolean({
+			char: 'f',
+			description: 'To overwrite the existing data if present.',
+		}),
 	};
 
 	async run(): Promise<void> {
@@ -55,11 +58,11 @@ export default class ImportCommand extends Command {
 		const forgerDBPath = getForgerDBPath(dataPath);
 
 		if (path.extname(sourcePath) !== '.gz') {
-			throw new Error('Forger data should be provided in gzip format.');
+			this.error('Forger data should be provided in gzip format.');
 		}
 
 		if (!flags.force && fs.existsSync(forgerDBPath)) {
-			throw new Error(`Forger data already exists at ${dataPath}. Use --force flag to overwrite`);
+			this.error(`Forger data already exists at ${dataPath}. Use --force flag to overwrite`);
 		}
 
 		fs.ensureDirSync(forgerDBPath);
