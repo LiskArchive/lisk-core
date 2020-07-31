@@ -52,5 +52,22 @@ describe('blockchain:import', () => {
 			.command(['blockchain:import'])
 			.catch((error: Error) => expect(error.message).to.contain('Missing 1 required arg:'))
 			.it('should throw an error when no arguments are provided.');
+    });
+    
+    describe('when importing with no existing blockchain data', () => {
+		setupTest()
+			.command(['blockchain:import', pathToBlockchainGzip])
+			.it('should import "blockchain.db" from given path', () => {
+				expect(fsExistsSyncStub).to.have.been.calledOnce;
+				expect(fsExistsSyncStub).to.have.been.calledWithExactly(defaultBlockchainDBPath);
+				expect(fsEnsureDirSyncStub).to.have.been.calledOnce;
+				expect(fsEnsureDirSyncStub).to.have.been.calledWithExactly(defaultBlockchainDBPath);
+				expect(extractStub).to.have.been.calledOnce;
+				expect(extractStub).to.have.been.calledWithExactly(
+					path.dirname(pathToBlockchainGzip),
+					'blockchain.db.gz',
+					defaultBlockchainDBPath,
+				);
+			});
 	});
 });
