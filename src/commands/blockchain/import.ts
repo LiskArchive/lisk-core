@@ -44,7 +44,7 @@ export default class ImportCommand extends Command {
 		}),
 		force: flagParser.boolean({
 			char: 'f',
-			description: 'Force import of blockchain data if it already exists.',
+			description: 'Delete and overwrite existing blockchain data',
 			default: false,
 		}),
 	};
