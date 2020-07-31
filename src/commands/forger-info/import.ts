@@ -1,0 +1,73 @@
+/*
+ * Copyright © 2020 Lisk Foundation
+ *
+ * See the LICENSE file at the top-level directory of this distribution
+ * for licensing information.
+ *
+ * Unless otherwise agreed in a custom licensing agreement with the Lisk Foundation,
+ * no part of this software, including this file, may be copied, modified,
+ * propagated, or distributed except according to the terms contained in the
+ * LICENSE file.
+ *
+ * Removal or modification of this copyright notice is prohibited.
+ *
+ */
+import { Command, flags as flagParser } from '@oclif/command';
+import * as path from 'path';
+import * as fs from 'fs-extra';
+import { getDefaultPath, getFullPath, getForgerDBPath } from '../../utils/path';
+import * as downloadUtils from '../../utils/download';
+
+interface Args {
+	readonly sourcePath: string;
+}
+
+export default class ImportCommand extends Command {
+	static description = 'Export forger data to a given data path';
+
+	static args = [
+		{
+			name: 'sourcePath',
+			required: true,
+			description: 'Path to the forger-info zip file that you want to import.',
+		},
+	];
+
+	static examples = [
+		'forger-info:import ./my/path',
+		'forger-info:import --data-path ./data --force',
+	];
+
+	static flags = {
+		'data-path': flagParser.string({
+			char: 'd',
+			description:
+				'Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.',
+			env: 'LISK_DATA_PATH',
+		}),
+		force: flagParser.boolean({ char: 'f' }),
+	};
+
+	async run(): Promise<void> {
+		const { args, flags } = this.parse(ImportCommand);
+		const { sourcePath } = args as Args;
+		const dataPath = flags['data-path'] ? flags['data-path'] : getDefaultPath();
+		const forgerDBPath = getForgerDBPath(dataPath);
+
+		if (path.extname(sourcePath) !== '.gz') {
+			throw new Error('Forger data should be provided in gzip format.');
+		}
+
+		if (!flags.force && fs.existsSync(forgerDBPath)) {
+			throw new Error(`Forger data already exists at ${dataPath}. Use --force flag to overwrite`);
+		}
+
+		fs.ensureDirSync(forgerDBPath);
+		this.log(`Importing forger data from ${getFullPath(sourcePath)}`);
+
+		await downloadUtils.extract(path.dirname(sourcePath), 'forger.db.gz', forgerDBPath);
+
+		this.log('Import completed.');
+		this.log(`   ${getFullPath(dataPath)}`);
+	}
+}
