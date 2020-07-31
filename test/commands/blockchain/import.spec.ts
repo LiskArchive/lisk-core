@@ -87,5 +87,22 @@ describe('blockchain:import', () => {
 					dataPath,
 				);
 			});
-	});
+    });
+    
+    describe('when importing with existing blockchain data', () => {
+		beforeEach(() => {
+			fsExistsSyncStub.returns(true);
+		});
+
+		describe('when importing without --force flag', () => {
+			setupTest()
+				.command(['blockchain:import', pathToBlockchainGzip])
+				.catch((error: Error) =>
+					expect(error.message).to.contain(
+						`There is already a blockchain data file found at ${defaultDataPath}`,
+					),
+				)
+				.it('should log error and return');
+        });
+    });
 });
