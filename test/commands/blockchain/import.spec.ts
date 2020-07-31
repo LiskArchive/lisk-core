@@ -104,5 +104,20 @@ describe('blockchain:import', () => {
 				)
 				.it('should log error and return');
         });
+
+        describe('when importing with --force flag', () => {
+			setupTest()
+				.command(['blockchain:import', pathToBlockchainGzip, '--force'])
+				.it('should import "blockchain.db" to given data-path', () => {
+					expect(fsEnsureDirSyncStub).to.have.been.calledOnce;
+					expect(fsEnsureDirSyncStub).to.have.been.calledWithExactly(defaultBlockchainDBPath);
+					expect(extractStub).to.have.been.calledOnce;
+					expect(extractStub).to.have.been.calledWithExactly(
+						path.dirname(pathToBlockchainGzip),
+						'blockchain.db.gz',
+						defaultBlockchainDBPath,
+					);
+				});
+		});
     });
 });
