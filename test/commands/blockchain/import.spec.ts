@@ -69,5 +69,23 @@ describe('blockchain:import', () => {
 					defaultBlockchainDBPath,
 				);
 			});
+    });
+    
+    describe('when importing with --data-path flag', () => {
+		const dataPath = getBlockchainDBPath('/my/app/');
+		setupTest()
+			.command(['blockchain:import', pathToBlockchainGzip, '--data-path=/my/app/'])
+			.it('should import "blockchain.db" to given data-path', () => {
+				expect(fsExistsSyncStub).to.have.been.calledOnce;
+				expect(fsExistsSyncStub).to.have.been.calledWithExactly(dataPath);
+				expect(fsEnsureDirSyncStub).to.have.been.calledOnce;
+				expect(fsEnsureDirSyncStub).to.have.been.calledWithExactly(dataPath);
+				expect(extractStub).to.have.been.calledOnce;
+				expect(extractStub).to.have.been.calledWithExactly(
+					path.dirname(pathToBlockchainGzip),
+					'blockchain.db.gz',
+					dataPath,
+				);
+			});
 	});
 });
