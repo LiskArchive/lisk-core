@@ -16,6 +16,7 @@
 import * as crypto from 'crypto';
 import * as axios from 'axios';
 import * as fs from 'fs-extra';
+import * as tar from 'tar';
 
 export interface FileInfo {
 	readonly fileName: string;
@@ -97,3 +98,10 @@ export const downloadAndValidate = async (url: string, dir: string): Promise<voi
 
 	await verifyChecksum(filePath, checksum);
 };
+
+export const extract = async (filePath: string, fileName: string, outDir: string): Promise<void> =>
+	tar.x({
+		file: `${filePath}/${fileName}`,
+		cwd: outDir,
+		strip: 1,
+	});
