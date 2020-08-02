@@ -22,7 +22,7 @@ interface Args {
 	readonly encryptedPassphrase?: string;
 }
 
-const processInputs = (password: string, encryptedPassphrase: string) => {
+const processInputs = (password: string, encryptedPassphrase: string): Record<string, string> => {
 	const encryptedPassphraseObject = cryptography.parseEncryptedPassphrase(encryptedPassphrase);
 	const passphrase = cryptography.decryptPassphraseWithPassword(
 		encryptedPassphraseObject,

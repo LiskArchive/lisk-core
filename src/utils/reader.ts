@@ -17,10 +17,21 @@ import * as liskPassphrase from '@liskhq/lisk-passphrase';
 import * as inquirer from 'inquirer';
 
 import { ValidationError } from './error';
+import { Schema } from '../base_ipc';
 
 interface MnemonicError {
 	readonly code: string;
 	readonly message: string;
+}
+
+interface PropertyValue {
+	readonly dataType: string;
+	readonly type: string;
+	readonly items: { type: string; properties: Record<string, unknown> };
+}
+
+interface Question {
+	readonly [key: string]: string | boolean;
 }
 
 const capitalise = (text: string): string => `${text.charAt(0).toUpperCase()}${text.slice(1)}`;
@@ -77,4 +88,122 @@ export const getPassphraseFromPrompt = async (
 
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 	return passphrase;
+};
+
+interface NestedPropertyTemplate {
+	[key: string]: string[];
+}
+
+interface NestedAsset {
+	[key: string]: Array<Record<string, string>>;
+}
+
+const getNestedPropertyTemplate = (schema: Schema): NestedPropertyTemplate => {
+	const keyValEntries = Object.entries(schema.properties);
+	const template: NestedPropertyTemplate = {};
+
+	// eslint-disable-next-line @typescript-eslint/prefer-for-of
+	for (let i = 0; i < keyValEntries.length; i += 1) {
+		const [schemaPropertyName, schemaPropertyValue] = keyValEntries[i];
+		if ((schemaPropertyValue as PropertyValue).type === 'array') {
+			// nested items properties
+			if ((schemaPropertyValue as PropertyValue).items.type === 'object') {
+				template[schemaPropertyName] = Object.keys(
+					(schemaPropertyValue as PropertyValue).items.properties,
+				);
+			}
+		}
+	}
+	return template;
+};
+
+const prepareQuestions = (schema: Schema): Question[] => {
+	const keyValEntries = Object.entries(schema.properties);
+	const questions: Question[] = [];
+
+	// eslint-disable-next-line @typescript-eslint/prefer-for-of
+	for (let i = 0; i < keyValEntries.length; i += 1) {
+		const [schemaPropertyName, schemaPropertyValue] = keyValEntries[i];
+		if ((schemaPropertyValue as PropertyValue).type === 'array') {
+			let commaSeparatedKeys: string[] = [];
+			// nested items properties
+			if ((schemaPropertyValue as PropertyValue).items.type === 'object') {
+				commaSeparatedKeys = Object.keys((schemaPropertyValue as PropertyValue).items.properties);
+			}
+			questions.push({
+				type: 'input',
+				name: schemaPropertyName,
+				message: `Please enter: ${schemaPropertyName}(${
+					commaSeparatedKeys.length ? commaSeparatedKeys.join(', ') : 'comma separated values (a,b)'
+				}): `,
+			});
+			if ((schemaPropertyValue as PropertyValue).items.type === 'object') {
+				questions.push({
+					type: 'confirm',
+					name: 'askAgain',
+					message: `Want to enter another ${schemaPropertyName}(${commaSeparatedKeys.join(', ')})`,
+				});
+			}
+		} else {
+			questions.push({
+				type: 'input',
+				name: schemaPropertyName,
+				message: `Please enter: ${schemaPropertyName}: `,
+			});
+		}
+	}
+	return questions;
+};
+
+const castValue = (strVal: string): number | string =>
+	Number.isInteger(Number(strVal)) ? Number(strVal) : strVal;
+const transformAsset = (data: Record<string, string>, schema: Schema): Record<string, string> => {
+	const propertySchema = Object.values(schema.properties);
+
+	return Object.entries(data).reduce((acc, curr, index) => {
+		acc[curr[0]] =
+			(propertySchema[index] as { type: string }).type === 'array'
+				? curr[1].split(',')
+				: castValue(curr[1]);
+		return acc;
+	}, {});
+};
+
+const transformNestedAsset = (data: Array<Record<string, string>>, schema: Schema): NestedAsset => {
+	const template = getNestedPropertyTemplate(schema);
+	const result = {};
+	const items: Array<Record<string, string>> = [];
+	for (const assetData of data) {
+		const [[key, val]] = Object.entries(assetData);
+		const templateValues = template[key];
+		const valObject = val.split(',').reduce((acc, curr, index) => {
+			acc[templateValues[index]] = Number.isInteger(Number(curr)) ? Number(curr) : curr;
+			return acc;
+		}, {});
+		items.push(valObject);
+		result[key] = items;
+	}
+	return result;
+};
+
+export const getAssetFromPrompt = async (
+	assetSchema: Schema,
+	output: Array<{ [key: string]: string }>,
+): Promise<NestedAsset | Record<string, unknown>> => {
+	const questions = prepareQuestions(assetSchema);
+	let isTypeConfirm = false;
+	const result = await inquirer.prompt(questions).then(async (answer: { [x: string]: string }) => {
+		isTypeConfirm = typeof answer.askAgain === 'boolean';
+		if (answer.askAgain) {
+			output.push(answer);
+			return getAssetFromPrompt(assetSchema, output);
+		}
+		output.push(answer);
+		return Promise.resolve(answer);
+	});
+	const filteredResult = output.map(({ askAgain, ...assetProps }) => assetProps);
+
+	return isTypeConfirm
+		? transformNestedAsset(filteredResult, assetSchema)
+		: transformAsset(result, assetSchema);
 };

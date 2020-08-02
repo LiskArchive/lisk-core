@@ -14,7 +14,7 @@
  */
 
 import { Command, flags as flagParser } from '@oclif/command';
-import { codec, cryptography, IPCChannel } from 'lisk-sdk';
+import { codec, cryptography, IPCChannel, transactions } from 'lisk-sdk';
 import { getDefaultPath, getSocketsPath, splitPath } from './utils/path';
 import { flags as commonFlags } from './utils/flags';
 import { isApplicationRunning } from './utils/application';
@@ -24,7 +24,7 @@ interface BaseIPCFlags {
 	readonly 'data-path'?: string;
 }
 
-interface Schema {
+export interface Schema {
 	readonly $id: string;
 	readonly type: string;
 	readonly properties: Record<string, unknown>;
@@ -43,15 +43,20 @@ interface CodecSchema {
 	};
 }
 
-interface Codec {
+export interface Codec {
 	decodeAccount: (data: Buffer | string) => Record<string, unknown>;
 	decodeBlock: (data: Buffer | string) => Record<string, unknown>;
 	decodeTransaction: (data: Buffer | string) => Record<string, unknown>;
+	encodeTransaction: (transactionObject: Record<string, unknown>, assetSchema: Schema) => string;
+	transactionObject: (
+		transactionObject: Record<string, unknown>,
+		assetSchema: Schema,
+	) => Record<string, unknown>;
 }
 
 const prettyDescription = 'Prints JSON in pretty format rather than condensed.';
 
-const convertStrToBuffer = (data: Buffer | string) =>
+const convertStrToBuffer = (data: Buffer | string): Buffer =>
 	Buffer.isBuffer(data) ? data : Buffer.from(data, 'base64');
 
 export default abstract class BaseIPCCommand extends Command {
@@ -130,9 +135,9 @@ export default abstract class BaseIPCCommand extends Command {
 		this._schema = await this._channel.invoke('app:getSchema');
 
 		this._codec = {
-			decodeAccount: (data: Buffer | string) =>
+			decodeAccount: (data: Buffer | string): Record<string, unknown> =>
 				codec.decodeJSON(this._schema.account, convertStrToBuffer(data)),
-			decodeBlock: (data: Buffer | string) => {
+			decodeBlock: (data: Buffer | string): Record<string, unknown> => {
 				const blockBuffer: Buffer = Buffer.isBuffer(data) ? data : Buffer.from(data, 'base64');
 				const { blockSchema, blockHeaderSchema, blockHeadersAssets } = this._schema;
 				const {
@@ -166,7 +171,7 @@ export default abstract class BaseIPCCommand extends Command {
 					payload: payloadJSON,
 				};
 			},
-			decodeTransaction: (data: Buffer | string) => {
+			decodeTransaction: (data: Buffer | string): Record<string, unknown> => {
 				const transactionBuffer = Buffer.isBuffer(data) ? data : Buffer.from(data, 'base64');
 				const baseTransaction: {
 					type: number;
@@ -183,6 +188,30 @@ export default abstract class BaseIPCCommand extends Command {
 					id: cryptography.hash(transactionBuffer).toString('base64'),
 					asset: transactionAsset,
 				};
+			},
+			transactionObject: (
+				transactionObject: Record<string, unknown>,
+				assetSchema: Schema,
+			): Record<string, unknown> => {
+				const assetBuffer = codec.encode(
+					assetSchema,
+					codec.fromJSON(assetSchema, transactionObject.asset as object),
+				);
+
+				return codec.fromJSON(this._schema.baseTransaction, {
+					...transactionObject,
+					asset: assetBuffer,
+				});
+			},
+			encodeTransaction: (transactionObject: Record<string, unknown>): string => {
+				const transactionBuffer = codec.encode(
+					this._schema.baseTransaction,
+					codec.fromJSON(this._schema.baseTransaction, {
+						...transactionObject,
+					}),
+				);
+
+				return transactionBuffer.toString('base64');
 			},
 		};
 	}
