@@ -14,7 +14,7 @@
  */
 
 import { Command, flags as flagParser } from '@oclif/command';
-import { codec, cryptography, IPCChannel, transactions } from 'lisk-sdk';
+import { codec, cryptography, IPCChannel } from 'lisk-sdk';
 import { getDefaultPath, getSocketsPath, splitPath } from './utils/path';
 import { flags as commonFlags } from './utils/flags';
 import { isApplicationRunning } from './utils/application';
@@ -47,7 +47,7 @@ export interface Codec {
 	decodeAccount: (data: Buffer | string) => Record<string, unknown>;
 	decodeBlock: (data: Buffer | string) => Record<string, unknown>;
 	decodeTransaction: (data: Buffer | string) => Record<string, unknown>;
-	encodeTransaction: (transactionObject: Record<string, unknown>, assetSchema: Schema) => string;
+	encodeTransaction: (transactionObject: Record<string, unknown>, assetSchema: Schema) => Buffer;
 	transactionObject: (
 		transactionObject: Record<string, unknown>,
 		assetSchema: Schema,
@@ -203,15 +203,13 @@ export default abstract class BaseIPCCommand extends Command {
 					asset: assetBuffer,
 				});
 			},
-			encodeTransaction: (transactionObject: Record<string, unknown>): string => {
+			encodeTransaction: (transactionObject: Record<string, unknown>): Buffer => {
 				const transactionBuffer = codec.encode(
 					this._schema.baseTransaction,
-					codec.fromJSON(this._schema.baseTransaction, {
-						...transactionObject,
-					}),
+					transactionObject,
 				);
 
-				return transactionBuffer.toString('base64');
+				return transactionBuffer;
 			},
 		};
 	}

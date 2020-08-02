@@ -28,11 +28,6 @@ interface Args {
 	readonly networkIdentifier: string;
 }
 
-interface MultiSignatureKeys {
-	readonly mandatoryKeys: Array<Buffer>;
-	readonly optionalKeys: Array<Buffer>;
-}
-
 export default class CreateCommand extends BaseIPCCommand {
 	static strict = false;
 	static description = 'Creates a transaction which can be broadcasted to the network.';
@@ -144,30 +139,20 @@ export default class CreateCommand extends BaseIPCCommand {
 
 		// Sign transaction
 		if (passphrase) {
-			if (transactionObject.type === 12) {
-				transactionObject = transactions.signMultiSignatureTransaction(
-					assetSchema,
-					{ ...transactionObject },
-					Buffer.from(networkIdentifier, 'hex'),
-					passphrase,
-					assetObject as MultiSignatureKeys,
-				);
-			} else {
-				transactionObject = transactions.signTransaction(
-					assetSchema,
-					{ ...transactionObject },
-					Buffer.from(networkIdentifier, 'hex'),
-					passphrase,
-				);
-			}
+			transactionObject = transactions.signTransaction(
+				assetSchema,
+				{ ...transactionObject },
+				Buffer.from(networkIdentifier, 'base64'),
+				passphrase,
+			);
 		}
-
 		// Print JSON or encoded transaction bytes
 		if (json) {
-			this.printJSON(codec.toJSON(this._schema.baseTransaction, transactionObject));
+			this.printJSON({ ...codec.toJSON(this._schema.baseTransaction, transactionObject) });
 		} else {
+			transactionObject.id = cryptography.hash(this._codec.encodeTransaction(transactionObject, assetSchema));
 			this.printJSON({
-				transaction: this._codec.encodeTransaction(transactionObject, assetSchema),
+				transaction: this._codec.encodeTransaction(transactionObject, assetSchema).toString('base64'),
 			});
 		}
 	}
