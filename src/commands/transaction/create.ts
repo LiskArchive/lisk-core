@@ -30,7 +30,7 @@ interface Args {
 
 export default class CreateCommand extends BaseIPCCommand {
 	static strict = false;
-	static description = 'Creates a transaction which can be broadcasted to the network.';
+	static description = 'Creates a transaction which can be broadcasted to the network. Note: fee and amount should be in Beddows!!';
 
 	static args = [
 		{
@@ -42,7 +42,7 @@ export default class CreateCommand extends BaseIPCCommand {
 		{
 			name: 'fee',
 			required: true,
-			description: 'Transaction fee in LSK.',
+			description: 'Transaction fee in Beddows.',
 		},
 		{
 			name: 'nonce',
@@ -57,7 +57,7 @@ export default class CreateCommand extends BaseIPCCommand {
 	];
 
 	static examples = [
-		'transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 8 --asset=\'{"amount":100,"recipientAddress":"qwBBp9P3ssKQtbg01Gvce364WBU=","data":"send token"}\'',
+		'transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 8 --asset=\'{"amount":100000000,"recipientAddress":"qwBBp9P3ssKQtbg01Gvce364WBU=","data":"send token"}\'',
 		'transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 8',
 	];
 
@@ -132,7 +132,7 @@ export default class CreateCommand extends BaseIPCCommand {
 		}
 
 		// Validate transaction
-		let transactionObject = this._codec.transactionObject(incompleteTransaction, assetSchema);
+		let transactionObject = this._codec.transactionToJSON(incompleteTransaction, assetSchema);
 		const transactionErrors = validator.validator.validate(
 			this._schema.baseTransaction,
 			transactionObject,

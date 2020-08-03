@@ -48,7 +48,7 @@ export interface Codec {
 	decodeBlock: (data: Buffer | string) => Record<string, unknown>;
 	decodeTransaction: (data: Buffer | string) => Record<string, unknown>;
 	encodeTransaction: (transactionObject: Record<string, unknown>, assetSchema: Schema) => Buffer;
-	transactionObject: (
+	transactionToJSON: (
 		transactionObject: Record<string, unknown>,
 		assetSchema: Schema,
 	) => Record<string, unknown>;
@@ -189,7 +189,7 @@ export default abstract class BaseIPCCommand extends Command {
 					asset: transactionAsset,
 				};
 			},
-			transactionObject: (
+			transactionToJSON: (
 				transactionObject: Record<string, unknown>,
 				assetSchema: Schema,
 			): Record<string, unknown> => {
