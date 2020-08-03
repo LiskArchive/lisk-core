@@ -132,7 +132,10 @@ export default class CreateCommand extends BaseIPCCommand {
 		}
 
 		// Validate transaction
-		let transactionObject = this._codec.transactionToJSON(incompleteTransaction, assetSchema);
+		let transactionObject = this._codec.transactionFromJSON(assetSchema, {
+			...incompleteTransaction
+		});
+
 		const transactionErrors = validator.validator.validate(
 			this._schema.baseTransaction,
 			transactionObject,
@@ -142,25 +145,22 @@ export default class CreateCommand extends BaseIPCCommand {
 		}
 
 		// Sign transaction
+		transactionObject.asset = assetObject;
 		if (passphrase) {
-			transactionObject = transactions.signTransaction(
+			transactions.signTransaction(
 				assetSchema,
-				{ ...transactionObject },
+				transactionObject,
 				Buffer.from(networkIdentifier, 'base64'),
 				passphrase,
 			);
 		}
 		// Print JSON or encoded transaction bytes
 		if (json) {
-			this.printJSON({ ...codec.toJSON(this._schema.baseTransaction, transactionObject) });
+			this.printJSON(this._codec.transactionToJSON(assetSchema, transactionObject));
 		} else {
-			transactionObject.id = cryptography.hash(
-				this._codec.encodeTransaction(transactionObject, assetSchema),
-			);
 			this.printJSON({
 				transaction: this._codec
-					.encodeTransaction(transactionObject, assetSchema)
-					.toString('base64'),
+					.encodeTransaction(assetSchema, transactionObject),
 			});
 		}
 	}

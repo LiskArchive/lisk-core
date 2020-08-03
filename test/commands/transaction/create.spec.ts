@@ -171,7 +171,7 @@ describe('transaction:create command', () => {
 					expect(printJSONStub).to.be.calledOnce;
 					expect(printJSONStub).to.be.calledWithExactly({
 						transaction:
-							'CAgQAhiAwtcvIiAP6aPxohtVMPJ/h6QUtUnnmpQL8k/fKy8F5/Iq7uzIaiokCGQSFKsAQafT97LCkLW4NNRr3Ht+uFgVGgpzZW5kIHRva2VuMkBW4g5n/J9XouRbWtVfMucUkhy1FOp5Gmz1Bz4ZT7/2IOCZhl7FLPTvjjRoclnyECIO3B4YK2C9kYTqwzbvKS0B',
+							'CAgQAhiAwtcvIiAP6aPxohtVMPJ/h6QUtUnnmpQL8k/fKy8F5/Iq7uzIaiokCGQSFKsAQafT97LCkLW4NNRr3Ht+uFgVGgpzZW5kIHRva2VuMkCHFEIf4SgKerUFBdT4gjMDdxmqsfCBXihonF7/nNnFX0OYAXtIXxG0LJggF1KxV8xhHw5fza23beiD465CR5oD',
 					});
 				});
 		});
@@ -223,7 +223,7 @@ describe('transaction:create command', () => {
 					expect(printJSONStub).to.be.calledOnce;
 					expect(printJSONStub).to.be.calledWithExactly({
 						transaction:
-							'CAgQAhiAwtcvIiAP6aPxohtVMPJ/h6QUtUnnmpQL8k/fKy8F5/Iq7uzIaiokCGQSFKsAQafT97LCkLW4NNRr3Ht+uFgVGgpzZW5kIHRva2VuMkBW4g5n/J9XouRbWtVfMucUkhy1FOp5Gmz1Bz4ZT7/2IOCZhl7FLPTvjjRoclnyECIO3B4YK2C9kYTqwzbvKS0B',
+							'CAgQAhiAwtcvIiAP6aPxohtVMPJ/h6QUtUnnmpQL8k/fKy8F5/Iq7uzIaiokCGQSFKsAQafT97LCkLW4NNRr3Ht+uFgVGgpzZW5kIHRva2VuMkCHFEIf4SgKerUFBdT4gjMDdxmqsfCBXihonF7/nNnFX0OYAXtIXxG0LJggF1KxV8xhHw5fza23beiD465CR5oD',
 					});
 				});
 		});
@@ -252,7 +252,7 @@ describe('transaction:create command', () => {
 					expect(printJSONStub).to.be.calledOnce;
 					expect(printJSONStub).to.be.calledWithExactly({
 						transaction:
-							'CAgQAhiAwtcvIiAP6aPxohtVMPJ/h6QUtUnnmpQL8k/fKy8F5/Iq7uzIaiokCGQSFKsAQafT97LCkLW4NNRr3Ht+uFgVGgpzZW5kIHRva2VuMkBW4g5n/J9XouRbWtVfMucUkhy1FOp5Gmz1Bz4ZT7/2IOCZhl7FLPTvjjRoclnyECIO3B4YK2C9kYTqwzbvKS0B',
+							'CAgQAhiAwtcvIiAP6aPxohtVMPJ/h6QUtUnnmpQL8k/fKy8F5/Iq7uzIaiokCGQSFKsAQafT97LCkLW4NNRr3Ht+uFgVGgpzZW5kIHRva2VuMkCHFEIf4SgKerUFBdT4gjMDdxmqsfCBXihonF7/nNnFX0OYAXtIXxG0LJggF1KxV8xhHw5fza23beiD465CR5oD',
 					});
 				});
 		});
@@ -279,7 +279,11 @@ describe('transaction:create command', () => {
 							nonce: '2',
 							fee: '100000000',
 							senderPublicKey: 'D+mj8aIbVTDyf4ekFLVJ55qUC/JP3ysvBefyKu7syGo=',
-							asset: 'CGQSFKsAQafT97LCkLW4NNRr3Ht+uFgVGgpzZW5kIHRva2Vu',
+							asset: {
+								amount: "100",
+								data: "send token",
+								recipientAddress: "qwBBp9P3ssKQtbg01Gvce364WBU="
+							},
 							signatures: [],
 						});
 					},
@@ -305,9 +309,13 @@ describe('transaction:create command', () => {
 						nonce: '2',
 						fee: '100000000',
 						senderPublicKey: 'D+mj8aIbVTDyf4ekFLVJ55qUC/JP3ysvBefyKu7syGo=',
-						asset: 'CGQSFKsAQafT97LCkLW4NNRr3Ht+uFgVGgpzZW5kIHRva2Vu',
+						asset: {
+							amount: "100",
+							data: "send token",
+							recipientAddress: "qwBBp9P3ssKQtbg01Gvce364WBU="
+						},
 						signatures: [
-							'VuIOZ/yfV6LkW1rVXzLnFJIctRTqeRps9Qc+GU+/9iDgmYZexSz07440aHJZ8hAiDtweGCtgvZGE6sM27yktAQ==',
+							'hxRCH+EoCnq1BQXU+IIzA3cZqrHwgV4oaJxe/5zZxV9DmAF7SF8RtCyYIBdSsVfMYR8OX82tt23og+OuQkeaAw==',
 						],
 					});
 				});

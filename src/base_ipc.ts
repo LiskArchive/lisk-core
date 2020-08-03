@@ -47,11 +47,16 @@ export interface Codec {
 	decodeAccount: (data: Buffer | string) => Record<string, unknown>;
 	decodeBlock: (data: Buffer | string) => Record<string, unknown>;
 	decodeTransaction: (data: Buffer | string) => Record<string, unknown>;
-	encodeTransaction: (transactionObject: Record<string, unknown>, assetSchema: Schema) => Buffer;
-	transactionToJSON: (
-		transactionObject: Record<string, unknown>,
+	encodeTransaction: (assetSchema: Schema, transactionObject: Record<string, unknown>) => string;
+	transactionFromJSON: (
 		assetSchema: Schema,
+		transactionObject: Record<string, unknown>,
 	) => Record<string, unknown>;
+	transactionToJSON: (
+		assetSchema: Schema,
+		transactionObject: Record<string, unknown>,
+	) => Record<string, unknown>;
+
 }
 
 const prettyDescription = 'Prints JSON in pretty format rather than condensed.';
@@ -189,9 +194,9 @@ export default abstract class BaseIPCCommand extends Command {
 					asset: transactionAsset,
 				};
 			},
-			transactionToJSON: (
-				transactionObject: Record<string, unknown>,
+			transactionFromJSON: (
 				assetSchema: Schema,
+				transactionObject: Record<string, unknown>,
 			): Record<string, unknown> => {
 				const assetBuffer = codec.encode(
 					assetSchema,
@@ -203,10 +208,37 @@ export default abstract class BaseIPCCommand extends Command {
 					asset: assetBuffer,
 				});
 			},
-			encodeTransaction: (transactionObject: Record<string, unknown>): Buffer => {
-				const transactionBuffer = codec.encode(this._schema.baseTransaction, transactionObject);
+			transactionToJSON: (
+				assetSchema: Schema,
+				transactionObject: Record<string, unknown>,
+			): Record<string, unknown> => {
+				const assetJSON = codec.toJSON(
+					assetSchema,
+					transactionObject.asset as object,
+				);
 
-				return transactionBuffer;
+				const transactionJSON = codec.toJSON(this._schema.baseTransaction, {
+					...transactionObject,
+					asset: Buffer.alloc(0),
+				});
+
+				return {
+					...transactionJSON,
+					asset: assetJSON,
+				}
+			},
+			encodeTransaction: (assetSchema: Schema, transactionObject: Record<string, unknown>): string => {
+				const assetBuffer = codec.encode(
+					assetSchema,
+					transactionObject.asset as object,
+				);
+
+				const transactionBuffer = codec.encode(this._schema.baseTransaction, {
+					...transactionObject,
+					asset: assetBuffer,
+				});
+
+				return transactionBuffer.toString('base64');
 			},
 		};
 	}
