@@ -117,7 +117,39 @@ const getNestedPropertyTemplate = (schema: Schema): NestedPropertyTemplate => {
 	return template;
 };
 
-const prepareQuestions = (schema: Schema): Question[] => {
+const castValue = (strVal: string): number | string =>
+	Number.isInteger(Number(strVal)) ? Number(strVal) : strVal;
+
+export const transformAsset = (data: Record<string, string>, schema: Schema): Record<string, string> => {
+	const propertySchema = Object.values(schema.properties);
+
+	return Object.entries(data).reduce((acc, curr, index) => {
+		acc[curr[0]] =
+			(propertySchema[index] as { type: string }).type === 'array'
+				? curr[1].split(',')
+				: castValue(curr[1]);
+		return acc;
+	}, {});
+};
+
+export const transformNestedAsset = (data: Array<Record<string, string>>, schema: Schema): NestedAsset => {
+	const template = getNestedPropertyTemplate(schema);
+	const result = {};
+	const items: Array<Record<string, string>> = [];
+	for (const assetData of data) {
+		const [[key, val]] = Object.entries(assetData);
+		const templateValues = template[key];
+		const valObject = val.split(',').reduce((acc, curr, index) => {
+			acc[templateValues[index]] = Number.isInteger(Number(curr)) ? Number(curr) : curr;
+			return acc;
+		}, {});
+		items.push(valObject);
+		result[key] = items;
+	}
+	return result;
+};
+
+export const prepareQuestions = (schema: Schema): Question[] => {
 	const keyValEntries = Object.entries(schema.properties);
 	const questions: Question[] = [];
 
@@ -155,45 +187,17 @@ const prepareQuestions = (schema: Schema): Question[] => {
 	return questions;
 };
 
-const castValue = (strVal: string): number | string =>
-	Number.isInteger(Number(strVal)) ? Number(strVal) : strVal;
-const transformAsset = (data: Record<string, string>, schema: Schema): Record<string, string> => {
-	const propertySchema = Object.values(schema.properties);
-
-	return Object.entries(data).reduce((acc, curr, index) => {
-		acc[curr[0]] =
-			(propertySchema[index] as { type: string }).type === 'array'
-				? curr[1].split(',')
-				: castValue(curr[1]);
-		return acc;
-	}, {});
-};
-
-const transformNestedAsset = (data: Array<Record<string, string>>, schema: Schema): NestedAsset => {
-	const template = getNestedPropertyTemplate(schema);
-	const result = {};
-	const items: Array<Record<string, string>> = [];
-	for (const assetData of data) {
-		const [[key, val]] = Object.entries(assetData);
-		const templateValues = template[key];
-		const valObject = val.split(',').reduce((acc, curr, index) => {
-			acc[templateValues[index]] = Number.isInteger(Number(curr)) ? Number(curr) : curr;
-			return acc;
-		}, {});
-		items.push(valObject);
-		result[key] = items;
-	}
-	return result;
-};
-
 export const getAssetFromPrompt = async (
 	assetSchema: Schema,
 	output: Array<{ [key: string]: string }>,
 ): Promise<NestedAsset | Record<string, unknown>> => {
+	// prepare array of questions based on asset schema
 	const questions = prepareQuestions(assetSchema);
 	let isTypeConfirm = false;
+	// Prompt user with prepared questions
 	const result = await inquirer.prompt(questions).then(async (answer: { [x: string]: string }) => {
 		isTypeConfirm = typeof answer.askAgain === 'boolean';
+		// if its a multiple questions prompt user again
 		if (answer.askAgain) {
 			output.push(answer);
 			return getAssetFromPrompt(assetSchema, output);
@@ -203,6 +207,7 @@ export const getAssetFromPrompt = async (
 	});
 	const filteredResult = output.map(({ askAgain, ...assetProps }) => assetProps);
 
+	// transform asset prompt result according to asset schema
 	return isTypeConfirm
 		? transformNestedAsset(filteredResult, assetSchema)
 		: transformAsset(result, assetSchema);

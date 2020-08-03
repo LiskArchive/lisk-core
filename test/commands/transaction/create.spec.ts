@@ -22,11 +22,9 @@ import { cryptography, IPCChannel, transactions } from 'lisk-sdk';
 import baseIPC from '../../../src/base_ipc';
 import * as appUtils from '../../../src/utils/application';
 import * as readerUtils from '../../../src/utils/reader';
-import { transferAssetSchema } from '../../utils/transactions';
-import { getAssetFromPrompt } from '../../../src/utils/reader';
 
 const transactionsAssets = {
-	8: transferAssetSchema,
+	8: transactions.TransferTransaction.ASSET_SCHEMA,
 };
 const passphrase = 'peanut hundred pen hawk invite exclude brain chunk gadget wait wrong ready';
 const transferAsset =
@@ -34,7 +32,7 @@ const transferAsset =
 const { publicKey } = cryptography.getAddressAndPublicKeyFromPassphrase(passphrase);
 const senderPublickey = publicKey.toString('base64');
 
-describe.only('transaction:create command', () => {
+describe('transaction:create command', () => {
 	const fsStub = sandbox.stub().returns(true);
 	const printJSONStub = sandbox.stub();
 	const ipcInvokeStub = sandbox.stub();
