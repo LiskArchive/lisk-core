@@ -12,14 +12,9 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-import { transactions, codec } from 'lisk-sdk';
-import { config } from '../../src/config/devnet';
-
-interface Schema {
-	readonly $id: string;
-	readonly type: string;
-	readonly properties: Record<string, unknown>;
-}
+import { cryptography, transactions, codec } from 'lisk-sdk';
+import { genesisBlock } from '../../src/config/devnet';
+import { Schema } from '../../src/base_ipc';
 
 const account = {
 	passphrase: 'endless focus guilt bronze hold economy bulk parent soon tower cement venue',
@@ -28,6 +23,42 @@ const account = {
 	publicKey: 'UIqWWHElNZWzbi+Nwnv/bmezm91GZTG+nG+MQBJTl5w=',
 	address: 'nKvuPSdCZna4Us5rgEyy/f980LU=',
 };
+
+export const transferAssetSchema = {
+	$id: 'lisk/transfer-transaction',
+	title: 'Transfer transaction asset',
+	type: 'object',
+	required: ['amount', 'recipientAddress', 'data'],
+	properties: {
+		amount: {
+			dataType: 'uint64',
+			fieldNumber: 1,
+		},
+		recipientAddress: {
+			dataType: 'bytes',
+			fieldNumber: 2,
+			minLength: 20,
+			maxLength: 20,
+		},
+		data: {
+			dataType: 'string',
+			fieldNumber: 3,
+			minLength: 0,
+			maxLength: 64,
+		},
+	},
+};
+
+export const genesisBlockTransactionRoot = Buffer.from(
+	genesisBlock.header.transactionRoot,
+	'base64',
+);
+export const communityIdentifier = 'Lisk';
+
+export const networkIdentifier = cryptography.getNetworkIdentifier(
+	genesisBlockTransactionRoot,
+	communityIdentifier,
+);
 
 export const createTransferTransaction = ({
 	amount,
@@ -51,7 +82,7 @@ export const createTransferTransaction = ({
 		},
 	});
 
-	transaction.sign(Buffer.from(config.networkVersion), account.passphrase);
+	transaction.sign(networkIdentifier, account.passphrase);
 
 	return {
 		id: transaction.id.toString('base64'),

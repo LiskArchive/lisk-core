@@ -57,8 +57,8 @@ export default class CreateCommand extends BaseIPCCommand {
 	];
 
 	static examples = [
-		'transaction:create 1 100 8 5I/riNtbXPWtcdk83NHYebbV7Rh6NrAALMNODvmIMlU= --asset=\'{"amount":100,"recipientAddress":"qwBBp9P3ssKQtbg01Gvce364WBU=","data":"send token"}\'',
-		'transaction:create 1 100 8 5I/riNtbXPWtcdk83NHYebbV7Rh6NrAALMNODvmIMlU=',
+		'transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 8 --asset=\'{"amount":100,"recipientAddress":"qwBBp9P3ssKQtbg01Gvce364WBU=","data":"send token"}\'',
+		'transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 8',
 	];
 
 	static flags = {
@@ -111,6 +111,10 @@ export default class CreateCommand extends BaseIPCCommand {
 			throw new LiskValidationError([...assetErrors]);
 		}
 
+		if (!senderPublicKeySource && noSignature) {
+			throw new Error('Sender publickey must be specified when no-signature flags is used');
+		}
+
 		const incompleteTransaction: Record<string, unknown> = {
 			type: Number(type),
 			nonce,
@@ -150,9 +154,13 @@ export default class CreateCommand extends BaseIPCCommand {
 		if (json) {
 			this.printJSON({ ...codec.toJSON(this._schema.baseTransaction, transactionObject) });
 		} else {
-			transactionObject.id = cryptography.hash(this._codec.encodeTransaction(transactionObject, assetSchema));
+			transactionObject.id = cryptography.hash(
+				this._codec.encodeTransaction(transactionObject, assetSchema),
+			);
 			this.printJSON({
-				transaction: this._codec.encodeTransaction(transactionObject, assetSchema).toString('base64'),
+				transaction: this._codec
+					.encodeTransaction(transactionObject, assetSchema)
+					.toString('base64'),
 			});
 		}
 	}

@@ -204,10 +204,7 @@ export default abstract class BaseIPCCommand extends Command {
 				});
 			},
 			encodeTransaction: (transactionObject: Record<string, unknown>): Buffer => {
-				const transactionBuffer = codec.encode(
-					this._schema.baseTransaction,
-					transactionObject,
-				);
+				const transactionBuffer = codec.encode(this._schema.baseTransaction, transactionObject);
 
 				return transactionBuffer;
 			},
