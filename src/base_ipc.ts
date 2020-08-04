@@ -24,7 +24,7 @@ interface BaseIPCFlags {
 	readonly 'data-path'?: string;
 }
 
-interface Schema {
+export interface Schema {
 	readonly $id: string;
 	readonly type: string;
 	readonly properties: Record<string, unknown>;
@@ -43,15 +43,24 @@ interface CodecSchema {
 	};
 }
 
-interface Codec {
+export interface Codec {
 	decodeAccount: (data: Buffer | string) => Record<string, unknown>;
 	decodeBlock: (data: Buffer | string) => Record<string, unknown>;
 	decodeTransaction: (data: Buffer | string) => Record<string, unknown>;
+	encodeTransaction: (assetSchema: Schema, transactionObject: Record<string, unknown>) => string;
+	transactionFromJSON: (
+		assetSchema: Schema,
+		transactionObject: Record<string, unknown>,
+	) => Record<string, unknown>;
+	transactionToJSON: (
+		assetSchema: Schema,
+		transactionObject: Record<string, unknown>,
+	) => Record<string, unknown>;
 }
 
 const prettyDescription = 'Prints JSON in pretty format rather than condensed.';
 
-const convertStrToBuffer = (data: Buffer | string) =>
+const convertStrToBuffer = (data: Buffer | string): Buffer =>
 	Buffer.isBuffer(data) ? data : Buffer.from(data, 'base64');
 
 export default abstract class BaseIPCCommand extends Command {
@@ -130,9 +139,9 @@ export default abstract class BaseIPCCommand extends Command {
 		this._schema = await this._channel.invoke('app:getSchema');
 
 		this._codec = {
-			decodeAccount: (data: Buffer | string) =>
+			decodeAccount: (data: Buffer | string): Record<string, unknown> =>
 				codec.decodeJSON(this._schema.account, convertStrToBuffer(data)),
-			decodeBlock: (data: Buffer | string) => {
+			decodeBlock: (data: Buffer | string): Record<string, unknown> => {
 				const blockBuffer: Buffer = Buffer.isBuffer(data) ? data : Buffer.from(data, 'base64');
 				const { blockSchema, blockHeaderSchema, blockHeadersAssets } = this._schema;
 				const {
@@ -166,7 +175,7 @@ export default abstract class BaseIPCCommand extends Command {
 					payload: payloadJSON,
 				};
 			},
-			decodeTransaction: (data: Buffer | string) => {
+			decodeTransaction: (data: Buffer | string): Record<string, unknown> => {
 				const transactionBuffer = Buffer.isBuffer(data) ? data : Buffer.from(data, 'base64');
 				const baseTransaction: {
 					type: number;
@@ -183,6 +192,49 @@ export default abstract class BaseIPCCommand extends Command {
 					id: cryptography.hash(transactionBuffer).toString('base64'),
 					asset: transactionAsset,
 				};
+			},
+			transactionFromJSON: (
+				assetSchema: Schema,
+				transactionObject: Record<string, unknown>,
+			): Record<string, unknown> => {
+				const assetBuffer = codec.encode(
+					assetSchema,
+					codec.fromJSON(assetSchema, transactionObject.asset as object),
+				);
+
+				return codec.fromJSON(this._schema.baseTransaction, {
+					...transactionObject,
+					asset: assetBuffer,
+				});
+			},
+			transactionToJSON: (
+				assetSchema: Schema,
+				transactionObject: Record<string, unknown>,
+			): Record<string, unknown> => {
+				const assetJSON = codec.toJSON(assetSchema, transactionObject.asset as object);
+
+				const transactionJSON = codec.toJSON(this._schema.baseTransaction, {
+					...transactionObject,
+					asset: Buffer.alloc(0),
+				});
+
+				return {
+					...transactionJSON,
+					asset: assetJSON,
+				};
+			},
+			encodeTransaction: (
+				assetSchema: Schema,
+				transactionObject: Record<string, unknown>,
+			): string => {
+				const assetBuffer = codec.encode(assetSchema, transactionObject.asset as object);
+
+				const transactionBuffer = codec.encode(this._schema.baseTransaction, {
+					...transactionObject,
+					asset: assetBuffer,
+				});
+
+				return transactionBuffer.toString('base64');
 			},
 		};
 	}

@@ -5,6 +5,8 @@ Dockerfile
 LICENSE
 .DS_Store
 data/
+.idea
+logs/
 
 .gitkeep
 mocha.opts

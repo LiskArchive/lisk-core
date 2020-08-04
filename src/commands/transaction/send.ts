@@ -16,6 +16,7 @@ import { validator } from 'lisk-sdk';
 import BaseIPCCommand from '../../base_ipc';
 
 export default class SendCommand extends BaseIPCCommand {
+	static description = 'Send a transaction to the local node.';
 	static flags = {
 		...BaseIPCCommand.flags,
 	};
@@ -26,6 +27,10 @@ export default class SendCommand extends BaseIPCCommand {
 			required: true,
 			description: 'The transaction to be sent to the node encoded as base64 string',
 		},
+	];
+
+	static examples = [
+		'transaction:send CAgQARiAyrXuASIg/QYbkUZpHzxWUEvgURddW3bRsdAXnFxDcOGFNMWIISIqJAhkEhSrAEGn0/eywpC1uDTUa9x7frhYFRoKc2VuZCB0b2tlbjJAKO3TYBzcNaQbsjQVoNnzw+nPGI2Zca3xh0LOo51YqoSAmqh7z+b+qsRiEcgEcq2Sl/2HcncJ9dfntBNMrxBrAg==',
 	];
 
 	async run(): Promise<void> {

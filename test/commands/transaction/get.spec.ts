@@ -16,46 +16,11 @@
 import { expect, test } from '@oclif/test';
 import * as sandbox from 'sinon';
 import * as fs from 'fs-extra';
-import { IPCChannel } from 'lisk-sdk';
+import { IPCChannel, transactions } from 'lisk-sdk';
 
 import baseIPC from '../../../src/base_ipc';
 import * as appUtils from '../../../src/utils/application';
 import { createTransferTransaction, encodeTransactionFromJSON } from '../../utils/transactions';
-
-export const baseTransactionSchema = {
-	$id: 'lisk/base-transaction',
-	type: 'object',
-	required: ['type', 'nonce', 'fee', 'senderPublicKey', 'asset'],
-	properties: {
-		type: {
-			dataType: 'uint32',
-			fieldNumber: 1,
-		},
-		nonce: {
-			dataType: 'uint64',
-			fieldNumber: 2,
-		},
-		fee: {
-			dataType: 'uint64',
-			fieldNumber: 3,
-		},
-		senderPublicKey: {
-			dataType: 'bytes',
-			fieldNumber: 4,
-		},
-		asset: {
-			dataType: 'bytes',
-			fieldNumber: 5,
-		},
-		signatures: {
-			type: 'array',
-			items: {
-				dataType: 'bytes',
-			},
-			fieldNumber: 6,
-		},
-	},
-};
 
 const transferAssetSchema = {
 	$id: 'lisk/transfer-transaction',
@@ -95,7 +60,7 @@ describe('transaction:get command', () => {
 	});
 	const encodedTransaction = encodeTransactionFromJSON(
 		transferTransaction as any,
-		baseTransactionSchema,
+		transactions.BaseTransaction.BASE_SCHEMA,
 		transactionsAssets,
 	);
 	const fsStub = sandbox.stub().returns(true);
@@ -105,7 +70,7 @@ describe('transaction:get command', () => {
 	ipcInvokeStub
 		.withArgs('app:getSchema')
 		.resolves({
-			baseTransaction: baseTransactionSchema,
+			baseTransaction: transactions.BaseTransaction.BASE_SCHEMA,
 			transactionsAssets,
 		})
 		.withArgs('app:getTransactionByID', { id: transactionId })
@@ -133,7 +98,7 @@ describe('transaction:get command', () => {
 
 	describe('transaction:get {transactionId}', () => {
 		setupTest()
-			.command(['transaction:get', '6rBsaiLoi8pxUOA0en2Xas0HDLkoRCPm6r7NZXrMEmM='])
+			.command(['transaction:get', transactionId])
 			.it('should get transaction for the given id and display as an object', () => {
 				expect(ipcInvokeStub).to.have.been.calledTwice;
 				expect(ipcInvokeStub).to.have.been.calledWithExactly('app:getSchema');
