@@ -39,6 +39,7 @@ pipeline {
 						npm install --global yarn
 						yarn
 						yarn build
+						npx lerna exec yarn unlink
 						npx lerna exec yarn link
 						npx lerna --loglevel error list >../packages
 						'''
