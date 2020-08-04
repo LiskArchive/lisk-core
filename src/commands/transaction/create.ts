@@ -30,7 +30,8 @@ interface Args {
 
 export default class CreateCommand extends BaseIPCCommand {
 	static strict = false;
-	static description = 'Creates a transaction which can be broadcasted to the network. Note: fee and amount should be in Beddows!!';
+	static description =
+		'Creates a transaction which can be broadcasted to the network. Note: fee and amount should be in Beddows!!';
 
 	static args = [
 		{
@@ -100,11 +101,7 @@ export default class CreateCommand extends BaseIPCCommand {
 		if (!assetSchema) {
 			throw new Error(`Transaction type:${type} is not registered in the application`);
 		}
-		const rawAsset = assetSource
-			? JSON.parse(assetSource)
-			: await getAssetFromPrompt(assetSchema, []);
-
-		// Validate asset
+		const rawAsset = assetSource ? JSON.parse(assetSource) : await getAssetFromPrompt(assetSchema);
 		const assetObject = codec.fromJSON(assetSchema, rawAsset);
 		const assetErrors = validator.validator.validate(assetSchema, assetObject);
 		if (assetErrors.length) {
@@ -131,9 +128,8 @@ export default class CreateCommand extends BaseIPCCommand {
 			incompleteTransaction.senderPublicKey = publicKey.toString('base64');
 		}
 
-		// Validate transaction
-		let transactionObject = this._codec.transactionFromJSON(assetSchema, {
-			...incompleteTransaction
+		const transactionObject = this._codec.transactionFromJSON(assetSchema, {
+			...incompleteTransaction,
 		});
 
 		const transactionErrors = validator.validator.validate(
@@ -144,7 +140,6 @@ export default class CreateCommand extends BaseIPCCommand {
 			throw new LiskValidationError([...transactionErrors]);
 		}
 
-		// Sign transaction
 		transactionObject.asset = assetObject;
 		if (passphrase) {
 			transactions.signTransaction(
@@ -154,13 +149,12 @@ export default class CreateCommand extends BaseIPCCommand {
 				passphrase,
 			);
 		}
-		// Print JSON or encoded transaction bytes
+
 		if (json) {
 			this.printJSON(this._codec.transactionToJSON(assetSchema, transactionObject));
 		} else {
 			this.printJSON({
-				transaction: this._codec
-					.encodeTransaction(assetSchema, transactionObject),
+				transaction: this._codec.encodeTransaction(assetSchema, transactionObject),
 			});
 		}
 	}

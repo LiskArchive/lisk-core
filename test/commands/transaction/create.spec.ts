@@ -25,10 +25,13 @@ import * as readerUtils from '../../../src/utils/reader';
 
 const transactionsAssets = {
 	8: transactions.TransferTransaction.ASSET_SCHEMA,
+	13: transactions.VoteTransaction.ASSET_SCHEMA,
 };
 const passphrase = 'peanut hundred pen hawk invite exclude brain chunk gadget wait wrong ready';
 const transferAsset =
 	'{"amount":100,"recipientAddress":"qwBBp9P3ssKQtbg01Gvce364WBU=","data":"send token"}';
+const voteAsset =
+	'{"votes":[{"delegateAddress":"qwBBp9P3ssKQtbg01Gvce364WBU=","amount":100},{"delegateAddress":"qwBBp9P3ssKQtbg01Gvce364WBU=","amount":-50}]}';
 const { publicKey } = cryptography.getAddressAndPublicKeyFromPassphrase(passphrase);
 const senderPublickey = publicKey.toString('base64');
 
@@ -37,13 +40,11 @@ describe('transaction:create command', () => {
 	const printJSONStub = sandbox.stub();
 	const ipcInvokeStub = sandbox.stub();
 	const ipcStartAndListenStub = sandbox.stub();
-	const promptAssetStub = sandbox
-		.stub()
-		.resolves({
-			amount: 100,
-			recipientAddress: 'qwBBp9P3ssKQtbg01Gvce364WBU=',
-			data: 'send token',
-		});
+	const promptAssetStub = sandbox.stub().resolves({
+		amount: 100,
+		recipientAddress: 'qwBBp9P3ssKQtbg01Gvce364WBU=',
+		data: 'send token',
+	});
 
 	ipcInvokeStub.withArgs('app:getSchema').resolves({
 		baseTransaction: transactions.BaseTransaction.BASE_SCHEMA,
@@ -196,6 +197,46 @@ describe('transaction:create command', () => {
 					});
 				});
 		});
+
+		describe(`transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 8 --asset=${voteAsset} --passphrase=${passphrase}`, () => {
+			setupTest()
+				.command([
+					'transaction:create',
+					'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=',
+					'100000000',
+					'2',
+					'13',
+					`--asset=${voteAsset}`,
+					`--passphrase=${passphrase}`,
+				])
+				.it('should return encoded transaction string in base64 format with signature', () => {
+					expect(printJSONStub).to.be.calledOnce;
+					expect(printJSONStub).to.be.calledWithExactly({
+						transaction:
+							'CA0QAhiAwtcvIiAP6aPxohtVMPJ/h6QUtUnnmpQL8k/fKy8F5/Iq7uzIaio1ChkKFKsAQafT97LCkLW4NNRr3Ht+uFgVEMgBChgKFKsAQafT97LCkLW4NNRr3Ht+uFgVEGMyQGXYV+1Eua7EMUHG5W5HjrfIQxYd2VLC/nsnC2tSKfeE8pKSzzr0lqr9fwwHbLdDBOS2rr8QC7r0NOitdQn6wQw=',
+					});
+				});
+		});
+
+		describe(`transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 8 --asset=${voteAsset} --passphrase=${passphrase}`, () => {
+			setupTest()
+				.command([
+					'transaction:create',
+					'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=',
+					'100000000',
+					'2',
+					'13',
+					`--asset=${voteAsset}`,
+					`--passphrase=${passphrase}`,
+				])
+				.it('should return encoded transaction string in base64 format with signature', () => {
+					expect(printJSONStub).to.be.calledOnce;
+					expect(printJSONStub).to.be.calledWithExactly({
+						transaction:
+							'CA0QAhiAwtcvIiAP6aPxohtVMPJ/h6QUtUnnmpQL8k/fKy8F5/Iq7uzIaio1ChkKFKsAQafT97LCkLW4NNRr3Ht+uFgVEMgBChgKFKsAQafT97LCkLW4NNRr3Ht+uFgVEGMyQGXYV+1Eua7EMUHG5W5HjrfIQxYd2VLC/nsnC2tSKfeE8pKSzzr0lqr9fwwHbLdDBOS2rr8QC7r0NOitdQn6wQw=',
+					});
+				});
+		});
 	});
 
 	describe('transaction:create with prompts and flags', () => {
@@ -280,9 +321,9 @@ describe('transaction:create command', () => {
 							fee: '100000000',
 							senderPublicKey: 'D+mj8aIbVTDyf4ekFLVJ55qUC/JP3ysvBefyKu7syGo=',
 							asset: {
-								amount: "100",
-								data: "send token",
-								recipientAddress: "qwBBp9P3ssKQtbg01Gvce364WBU="
+								amount: '100',
+								data: 'send token',
+								recipientAddress: 'qwBBp9P3ssKQtbg01Gvce364WBU=',
 							},
 							signatures: [],
 						});
@@ -310,9 +351,9 @@ describe('transaction:create command', () => {
 						fee: '100000000',
 						senderPublicKey: 'D+mj8aIbVTDyf4ekFLVJ55qUC/JP3ysvBefyKu7syGo=',
 						asset: {
-							amount: "100",
-							data: "send token",
-							recipientAddress: "qwBBp9P3ssKQtbg01Gvce364WBU="
+							amount: '100',
+							data: 'send token',
+							recipientAddress: 'qwBBp9P3ssKQtbg01Gvce364WBU=',
 						},
 						signatures: [
 							'hxRCH+EoCnq1BQXU+IIzA3cZqrHwgV4oaJxe/5zZxV9DmAF7SF8RtCyYIBdSsVfMYR8OX82tt23og+OuQkeaAw==',

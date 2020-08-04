@@ -120,7 +120,10 @@ const getNestedPropertyTemplate = (schema: Schema): NestedPropertyTemplate => {
 const castValue = (strVal: string): number | string =>
 	Number.isInteger(Number(strVal)) ? Number(strVal) : strVal;
 
-export const transformAsset = (data: Record<string, string>, schema: Schema): Record<string, string> => {
+export const transformAsset = (
+	schema: Schema,
+	data: Record<string, string>,
+): Record<string, string> => {
 	const propertySchema = Object.values(schema.properties);
 
 	return Object.entries(data).reduce((acc, curr, index) => {
@@ -132,7 +135,10 @@ export const transformAsset = (data: Record<string, string>, schema: Schema): Re
 	}, {});
 };
 
-export const transformNestedAsset = (data: Array<Record<string, string>>, schema: Schema): NestedAsset => {
+export const transformNestedAsset = (
+	schema: Schema,
+	data: Array<Record<string, string>>,
+): NestedAsset => {
 	const template = getNestedPropertyTemplate(schema);
 	const result = {};
 	const items: Array<Record<string, string>> = [];
@@ -153,9 +159,7 @@ export const prepareQuestions = (schema: Schema): Question[] => {
 	const keyValEntries = Object.entries(schema.properties);
 	const questions: Question[] = [];
 
-	// eslint-disable-next-line @typescript-eslint/prefer-for-of
-	for (let i = 0; i < keyValEntries.length; i += 1) {
-		const [schemaPropertyName, schemaPropertyValue] = keyValEntries[i];
+	for (const [schemaPropertyName, schemaPropertyValue] of keyValEntries) {
 		if ((schemaPropertyValue as PropertyValue).type === 'array') {
 			let commaSeparatedKeys: string[] = [];
 			// nested items properties
@@ -189,7 +193,7 @@ export const prepareQuestions = (schema: Schema): Question[] => {
 
 export const getAssetFromPrompt = async (
 	assetSchema: Schema,
-	output: Array<{ [key: string]: string }>,
+	output: Array<{ [key: string]: string }> = [],
 ): Promise<NestedAsset | Record<string, unknown>> => {
 	// prepare array of questions based on asset schema
 	const questions = prepareQuestions(assetSchema);
@@ -209,6 +213,6 @@ export const getAssetFromPrompt = async (
 
 	// transform asset prompt result according to asset schema
 	return isTypeConfirm
-		? transformNestedAsset(filteredResult, assetSchema)
-		: transformAsset(result, assetSchema);
+		? transformNestedAsset(assetSchema, filteredResult)
+		: transformAsset(assetSchema, result);
 };

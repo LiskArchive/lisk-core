@@ -56,7 +56,6 @@ export interface Codec {
 		assetSchema: Schema,
 		transactionObject: Record<string, unknown>,
 	) => Record<string, unknown>;
-
 }
 
 const prettyDescription = 'Prints JSON in pretty format rather than condensed.';
@@ -212,10 +211,7 @@ export default abstract class BaseIPCCommand extends Command {
 				assetSchema: Schema,
 				transactionObject: Record<string, unknown>,
 			): Record<string, unknown> => {
-				const assetJSON = codec.toJSON(
-					assetSchema,
-					transactionObject.asset as object,
-				);
+				const assetJSON = codec.toJSON(assetSchema, transactionObject.asset as object);
 
 				const transactionJSON = codec.toJSON(this._schema.baseTransaction, {
 					...transactionObject,
@@ -225,13 +221,13 @@ export default abstract class BaseIPCCommand extends Command {
 				return {
 					...transactionJSON,
 					asset: assetJSON,
-				}
+				};
 			},
-			encodeTransaction: (assetSchema: Schema, transactionObject: Record<string, unknown>): string => {
-				const assetBuffer = codec.encode(
-					assetSchema,
-					transactionObject.asset as object,
-				);
+			encodeTransaction: (
+				assetSchema: Schema,
+				transactionObject: Record<string, unknown>,
+			): string => {
+				const assetBuffer = codec.encode(assetSchema, transactionObject.asset as object);
 
 				const transactionBuffer = codec.encode(this._schema.baseTransaction, {
 					...transactionObject,
