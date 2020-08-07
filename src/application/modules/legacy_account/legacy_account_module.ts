@@ -26,11 +26,10 @@ export class LegacyAccountModule extends BaseModule {
 		reducerHandler,
 		stateStore,
 	}: AfterGenesisBlockApplyInput): Promise<void> {
-		// Save unregistered addresses to state store
 		const { accounts } = genesisBlock.header.asset;
-		const unregisteredAddresses = accounts
-			.filter(a => a.address.length !== 20)
-			.map(({ address }) => ({ address }));
+		// New address is 20-byte value specified in LIP 0018 if the account has a registered public key.
+		// Otherwise, it is the 8-byte value of the legacy address.
+		const unregisteredAddresses = accounts.filter(a => a.address.length !== 20);
 		const unregisteredAddressesWithBalance = await Promise.all(
 			unregisteredAddresses.map(async ({ address }) => {
 				const balance = await reducerHandler.invoke<bigint>('token:getBalance', { address });
@@ -40,6 +39,7 @@ export class LegacyAccountModule extends BaseModule {
 		const encodedUnregisteredAddresses = codec.encode(unregisteredAddressesSchema, {
 			unregisteredAddresses: unregisteredAddressesWithBalance,
 		});
+
 		stateStore.chain.set(CHAIN_STATE_UNREGISTERED_ADDRESSES, encodedUnregisteredAddresses);
 	}
 }
