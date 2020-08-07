@@ -12,5 +12,5 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-export * from './reclaim_asset';
+export * from './transaction_assets/reclaim_asset';
 export * from './legacy_account_module';

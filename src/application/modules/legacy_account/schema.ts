@@ -26,14 +26,27 @@ export const unregisteredAddressesSchema = {
 						dataType: 'bytes',
 						fieldNumber: 1,
 					},
-					amount: {
+					balance: {
 						dataType: 'uint64',
 						fieldNumber: 2,
 					},
 				},
-				required: ['address', 'amount'],
+				required: ['address', 'balance'],
 			},
 		},
 	},
 	required: ['unregisteredAddresses'],
+};
+
+export const reclaimAssetSchema = {
+	$id: 'lisk/legacyAccount/reclaim',
+	title: 'Reclaim transaction asset',
+	type: 'object',
+	required: ['amount'],
+	properties: {
+		amount: {
+			dataType: 'uint64',
+			fieldNumber: 1,
+		},
+	},
 };

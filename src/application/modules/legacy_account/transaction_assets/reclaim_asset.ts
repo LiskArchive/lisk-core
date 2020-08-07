@@ -13,33 +13,26 @@
  */
 
 import { ApplyAssetInput, BaseAsset, codec, cryptography } from 'lisk-sdk';
-import { CHAIN_STATE_UNREGISTERED_ADDRESSES } from './constants';
-import { unregisteredAddressesSchema } from './schema';
+import { CHAIN_STATE_UNREGISTERED_ADDRESSES } from '../constants';
+import { reclaimAssetSchema, unregisteredAddressesSchema } from '../schema';
 
 interface Asset {
 	readonly amount: bigint;
 }
 
-export interface UnregisteredAddresses {
+interface UnregisteredAccount {
 	readonly address: Buffer;
-	readonly amount: bigint;
+	readonly balance: bigint;
+}
+
+interface UnregisteredAddresses {
+	readonly unregisteredAddresses: UnregisteredAccount[];
 }
 
 export class ReclaimAsset extends BaseAsset<Asset> {
 	public name = 'reclaim';
 	public type = 0;
-	public assetSchema = {
-		$id: 'lisk/legacyAccount/reclaim',
-		title: 'Reclaim transaction asset',
-		type: 'object',
-		required: ['amount'],
-		properties: {
-			amount: {
-				dataType: 'uint64',
-				fieldNumber: 1,
-			},
-		},
-	};
+	public assetSchema = reclaimAssetSchema;
 
 	// eslint-disable-next-line class-methods-use-this
 	public async applyAsset({
@@ -55,7 +48,7 @@ export class ReclaimAsset extends BaseAsset<Asset> {
 		if (!encodedUnregisteredAddresses) {
 			throw new Error('Chain state does not contain any unregistered addresses');
 		}
-		const unregisteredAddresses = codec.decode<UnregisteredAddresses[]>(
+		const { unregisteredAddresses } = codec.decode<UnregisteredAddresses>(
 			unregisteredAddressesSchema,
 			encodedUnregisteredAddresses,
 		);
@@ -69,15 +62,20 @@ export class ReclaimAsset extends BaseAsset<Asset> {
 				'Legacy address corresponding to sender publickey was not found genesis account state',
 			);
 		}
-		if (asset.amount !== addressWithoutPublickey.amount) {
+		if (asset.amount !== addressWithoutPublickey.balance) {
 			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-			throw new Error(`Invalid amount:${asset.amount} claimed by the sender: ${senderPublicKey}`);
+			throw new Error(
+				`Invalid amount:${
+					asset.amount
+				} claimed by the sender: ${addressWithoutPublickey.address.toString('base64')}`,
+			);
 		}
 		const newAddress = cryptography.getAddressFromPublicKey(senderPublicKey);
-		const reclaimAccount = await stateStore.account.getOrDefault(newAddress);
-		await reducerHandler.invoke(
-			'token:credit',
-			(reclaimAccount as unknown) as Record<string, unknown>,
-		);
+		const { address } = await stateStore.account.get(newAddress);
+
+		await reducerHandler.invoke('token:credit', {
+			address,
+			amount: addressWithoutPublickey.balance,
+		});
 	}
 }
