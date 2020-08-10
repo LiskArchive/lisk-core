@@ -17,7 +17,7 @@ import { expect } from 'chai';
 import * as sandbox from 'sinon';
 import { ApplyAssetInput, cryptography, codec } from 'lisk-sdk';
 import { testing } from '@liskhq/lisk-utils';
-import { ReclaimAsset } from '../../../../src/application/modules';
+import { ReclaimAsset, getLegacyBytes } from '../../../../src/application/modules';
 import {
 	reclaimAssetSchema,
 	unregisteredAddressesSchema,
@@ -46,8 +46,6 @@ describe('ReclaimAsset', () => {
 		});
 	};
 	const balanceToClaim = BigInt(100000000000);
-	const getAddressBuffer = (publicKey: Buffer) =>
-		Buffer.from(cryptography.getLegacyAddressFromPublicKey(publicKey), 'base64');
 
 	beforeEach(() => {
 		defaultAccount = createAccount();
@@ -55,7 +53,7 @@ describe('ReclaimAsset', () => {
 		reclaimAsset = new ReclaimAsset();
 
 		const unregisteredAddresses = [
-			{ address: getAddressBuffer(defaultAccount.publicKey), balance: balanceToClaim },
+			{ address: getLegacyBytes(defaultAccount.publicKey), balance: balanceToClaim },
 		];
 
 		chainMockData[CHAIN_STATE_UNREGISTERED_ADDRESSES] = encodeUnregisteredAddresses(
@@ -102,7 +100,7 @@ describe('ReclaimAsset', () => {
 
 		it('should throw error when reclaim senderPublickey corresponding address is not found in unregistered address', () => {
 			const unregisteredAddresses = [
-				{ address: getAddressBuffer(randomPublicKey), balance: balanceToClaim },
+				{ address: getLegacyBytes(randomPublicKey), balance: balanceToClaim },
 			];
 			chainMockData[CHAIN_STATE_UNREGISTERED_ADDRESSES] = encodeUnregisteredAddresses(
 				unregisteredAddresses,
@@ -119,7 +117,7 @@ describe('ReclaimAsset', () => {
 
 		it('should throw error when reclaim amount does not match unregistered address amount', () => {
 			const unregisteredAddresses = [
-				{ address: getAddressBuffer(defaultAccount.publicKey), amount: BigInt(500000000000) },
+				{ address: getLegacyBytes(defaultAccount.publicKey), amount: BigInt(500000000000) },
 			];
 			chainMockData[CHAIN_STATE_UNREGISTERED_ADDRESSES] = encodeUnregisteredAddresses(
 				unregisteredAddresses,
@@ -142,6 +140,15 @@ describe('ReclaimAsset', () => {
 				address: newAddress,
 				amount: balanceToClaim,
 			});
+			expect(reclaimAssetInput.stateStore.chain.get(CHAIN_STATE_UNREGISTERED_ADDRESSES)).to.be.empty;
+		});
+
+		it('should fail to reclaim twice for same account', async () => {
+			await reclaimAsset.applyAsset(reclaimAssetInput);
+			expect(reclaimAsset.applyAsset(reclaimAssetInput)).to.rejectedWith(
+				'Legacy address corresponding to sender publickey was not found genesis account state',
+			);
+			expect(reclaimAssetInput.stateStore.chain.get(CHAIN_STATE_UNREGISTERED_ADDRESSES)).to.be.empty;
 		});
 	});
 });

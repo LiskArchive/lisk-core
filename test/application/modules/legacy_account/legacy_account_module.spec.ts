@@ -15,35 +15,44 @@
 
 import { expect } from 'chai';
 import * as sandbox from 'sinon';
-import { AfterGenesisBlockApplyInput, cryptography, GenesisConfig, codec } from 'lisk-sdk';
+import { AfterGenesisBlockApplyInput, GenesisConfig, codec } from 'lisk-sdk';
 import { testing } from '@liskhq/lisk-utils';
-import { LegacyAccountModule } from '../../../../src/application/modules';
+import { LegacyAccountModule, getLegacyBytes } from '../../../../src/application/modules';
 import { createAccount, createFakeDefaultAccount } from '../../../utils/account';
 import { unregisteredAddressesSchema } from '../../../../src/application/modules/legacy_account/schema';
 import { CHAIN_STATE_UNREGISTERED_ADDRESSES } from '../../../../src/application/modules/legacy_account/constants';
 
 describe('LegacyAccountModule', () => {
-	let defaultAccount;
+	let defaultAccount1;
+	let defaultAccount2;
+	let defaultAccount3;
 	let legacyAccountModule: LegacyAccountModule;
 	let afterGenesisBlockApplyInput: AfterGenesisBlockApplyInput;
-	let sender;
+	let legacyAccount1;
+	let legacyAccount2;
+	let newAccount;
 	const legacyBalance = BigInt(100000000000);
 	const reducerHandlerStub = {
 		invoke: sandbox.stub().resolves(legacyBalance),
 	};
-	const getLegacyAddressBuffer = (publicKey: Buffer) =>
-		Buffer.from(cryptography.getLegacyAddressFromPublicKey(publicKey), 'base64');
 
 	beforeEach(() => {
-		defaultAccount = createAccount();
-		sender = createFakeDefaultAccount(defaultAccount);
+		[defaultAccount1, defaultAccount2, defaultAccount3] = [
+			createAccount(),
+			createAccount(),
+			createAccount(),
+		];
+		legacyAccount1 = createFakeDefaultAccount(defaultAccount1);
+		legacyAccount2 = createFakeDefaultAccount(defaultAccount2);
+		newAccount = createFakeDefaultAccount(defaultAccount3);
 		// assign legacy address
-		sender.address = getLegacyAddressBuffer(defaultAccount.publicKey);
+		legacyAccount1.address = getLegacyBytes(defaultAccount1.publicKey);
+		legacyAccount2.address = getLegacyBytes(defaultAccount2.publicKey);
 
 		const genesisBlock = {
 			header: {
 				asset: {
-					accounts: [sender],
+					accounts: [legacyAccount1, legacyAccount2, newAccount],
 				},
 			},
 		};
@@ -53,7 +62,7 @@ describe('LegacyAccountModule', () => {
 		afterGenesisBlockApplyInput = {
 			genesisBlock,
 			reducerHandler: reducerHandlerStub,
-			stateStore: new testing.StateStoreMock({ accounts: [sender] }),
+			stateStore: new testing.StateStoreMock({ accounts: [legacyAccount1, legacyAccount2] }),
 		} as any;
 	});
 
@@ -75,10 +84,14 @@ describe('LegacyAccountModule', () => {
 		it('should invoke token:getBalance for each account', async () => {
 			await legacyAccountModule.afterGenesisBlockApply(afterGenesisBlockApplyInput);
 
-			const oldAddress = getLegacyAddressBuffer(defaultAccount.publicKey);
-			expect(reducerHandlerStub.invoke).to.be.calledOnce;
-			expect(reducerHandlerStub.invoke).to.be.calledOnceWithExactly('token:getBalance', {
-				address: oldAddress,
+			const oldAddress1 = getLegacyBytes(defaultAccount1.publicKey);
+			const oldAddress2 = getLegacyBytes(defaultAccount2.publicKey);
+			expect(reducerHandlerStub.invoke).to.be.calledTwice;
+			expect(reducerHandlerStub.invoke).to.be.calledWithExactly('token:getBalance', {
+				address: oldAddress1,
+			});
+			expect(reducerHandlerStub.invoke).to.be.calledWithExactly('token:getBalance', {
+				address: oldAddress2,
 			});
 		});
 
@@ -88,7 +101,11 @@ describe('LegacyAccountModule', () => {
 			const encodedUnregisteredAddresses = codec.encode(unregisteredAddressesSchema, {
 				unregisteredAddresses: [
 					{
-						address: getLegacyAddressBuffer(defaultAccount.publicKey),
+						address: getLegacyBytes(defaultAccount1.publicKey),
+						balance: legacyBalance,
+					},
+					{
+						address: getLegacyBytes(defaultAccount2.publicKey),
 						balance: legacyBalance,
 					},
 				],
@@ -97,7 +114,7 @@ describe('LegacyAccountModule', () => {
 			const savedResult = await afterGenesisBlockApplyInput.stateStore.chain.get(
 				CHAIN_STATE_UNREGISTERED_ADDRESSES,
 			);
-			expect(encodedUnregisteredAddresses.equals(savedResult as Buffer)).to.be.true;
+			expect(encodedUnregisteredAddresses).to.deep.equal(savedResult);
 		});
 	});
 });

@@ -29,7 +29,7 @@ export class LegacyAccountModule extends BaseModule {
 		const { accounts } = genesisBlock.header.asset;
 		// New address is 20-byte value specified in LIP 0018 if the account has a registered public key.
 		// Otherwise, it is the 8-byte value of the legacy address.
-		const unregisteredAddresses = accounts.filter(a => a.address.length !== 20);
+		const unregisteredAddresses = accounts.filter(account => account.address.length !== 20);
 		const unregisteredAddressesWithBalance = await Promise.all(
 			unregisteredAddresses.map(async ({ address }) => {
 				const balance = await reducerHandler.invoke<bigint>('token:getBalance', { address });

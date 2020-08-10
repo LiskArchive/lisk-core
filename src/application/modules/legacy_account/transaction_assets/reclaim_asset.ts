@@ -29,6 +29,9 @@ interface UnregisteredAddresses {
 	readonly unregisteredAddresses: UnregisteredAccount[];
 }
 
+export const getLegacyBytes = (publicKey: string | Buffer): Buffer =>
+	cryptography.getFirstEightBytesReversed(cryptography.hash(publicKey));
+
 export class ReclaimAsset extends BaseAsset<Asset> {
 	public name = 'reclaim';
 	public type = 0;
@@ -52,9 +55,9 @@ export class ReclaimAsset extends BaseAsset<Asset> {
 			unregisteredAddressesSchema,
 			encodedUnregisteredAddresses,
 		);
-		const legacyAddress = cryptography.getLegacyAddressFromPublicKey(senderPublicKey);
+		const legacyAddress = getLegacyBytes(senderPublicKey);
 		const addressWithoutPublickey = unregisteredAddresses.find(a =>
-			a.address.equals(Buffer.from(legacyAddress, 'base64')),
+			a.address.equals(legacyAddress),
 		);
 
 		if (!addressWithoutPublickey) {
@@ -77,5 +80,15 @@ export class ReclaimAsset extends BaseAsset<Asset> {
 			address,
 			amount: addressWithoutPublickey.balance,
 		});
+
+		const excludedClaimedAccount = unregisteredAddresses.filter(
+			account => !account.address.equals(addressWithoutPublickey.address),
+		);
+		stateStore.chain.set(
+			CHAIN_STATE_UNREGISTERED_ADDRESSES,
+			codec.encode(unregisteredAddressesSchema, {
+				unregisteredAddresses: excludedClaimedAccount,
+			}),
+		);
 	}
 }
