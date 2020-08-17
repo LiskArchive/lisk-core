@@ -17,39 +17,22 @@ import { expect, test } from '@oclif/test';
 import * as sandbox from 'sinon';
 import * as fs from 'fs-extra';
 import { join } from 'path';
-import { IPCChannel, transactions } from 'lisk-sdk';
+import { IPCChannel, transactionSchema } from 'lisk-sdk';
 
 import * as appUtils from '../../../src/utils/application';
-import { createTransferTransaction, encodeTransactionFromJSON } from '../../utils/transactions';
+import {
+	createTransferTransaction,
+	encodeTransactionFromJSON,
+	tokenTransferAssetSchema,
+} from '../../utils/transactions';
 
-const transferAssetSchema = {
-	$id: 'lisk/transfer-transaction',
-	title: 'Transfer transaction asset',
-	type: 'object',
-	required: ['amount', 'recipientAddress', 'data'],
-	properties: {
-		amount: {
-			dataType: 'uint64',
-			fieldNumber: 1,
-		},
-		recipientAddress: {
-			dataType: 'bytes',
-			fieldNumber: 2,
-			minLength: 20,
-			maxLength: 20,
-		},
-		data: {
-			dataType: 'string',
-			fieldNumber: 3,
-			minLength: 0,
-			maxLength: 64,
-		},
+const transactionsAssetSchemas = [
+	{
+		moduleType: 2,
+		assetType: 0,
+		schema: tokenTransferAssetSchema,
 	},
-};
-
-const transactionsAssets = {
-	8: transferAssetSchema,
-};
+];
 
 describe('transaction:send command', () => {
 	const { id: transactionId, ...transferTransaction } = createTransferTransaction({
@@ -60,8 +43,8 @@ describe('transaction:send command', () => {
 	});
 	const encodedTransaction = encodeTransactionFromJSON(
 		transferTransaction as any,
-		transactions.BaseTransaction.BASE_SCHEMA,
-		transactionsAssets,
+		transactionSchema,
+		transactionsAssetSchemas,
 	);
 	const fsStub = sandbox.stub().returns(true);
 	const printJSONStub = sandbox.stub();
@@ -69,8 +52,8 @@ describe('transaction:send command', () => {
 	const pathToAppPIDFiles = join(__dirname, 'fake_test_app');
 	const ipcStartAndListenStub = sandbox.stub();
 	ipcInvokeStub.withArgs('app:getSchema').resolves({
-		baseTransaction: transactions.BaseTransaction.BASE_SCHEMA,
-		transactionsAssets,
+		transactionSchema,
+		transactionsAssetSchemas,
 	});
 
 	afterEach(() => {
@@ -131,7 +114,9 @@ describe('transaction:send command', () => {
 				expect(ipcInvokeStub).to.have.been.calledWithExactly('app:postTransaction', {
 					transaction: encodedTransaction,
 				});
-				expect(out.stdout).to.contain(`Transaction with id: '${transactionId}' received by node`);
+				expect(out.stdout).to.contain(
+					`Transaction with id: '${transactionId as string}' received by node`,
+				);
 			});
 	});
 

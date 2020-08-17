@@ -140,7 +140,8 @@ describe('ReclaimAsset', () => {
 				address: newAddress,
 				amount: balanceToClaim,
 			});
-			expect(reclaimAssetInput.stateStore.chain.get(CHAIN_STATE_UNREGISTERED_ADDRESSES)).to.be.empty;
+			expect(reclaimAssetInput.stateStore.chain.get(CHAIN_STATE_UNREGISTERED_ADDRESSES)).to.be
+				.empty;
 		});
 
 		it('should fail to reclaim twice for same account', async () => {
@@ -148,7 +149,8 @@ describe('ReclaimAsset', () => {
 			expect(reclaimAsset.applyAsset(reclaimAssetInput)).to.rejectedWith(
 				'Legacy address corresponding to sender publickey was not found genesis account state',
 			);
-			expect(reclaimAssetInput.stateStore.chain.get(CHAIN_STATE_UNREGISTERED_ADDRESSES)).to.be.empty;
+			expect(reclaimAssetInput.stateStore.chain.get(CHAIN_STATE_UNREGISTERED_ADDRESSES)).to.be
+				.empty;
 		});
 	});
 });

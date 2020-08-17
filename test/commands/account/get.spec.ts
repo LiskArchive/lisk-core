@@ -32,7 +32,7 @@ describe('account:get command', () => {
 	ipcInvokeStub
 		.withArgs('app:getSchema')
 		.resolves({
-			account: {
+			accountSchema: {
 				$id: 'dummy',
 				type: 'object',
 				properties: { address: { dataType: 'bytes' } },

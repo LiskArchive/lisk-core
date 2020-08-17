@@ -11,12 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import {
-	Application,
-	ApplicationConfig,
-	HTTPAPIPlugin,
-	ForgerPlugin,
-} from 'lisk-sdk';
+import { Application, ApplicationConfig, HTTPAPIPlugin, ForgerPlugin } from 'lisk-sdk';
 
 export interface Options {
 	enableHTTPAPI: boolean;

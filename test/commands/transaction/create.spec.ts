@@ -17,16 +17,25 @@ import { expect, test } from '@oclif/test';
 import * as sandbox from 'sinon';
 import * as fs from 'fs-extra';
 import * as inquirer from 'inquirer';
-import { cryptography, IPCChannel, transactions } from 'lisk-sdk';
+import { cryptography, IPCChannel, transactionSchema } from 'lisk-sdk';
 
 import baseIPC from '../../../src/base_ipc';
 import * as appUtils from '../../../src/utils/application';
 import * as readerUtils from '../../../src/utils/reader';
+import { dposVoteAssetSchema, tokenTransferAssetSchema } from '../../utils/transactions';
 
-const transactionsAssets = {
-	8: transactions.TransferTransaction.ASSET_SCHEMA,
-	13: transactions.VoteTransaction.ASSET_SCHEMA,
-};
+const transactionsAssetSchemas = [
+	{
+		moduleType: 2,
+		assetType: 0,
+		schema: tokenTransferAssetSchema,
+	},
+	{
+		moduleType: 5,
+		assetType: 1,
+		schema: dposVoteAssetSchema,
+	},
+];
 const passphrase = 'peanut hundred pen hawk invite exclude brain chunk gadget wait wrong ready';
 const transferAsset =
 	'{"amount":100,"recipientAddress":"qwBBp9P3ssKQtbg01Gvce364WBU=","data":"send token"}';
@@ -47,8 +56,8 @@ describe('transaction:create command', () => {
 	});
 
 	ipcInvokeStub.withArgs('app:getSchema').resolves({
-		baseTransaction: transactions.BaseTransaction.BASE_SCHEMA,
-		transactionsAssets,
+		transactionSchema,
+		transactionsAssetSchemas,
 	});
 
 	afterEach(() => {
@@ -73,21 +82,21 @@ describe('transaction:create command', () => {
 	describe('transaction:create', () => {
 		setupTest()
 			.command(['transaction:create'])
-			.catch((error: Error) => expect(error.message).to.contain('Missing 4 required args:'))
+			.catch((error: Error) => expect(error.message).to.contain('Missing 5 required args:'))
 			.it('should throw an error when no arguments are provided.');
 	});
 
 	describe('transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=', () => {
 		setupTest()
 			.command(['transaction:create', 'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM='])
-			.catch((error: Error) => expect(error.message).to.contain('Missing 3 required args:'))
+			.catch((error: Error) => expect(error.message).to.contain('Missing 4 required args:'))
 			.it('should throw an error when fee, nonce and transaction type are provided.');
 	});
 
 	describe('transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000', () => {
 		setupTest()
 			.command(['transaction:create', 'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=', '100000000'])
-			.catch((error: Error) => expect(error.message).to.contain('Missing 2 required args:'))
+			.catch((error: Error) => expect(error.message).to.contain('Missing 3 required args:'))
 			.it('should throw an error when nonce and transaction type are provided.');
 	});
 
@@ -99,11 +108,24 @@ describe('transaction:create command', () => {
 				'100000000',
 				'2',
 			])
-			.catch((error: Error) => expect(error.message).to.contain('Missing 1 required arg:'))
-			.it('should throw an error when transaction type are provided.');
+			.catch((error: Error) => expect(error.message).to.contain('Missing 2 required args:'))
+			.it('should throw an error when transaction moduleType and assetTYpe are provided.');
 	});
 
-	describe('transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 99999', () => {
+	describe('transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 2', () => {
+		setupTest()
+			.command([
+				'transaction:create',
+				'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=',
+				'100000000',
+				'2',
+				'2',
+			])
+			.catch((error: Error) => expect(error.message).to.contain('Missing 1 required arg:'))
+			.it('should throw an error when transaction assetType is not provided.');
+	});
+
+	describe('transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 99999 0', () => {
 		setupTest()
 			.command([
 				'transaction:create',
@@ -111,10 +133,11 @@ describe('transaction:create command', () => {
 				'100000000',
 				'2',
 				'99999',
+				'0',
 			])
 			.catch((error: Error) =>
 				expect(error.message).to.contain(
-					'Transaction type:99999 is not registered in the application',
+					'Transaction moduleType:99999 with assetType:0 is not registered in the application',
 				),
 			)
 			.it('should throw an error when transaction type is unknown.');
@@ -128,7 +151,8 @@ describe('transaction:create command', () => {
 					'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=',
 					'100000000',
 					'2',
-					'8',
+					'2',
+					'0',
 					'--asset={"amount": "abc"}',
 					`--passphrase=${passphrase}`,
 				])
@@ -143,7 +167,8 @@ describe('transaction:create command', () => {
 					'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=',
 					'100000000',
 					'2',
-					'8',
+					'2',
+					'0',
 					`--asset=${transferAsset}`,
 					'--no-signature',
 				])
@@ -164,7 +189,8 @@ describe('transaction:create command', () => {
 					'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=',
 					'100000000',
 					'2',
-					'8',
+					'2',
+					'0',
 					`--asset=${transferAsset}`,
 					`--passphrase=${passphrase}`,
 				])
@@ -172,7 +198,7 @@ describe('transaction:create command', () => {
 					expect(printJSONStub).to.be.calledOnce;
 					expect(printJSONStub).to.be.calledWithExactly({
 						transaction:
-							'CAgQAhiAwtcvIiAP6aPxohtVMPJ/h6QUtUnnmpQL8k/fKy8F5/Iq7uzIaiokCGQSFKsAQafT97LCkLW4NNRr3Ht+uFgVGgpzZW5kIHRva2VuMkCHFEIf4SgKerUFBdT4gjMDdxmqsfCBXihonF7/nNnFX0OYAXtIXxG0LJggF1KxV8xhHw5fza23beiD465CR5oD',
+							'CAIQABgCIIDC1y8qIA/po/GiG1Uw8n+HpBS1SeealAvyT98rLwXn8iru7MhqMiQIZBIUqwBBp9P3ssKQtbg01Gvce364WBUaCnNlbmQgdG9rZW46QK7OrO4MyS1cs13ExJI3xU0Im2EnOt6c/V3KU4zL9XfN9RNhggX2dXECqhzZlY+5Te+N9VNr2ZNoa0rr9OI/CA8=',
 					});
 				});
 		});
@@ -184,7 +210,8 @@ describe('transaction:create command', () => {
 					'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=',
 					'100000000',
 					'2',
-					'8',
+					'2',
+					'0',
 					`--asset=${transferAsset}`,
 					'--no-signature',
 					`--sender-publickey=${senderPublickey}`,
@@ -193,19 +220,20 @@ describe('transaction:create command', () => {
 					expect(printJSONStub).to.be.calledOnce;
 					expect(printJSONStub).to.be.calledWithExactly({
 						transaction:
-							'CAgQAhiAwtcvIiAP6aPxohtVMPJ/h6QUtUnnmpQL8k/fKy8F5/Iq7uzIaiokCGQSFKsAQafT97LCkLW4NNRr3Ht+uFgVGgpzZW5kIHRva2Vu',
+							'CAIQABgCIIDC1y8qIA/po/GiG1Uw8n+HpBS1SeealAvyT98rLwXn8iru7MhqMiQIZBIUqwBBp9P3ssKQtbg01Gvce364WBUaCnNlbmQgdG9rZW4=',
 					});
 				});
 		});
 
-		describe(`transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 8 --asset=${voteAsset} --passphrase=${passphrase}`, () => {
+		describe(`transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 5 1 --asset=${voteAsset} --passphrase=${passphrase}`, () => {
 			setupTest()
 				.command([
 					'transaction:create',
 					'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=',
 					'100000000',
 					'2',
-					'13',
+					'5',
+					'1',
 					`--asset=${voteAsset}`,
 					`--passphrase=${passphrase}`,
 				])
@@ -213,19 +241,20 @@ describe('transaction:create command', () => {
 					expect(printJSONStub).to.be.calledOnce;
 					expect(printJSONStub).to.be.calledWithExactly({
 						transaction:
-							'CA0QAhiAwtcvIiAP6aPxohtVMPJ/h6QUtUnnmpQL8k/fKy8F5/Iq7uzIaio1ChkKFKsAQafT97LCkLW4NNRr3Ht+uFgVEMgBChgKFKsAQafT97LCkLW4NNRr3Ht+uFgVEGMyQGXYV+1Eua7EMUHG5W5HjrfIQxYd2VLC/nsnC2tSKfeE8pKSzzr0lqr9fwwHbLdDBOS2rr8QC7r0NOitdQn6wQw=',
+							'CAUQARgCIIDC1y8qIA/po/GiG1Uw8n+HpBS1SeealAvyT98rLwXn8iru7MhqMjUKGQoUqwBBp9P3ssKQtbg01Gvce364WBUQyAEKGAoUqwBBp9P3ssKQtbg01Gvce364WBUQYzpAe8iVOz1ZiYXPqr+UlXa4LTFFEc5q64G61dBsklU4uVPgxRYbX3yT+zIMUpRMQG7PXvYDi0S1eNIhSV9NNq5DDg==',
 					});
 				});
 		});
 
-		describe(`transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 8 --asset=${voteAsset} --passphrase=${passphrase}`, () => {
+		describe(`transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 5 1 --asset=${voteAsset} --passphrase=${passphrase}`, () => {
 			setupTest()
 				.command([
 					'transaction:create',
 					'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=',
 					'100000000',
 					'2',
-					'13',
+					'5',
+					'1',
 					`--asset=${voteAsset}`,
 					`--passphrase=${passphrase}`,
 				])
@@ -233,21 +262,22 @@ describe('transaction:create command', () => {
 					expect(printJSONStub).to.be.calledOnce;
 					expect(printJSONStub).to.be.calledWithExactly({
 						transaction:
-							'CA0QAhiAwtcvIiAP6aPxohtVMPJ/h6QUtUnnmpQL8k/fKy8F5/Iq7uzIaio1ChkKFKsAQafT97LCkLW4NNRr3Ht+uFgVEMgBChgKFKsAQafT97LCkLW4NNRr3Ht+uFgVEGMyQGXYV+1Eua7EMUHG5W5HjrfIQxYd2VLC/nsnC2tSKfeE8pKSzzr0lqr9fwwHbLdDBOS2rr8QC7r0NOitdQn6wQw=',
+							'CAUQARgCIIDC1y8qIA/po/GiG1Uw8n+HpBS1SeealAvyT98rLwXn8iru7MhqMjUKGQoUqwBBp9P3ssKQtbg01Gvce364WBUQyAEKGAoUqwBBp9P3ssKQtbg01Gvce364WBUQYzpAe8iVOz1ZiYXPqr+UlXa4LTFFEc5q64G61dBsklU4uVPgxRYbX3yT+zIMUpRMQG7PXvYDi0S1eNIhSV9NNq5DDg==',
 					});
 				});
 		});
 	});
 
 	describe('transaction:create with prompts and flags', () => {
-		describe(`transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 8 --passphrase=${passphrase}`, () => {
+		describe(`transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 2 0 --passphrase=${passphrase}`, () => {
 			setupTest()
 				.command([
 					'transaction:create',
 					'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=',
 					'100000000',
 					'2',
-					'8',
+					'2',
+					'0',
 					`--passphrase=${passphrase}`,
 				])
 				.it('should prompt user for asset.', () => {
@@ -264,19 +294,20 @@ describe('transaction:create command', () => {
 					expect(printJSONStub).to.be.calledOnce;
 					expect(printJSONStub).to.be.calledWithExactly({
 						transaction:
-							'CAgQAhiAwtcvIiAP6aPxohtVMPJ/h6QUtUnnmpQL8k/fKy8F5/Iq7uzIaiokCGQSFKsAQafT97LCkLW4NNRr3Ht+uFgVGgpzZW5kIHRva2VuMkCHFEIf4SgKerUFBdT4gjMDdxmqsfCBXihonF7/nNnFX0OYAXtIXxG0LJggF1KxV8xhHw5fza23beiD465CR5oD',
+							'CAIQABgCIIDC1y8qIA/po/GiG1Uw8n+HpBS1SeealAvyT98rLwXn8iru7MhqMiQIZBIUqwBBp9P3ssKQtbg01Gvce364WBUaCnNlbmQgdG9rZW46QK7OrO4MyS1cs13ExJI3xU0Im2EnOt6c/V3KU4zL9XfN9RNhggX2dXECqhzZlY+5Te+N9VNr2ZNoa0rr9OI/CA8=',
 					});
 				});
 		});
 
-		describe('transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 8', () => {
+		describe('transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 2 0', () => {
 			setupTest()
 				.command([
 					'transaction:create',
 					'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=',
 					'100000000',
 					'2',
-					'8',
+					'2',
+					'0',
 				])
 				.it('should prompt user for asset and passphrase.', () => {
 					expect(promptAssetStub).to.be.calledOnce;
@@ -293,19 +324,20 @@ describe('transaction:create command', () => {
 					expect(printJSONStub).to.be.calledOnce;
 					expect(printJSONStub).to.be.calledWithExactly({
 						transaction:
-							'CAgQAhiAwtcvIiAP6aPxohtVMPJ/h6QUtUnnmpQL8k/fKy8F5/Iq7uzIaiokCGQSFKsAQafT97LCkLW4NNRr3Ht+uFgVGgpzZW5kIHRva2VuMkCHFEIf4SgKerUFBdT4gjMDdxmqsfCBXihonF7/nNnFX0OYAXtIXxG0LJggF1KxV8xhHw5fza23beiD465CR5oD',
+							'CAIQABgCIIDC1y8qIA/po/GiG1Uw8n+HpBS1SeealAvyT98rLwXn8iru7MhqMiQIZBIUqwBBp9P3ssKQtbg01Gvce364WBUaCnNlbmQgdG9rZW46QK7OrO4MyS1cs13ExJI3xU0Im2EnOt6c/V3KU4zL9XfN9RNhggX2dXECqhzZlY+5Te+N9VNr2ZNoa0rr9OI/CA8=',
 					});
 				});
 		});
 
-		describe(`transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 8 --asset=${transferAsset} --no-signature --json`, () => {
+		describe(`transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 2 0 --asset=${transferAsset} --no-signature --json`, () => {
 			setupTest()
 				.command([
 					'transaction:create',
 					'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=',
 					'100000000',
 					'2',
-					'8',
+					'2',
+					'0',
 					`--asset=${transferAsset}`,
 					'--no-signature',
 					`--sender-publickey=${senderPublickey}`,
@@ -316,7 +348,8 @@ describe('transaction:create command', () => {
 					() => {
 						expect(printJSONStub).to.be.calledOnce;
 						expect(printJSONStub).to.be.calledWithExactly({
-							type: 8,
+							moduleType: 2,
+							assetType: 0,
 							nonce: '2',
 							fee: '100000000',
 							senderPublicKey: 'D+mj8aIbVTDyf4ekFLVJ55qUC/JP3ysvBefyKu7syGo=',
@@ -331,14 +364,15 @@ describe('transaction:create command', () => {
 				);
 		});
 
-		describe(`transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 8 --asset=${transferAsset} --passphrase=${passphrase} --json`, () => {
+		describe(`transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 2 0 --asset=${transferAsset} --passphrase=${passphrase} --json`, () => {
 			setupTest()
 				.command([
 					'transaction:create',
 					'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=',
 					'100000000',
 					'2',
-					'8',
+					'2',
+					'0',
 					`--asset=${transferAsset}`,
 					`--passphrase=${passphrase}`,
 					'--json',
@@ -346,7 +380,8 @@ describe('transaction:create command', () => {
 				.it('should return signed transaction in json format when passphrase specified', () => {
 					expect(printJSONStub).to.be.calledOnce;
 					expect(printJSONStub).to.be.calledWithExactly({
-						type: 8,
+						moduleType: 2,
+						assetType: 0,
 						nonce: '2',
 						fee: '100000000',
 						senderPublicKey: 'D+mj8aIbVTDyf4ekFLVJ55qUC/JP3ysvBefyKu7syGo=',
@@ -356,7 +391,7 @@ describe('transaction:create command', () => {
 							recipientAddress: 'qwBBp9P3ssKQtbg01Gvce364WBU=',
 						},
 						signatures: [
-							'hxRCH+EoCnq1BQXU+IIzA3cZqrHwgV4oaJxe/5zZxV9DmAF7SF8RtCyYIBdSsVfMYR8OX82tt23og+OuQkeaAw==',
+							'rs6s7gzJLVyzXcTEkjfFTQibYSc63pz9XcpTjMv1d831E2GCBfZ1cQKqHNmVj7lN7431U2vZk2hrSuv04j8IDw==',
 						],
 					});
 				});
