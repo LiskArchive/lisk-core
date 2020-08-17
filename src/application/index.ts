@@ -14,7 +14,6 @@
 import {
 	Application,
 	ApplicationConfig,
-	GenesisBlockJSON,
 	HTTPAPIPlugin,
 	ForgerPlugin,
 } from 'lisk-sdk';
@@ -27,11 +26,11 @@ export interface Options {
 // Temporally disable eslint
 /* eslint-disable */
 export const getApplication = (
-	genesisBlock: GenesisBlockJSON,
+	genesisBlock: Record<string, unknown>,
 	config: ApplicationConfig,
 	options: Options,
 ): Application => {
-	const app = new Application(genesisBlock, config);
+	const app = Application.defaultApplication(genesisBlock, config);
 
 	if (options.enableHTTPAPI) {
 		app.registerPlugin(HTTPAPIPlugin);

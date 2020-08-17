@@ -13,7 +13,7 @@
  *
  */
 import { Command, flags as flagParser } from '@oclif/command';
-import { ApplicationConfig, GenesisBlockJSON } from 'lisk-sdk';
+import { ApplicationConfig } from 'lisk-sdk';
 import { NETWORK, RELEASE_URL, DEFAULT_NETWORK } from '../../constants';
 import { liskSnapshotUrl } from '../../utils/commons';
 import { getDefaultPath, getFullPath } from '../../utils/path';
@@ -57,7 +57,7 @@ export default class DownloadCommand extends Command {
 		this.log(`Downloading snapshot from ${url} to ${getFullPath(dataPath)}`);
 
 		const networkConfigs = configs[flags.network] as
-			| { config: ApplicationConfig; genesisBlock: GenesisBlockJSON }
+			| { config: ApplicationConfig; genesisBlock: Record<string, unknown> }
 			| undefined;
 		if (networkConfigs === undefined) {
 			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
