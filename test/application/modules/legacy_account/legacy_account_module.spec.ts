@@ -62,7 +62,7 @@ describe('LegacyAccountModule', () => {
 		afterGenesisBlockApplyInput = {
 			genesisBlock,
 			reducerHandler: reducerHandlerStub,
-			stateStore: new testing.StateStoreMock({ accounts: [legacyAccount1, legacyAccount2] }),
+			stateStore: new testing.StateStoreMock({ accounts: [legacyAccount1, legacyAccount2, newAccount] }),
 		} as any;
 	});
 
@@ -115,6 +115,12 @@ describe('LegacyAccountModule', () => {
 				CHAIN_STATE_UNREGISTERED_ADDRESSES,
 			);
 			expect(encodedUnregisteredAddresses).to.deep.equal(savedResult);
+		});
+
+		it('should delete unregistered accounts from state store', async () => {
+			await legacyAccountModule.afterGenesisBlockApply(afterGenesisBlockApplyInput);
+			const updatedAccounts = afterGenesisBlockApplyInput.stateStore.account.getUpdated();
+			expect(updatedAccounts).to.have.lengthOf(1);
 		});
 	});
 });
