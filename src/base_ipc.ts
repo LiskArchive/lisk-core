@@ -31,16 +31,18 @@ export interface Schema {
 }
 
 interface CodecSchema {
-	account: Schema;
+	accountSchema: Schema;
 	blockSchema: Schema;
 	blockHeaderSchema: Schema;
 	blockHeadersAssets: {
 		[key: number]: Schema;
 	};
-	baseTransaction: Schema;
-	transactionsAssets: {
-		[key: number]: Schema;
-	};
+	transactionSchema: Schema;
+	transactionsAssetSchemas: {
+		moduleType: number;
+		assetType: number;
+		schema: Schema;
+	}[];
 }
 
 export interface Codec {
@@ -140,7 +142,7 @@ export default abstract class BaseIPCCommand extends Command {
 
 		this._codec = {
 			decodeAccount: (data: Buffer | string): Record<string, unknown> =>
-				codec.decodeJSON(this._schema.account, convertStrToBuffer(data)),
+				codec.decodeJSON(this._schema.accountSchema, convertStrToBuffer(data)),
 			decodeBlock: (data: Buffer | string): Record<string, unknown> => {
 				const blockBuffer: Buffer = Buffer.isBuffer(data) ? data : Buffer.from(data, 'base64');
 				const { blockSchema, blockHeaderSchema, blockHeadersAssets } = this._schema;
@@ -178,12 +180,22 @@ export default abstract class BaseIPCCommand extends Command {
 			decodeTransaction: (data: Buffer | string): Record<string, unknown> => {
 				const transactionBuffer = Buffer.isBuffer(data) ? data : Buffer.from(data, 'base64');
 				const baseTransaction: {
-					type: number;
+					moduleType: number;
+					assetType: number;
 					asset: string;
-				} = codec.decodeJSON(this._schema.baseTransaction, transactionBuffer);
-				const transactionTypeAssetSchema = this._schema.transactionsAssets[baseTransaction.type];
+				} = codec.decodeJSON(this._schema.transactionSchema, transactionBuffer);
+				const transactionTypeAssetSchema = this._schema.transactionsAssetSchemas.find(
+					as =>
+						as.moduleType === baseTransaction.moduleType &&
+						as.assetType === baseTransaction.assetType,
+				);
+				if (!transactionTypeAssetSchema) {
+					throw new Error(
+						`Transaction with module ${baseTransaction.moduleType} asset ${baseTransaction.assetType} is not registered`,
+					);
+				}
 				const transactionAsset = codec.decodeJSON<Record<string, unknown>>(
-					transactionTypeAssetSchema,
+					transactionTypeAssetSchema.schema,
 					Buffer.from(baseTransaction.asset, 'base64'),
 				);
 
@@ -202,7 +214,7 @@ export default abstract class BaseIPCCommand extends Command {
 					codec.fromJSON(assetSchema, transactionObject.asset as object),
 				);
 
-				return codec.fromJSON(this._schema.baseTransaction, {
+				return codec.fromJSON(this._schema.transactionSchema, {
 					...transactionObject,
 					asset: assetBuffer,
 				});
@@ -213,7 +225,7 @@ export default abstract class BaseIPCCommand extends Command {
 			): Record<string, unknown> => {
 				const assetJSON = codec.toJSON(assetSchema, transactionObject.asset as object);
 
-				const transactionJSON = codec.toJSON(this._schema.baseTransaction, {
+				const transactionJSON = codec.toJSON(this._schema.transactionSchema, {
 					...transactionObject,
 					asset: Buffer.alloc(0),
 				});
@@ -229,7 +241,7 @@ export default abstract class BaseIPCCommand extends Command {
 			): string => {
 				const assetBuffer = codec.encode(assetSchema, transactionObject.asset as object);
 
-				const transactionBuffer = codec.encode(this._schema.baseTransaction, {
+				const transactionBuffer = codec.encode(this._schema.transactionSchema, {
 					...transactionObject,
 					asset: assetBuffer,
 				});

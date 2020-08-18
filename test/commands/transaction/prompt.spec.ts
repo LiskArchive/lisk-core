@@ -14,13 +14,17 @@
  */
 
 import { expect } from '@oclif/test';
-import { transactions } from 'lisk-sdk';
 import { prepareQuestions, transformAsset, transformNestedAsset } from '../../../src/utils/reader';
+import {
+	tokenTransferAssetSchema,
+	keysRegisterAssetSchema,
+	dposVoteAssetSchema,
+} from '../../utils/transactions';
 
 describe('prompt', () => {
 	describe('prepareQuestions', () => {
 		it('should return array of questions for given asset schema', () => {
-			const questions = prepareQuestions(transactions.TransferTransaction.ASSET_SCHEMA);
+			const questions = prepareQuestions(tokenTransferAssetSchema);
 			expect(questions).to.deep.equal([
 				{ type: 'input', name: 'amount', message: 'Please enter: amount: ' },
 				{
@@ -35,8 +39,8 @@ describe('prompt', () => {
 
 	describe('transformAsset', () => {
 		it('should transform result according to asset schema', () => {
-			const questions = prepareQuestions(transactions.MultisignatureTransaction.ASSET_SCHEMA);
-			const transformedAsset = transformAsset(transactions.MultisignatureTransaction.ASSET_SCHEMA, {
+			const questions = prepareQuestions(keysRegisterAssetSchema);
+			const transformedAsset = transformAsset(keysRegisterAssetSchema, {
 				numberOfSignatures: '4',
 				mandatoryKeys: 'a,b',
 				optionalKeys: 'c,d',
@@ -68,8 +72,8 @@ describe('prompt', () => {
 
 	describe('transformNestedAsset', () => {
 		it('should transform result according to nested asset schema', () => {
-			const questions = prepareQuestions(transactions.VoteTransaction.ASSET_SCHEMA);
-			const transformedAsset = transformNestedAsset(transactions.VoteTransaction.ASSET_SCHEMA, [
+			const questions = prepareQuestions(dposVoteAssetSchema);
+			const transformedAsset = transformNestedAsset(dposVoteAssetSchema, [
 				{ votes: 'a,100' },
 				{ votes: 'b,300' },
 			]);

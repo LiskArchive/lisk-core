@@ -16,7 +16,7 @@
 import { expect, test } from '@oclif/test';
 import * as sandbox from 'sinon';
 import * as fs from 'fs-extra';
-import { IPCChannel, transactions } from 'lisk-sdk';
+import { IPCChannel, transactionSchema } from 'lisk-sdk';
 
 import baseIPC from '../../../src/base_ipc';
 import * as appUtils from '../../../src/utils/application';
@@ -47,9 +47,13 @@ const transferAssetSchema = {
 	},
 };
 
-const transactionsAssets = {
-	8: transferAssetSchema,
-};
+const transactionsAssetSchemas = [
+	{
+		moduleType: 2,
+		assetType: 0,
+		schema: transferAssetSchema,
+	},
+];
 
 describe('transaction:get command', () => {
 	const { id: transactionId, ...transferTransaction } = createTransferTransaction({
@@ -60,8 +64,8 @@ describe('transaction:get command', () => {
 	});
 	const encodedTransaction = encodeTransactionFromJSON(
 		transferTransaction as any,
-		transactions.BaseTransaction.BASE_SCHEMA,
-		transactionsAssets,
+		transactionSchema,
+		transactionsAssetSchemas,
 	);
 	const fsStub = sandbox.stub().returns(true);
 	const printJSONStub = sandbox.stub();
@@ -70,8 +74,8 @@ describe('transaction:get command', () => {
 	ipcInvokeStub
 		.withArgs('app:getSchema')
 		.resolves({
-			baseTransaction: transactions.BaseTransaction.BASE_SCHEMA,
-			transactionsAssets,
+			transactionSchema,
+			transactionsAssetSchemas,
 		})
 		.withArgs('app:getTransactionByID', { id: transactionId })
 		.resolves(encodedTransaction);
@@ -98,7 +102,7 @@ describe('transaction:get command', () => {
 
 	describe('transaction:get {transactionId}', () => {
 		setupTest()
-			.command(['transaction:get', transactionId])
+			.command(['transaction:get', transactionId as string])
 			.it('should get transaction for the given id and display as an object', () => {
 				expect(ipcInvokeStub).to.have.been.calledTwice;
 				expect(ipcInvokeStub).to.have.been.calledWithExactly('app:getSchema');

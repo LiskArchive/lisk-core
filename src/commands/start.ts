@@ -16,7 +16,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Command, flags as flagParser } from '@oclif/command';
 import * as fs from 'fs-extra';
-import { ApplicationConfig, utils, GenesisBlockJSON, HTTPAPIPlugin, ForgerPlugin } from 'lisk-sdk';
+import { ApplicationConfig, utils, HTTPAPIPlugin, ForgerPlugin } from 'lisk-sdk';
 import { getDefaultPath, splitPath, getFullPath } from '../utils/path';
 import { flags as commonFlags } from '../utils/flags';
 import { getApplication } from '../application';
@@ -125,7 +125,7 @@ export default class StartCommand extends Command {
 		// Copy all default configs to datapath if not exist
 		// eslint-disable-next-line import/namespace
 		const networkConfigs = configs[flags.network] as
-			| { config: ApplicationConfig; genesisBlock: GenesisBlockJSON }
+			| { config: ApplicationConfig; genesisBlock: Record<string, unknown> }
 			| undefined;
 		if (networkConfigs === undefined) {
 			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions

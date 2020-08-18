@@ -12,7 +12,14 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-import { cryptography, transactions, codec } from 'lisk-sdk';
+import {
+	cryptography,
+	transactions,
+	codec,
+	TokenTransferAsset,
+	KeysRegisterAsset,
+	DPoSVoteAsset,
+} from 'lisk-sdk';
 import { genesisBlock } from '../../src/config/devnet';
 import { Schema } from '../../src/base_ipc';
 
@@ -23,6 +30,12 @@ const account = {
 	publicKey: 'UIqWWHElNZWzbi+Nwnv/bmezm91GZTG+nG+MQBJTl5w=',
 	address: 'nKvuPSdCZna4Us5rgEyy/f980LU=',
 };
+
+const tokenTransferAsset = new TokenTransferAsset(BigInt(500000));
+
+export const tokenTransferAssetSchema = tokenTransferAsset.assetSchema;
+export const keysRegisterAssetSchema = new KeysRegisterAsset().assetSchema;
+export const dposVoteAssetSchema = new DPoSVoteAsset().assetSchema;
 
 export const genesisBlockTransactionRoot = Buffer.from(
 	genesisBlock.header.transactionRoot,
@@ -45,23 +58,28 @@ export const createTransferTransaction = ({
 	fee: string;
 	recipientAddress: string;
 	nonce: number;
-}): transactions.TransactionJSON => {
-	const transaction = new transactions.TransferTransaction({
-		nonce: BigInt(nonce),
-		fee: BigInt(transactions.utils.convertLSKToBeddows(fee)),
-		senderPublicKey: Buffer.from(account.publicKey, 'base64'),
-		asset: {
-			amount: BigInt(transactions.utils.convertLSKToBeddows(amount)),
-			recipientAddress: Buffer.from(recipientAddress, 'base64'),
-			data: '',
+}): Record<string, unknown> => {
+	const transaction = transactions.signTransaction(
+		tokenTransferAsset.assetSchema,
+		{
+			moduleType: 2,
+			assetType: 0,
+			nonce: BigInt(nonce),
+			fee: BigInt(transactions.convertLSKToBeddows(fee)),
+			senderPublicKey: Buffer.from(account.publicKey, 'base64'),
+			asset: {
+				amount: BigInt(transactions.convertLSKToBeddows(amount)),
+				recipientAddress: Buffer.from(recipientAddress, 'base64'),
+				data: '',
+			},
 		},
-	});
-
-	transaction.sign(networkIdentifier, account.passphrase);
+		networkIdentifier,
+		account.passphrase,
+	) as any;
 
 	return {
+		...transaction,
 		id: transaction.id.toString('base64'),
-		type: transaction.type,
 		senderPublicKey: transaction.senderPublicKey.toString('base64'),
 		signatures: transaction.signatures.map(s => (s as Buffer).toString('base64')),
 		asset: {
@@ -75,19 +93,21 @@ export const createTransferTransaction = ({
 };
 
 export const encodeTransactionFromJSON = (
-	transaction: transactions.TransactionJSON,
+	transaction: Record<string, unknown>,
 	baseSchema: Schema,
-	assetsSchemas: { [key: number]: Schema },
+	assetsSchemas: { moduleType: number; assetType: number; schema: Schema }[],
 ): string => {
-	const transactionTypeAssetSchema = assetsSchemas[transaction.type];
+	const transactionTypeAssetSchema = assetsSchemas.find(
+		as => as.moduleType === transaction.moduleType && as.assetType === transaction.assetType,
+	);
 
 	if (!transactionTypeAssetSchema) {
 		throw new Error('Transaction type not found.');
 	}
 
 	const transactionAssetBuffer = codec.encode(
-		transactionTypeAssetSchema,
-		codec.fromJSON(transactionTypeAssetSchema, transaction.asset),
+		transactionTypeAssetSchema.schema,
+		codec.fromJSON(transactionTypeAssetSchema.schema, transaction.asset as object),
 	);
 
 	const transactionBuffer = codec.encode(

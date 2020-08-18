@@ -24,7 +24,8 @@ import { LiskValidationError } from '../../../../lisk-sdk/node_modules/@liskhq/l
 interface Args {
 	readonly nonce: string;
 	readonly fee: string;
-	readonly type: number;
+	readonly moduleType: number;
+	readonly assetType: number;
 	readonly networkIdentifier: string;
 }
 
@@ -51,15 +52,20 @@ export default class CreateCommand extends BaseIPCCommand {
 			description: 'Nonce of the transaction.',
 		},
 		{
-			name: 'type',
+			name: 'moduleType',
 			required: true,
-			description: 'Register transaction type.',
+			description: 'Register transaction moduel type.',
+		},
+		{
+			name: 'assetType',
+			required: true,
+			description: 'Register transaction asset type.',
 		},
 	];
 
 	static examples = [
-		'transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 8 --asset=\'{"amount":100000000,"recipientAddress":"qwBBp9P3ssKQtbg01Gvce364WBU=","data":"send token"}\'',
-		'transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 8',
+		'transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 2 0 --asset=\'{"amount":100000000,"recipientAddress":"qwBBp9P3ssKQtbg01Gvce364WBU=","data":"send token"}\'',
+		'transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 2 0',
 	];
 
 	static flags = {
@@ -95,15 +101,21 @@ export default class CreateCommand extends BaseIPCCommand {
 				json,
 			},
 		} = this.parse(CreateCommand);
-		const { fee, nonce, networkIdentifier, type } = args as Args;
-		const assetSchema = this._schema.transactionsAssets[type];
+		const { fee, nonce, networkIdentifier, moduleType, assetType } = args as Args;
+		const assetSchema = this._schema.transactionsAssetSchemas.find(
+			as => as.moduleType === Number(moduleType) && as.assetType === Number(assetType),
+		);
 
 		if (!assetSchema) {
-			throw new Error(`Transaction type:${type} is not registered in the application`);
+			throw new Error(
+				`Transaction moduleType:${moduleType} with assetType:${assetType} is not registered in the application`,
+			);
 		}
-		const rawAsset = assetSource ? JSON.parse(assetSource) : await getAssetFromPrompt(assetSchema);
-		const assetObject = codec.fromJSON(assetSchema, rawAsset);
-		const assetErrors = validator.validator.validate(assetSchema, assetObject);
+		const rawAsset = assetSource
+			? JSON.parse(assetSource)
+			: await getAssetFromPrompt(assetSchema.schema);
+		const assetObject = codec.fromJSON(assetSchema.schema, rawAsset);
+		const assetErrors = validator.validator.validate(assetSchema.schema, assetObject);
 		if (assetErrors.length) {
 			throw new LiskValidationError([...assetErrors]);
 		}
@@ -113,7 +125,8 @@ export default class CreateCommand extends BaseIPCCommand {
 		}
 
 		const incompleteTransaction: Record<string, unknown> = {
-			type: Number(type),
+			moduleType: Number(moduleType),
+			assetType: Number(assetType),
 			nonce,
 			fee,
 			senderPublicKey: senderPublicKeySource,
@@ -128,12 +141,12 @@ export default class CreateCommand extends BaseIPCCommand {
 			incompleteTransaction.senderPublicKey = publicKey.toString('base64');
 		}
 
-		const transactionObject = this._codec.transactionFromJSON(assetSchema, {
+		const transactionObject = this._codec.transactionFromJSON(assetSchema.schema, {
 			...incompleteTransaction,
 		});
 
 		const transactionErrors = validator.validator.validate(
-			this._schema.baseTransaction,
+			this._schema.transactionSchema,
 			transactionObject,
 		);
 		if (transactionErrors.length) {
@@ -143,7 +156,7 @@ export default class CreateCommand extends BaseIPCCommand {
 		transactionObject.asset = assetObject;
 		if (passphrase) {
 			transactions.signTransaction(
-				assetSchema,
+				assetSchema.schema,
 				transactionObject,
 				Buffer.from(networkIdentifier, 'base64'),
 				passphrase,
@@ -151,10 +164,10 @@ export default class CreateCommand extends BaseIPCCommand {
 		}
 
 		if (json) {
-			this.printJSON(this._codec.transactionToJSON(assetSchema, transactionObject));
+			this.printJSON(this._codec.transactionToJSON(assetSchema.schema, transactionObject));
 		} else {
 			this.printJSON({
-				transaction: this._codec.encodeTransaction(assetSchema, transactionObject),
+				transaction: this._codec.encodeTransaction(assetSchema.schema, transactionObject),
 			});
 		}
 	}
