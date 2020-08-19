@@ -15,10 +15,12 @@
 import { AfterGenesisBlockApplyInput, BaseModule, codec } from 'lisk-sdk';
 import { CHAIN_STATE_UNREGISTERED_ADDRESSES } from './constants';
 import { unregisteredAddressesSchema } from './schema';
+import { ReclaimAsset } from './transaction_assets/reclaim_asset';
 
 export class LegacyAccountModule extends BaseModule {
 	public name = 'legacyAccount';
 	public type = 6;
+	public transactionAssets = [new ReclaimAsset()];
 
 	// eslint-disable-next-line class-methods-use-this
 	public async afterGenesisBlockApply({
