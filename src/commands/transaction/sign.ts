@@ -20,14 +20,13 @@ import { flags as commonFlags } from '../../utils/flags';
 import { getPassphraseFromPrompt } from '../../utils/reader';
 
 export default class SignCommand extends BaseIPCCommand {
-	static description = 'Sign a encoded transaction.';
+	static description = 'Sign an encoded transaction.';
 
 	static args = [
 		{
 			name: 'networkIdentifier',
 			required: true,
-			description:
-				'Network identifier defined for the network or main | test for the Lisk Network.',
+			description: 'Network identifier defined for a network(mainnet | testnet).',
 		},
 		{
 			name: 'transaction',
