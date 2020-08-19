@@ -24,8 +24,8 @@ import { LiskValidationError } from '../../../../lisk-sdk/node_modules/@liskhq/l
 interface Args {
 	readonly nonce: string;
 	readonly fee: string;
-	readonly moduleType: number;
-	readonly assetType: number;
+	readonly moduleID: number;
+	readonly assetID: number;
 	readonly networkIdentifier: string;
 }
 
@@ -52,14 +52,14 @@ export default class CreateCommand extends BaseIPCCommand {
 			description: 'Nonce of the transaction.',
 		},
 		{
-			name: 'moduleType',
+			name: 'moduleID',
 			required: true,
-			description: 'Register transaction module type.',
+			description: 'Register transaction module id.',
 		},
 		{
-			name: 'assetType',
+			name: 'assetID',
 			required: true,
-			description: 'Register transaction asset type.',
+			description: 'Register transaction asset id.',
 		},
 	];
 
@@ -101,14 +101,14 @@ export default class CreateCommand extends BaseIPCCommand {
 				json,
 			},
 		} = this.parse(CreateCommand);
-		const { fee, nonce, networkIdentifier, moduleType, assetType } = args as Args;
+		const { fee, nonce, networkIdentifier, moduleID, assetID } = args as Args;
 		const assetSchema = this._schema.transactionsAssetSchemas.find(
-			as => as.moduleType === Number(moduleType) && as.assetType === Number(assetType),
+			as => as.moduleID === Number(moduleID) && as.assetID === Number(assetID),
 		);
 
 		if (!assetSchema) {
 			throw new Error(
-				`Transaction moduleType:${moduleType} with assetType:${assetType} is not registered in the application`,
+				`Transaction moduleID:${moduleID} with assetID:${assetID} is not registered in the application`,
 			);
 		}
 		const rawAsset = assetSource
@@ -125,8 +125,8 @@ export default class CreateCommand extends BaseIPCCommand {
 		}
 
 		const incompleteTransaction: Record<string, unknown> = {
-			moduleType: Number(moduleType),
-			assetType: Number(assetType),
+			moduleID: Number(moduleID),
+			assetID: Number(assetID),
 			nonce,
 			fee,
 			senderPublicKey: senderPublicKeySource,

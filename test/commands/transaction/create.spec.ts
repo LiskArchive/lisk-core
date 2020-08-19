@@ -26,13 +26,13 @@ import { dposVoteAssetSchema, tokenTransferAssetSchema } from '../../utils/trans
 
 const transactionsAssetSchemas = [
 	{
-		moduleType: 2,
-		assetType: 0,
+		moduleID: 2,
+		assetID: 0,
 		schema: tokenTransferAssetSchema,
 	},
 	{
-		moduleType: 5,
-		assetType: 1,
+		moduleID: 5,
+		assetID: 1,
 		schema: dposVoteAssetSchema,
 	},
 ];
@@ -109,7 +109,7 @@ describe('transaction:create command', () => {
 				'2',
 			])
 			.catch((error: Error) => expect(error.message).to.contain('Missing 2 required args:'))
-			.it('should throw an error when transaction moduleType and assetTYpe are provided.');
+			.it('should throw an error when transaction moduleID and assetID are provided.');
 	});
 
 	describe('transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 2', () => {
@@ -122,7 +122,7 @@ describe('transaction:create command', () => {
 				'2',
 			])
 			.catch((error: Error) => expect(error.message).to.contain('Missing 1 required arg:'))
-			.it('should throw an error when transaction assetType is not provided.');
+			.it('should throw an error when transaction assetID is not provided.');
 	});
 
 	describe('transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 99999 0', () => {
@@ -137,7 +137,7 @@ describe('transaction:create command', () => {
 			])
 			.catch((error: Error) =>
 				expect(error.message).to.contain(
-					'Transaction moduleType:99999 with assetType:0 is not registered in the application',
+					'Transaction moduleID:99999 with assetID:0 is not registered in the application',
 				),
 			)
 			.it('should throw an error when transaction type is unknown.');
@@ -348,8 +348,8 @@ describe('transaction:create command', () => {
 					() => {
 						expect(printJSONStub).to.be.calledOnce;
 						expect(printJSONStub).to.be.calledWithExactly({
-							moduleType: 2,
-							assetType: 0,
+							moduleID: 2,
+							assetID: 0,
 							nonce: '2',
 							fee: '100000000',
 							senderPublicKey: 'D+mj8aIbVTDyf4ekFLVJ55qUC/JP3ysvBefyKu7syGo=',
@@ -380,8 +380,8 @@ describe('transaction:create command', () => {
 				.it('should return signed transaction in json format when passphrase specified', () => {
 					expect(printJSONStub).to.be.calledOnce;
 					expect(printJSONStub).to.be.calledWithExactly({
-						moduleType: 2,
-						assetType: 0,
+						moduleID: 2,
+						assetID: 0,
 						nonce: '2',
 						fee: '100000000',
 						senderPublicKey: 'D+mj8aIbVTDyf4ekFLVJ55qUC/JP3ysvBefyKu7syGo=',

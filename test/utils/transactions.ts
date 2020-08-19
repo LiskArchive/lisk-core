@@ -33,9 +33,9 @@ const account = {
 
 const tokenTransferAsset = new TokenTransferAsset(BigInt(500000));
 
-export const tokenTransferAssetSchema = tokenTransferAsset.assetSchema;
-export const keysRegisterAssetSchema = new KeysRegisterAsset().assetSchema;
-export const dposVoteAssetSchema = new DPoSVoteAsset().assetSchema;
+export const tokenTransferAssetSchema = tokenTransferAsset.schema;
+export const keysRegisterAssetSchema = new KeysRegisterAsset().schema;
+export const dposVoteAssetSchema = new DPoSVoteAsset().schema;
 
 export const genesisBlockTransactionRoot = Buffer.from(
 	genesisBlock.header.transactionRoot,
@@ -62,10 +62,10 @@ export const createTransferTransaction = ({
 	nonce: number;
 }): Record<string, unknown> => {
 	const transaction = transactions.signTransaction(
-		tokenTransferAsset.assetSchema,
+		tokenTransferAsset.schema,
 		{
-			moduleType: 2,
-			assetType: 0,
+			moduleID: 2,
+			assetID: 0,
 			nonce: BigInt(nonce),
 			fee: BigInt(transactions.convertLSKToBeddows(fee)),
 			senderPublicKey: Buffer.from(account.publicKey, 'base64'),
@@ -97,10 +97,10 @@ export const createTransferTransaction = ({
 export const encodeTransactionFromJSON = (
 	transaction: Record<string, unknown>,
 	baseSchema: Schema,
-	assetsSchemas: { moduleType: number; assetType: number; schema: Schema }[],
+	assetsSchemas: { moduleID: number; assetID: number; schema: Schema }[],
 ): string => {
 	const transactionTypeAssetSchema = assetsSchemas.find(
-		as => as.moduleType === transaction.moduleType && as.assetType === transaction.assetType,
+		as => as.moduleID === transaction.moduleID && as.assetID === transaction.assetID,
 	);
 
 	if (!transactionTypeAssetSchema) {

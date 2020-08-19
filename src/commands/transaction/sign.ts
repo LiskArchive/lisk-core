@@ -74,14 +74,15 @@ export default class SignCommand extends BaseIPCCommand {
 		const transactionJSON = (this._codec.decodeTransaction(
 			transaction,
 		) as unknown) as TransactionJSON;
-		const { asset, assetType, moduleType } = transactionJSON;
+		const { asset, assetID, moduleID } = transactionJSON;
 		const assetSchema = this._schema.transactionsAssetSchemas.find(
-			as => as.moduleType === moduleType && as.assetType === assetType,
+			as => as.moduleID === moduleID && as.assetID === assetID,
 		);
 
 		if (!assetSchema) {
 			throw new Error(
-				`Transaction moduleType:${moduleType} with assetType:${assetType} is not registered in the application`,
+				// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+				`Transaction moduleID:${moduleID.toString()} with assetID:${assetID.toString()} is not registered in the application`,
 			);
 		}
 
