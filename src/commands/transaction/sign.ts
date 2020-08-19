@@ -40,7 +40,6 @@ export default class SignCommand extends BaseIPCCommand {
 		...BaseIPCCommand.flags,
 		passphrase: flagParser.string(commonFlags.passphrase),
 		'include-sender-signature': flagParser.boolean({
-			char: 'j',
 			description: 'Include sender signature in transaction.',
 		}),
 		'mandatory-keys': flagParser.string({
