@@ -48,6 +48,8 @@ export const networkIdentifier = cryptography.getNetworkIdentifier(
 	communityIdentifier,
 );
 
+export const networkIdentifierStr = networkIdentifier.toString('base64');
+
 export const createTransferTransaction = ({
 	amount,
 	fee,
