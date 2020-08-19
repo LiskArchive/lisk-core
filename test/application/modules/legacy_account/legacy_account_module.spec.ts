@@ -62,7 +62,9 @@ describe('LegacyAccountModule', () => {
 		afterGenesisBlockApplyInput = {
 			genesisBlock,
 			reducerHandler: reducerHandlerStub,
-			stateStore: new testing.StateStoreMock({ accounts: [legacyAccount1, legacyAccount2, newAccount] }),
+			stateStore: new testing.StateStoreMock({
+				accounts: [legacyAccount1, legacyAccount2, newAccount],
+			}),
 		} as any;
 	});
 
