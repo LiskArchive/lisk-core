@@ -54,7 +54,7 @@ export default class CreateCommand extends BaseIPCCommand {
 		{
 			name: 'moduleType',
 			required: true,
-			description: 'Register transaction moduel type.',
+			description: 'Register transaction module type.',
 		},
 		{
 			name: 'assetType',

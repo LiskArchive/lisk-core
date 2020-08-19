@@ -14,86 +14,122 @@
  */
 
 import { flags as flagParser } from '@oclif/command';
-import { transactions } from 'lisk-sdk';
+import { transactions, codec, TransactionJSON } from 'lisk-sdk';
 import BaseIPCCommand from '../../base_ipc';
 import { flags as commonFlags } from '../../utils/flags';
+import { getPassphraseFromPrompt } from '../../utils/reader';
 
 export default class SignCommand extends BaseIPCCommand {
-  static description = 'Send a transaction to the local node.';
+	static description = 'Sign a encoded transaction.';
 
-  static args = [
-    {
-      name: 'transaction',
-      required: true,
-      description: 'The transaction to be signed encoded as base64 string',
-    },
-  ];
+	static args = [
+		{
+			name: 'networkIdentifier',
+			required: true,
+			description:
+				'Network identifier defined for the network or main | test for the Lisk Network.',
+		},
+		{
+			name: 'transaction',
+			required: true,
+			description: 'The transaction to be signed encoded as base64 string',
+		},
+	];
 
-  static flags = {
-    ...BaseIPCCommand.flags,
-    passphrase: flagParser.string(commonFlags.passphrase),
-    includeSenderSignature: flagParser.boolean({
-      char: 'j',
-      description: 'Include sender signature in transaction.',
-    }),
-    mandatoryKeys: flagParser.string({
-      multiple: true,
-      description: 'Mandatory publicKey string in base64 format.',
-    }),
-    optionalKeys: flagParser.string({
-      multiple: true,
-      description: 'Optional publicKey string in base64 format.',
-    }),
-    json: flagParser.boolean({
-      char: 'j',
-      description: 'Print the transaction in JSON format.',
-    }),
-  };
+	static flags = {
+		...BaseIPCCommand.flags,
+		passphrase: flagParser.string(commonFlags.passphrase),
+		'include-sender-signature': flagParser.boolean({
+			char: 'j',
+			description: 'Include sender signature in transaction.',
+		}),
+		'mandatory-keys': flagParser.string({
+			multiple: true,
+			description: 'Mandatory publicKey string in base64 format.',
+		}),
+		'optional-keys': flagParser.string({
+			multiple: true,
+			description: 'Optional publicKey string in base64 format.',
+		}),
+		json: flagParser.boolean({
+			char: 'j',
+			description: 'Print the transaction in JSON format.',
+		}),
+	};
 
-  static examples = [
-    'transaction:sign GxT7g9YMBOO8wkr0bygKoQz70vRsKmK7PPrKYi4+80q8jr+j95NVQQDvlEIX1L6d6ThBR7D8eZdYEbLFF+aXDw==',
-  ];
+	static examples = [
+		'transaction:sign hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= CAIQABgCIIDC1y8qIA/po/GiG1Uw8n+HpBS1SeealAvyT98rLwXn8iru7MhqMicIgMLXLxIUqwBBp9P3ssKQtbg01Gvce364WBUaCnNlbmQgdG9rZW46QGtgC2NbDYXDv/HlmxYg4Qg4B/3kzSZUWl0Y0qgfzvege/XsB50JBjC7i6NH1dgr9CbL/6qotUBPEZCnZ2yL1AY=',
+	];
 
-  async run(): Promise<void> {
-    const {
-      args: { transaction },
-      flags: {
-        includeSenderSignature,
-        json,
-        mandatoryKeys,
-        optionalKeys,
-        passphrase,
-      }
-    } = this.parse(SignCommand);
-    console.log(transaction);
-    const transactionObject = this._codec.decodeTransaction(transaction);
-    console.log(transactionObject);
-    const type = transactionObject.assetType as number;
-    const assetSchema = this._schema.transactionsAssets[type];
+	async run(): Promise<void> {
+		const {
+			args: { networkIdentifier, transaction },
+			flags: {
+				'include-sender-signature': includeSenderSignature,
+				json,
+				'mandatory-keys': mandatoryKeys,
+				'optional-keys': optionalKeys,
+				passphrase: passphraseSource,
+			},
+		} = this.parse(SignCommand);
 
-    if (!assetSchema) {
-      throw new Error(`Transaction type:${type} is not registered in the application`);
-    }
-    const keys = {
-      mandatoryKeys: mandatoryKeys.map(k => Buffer.from(k, 'base64')),
-      optionalKeys: optionalKeys.map(k => Buffer.from(k, 'base64')),
-    };
-    const { networkID } = await this._channel.invoke<{ networkID: string }>('app:getNodeInfo');
-    const networkIdentifier = Buffer.from(networkID, 'base64');
-    let signedTransaction: Record<string, unknown>;
+		const transactionJSON = (this._codec.decodeTransaction(
+			transaction,
+		) as unknown) as TransactionJSON;
+		const { asset, assetType, moduleType } = transactionJSON;
+		const assetSchema = this._schema.transactionsAssetSchemas.find(
+			as => as.moduleType === moduleType && as.assetType === assetType,
+		);
 
-    if (mandatoryKeys || optionalKeys) {
-      signedTransaction = transactions.signMultiSignatureTransaction(assetSchema, transactionObject, networkIdentifier, passphrase as string, keys, includeSenderSignature);
-    } else {
-      signedTransaction = transactions.signTransaction(assetSchema, transactionObject, networkIdentifier, passphrase as string);
-    }
+		if (!assetSchema) {
+			throw new Error(
+				`Transaction moduleType:${moduleType} with assetType:${assetType} is not registered in the application`,
+			);
+		}
 
-    if (json) {
-      this.printJSON(this._codec.transactionToJSON(assetSchema, signedTransaction));
-    } else {
-      this.printJSON({
-        transaction: this._codec.encodeTransaction(assetSchema, signedTransaction),
-      });
-    }
-  }
+		const passphrase = passphraseSource ?? (await getPassphraseFromPrompt('passphrase', true));
+		const networkIdentifierBuffer = Buffer.from(networkIdentifier, 'base64');
+		const { id, ...transactionJSONWithoutID } = (transactionJSON as unknown) as Record<
+			string,
+			unknown
+		>;
+		const transactionObject = this._codec.transactionFromJSON(
+			assetSchema.schema,
+			transactionJSONWithoutID,
+		);
+		transactionObject.asset = codec.fromJSON(assetSchema.schema, asset);
+		let signedTransaction: Record<string, unknown>;
+
+		if (mandatoryKeys || optionalKeys) {
+			const keys = {
+				mandatoryKeys: mandatoryKeys ? mandatoryKeys.map(k => Buffer.from(k, 'base64')) : [],
+				optionalKeys: optionalKeys ? optionalKeys.map(k => Buffer.from(k, 'base64')) : [],
+			};
+
+			signedTransaction = transactions.signMultiSignatureTransaction(
+				assetSchema.schema,
+				transactionObject,
+				networkIdentifierBuffer,
+				passphrase,
+				keys,
+				includeSenderSignature,
+			);
+		} else {
+			signedTransaction = transactions.signTransaction(
+				assetSchema.schema,
+				transactionObject,
+				networkIdentifierBuffer,
+				passphrase,
+			);
+		}
+
+		if (json) {
+			const { id: transactionID, ...signedTransactionWithoutID } = signedTransaction;
+			this.printJSON(this._codec.transactionToJSON(assetSchema.schema, signedTransactionWithoutID));
+		} else {
+			this.printJSON({
+				transaction: this._codec.encodeTransaction(assetSchema.schema, signedTransaction),
+			});
+		}
+	}
 }
