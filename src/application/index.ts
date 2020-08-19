@@ -12,6 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import { Application, ApplicationConfig, HTTPAPIPlugin, ForgerPlugin } from 'lisk-sdk';
+import { LegacyAccountModule } from './modules';
 
 export interface Options {
 	enableHTTPAPI: boolean;
@@ -26,6 +27,7 @@ export const getApplication = (
 	options: Options,
 ): Application => {
 	const app = Application.defaultApplication(genesisBlock, config);
+	app.registerModule(LegacyAccountModule);
 
 	if (options.enableHTTPAPI) {
 		app.registerPlugin(HTTPAPIPlugin);
