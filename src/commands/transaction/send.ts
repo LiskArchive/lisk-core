@@ -18,6 +18,10 @@ import BaseIPCCommand from '../../base_ipc';
 export default class SendCommand extends BaseIPCCommand {
 	static description = 'Send a transaction to the local node.';
 
+	static flags = {
+		...BaseIPCCommand.flags,
+	};
+
 	static args = [
 		{
 			name: 'transaction',
