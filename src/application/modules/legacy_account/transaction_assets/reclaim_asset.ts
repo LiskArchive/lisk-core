@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-import { ApplyAssetInput, BaseAsset, codec, cryptography } from 'lisk-sdk';
+import { ApplyAssetContext, BaseAsset, codec, cryptography } from 'lisk-sdk';
 import { CHAIN_STATE_UNREGISTERED_ADDRESSES } from '../constants';
 import { reclaimAssetSchema, unregisteredAddressesSchema } from '../schema';
 
@@ -34,16 +34,16 @@ export const getLegacyBytes = (publicKey: string | Buffer): Buffer =>
 
 export class ReclaimAsset extends BaseAsset<Asset> {
 	public name = 'reclaim';
-	public type = 0;
-	public assetSchema = reclaimAssetSchema;
+	public id = 0;
+	public schema = reclaimAssetSchema;
 
 	// eslint-disable-next-line class-methods-use-this
-	public async applyAsset({
+	public async apply({
 		asset,
 		reducerHandler,
 		stateStore,
 		transaction: { senderPublicKey },
-	}: ApplyAssetInput<Asset>): Promise<void> {
+	}: ApplyAssetContext<Asset>): Promise<void> {
 		const encodedUnregisteredAddresses = await stateStore.chain.get(
 			CHAIN_STATE_UNREGISTERED_ADDRESSES,
 		);
@@ -66,10 +66,10 @@ export class ReclaimAsset extends BaseAsset<Asset> {
 			);
 		}
 		if (asset.amount !== addressWithoutPublickey.balance) {
-			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
 			throw new Error(
 				`Invalid amount:${
-					asset.amount
+					// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+					asset.amount.toString()
 				} claimed by the sender: ${addressWithoutPublickey.address.toString('base64')}`,
 			);
 		}

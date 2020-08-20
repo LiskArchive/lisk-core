@@ -39,8 +39,8 @@ interface CodecSchema {
 	};
 	transactionSchema: Schema;
 	transactionsAssetSchemas: {
-		moduleType: number;
-		assetType: number;
+		moduleID: number;
+		assetID: number;
 		schema: Schema;
 	}[];
 }
@@ -180,18 +180,16 @@ export default abstract class BaseIPCCommand extends Command {
 			decodeTransaction: (data: Buffer | string): Record<string, unknown> => {
 				const transactionBuffer = Buffer.isBuffer(data) ? data : Buffer.from(data, 'base64');
 				const baseTransaction: {
-					moduleType: number;
-					assetType: number;
+					moduleID: number;
+					assetID: number;
 					asset: string;
 				} = codec.decodeJSON(this._schema.transactionSchema, transactionBuffer);
 				const transactionTypeAssetSchema = this._schema.transactionsAssetSchemas.find(
-					as =>
-						as.moduleType === baseTransaction.moduleType &&
-						as.assetType === baseTransaction.assetType,
+					as => as.moduleID === baseTransaction.moduleID && as.assetID === baseTransaction.assetID,
 				);
 				if (!transactionTypeAssetSchema) {
 					throw new Error(
-						`Transaction with module ${baseTransaction.moduleType} asset ${baseTransaction.assetType} is not registered`,
+						`Transaction with module ${baseTransaction.moduleID} asset ${baseTransaction.assetID} is not registered`,
 					);
 				}
 				const transactionAsset = codec.decodeJSON<Record<string, unknown>>(

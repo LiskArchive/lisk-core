@@ -15,7 +15,7 @@
 
 import { expect } from 'chai';
 import * as sandbox from 'sinon';
-import { AfterGenesisBlockApplyInput, GenesisConfig, codec } from 'lisk-sdk';
+import { AfterGenesisBlockApplyContext, GenesisConfig, codec } from 'lisk-sdk';
 import { testing } from '@liskhq/lisk-utils';
 import { LegacyAccountModule, getLegacyBytes } from '../../../../src/application/modules';
 import { createAccount, createFakeDefaultAccount } from '../../../utils/account';
@@ -27,7 +27,7 @@ describe('LegacyAccountModule', () => {
 	let defaultAccount2;
 	let defaultAccount3;
 	let legacyAccountModule: LegacyAccountModule;
-	let afterGenesisBlockApplyInput: AfterGenesisBlockApplyInput;
+	let afterGenesisBlockApplyInput: AfterGenesisBlockApplyContext;
 	let legacyAccount1;
 	let legacyAccount2;
 	let newAccount;
@@ -73,8 +73,8 @@ describe('LegacyAccountModule', () => {
 	});
 
 	describe('constructor', () => {
-		it('should have valid type', () => {
-			expect(legacyAccountModule.type).to.equal(6);
+		it('should have valid id', () => {
+			expect(legacyAccountModule.id).to.equal(6);
 		});
 
 		it('should have valid name', () => {

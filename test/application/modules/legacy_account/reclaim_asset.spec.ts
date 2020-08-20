@@ -15,7 +15,7 @@
 
 import { expect } from 'chai';
 import * as sandbox from 'sinon';
-import { ApplyAssetInput, cryptography, codec } from 'lisk-sdk';
+import { ApplyAssetContext, cryptography, codec } from 'lisk-sdk';
 import { testing } from '@liskhq/lisk-utils';
 import { ReclaimAsset, getLegacyBytes } from '../../../../src/application/modules';
 import {
@@ -28,7 +28,7 @@ import { createAccount, createFakeDefaultAccount } from '../../../utils/account'
 describe('ReclaimAsset', () => {
 	let defaultAccount;
 	let reclaimAsset: ReclaimAsset;
-	let reclaimAssetInput: ApplyAssetInput<{
+	let reclaimAssetInput: ApplyAssetContext<{
 		readonly amount: bigint;
 	}>;
 	let sender;
@@ -40,7 +40,7 @@ describe('ReclaimAsset', () => {
 		'0fe9a3f1a21b5530f27f87a414b549e79a940bf24fdf2b2f05e7f22aeeecc86a',
 		'hex',
 	);
-	const encodeUnregisteredAddresses = unregisteredAddresses => {
+	const encodeUnregisteredAddresses = (unregisteredAddresses): Buffer => {
 		return codec.encode(unregisteredAddressesSchema, {
 			unregisteredAddresses,
 		});
@@ -74,26 +74,26 @@ describe('ReclaimAsset', () => {
 	});
 
 	describe('constructor', () => {
-		it('should have valid type', () => {
-			expect(reclaimAsset.type).to.equal(0);
+		it('should have valid id', () => {
+			expect(reclaimAsset.id).to.equal(0);
 		});
 
 		it('should have valid name', () => {
 			expect(reclaimAsset.name).to.equal('reclaim');
 		});
 
-		it('should have valid assetSchema', () => {
-			expect(reclaimAsset.assetSchema).to.deep.equal(reclaimAssetSchema);
+		it('should have valid schema', () => {
+			expect(reclaimAsset.schema).to.deep.equal(reclaimAssetSchema);
 		});
 	});
 
-	describe('applyAsset', () => {
+	describe('apply', () => {
 		it('should throw error when chain state store does not have unregistered addresses', () => {
 			reclaimAssetInput.stateStore = new testing.StateStoreMock({
 				accounts: [sender],
 				chain: {},
 			}) as any;
-			expect(reclaimAsset.applyAsset(reclaimAssetInput)).to.rejectedWith(
+			expect(reclaimAsset.apply(reclaimAssetInput)).to.rejectedWith(
 				'Chain state does not contain any unregistered addresses',
 			);
 		});
@@ -110,7 +110,7 @@ describe('ReclaimAsset', () => {
 				accounts: [sender],
 				chain: chainMockData,
 			}) as any;
-			expect(reclaimAsset.applyAsset(reclaimAssetInput)).to.rejectedWith(
+			expect(reclaimAsset.apply(reclaimAssetInput)).to.rejectedWith(
 				'Legacy address corresponding to sender publickey was not found genesis account state',
 			);
 		});
@@ -127,13 +127,13 @@ describe('ReclaimAsset', () => {
 				accounts: [sender],
 				chain: chainMockData,
 			}) as any;
-			expect(reclaimAsset.applyAsset(reclaimAssetInput)).to.rejectedWith(
+			expect(reclaimAsset.apply(reclaimAssetInput)).to.rejectedWith(
 				'Invalid amount:100000000000 claimed by the sender',
 			);
 		});
 
 		it('should credit amount from unregistered address to new address', async () => {
-			await reclaimAsset.applyAsset(reclaimAssetInput);
+			await reclaimAsset.apply(reclaimAssetInput);
 			const newAddress = cryptography.getAddressFromPublicKey(defaultAccount.publicKey);
 			expect(reducerHandlerStub.invoke).to.be.calledOnce;
 			expect(reducerHandlerStub.invoke).to.be.calledOnceWithExactly('token:credit', {
@@ -145,8 +145,8 @@ describe('ReclaimAsset', () => {
 		});
 
 		it('should fail to reclaim twice for same account', async () => {
-			await reclaimAsset.applyAsset(reclaimAssetInput);
-			expect(reclaimAsset.applyAsset(reclaimAssetInput)).to.rejectedWith(
+			await reclaimAsset.apply(reclaimAssetInput);
+			expect(reclaimAsset.apply(reclaimAssetInput)).to.rejectedWith(
 				'Legacy address corresponding to sender publickey was not found genesis account state',
 			);
 			expect(reclaimAssetInput.stateStore.chain.get(CHAIN_STATE_UNREGISTERED_ADDRESSES)).to.be

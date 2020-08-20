@@ -30,18 +30,18 @@ import * as readerUtils from '../../../src/utils/reader';
 
 const transactionsAssetSchemas = [
 	{
-		moduleType: 2,
-		assetType: 0,
+		moduleID: 2,
+		assetID: 0,
 		schema: tokenTransferAssetSchema,
 	},
 	{
-		moduleType: 4,
-		assetType: 0,
+		moduleID: 4,
+		assetID: 0,
 		schema: keysRegisterAssetSchema,
 	},
 	{
-		moduleType: 5,
-		assetType: 1,
+		moduleID: 5,
+		assetID: 1,
 		schema: dposVoteAssetSchema,
 	},
 ];
@@ -173,8 +173,8 @@ describe('transaction:sign command', () => {
 			.it('should return signed transaction in json format', () => {
 				expect(printJSONStub).to.be.calledOnce;
 				expect(printJSONStub).to.be.calledWithExactly({
-					moduleType: 2,
-					assetType: 0,
+					moduleID: 2,
+					assetID: 0,
 					nonce: '2',
 					fee: '100000000',
 					senderPublicKey: 'CyEfzkthUINwHLioyZQH5GSy+apPNnCVMi3ht35fz74=',
@@ -254,8 +254,8 @@ describe('transaction:sign command', () => {
 			.it('should return fully signed transaction string in base64 format', () => {
 				expect(printJSONStub.callCount).to.equal(1);
 				expect(printJSONStub).to.be.calledWithExactly({
-					moduleType: 4,
-					assetType: 0,
+					moduleID: 4,
+					assetID: 0,
 					nonce: '2',
 					fee: '100000000',
 					senderPublicKey: 'CyEfzkthUINwHLioyZQH5GSy+apPNnCVMi3ht35fz74=',
@@ -342,9 +342,9 @@ describe('transaction:sign command', () => {
 							data: 'send token',
 							recipientAddress: 'qwBBp9P3ssKQtbg01Gvce364WBU=',
 						},
-						assetType: 0,
+						assetID: 0,
 						fee: '100000000',
-						moduleType: 2,
+						moduleID: 2,
 						nonce: '2',
 						senderPublicKey: '8bn07nG11YV9OzRtRBypZ/J4cOvuiFads2T9E+KK26M=',
 						signatures: [

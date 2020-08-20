@@ -28,8 +28,8 @@ import {
 
 const transactionsAssetSchemas = [
 	{
-		moduleType: 2,
-		assetType: 0,
+		moduleID: 2,
+		assetID: 0,
 		schema: tokenTransferAssetSchema,
 	},
 ];

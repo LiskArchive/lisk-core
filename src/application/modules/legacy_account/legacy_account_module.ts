@@ -12,14 +12,14 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-import { AfterGenesisBlockApplyInput, BaseModule, codec } from 'lisk-sdk';
+import { AfterGenesisBlockApplyContext, BaseModule, codec } from 'lisk-sdk';
 import { CHAIN_STATE_UNREGISTERED_ADDRESSES } from './constants';
 import { unregisteredAddressesSchema } from './schema';
 import { ReclaimAsset } from './transaction_assets/reclaim_asset';
 
 export class LegacyAccountModule extends BaseModule {
 	public name = 'legacyAccount';
-	public type = 6;
+	public id = 6;
 	public transactionAssets = [new ReclaimAsset()];
 
 	// eslint-disable-next-line class-methods-use-this
@@ -27,7 +27,7 @@ export class LegacyAccountModule extends BaseModule {
 		genesisBlock,
 		reducerHandler,
 		stateStore,
-	}: AfterGenesisBlockApplyInput): Promise<void> {
+	}: AfterGenesisBlockApplyContext): Promise<void> {
 		const { accounts } = genesisBlock.header.asset;
 		// New address is 20-byte value specified in LIP 0018 if the account has a registered public key.
 		// Otherwise, it is the 8-byte value of the legacy address.
