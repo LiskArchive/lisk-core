@@ -1,10 +1,9 @@
 {
 	"name": "lisk-core",
-	"version": "3.0.0-beta.1",
+	"version": "3.0.0-debug.0",
 	"description": "Lisk blockchain application platform",
 	"author": "Lisk Foundation <admin@lisk.io>, lightcurve GmbH <admin@lightcurve.io>",
 	"license": "Apache-2.0",
-	"private": true,
 	"keywords": [
 		"cryptocurrency",
 		"blockchain",
@@ -21,7 +20,7 @@
 		"url": "https://github.com/LiskHQ/lisk-sdk/issues"
 	},
 	"engines": {
-		"node": ">=12.18.0",
+		"node": ">=12.18.3",
 		"npm": ">=6.14.4"
 	},
 	"main": "dist/index.js",
@@ -29,7 +28,7 @@
 		"lint": "eslint --ext .js,.ts .",
 		"lint:fix": "eslint --fix --ext .js,.ts .",
 		"format": "prettier --write '**/*'",
-		"prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
+		"prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme --multi --dir=docs/commands",
 		"prebuild": "if test -d dist; then rm -r dist; fi; rm -f tsconfig.tsbuildinfo",
 		"build": "tsc",
 		"test": "mocha test",
@@ -59,15 +58,15 @@
 		}
 	},
 	"dependencies": {
-		"@liskhq/lisk-db": "0.1.0-alpha.0",
-		"@liskhq/lisk-passphrase": "3.0.0",
-		"@liskhq/lisk-utils": "0.1.0-alpha.0",
+		"@liskhq/lisk-db": "0.1.0-debug.0",
+		"@liskhq/lisk-passphrase": "3.0.1-debug.0",
+		"@liskhq/lisk-utils": "0.1.0-debug.0",
 		"@oclif/command": "1.6.1",
 		"@oclif/config": "1.15.1",
 		"@oclif/plugin-help": "3.1.0",
 		"fs-extra": "9.0.1",
 		"inquirer": "7.3.2",
-		"lisk-sdk": "5.0.0-alpha.2",
+		"lisk-sdk": "5.0.0-debug.0",
 		"tar": "6.0.2",
 		"tslib": "1.13.0",
 		"axios": "0.19.2"

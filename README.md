@@ -64,7 +64,7 @@ $ npm install -g lisk-core
 $ core COMMAND
 running command...
 $ core (-v|--version|version)
-lisk-core/3.0.0-beta.1 darwin-x64 node-v12.18.0
+lisk-core/3.0.0-debug.0 darwin-x64 node-v12.18.3
 $ core --help [COMMAND]
 USAGE
   $ core COMMAND
@@ -79,9 +79,19 @@ USAGE
 
 # Command Topics
 
+- [`core account`](docs/commands/account.md) - Gets account information for a given address from the blockchain
+- [`core block`](docs/commands/block.md) - Gets block information for a given block id or height from the blockchain
+- [`core blockchain`](docs/commands/blockchain.md) - Download blockchain data from a provided snapshot.
 - [`core copyright`](docs/commands/copyright.md) - Displays copyright notice.
+- [`core forger-info`](docs/commands/forger-info.md) - Export forger data to a given data path
+- [`core forging`](docs/commands/forging.md) - Disable forging for given delegate address
+- [`core hash-onion`](docs/commands/hash-onion.md) - Creates hash onion output to be used by forger.
 - [`core help`](docs/commands/help.md) - display help for core
+- [`core node`](docs/commands/node.md) - Gets node information from a running application
+- [`core passphrase`](docs/commands/passphrase.md) - Decrypts your secret passphrase using the password which was provided at the time of encryption.
+- [`core sdk`](docs/commands/sdk.md) - Link an specific SDK folder given the parameter
 - [`core start`](docs/commands/start.md) - Start Lisk Core Node with given config parameters
+- [`core transaction`](docs/commands/transaction.md) - Creates a transaction which can be broadcasted to the network. Note: fee and amount should be in Beddows!!
 - [`core warranty`](docs/commands/warranty.md) - Displays warranty notice.
 
 <!-- commandsstop -->

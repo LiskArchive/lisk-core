@@ -16,4 +16,4 @@ EXAMPLE
   warranty
 ```
 
-_See code: [dist/commands/warranty.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.1/dist/commands/warranty.ts)_
+_See code: [dist/commands/warranty.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.0/dist/commands/warranty.ts)_

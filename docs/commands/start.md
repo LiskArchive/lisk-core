@@ -60,4 +60,4 @@ EXAMPLES
   start --network dev --data-path ./data --log debug
 ```
 
-_See code: [dist/commands/start.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.1/dist/commands/start.ts)_
+_See code: [dist/commands/start.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.0/dist/commands/start.ts)_

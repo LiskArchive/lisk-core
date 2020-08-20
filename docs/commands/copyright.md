@@ -16,4 +16,4 @@ EXAMPLE
   copyright
 ```
 
-_See code: [dist/commands/copyright.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.1/dist/commands/copyright.ts)_
+_See code: [dist/commands/copyright.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.0/dist/commands/copyright.ts)_
