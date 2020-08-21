@@ -35,10 +35,10 @@
 		"version": "oclif-dev readme --multi --dir=docs/commands && git add README.md docs"
 	},
 	"bin": {
-		"core": "./bin/run"
+		"lisk-core": "./bin/run"
 	},
 	"oclif": {
-		"bin": "core",
+		"bin": "lisk-core",
 		"commands": "./dist/commands",
 		"plugins": [
 			"@oclif/plugin-help"
