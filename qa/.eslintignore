@@ -1,3 +1,10 @@
-node_modules
-output
-features
+docs/
+lisk/
+templates/
+types/
+examples/
+**/*.d.ts
+jest.config.js
+coverage
+benchmark
+.eslintrc.js
