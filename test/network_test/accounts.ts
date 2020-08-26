@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Lisk Foundation
+ * Copyright © 2020 Lisk Foundation
  *
  * See the LICENSE file at the top-level directory of this distribution
  * for licensing information.
@@ -16,21 +16,21 @@ import { Mnemonic } from '@liskhq/lisk-passphrase';
 import { cryptography } from 'lisk-sdk';
 
 export const createAccount = () => {
-  const passphrase = Mnemonic.generateMnemonic();
-  const { privateKey, publicKey } = cryptography.getKeys(passphrase);
-  const address = cryptography.getAddressFromPublicKey(publicKey);
+	const passphrase = Mnemonic.generateMnemonic();
+	const { privateKey, publicKey } = cryptography.getKeys(passphrase);
+	const address = cryptography.getAddressFromPublicKey(publicKey);
 
-  return {
-    passphrase,
-    privateKey,
-    publicKey,
-    address,
-  };
+	return {
+		passphrase,
+		privateKey,
+		publicKey,
+		address,
+	};
 };
 
 export const genesisAccount = {
-	address: Buffer.from('d04699e57c4a3846c988f3c15306796f8eae5c1c', 'hex'),
-	publicKey: Buffer.from('0fe9a3f1a21b5530f27f87a414b549e79a940bf24fdf2b2f05e7f22aeeecc86a', 'hex'),
+	address: '0EaZ5XxKOEbJiPPBUwZ5b46uXBw=',
+	publicKey: Buffer.from('D+mj8aIbVTDyf4ekFLVJ55qUC/JP3ysvBefyKu7syGo=', 'base64'),
 	passphrase: 'peanut hundred pen hawk invite exclude brain chunk gadget wait wrong ready',
 	balance: '10000000000000000',
 	encryptedPassphrase:
