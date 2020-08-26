@@ -19,7 +19,6 @@ import { codec, cryptography, transactions, validator } from 'lisk-sdk';
 import BaseIPCCommand from '../../base_ipc';
 import { flags as commonFlags } from '../../utils/flags';
 import { getAssetFromPrompt, getPassphraseFromPrompt } from '../../utils/reader';
-import { LiskValidationError } from '../../../../lisk-sdk/node_modules/@liskhq/lisk-validator/dist-node';
 
 interface Args {
 	readonly nonce: string;
@@ -117,7 +116,7 @@ export default class CreateCommand extends BaseIPCCommand {
 		const assetObject = codec.fromJSON(assetSchema.schema, rawAsset);
 		const assetErrors = validator.validator.validate(assetSchema.schema, assetObject);
 		if (assetErrors.length) {
-			throw new LiskValidationError([...assetErrors]);
+			throw new validator.LiskValidationError([...assetErrors]);
 		}
 
 		if (!senderPublicKeySource && noSignature) {
@@ -150,7 +149,7 @@ export default class CreateCommand extends BaseIPCCommand {
 			transactionObject,
 		);
 		if (transactionErrors.length) {
-			throw new LiskValidationError([...transactionErrors]);
+			throw new validator.LiskValidationError([...transactionErrors]);
 		}
 
 		transactionObject.asset = assetObject;
