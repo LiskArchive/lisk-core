@@ -63,8 +63,8 @@ export default class CreateCommand extends BaseIPCCommand {
 	];
 
 	static examples = [
-		'transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 2 0 --asset=\'{"amount":100000000,"recipientAddress":"qwBBp9P3ssKQtbg01Gvce364WBU=","data":"send token"}\'',
-		'transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 2 0',
+		'transaction:create 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 100000000 2 2 0 --asset=\'{"amount":100000000,"recipientAddress":"ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815","data":"send token"}\'',
+		'transaction:create 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 100000000 2 2 0',
 	];
 
 	static flags = {
@@ -137,7 +137,7 @@ export default class CreateCommand extends BaseIPCCommand {
 		if (passphraseSource || !noSignature) {
 			passphrase = passphraseSource ?? (await getPassphraseFromPrompt('passphrase', true));
 			const { publicKey } = cryptography.getAddressAndPublicKeyFromPassphrase(passphrase);
-			incompleteTransaction.senderPublicKey = publicKey.toString('base64');
+			incompleteTransaction.senderPublicKey = publicKey.toString('hex');
 		}
 
 		const transactionObject = this._codec.transactionFromJSON(assetSchema.schema, {
@@ -157,7 +157,7 @@ export default class CreateCommand extends BaseIPCCommand {
 			transactions.signTransaction(
 				assetSchema.schema,
 				transactionObject,
-				Buffer.from(networkIdentifier, 'base64'),
+				Buffer.from(networkIdentifier, 'hex'),
 				passphrase,
 			);
 		}

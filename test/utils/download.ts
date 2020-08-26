@@ -17,28 +17,33 @@ import { expect } from 'chai';
 import * as fs from 'fs-extra';
 import * as axios from 'axios';
 import { SinonStub } from 'sinon';
+import { EventEmitter } from 'events';
 import * as downloadUtil from '../../src/utils/download';
 
 describe('download utils', () => {
 	const url = 'https://downloads.lisk.io/lisk/betanet/blockchain.db.gz';
-	const outDir = '~/.cache/lisk-core';
+	const outDir = './tmp/cache/lisk-core';
 
 	describe('#download', () => {
 		let existsSyncStub: SinonStub;
 		let statSyncStub: SinonStub;
 
 		beforeEach(() => {
-			sandbox.stub(axios, 'default');
+			sandbox.stub(axios, 'default').resolves({ data: { pipe: sandbox.stub() } } as any);
 			existsSyncStub = sandbox.stub(fs, 'existsSync');
 			statSyncStub = sandbox.stub(fs, 'statSync');
 			sandbox.stub(fs, 'unlinkSync').returns();
 		});
 
-		it('should return true if downloaded file', () => {
+		it('should resolve if downloaded file', async () => {
 			existsSyncStub.returns(true);
 			statSyncStub.returns({ birthtime: new Date() });
+			const stream = new EventEmitter();
+			sandbox.stub(fs, 'createWriteStream').returns(stream as any);
 
-			return expect(downloadUtil.download(url, outDir)).returned;
+			setTimeout(() => stream.emit('finish'), 10);
+			const res = await downloadUtil.download(url, outDir);
+			return expect(res).to.be.undefined;
 		});
 	});
 

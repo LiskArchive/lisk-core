@@ -63,7 +63,7 @@ export interface Codec {
 const prettyDescription = 'Prints JSON in pretty format rather than condensed.';
 
 const convertStrToBuffer = (data: Buffer | string): Buffer =>
-	Buffer.isBuffer(data) ? data : Buffer.from(data, 'base64');
+	Buffer.isBuffer(data) ? data : Buffer.from(data, 'hex');
 
 export default abstract class BaseIPCCommand extends Command {
 	static flags = {
@@ -144,7 +144,7 @@ export default abstract class BaseIPCCommand extends Command {
 			decodeAccount: (data: Buffer | string): Record<string, unknown> =>
 				codec.decodeJSON(this._schema.accountSchema, convertStrToBuffer(data)),
 			decodeBlock: (data: Buffer | string): Record<string, unknown> => {
-				const blockBuffer: Buffer = Buffer.isBuffer(data) ? data : Buffer.from(data, 'base64');
+				const blockBuffer: Buffer = Buffer.isBuffer(data) ? data : Buffer.from(data, 'hex');
 				const { blockSchema, blockHeaderSchema, blockHeadersAssets } = this._schema;
 				const {
 					header,
@@ -160,13 +160,13 @@ export default abstract class BaseIPCCommand extends Command {
 				} = codec.decodeJSON(blockHeaderSchema, header);
 				const blockAssetJSON = codec.decodeJSON<Record<string, unknown>>(
 					blockHeadersAssets[baseHeaderJSON.version],
-					Buffer.from(baseHeaderJSON.asset, 'base64'),
+					Buffer.from(baseHeaderJSON.asset, 'hex'),
 				);
 				const payloadJSON = payload.map(transactionBuffer =>
 					this._codec.decodeTransaction(transactionBuffer),
 				);
 
-				const blockId = cryptography.hash(header).toString('base64');
+				const blockId = cryptography.hash(header).toString('hex');
 
 				return {
 					header: {
@@ -178,7 +178,7 @@ export default abstract class BaseIPCCommand extends Command {
 				};
 			},
 			decodeTransaction: (data: Buffer | string): Record<string, unknown> => {
-				const transactionBuffer = Buffer.isBuffer(data) ? data : Buffer.from(data, 'base64');
+				const transactionBuffer = Buffer.isBuffer(data) ? data : Buffer.from(data, 'hex');
 				const baseTransaction: {
 					moduleID: number;
 					assetID: number;
@@ -194,12 +194,12 @@ export default abstract class BaseIPCCommand extends Command {
 				}
 				const transactionAsset = codec.decodeJSON<Record<string, unknown>>(
 					transactionTypeAssetSchema.schema,
-					Buffer.from(baseTransaction.asset, 'base64'),
+					Buffer.from(baseTransaction.asset, 'hex'),
 				);
 
 				return {
 					...baseTransaction,
-					id: cryptography.hash(transactionBuffer).toString('base64'),
+					id: cryptography.hash(transactionBuffer).toString('hex'),
 					asset: transactionAsset,
 				};
 			},
@@ -244,7 +244,7 @@ export default abstract class BaseIPCCommand extends Command {
 					asset: assetBuffer,
 				});
 
-				return transactionBuffer.toString('base64');
+				return transactionBuffer.toString('hex');
 			},
 		};
 	}

@@ -102,7 +102,7 @@ describe('blockchain:hash', () => {
 				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
 				.command(['blockchain:hash'])
 				.it('should output the hash db values', ctx => {
-					expect(ctx.stdout).to.equal(`${hashBuffer.toString('base64')}\n`);
+					expect(ctx.stdout).to.equal(`${hashBuffer.toString('hex')}\n`);
 				});
 		});
 
@@ -130,7 +130,7 @@ describe('blockchain:hash', () => {
 				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
 				.command(['blockchain:hash', '--data-path=/my/app/'])
 				.it('should output the hash db values', ctx => {
-					expect(ctx.stdout).to.equal(`${hashBuffer.toString('base64')}\n`);
+					expect(ctx.stdout).to.equal(`${hashBuffer.toString('hex')}\n`);
 				});
 		});
 	});
