@@ -15,8 +15,7 @@
 
 import { expect } from 'chai';
 import * as sandbox from 'sinon';
-import { ApplyAssetContext, cryptography, codec } from 'lisk-sdk';
-import { testing } from '@liskhq/lisk-utils';
+import { ApplyAssetContext, cryptography, codec, testing } from 'lisk-sdk';
 import { ReclaimAsset, getLegacyBytes } from '../../../../src/application/modules';
 import {
 	reclaimAssetSchema,
