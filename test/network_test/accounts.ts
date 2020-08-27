@@ -15,6 +15,13 @@
 import { Mnemonic } from '@liskhq/lisk-passphrase';
 import { cryptography } from 'lisk-sdk';
 
+export interface PassphraseAndKeys {
+	passphrase: string;
+	privateKey?: Buffer;
+	publicKey: Buffer;
+	address: Buffer;
+}
+
 export const createAccount = () => {
 	const passphrase = Mnemonic.generateMnemonic();
 	const { privateKey, publicKey } = cryptography.getKeys(passphrase);
@@ -29,11 +36,8 @@ export const createAccount = () => {
 };
 
 export const genesisAccount = {
-	address: '0EaZ5XxKOEbJiPPBUwZ5b46uXBw=',
+	address: Buffer.from('0EaZ5XxKOEbJiPPBUwZ5b46uXBw=', 'base64'),
 	publicKey: Buffer.from('D+mj8aIbVTDyf4ekFLVJ55qUC/JP3ysvBefyKu7syGo=', 'base64'),
 	passphrase: 'peanut hundred pen hawk invite exclude brain chunk gadget wait wrong ready',
-	balance: '10000000000000000',
-	encryptedPassphrase:
-		'iterations=10&cipherText=6541c04d7a46eacd666c07fbf030fef32c5db324466e3422e59818317ac5d15cfffb80c5f1e2589eaa6da4f8d611a94cba92eee86722fc0a4015a37cff43a5a699601121fbfec11ea022&iv=141edfe6da3a9917a42004be&salt=f523bba8316c45246c6ffa848b806188&tag=4ffb5c753d4a1dc96364c4a54865521a&version=1',
 	password: 'elephant tree paris dragon chair galaxy',
 };

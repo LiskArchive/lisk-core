@@ -13,149 +13,231 @@
  *
  */
 
-import { IPCChannel, codec } from 'lisk-sdk';
+import { IPCChannel, codec, transactions } from 'lisk-sdk';
 import { Schema } from '@liskhq/lisk-codec';
-import { Mnemonic } from '@liskhq/lisk-passphrase';
-import { createAccount, genesisAccount } from '../accounts';
+import { PassphraseAndKeys } from '../accounts';
 import {
-  createTransferTransaction,
-  createDelegateRegisterTransaction,
-  createReclaimTransaction,
+	createTransferTransaction,
+	createDelegateRegisterTransaction,
+	createReclaimTransaction,
+	createDelegateVoteTransaction,
+	Vote,
+	createMultiSignRegisterTransaction,
+	createMultisignatureTransferTransaction,
 } from './create';
 
 interface CodecSchema {
-  accountSchema: Schema;
-  blockSchema: Schema;
-  blockHeaderSchema: Schema;
-  blockHeadersAssets: {
-    [key: number]: Schema;
-  };
-  transactionSchema: Schema;
-  transactionsAssetSchemas: {
-    moduleType: number;
-    assetType: number;
-    schema: Schema;
-  }[];
+	accountSchema: Schema;
+	blockSchema: Schema;
+	blockHeaderSchema: Schema;
+	blockHeadersAssets: {
+		[key: number]: Schema;
+	};
+	transactionSchema: Schema;
+	transactionsAssetSchemas: {
+		moduleType: number;
+		assetType: number;
+		schema: Schema;
+	}[];
 }
 
-const generateRandomUserName = () => Mnemonic.generateMnemonic().split(' ').join('').substr(0, 20);
+export const getBeddows = (lskAmount: string) =>
+	BigInt(transactions.convertLSKToBeddows(lskAmount));
 
-const nonceSequenceItems = (AccountNonce: number, count = 1) => [
-  AccountNonce,
-  ...Array.from({ length: count }, (_, k) => AccountNonce + k + 1),
+const generateRandomUserName = () => {
+	const allLowerAlpha = [...'abcdefghijklmnopqrstuvwxyz'];
+
+	const base = [...allLowerAlpha];
+
+	return [...Array(20)].map(() => base[(Math.random() * base.length) | 0]).join('');
+};
+
+const nonceSequenceItems = (AccountNonce: number, count = 63) => [
+	AccountNonce,
+	...Array.from({ length: count }, (_, k) => AccountNonce + k + 1),
 ];
 
 const getAccount = async (
-  channel: IPCChannel,
-  address: string,
+	channel: IPCChannel,
+	address: string,
 ): Promise<Record<string, unknown>> => {
-  const schema = await channel.invoke<CodecSchema>('app:getSchema');
-  const account = await channel.invoke<string>('app:getAccount', {
-    address,
-  });
+	const schema = await channel.invoke<CodecSchema>('app:getSchema');
+	const account = await channel.invoke<string>('app:getAccount', {
+		address,
+	});
 
-  return codec.decodeJSON(schema.accountSchema, Buffer.from(account, 'base64'));
+	return codec.decodeJSON(schema.accountSchema, Buffer.from(account, 'base64'));
 };
 
 const getAccountNonce = async (channel: IPCChannel, address: string): Promise<number> => {
-  const account = await getAccount(channel, address);
-  const { sequence } = account as { sequence: { nonce: string } };
-  return Number(sequence.nonce);
+	const account = await getAccount(channel, address);
+	const { sequence } = account as { sequence: { nonce: string } };
+	return Number(sequence.nonce);
+};
+
+const handleTransaction = async (
+	channel: IPCChannel,
+	transaction: string,
+	transactionMessage: string,
+) => {
+	try {
+		const result: any = await channel.invoke('app:postTransaction', { transaction });
+
+		if (result.transactionId) {
+			console.log(`Sending ${transactionMessage} transaction: ${result.transactionId}`);
+		} else {
+			console.log(`Failed to send ${transactionMessage} transaction: ${transaction}`);
+		}
+	} catch (error) {
+		console.error(`Error while sending ${transactionMessage} transaction: \n`, error);
+	}
 };
 
 export const sendTokenTransferTransactions = async (
-  channel: IPCChannel,
-  nodeInfo: Record<string, unknown>,
+	channel: IPCChannel,
+	nodeInfo: Record<string, unknown>,
+	accounts: PassphraseAndKeys[],
+	fromAccount: PassphraseAndKeys,
+	fromGenesis = true,
 ) => {
-  try {
-    const AccountNonce = await getAccountNonce(channel, genesisAccount.address);
+	try {
+		const AccountNonce = fromGenesis
+			? await getAccountNonce(channel, fromAccount.address.toString('base64'))
+			: 0;
 
-    const { networkID } = nodeInfo as { networkID: string };
-    const transactions = nonceSequenceItems(AccountNonce).map(nonce => {
-      const newAccount = createAccount();
+		const { networkID } = nodeInfo as { networkID: string };
+		const transactions = nonceSequenceItems(AccountNonce).map((nonce, index) => {
+			return createTransferTransaction({
+				nonce: BigInt(nonce),
+				recipientAddress: accounts[index].address,
+				amount: getBeddows(fromGenesis ? '2000' : '25'),
+				fee: getBeddows('0.1'),
+				networkIdentifier: Buffer.from(networkID, 'base64'),
+				passphrase: fromAccount.passphrase,
+			});
+		});
 
-      return createTransferTransaction({
-        nonce: BigInt(nonce),
-        recipientAddress: newAccount.address,
-        amount: BigInt('1000000000'),
-        fee: BigInt('400000'),
-        networkIdentifier: Buffer.from(networkID, 'base64'),
-        passphrase: genesisAccount.passphrase,
-      });
-    });
+		const result = await Promise.all(
+			transactions.map(
+				async transaction => await channel.invoke('app:postTransaction', { transaction }),
+			),
+		);
 
-    const result = await Promise.all(transactions.map(async transaction => await channel.invoke('app:postTransaction', { transaction })));
-
-    for (const transaction of result as Array<Record<string, unknown>>) {
-      if (transaction.transactionId) {
-        console.log(`Sending token transfer transaction: ${transaction.transactionId}`);
-      } else {
-        console.log(`Failed to send token transfer transaction: ${transaction}`);
-      }
-    }
-    console.log(`Sent token transfer transactions: ${transactions.length}`);
-  } catch (error) {
-    console.error('Error while sending token transfer transaction: \n', error);
-  }
+		for (const transaction of result as Array<Record<string, unknown>>) {
+			if (transaction.transactionId) {
+				console.log(`Sending token transfer transaction: ${transaction.transactionId}`);
+			} else {
+				console.log(`Failed to send token transfer transaction: ${transaction}`);
+			}
+		}
+		console.log(`Sent token transfer transactions: ${transactions.length}`);
+	} catch (error) {
+		console.error('Error while sending token transfer transaction: \n', error);
+	}
 };
 
-export const sendDelegateRegistrationTransactions = async (
-  channel: IPCChannel,
-  nodeInfo: Record<string, unknown>,
+export const sendDelegateRegistrationTransaction = async (
+	channel: IPCChannel,
+	nodeInfo: Record<string, unknown>,
+	fromAccount: PassphraseAndKeys,
 ) => {
-  try {
-    const AccountNonce = await getAccountNonce(channel, genesisAccount.address);
+	const AccountNonce = await getAccountNonce(channel, fromAccount.address.toString('base64'));
 
-    const { networkID } = nodeInfo as { networkID: string };
-    const transactions = nonceSequenceItems(AccountNonce).map(nonce => {
-      return createDelegateRegisterTransaction({
-        nonce: BigInt(nonce),
-        username: generateRandomUserName(),
-        fee: BigInt('2500000000'),
-        networkIdentifier: Buffer.from(networkID, 'base64'),
-        passphrase: genesisAccount.passphrase,
-      });
-    });
+	const { networkID } = nodeInfo as { networkID: string };
+	const transaction = createDelegateRegisterTransaction({
+		nonce: BigInt(AccountNonce),
+		username: generateRandomUserName(),
+		fee: getBeddows('15'),
+		networkIdentifier: Buffer.from(networkID, 'base64'),
+		passphrase: fromAccount.passphrase,
+	});
 
-    const result = await Promise.all(transactions.map(async transaction => await channel.invoke('app:postTransaction', { transaction })));
+	await handleTransaction(channel, transaction, 'delegate registration');
+};
 
-    for (const transaction of result as Array<Record<string, unknown>>) {
-      if (transaction.transactionId) {
-        console.log(`Sending delegate registration transaction: ${transaction.transactionId}`);
-      } else {
-        console.log(`Failed to send delegate registration transaction: ${transaction}`);
-      }
-    }
-    console.log(`Sent delegate registration transactions: ${transactions.length}`);
-  } catch (error) {
-    console.error('Error while sending delegate registration transaction: \n', error);
-  }
+export const sendVoteTransaction = async (
+	channel: IPCChannel,
+	nodeInfo: Record<string, unknown>,
+	fromAccount: PassphraseAndKeys,
+	votes: Vote[],
+) => {
+	const AccountNonce = await getAccountNonce(channel, fromAccount.address.toString('base64'));
 
+	const { networkID } = nodeInfo as { networkID: string };
+	const transaction = createDelegateVoteTransaction({
+		nonce: BigInt(AccountNonce),
+		votes,
+		fee: getBeddows('0.3'),
+		networkIdentifier: Buffer.from(networkID, 'base64'),
+		passphrase: fromAccount.passphrase,
+	});
+
+	await handleTransaction(channel, transaction, 'vote');
+};
+
+export const sendMultiSigRegistrationTransaction = async (
+	channel: IPCChannel,
+	nodeInfo: Record<string, unknown>,
+	fromAccount: PassphraseAndKeys,
+	asset: { mandatoryKeys: Buffer[]; optionalKeys: Buffer[]; numberOfSignatures: number },
+	passphrases: string[],
+) => {
+	const AccountNonce = await getAccountNonce(channel, fromAccount.address.toString('base64'));
+
+	const { networkID } = nodeInfo as { networkID: string };
+	const transaction = createMultiSignRegisterTransaction({
+		nonce: BigInt(AccountNonce),
+		mandatoryKeys: asset.mandatoryKeys,
+		optionalKeys: asset.optionalKeys,
+		numberOfSignatures: asset.numberOfSignatures,
+		senderPassphrase: fromAccount.passphrase,
+		fee: getBeddows('0.5'),
+		networkIdentifier: Buffer.from(networkID, 'base64'),
+		passphrases,
+	});
+
+	await handleTransaction(channel, transaction, 'multi signature registration');
+};
+
+export const sendTransferTransactionFromMultiSigAccount = async (
+	channel: IPCChannel,
+	nodeInfo: Record<string, unknown>,
+	fromAccount: PassphraseAndKeys,
+	asset: { mandatoryKeys: Buffer[]; optionalKeys: Buffer[] },
+	passphrases: string[],
+) => {
+	const AccountNonce = await getAccountNonce(channel, fromAccount.address.toString('base64'));
+
+	const { networkID } = nodeInfo as { networkID: string };
+	const transaction = createMultisignatureTransferTransaction({
+		senderPublicKey: fromAccount.publicKey,
+		recipientAddress: fromAccount.address,
+		amount: getBeddows('1'),
+		nonce: BigInt(AccountNonce),
+		mandatoryKeys: asset.mandatoryKeys,
+		optionalKeys: asset.optionalKeys,
+		fee: getBeddows('0.5'),
+		networkIdentifier: Buffer.from(networkID, 'base64'),
+		passphrases,
+	});
+
+	await handleTransaction(channel, transaction, 'transfer transaction from multisig account');
 };
 
 export const sendReclaimTransactions = async (
-  channel: IPCChannel,
-  nodeInfo: Record<string, unknown>,
-  passphrase: string,
+	channel: IPCChannel,
+	nodeInfo: Record<string, unknown>,
+	fromAccount: PassphraseAndKeys,
 ) => {
-  try {
-    const { networkID } = nodeInfo as { networkID: string };
-    const AccountNonce = await getAccountNonce(channel, genesisAccount.address);
-    const transaction = createReclaimTransaction({
-      nonce: BigInt(AccountNonce),
-      amount: BigInt('1000000000'),
-      fee: BigInt('400000'),
-      networkIdentifier: Buffer.from(networkID, 'base64'),
-      passphrase: passphrase,
-    });
+	const { networkID } = nodeInfo as { networkID: string };
+	const AccountNonce = await getAccountNonce(channel, fromAccount.address.toString('base64'));
+	const transaction = createReclaimTransaction({
+		nonce: BigInt(AccountNonce),
+		amount: getBeddows('10000'),
+		fee: getBeddows('0.4'),
+		networkIdentifier: Buffer.from(networkID, 'base64'),
+		passphrase: fromAccount.passphrase,
+	});
 
-    const result: any = await channel.invoke('app:postTransaction', { transaction });
-    if (result.transactionId) {
-      console.log(`Sent reclaim transaction: ${result.transactionId}`);
-    } else {
-      console.log(`Failed to send token transfer transaction: ${transaction}`);
-    }
-  } catch (error) {
-    console.error('Error while sending reclaim transaction: \n', error);
-  }
+	await handleTransaction(channel, transaction, 'reclaim');
 };

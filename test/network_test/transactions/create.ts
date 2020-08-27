@@ -26,6 +26,11 @@ import {
 
 import { ReclaimAsset } from '../../../src/application/modules';
 
+export interface Vote {
+	delegateAddress: Buffer;
+	amount: bigint;
+}
+
 export const createTransferTransaction = (input: {
 	recipientAddress: Buffer;
 	amount?: bigint;
@@ -96,8 +101,8 @@ export const createDelegateVoteTransaction = (input: {
 	nonce: bigint;
 	networkIdentifier: Buffer;
 	passphrase: string;
+	votes: Vote[];
 	fee?: bigint;
-	votes: { delegateAddress: Buffer; amount: bigint }[];
 }): string => {
 	const encodedAsset = codec.encode(new DPoSVoteAsset().schema, {
 		votes: input.votes,
