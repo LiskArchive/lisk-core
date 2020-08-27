@@ -31,7 +31,7 @@ export default class SignCommand extends BaseIPCCommand {
 		{
 			name: 'transaction',
 			required: true,
-			description: 'The transaction to be signed encoded as base64 string',
+			description: 'The transaction to be signed encoded as hex string',
 		},
 	];
 
@@ -43,11 +43,11 @@ export default class SignCommand extends BaseIPCCommand {
 		}),
 		'mandatory-keys': flagParser.string({
 			multiple: true,
-			description: 'Mandatory publicKey string in base64 format.',
+			description: 'Mandatory publicKey string in hex format.',
 		}),
 		'optional-keys': flagParser.string({
 			multiple: true,
-			description: 'Optional publicKey string in base64 format.',
+			description: 'Optional publicKey string in hex format.',
 		}),
 		json: flagParser.boolean({
 			char: 'j',
@@ -56,7 +56,7 @@ export default class SignCommand extends BaseIPCCommand {
 	};
 
 	static examples = [
-		'transaction:sign hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= CAIQABgCIIDC1y8qIA/po/GiG1Uw8n+HpBS1SeealAvyT98rLwXn8iru7MhqMicIgMLXLxIUqwBBp9P3ssKQtbg01Gvce364WBUaCnNlbmQgdG9rZW46QGtgC2NbDYXDv/HlmxYg4Qg4B/3kzSZUWl0Y0qgfzvege/XsB50JBjC7i6NH1dgr9CbL/6qotUBPEZCnZ2yL1AY=',
+		'transaction:sign 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 0802100018022080c2d72f2a200fe9a3f1a21b5530f27f87a414b549e79a940bf24fdf2b2f05e7f22aeeecc86a32270880c2d72f1214ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e3a406b600b635b0d85c3bff1e59b1620e1083807fde4cd26545a5d18d2a81fcef7a07bf5ec079d090630bb8ba347d5d82bf426cbffaaa8b5404f1190a7676c8bd406',
 	];
 
 	async run(): Promise<void> {
@@ -87,7 +87,7 @@ export default class SignCommand extends BaseIPCCommand {
 		}
 
 		const passphrase = passphraseSource ?? (await getPassphraseFromPrompt('passphrase', true));
-		const networkIdentifierBuffer = Buffer.from(networkIdentifier, 'base64');
+		const networkIdentifierBuffer = Buffer.from(networkIdentifier, 'hex');
 		const { id, ...transactionJSONWithoutID } = (transactionJSON as unknown) as Record<
 			string,
 			unknown
@@ -101,8 +101,8 @@ export default class SignCommand extends BaseIPCCommand {
 
 		if (mandatoryKeys || optionalKeys) {
 			const keys = {
-				mandatoryKeys: mandatoryKeys ? mandatoryKeys.map(k => Buffer.from(k, 'base64')) : [],
-				optionalKeys: optionalKeys ? optionalKeys.map(k => Buffer.from(k, 'base64')) : [],
+				mandatoryKeys: mandatoryKeys ? mandatoryKeys.map(k => Buffer.from(k, 'hex')) : [],
+				optionalKeys: optionalKeys ? optionalKeys.map(k => Buffer.from(k, 'hex')) : [],
 			};
 
 			signedTransaction = transactions.signMultiSignatureTransaction(

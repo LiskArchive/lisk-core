@@ -38,11 +38,11 @@ const transactionsAssetSchemas = [
 ];
 const passphrase = 'peanut hundred pen hawk invite exclude brain chunk gadget wait wrong ready';
 const transferAsset =
-	'{"amount":100,"recipientAddress":"qwBBp9P3ssKQtbg01Gvce364WBU=","data":"send token"}';
+	'{"amount":100,"recipientAddress":"ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815","data":"send token"}';
 const voteAsset =
-	'{"votes":[{"delegateAddress":"qwBBp9P3ssKQtbg01Gvce364WBU=","amount":100},{"delegateAddress":"qwBBp9P3ssKQtbg01Gvce364WBU=","amount":-50}]}';
+	'{"votes":[{"delegateAddress":"ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815","amount":100},{"delegateAddress":"ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815","amount":-50}]}';
 const { publicKey } = cryptography.getAddressAndPublicKeyFromPassphrase(passphrase);
-const senderPublickey = publicKey.toString('base64');
+const senderPublickey = publicKey.toString('hex');
 
 describe('transaction:create command', () => {
 	const fsStub = sandbox.stub().returns(true);
@@ -51,7 +51,7 @@ describe('transaction:create command', () => {
 	const ipcStartAndListenStub = sandbox.stub();
 	const promptAssetStub = sandbox.stub().resolves({
 		amount: 100,
-		recipientAddress: 'qwBBp9P3ssKQtbg01Gvce364WBU=',
+		recipientAddress: 'ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815',
 		data: 'send token',
 	});
 
@@ -86,25 +86,32 @@ describe('transaction:create command', () => {
 			.it('should throw an error when no arguments are provided.');
 	});
 
-	describe('transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=', () => {
+	describe('transaction:create 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3', () => {
 		setupTest()
-			.command(['transaction:create', 'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM='])
+			.command([
+				'transaction:create',
+				'873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3',
+			])
 			.catch((error: Error) => expect(error.message).to.contain('Missing 4 required args:'))
 			.it('should throw an error when fee, nonce and transaction type are provided.');
 	});
 
-	describe('transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000', () => {
+	describe('transaction:create 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 100000000', () => {
 		setupTest()
-			.command(['transaction:create', 'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=', '100000000'])
+			.command([
+				'transaction:create',
+				'873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3',
+				'100000000',
+			])
 			.catch((error: Error) => expect(error.message).to.contain('Missing 3 required args:'))
 			.it('should throw an error when nonce and transaction type are provided.');
 	});
 
-	describe('transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2', () => {
+	describe('transaction:create 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 100000000 2', () => {
 		setupTest()
 			.command([
 				'transaction:create',
-				'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=',
+				'873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3',
 				'100000000',
 				'2',
 			])
@@ -112,11 +119,11 @@ describe('transaction:create command', () => {
 			.it('should throw an error when transaction moduleID and assetID are provided.');
 	});
 
-	describe('transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 2', () => {
+	describe('transaction:create 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 100000000 2 2', () => {
 		setupTest()
 			.command([
 				'transaction:create',
-				'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=',
+				'873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3',
 				'100000000',
 				'2',
 				'2',
@@ -125,11 +132,11 @@ describe('transaction:create command', () => {
 			.it('should throw an error when transaction assetID is not provided.');
 	});
 
-	describe('transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 99999 0', () => {
+	describe('transaction:create 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 100000000 2 99999 0', () => {
 		setupTest()
 			.command([
 				'transaction:create',
-				'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=',
+				'873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3',
 				'100000000',
 				'2',
 				'99999',
@@ -144,11 +151,11 @@ describe('transaction:create command', () => {
 	});
 
 	describe('transaction:create with flags', () => {
-		describe(`transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 8 --asset='{"amount": "abc"}' --passphrase=${passphrase}`, () => {
+		describe(`transaction:create 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 100000000 2 8 --asset='{"amount": "abc"}' --passphrase=${passphrase}`, () => {
 			setupTest()
 				.command([
 					'transaction:create',
-					'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=',
+					'873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3',
 					'100000000',
 					'2',
 					'2',
@@ -160,11 +167,11 @@ describe('transaction:create command', () => {
 				.it('should throw error for invalid asset.');
 		});
 
-		describe(`transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 8 --asset=${transferAsset} --no-signature`, () => {
+		describe(`transaction:create 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 100000000 2 8 --asset=${transferAsset} --no-signature`, () => {
 			setupTest()
 				.command([
 					'transaction:create',
-					'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=',
+					'873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3',
 					'100000000',
 					'2',
 					'2',
@@ -182,11 +189,11 @@ describe('transaction:create command', () => {
 				);
 		});
 
-		describe(`transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 8 --asset=${transferAsset} --passphrase=${passphrase}`, () => {
+		describe(`transaction:create 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 100000000 2 8 --asset=${transferAsset} --passphrase=${passphrase}`, () => {
 			setupTest()
 				.command([
 					'transaction:create',
-					'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=',
+					'873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3',
 					'100000000',
 					'2',
 					'2',
@@ -194,20 +201,20 @@ describe('transaction:create command', () => {
 					`--asset=${transferAsset}`,
 					`--passphrase=${passphrase}`,
 				])
-				.it('should return encoded transaction string in base64 format with signature', () => {
+				.it('should return encoded transaction string in hex format with signature', () => {
 					expect(printJSONStub).to.be.calledOnce;
 					expect(printJSONStub).to.be.calledWithExactly({
 						transaction:
-							'CAIQABgCIIDC1y8qIA/po/GiG1Uw8n+HpBS1SeealAvyT98rLwXn8iru7MhqMiQIZBIUqwBBp9P3ssKQtbg01Gvce364WBUaCnNlbmQgdG9rZW46QK7OrO4MyS1cs13ExJI3xU0Im2EnOt6c/V3KU4zL9XfN9RNhggX2dXECqhzZlY+5Te+N9VNr2ZNoa0rr9OI/CA8=',
+							'0802100018022080c2d72f2a200fe9a3f1a21b5530f27f87a414b549e79a940bf24fdf2b2f05e7f22aeeecc86a322408641214ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e3a40aeceacee0cc92d5cb35dc4c49237c54d089b61273ade9cfd5dca538ccbf577cdf513618205f6757102aa1cd9958fb94def8df5536bd993686b4aebf4e23f080f',
 					});
 				});
 		});
 
-		describe(`transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 8 --asset=${transferAsset} --no-signature --sender-publickey=${senderPublickey}`, () => {
+		describe(`transaction:create 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 100000000 2 8 --asset=${transferAsset} --no-signature --sender-publickey=${senderPublickey}`, () => {
 			setupTest()
 				.command([
 					'transaction:create',
-					'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=',
+					'873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3',
 					'100000000',
 					'2',
 					'2',
@@ -216,20 +223,20 @@ describe('transaction:create command', () => {
 					'--no-signature',
 					`--sender-publickey=${senderPublickey}`,
 				])
-				.it('should return encoded transaction string in base64 format without signature', () => {
+				.it('should return encoded transaction string in hex format without signature', () => {
 					expect(printJSONStub).to.be.calledOnce;
 					expect(printJSONStub).to.be.calledWithExactly({
 						transaction:
-							'CAIQABgCIIDC1y8qIA/po/GiG1Uw8n+HpBS1SeealAvyT98rLwXn8iru7MhqMiQIZBIUqwBBp9P3ssKQtbg01Gvce364WBUaCnNlbmQgdG9rZW4=',
+							'0802100018022080c2d72f2a200fe9a3f1a21b5530f27f87a414b549e79a940bf24fdf2b2f05e7f22aeeecc86a322408641214ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e',
 					});
 				});
 		});
 
-		describe(`transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 5 1 --asset=${voteAsset} --passphrase=${passphrase}`, () => {
+		describe(`transaction:create 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 100000000 2 5 1 --asset=${voteAsset} --passphrase=${passphrase}`, () => {
 			setupTest()
 				.command([
 					'transaction:create',
-					'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=',
+					'873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3',
 					'100000000',
 					'2',
 					'5',
@@ -237,20 +244,20 @@ describe('transaction:create command', () => {
 					`--asset=${voteAsset}`,
 					`--passphrase=${passphrase}`,
 				])
-				.it('should return encoded transaction string in base64 format with signature', () => {
+				.it('should return encoded transaction string in hex format with signature', () => {
 					expect(printJSONStub).to.be.calledOnce;
 					expect(printJSONStub).to.be.calledWithExactly({
 						transaction:
-							'CAUQARgCIIDC1y8qIA/po/GiG1Uw8n+HpBS1SeealAvyT98rLwXn8iru7MhqMjUKGQoUqwBBp9P3ssKQtbg01Gvce364WBUQyAEKGAoUqwBBp9P3ssKQtbg01Gvce364WBUQYzpAe8iVOz1ZiYXPqr+UlXa4LTFFEc5q64G61dBsklU4uVPgxRYbX3yT+zIMUpRMQG7PXvYDi0S1eNIhSV9NNq5DDg==',
+							'0805100118022080c2d72f2a200fe9a3f1a21b5530f27f87a414b549e79a940bf24fdf2b2f05e7f22aeeecc86a32350a190a14ab0041a7d3f7b2c290b5b834d46bdc7b7eb8581510c8010a180a14ab0041a7d3f7b2c290b5b834d46bdc7b7eb8581510633a407bc8953b3d598985cfaabf949576b82d314511ce6aeb81bad5d06c925538b953e0c5161b5f7c93fb320c52944c406ecf5ef6038b44b578d221495f4d36ae430e',
 					});
 				});
 		});
 
-		describe(`transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 5 1 --asset=${voteAsset} --passphrase=${passphrase}`, () => {
+		describe(`transaction:create 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 100000000 2 5 1 --asset=${voteAsset} --passphrase=${passphrase}`, () => {
 			setupTest()
 				.command([
 					'transaction:create',
-					'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=',
+					'873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3',
 					'100000000',
 					'2',
 					'5',
@@ -258,22 +265,22 @@ describe('transaction:create command', () => {
 					`--asset=${voteAsset}`,
 					`--passphrase=${passphrase}`,
 				])
-				.it('should return encoded transaction string in base64 format with signature', () => {
+				.it('should return encoded transaction string in hex format with signature', () => {
 					expect(printJSONStub).to.be.calledOnce;
 					expect(printJSONStub).to.be.calledWithExactly({
 						transaction:
-							'CAUQARgCIIDC1y8qIA/po/GiG1Uw8n+HpBS1SeealAvyT98rLwXn8iru7MhqMjUKGQoUqwBBp9P3ssKQtbg01Gvce364WBUQyAEKGAoUqwBBp9P3ssKQtbg01Gvce364WBUQYzpAe8iVOz1ZiYXPqr+UlXa4LTFFEc5q64G61dBsklU4uVPgxRYbX3yT+zIMUpRMQG7PXvYDi0S1eNIhSV9NNq5DDg==',
+							'0805100118022080c2d72f2a200fe9a3f1a21b5530f27f87a414b549e79a940bf24fdf2b2f05e7f22aeeecc86a32350a190a14ab0041a7d3f7b2c290b5b834d46bdc7b7eb8581510c8010a180a14ab0041a7d3f7b2c290b5b834d46bdc7b7eb8581510633a407bc8953b3d598985cfaabf949576b82d314511ce6aeb81bad5d06c925538b953e0c5161b5f7c93fb320c52944c406ecf5ef6038b44b578d221495f4d36ae430e',
 					});
 				});
 		});
 	});
 
 	describe('transaction:create with prompts and flags', () => {
-		describe(`transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 2 0 --passphrase=${passphrase}`, () => {
+		describe(`transaction:create 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 100000000 2 2 0 --passphrase=${passphrase}`, () => {
 			setupTest()
 				.command([
 					'transaction:create',
-					'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=',
+					'873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3',
 					'100000000',
 					'2',
 					'2',
@@ -294,16 +301,16 @@ describe('transaction:create command', () => {
 					expect(printJSONStub).to.be.calledOnce;
 					expect(printJSONStub).to.be.calledWithExactly({
 						transaction:
-							'CAIQABgCIIDC1y8qIA/po/GiG1Uw8n+HpBS1SeealAvyT98rLwXn8iru7MhqMiQIZBIUqwBBp9P3ssKQtbg01Gvce364WBUaCnNlbmQgdG9rZW46QK7OrO4MyS1cs13ExJI3xU0Im2EnOt6c/V3KU4zL9XfN9RNhggX2dXECqhzZlY+5Te+N9VNr2ZNoa0rr9OI/CA8=',
+							'0802100018022080c2d72f2a200fe9a3f1a21b5530f27f87a414b549e79a940bf24fdf2b2f05e7f22aeeecc86a322408641214ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e3a40aeceacee0cc92d5cb35dc4c49237c54d089b61273ade9cfd5dca538ccbf577cdf513618205f6757102aa1cd9958fb94def8df5536bd993686b4aebf4e23f080f',
 					});
 				});
 		});
 
-		describe('transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 2 0', () => {
+		describe('transaction:create 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 100000000 2 2 0', () => {
 			setupTest()
 				.command([
 					'transaction:create',
-					'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=',
+					'873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3',
 					'100000000',
 					'2',
 					'2',
@@ -324,16 +331,16 @@ describe('transaction:create command', () => {
 					expect(printJSONStub).to.be.calledOnce;
 					expect(printJSONStub).to.be.calledWithExactly({
 						transaction:
-							'CAIQABgCIIDC1y8qIA/po/GiG1Uw8n+HpBS1SeealAvyT98rLwXn8iru7MhqMiQIZBIUqwBBp9P3ssKQtbg01Gvce364WBUaCnNlbmQgdG9rZW46QK7OrO4MyS1cs13ExJI3xU0Im2EnOt6c/V3KU4zL9XfN9RNhggX2dXECqhzZlY+5Te+N9VNr2ZNoa0rr9OI/CA8=',
+							'0802100018022080c2d72f2a200fe9a3f1a21b5530f27f87a414b549e79a940bf24fdf2b2f05e7f22aeeecc86a322408641214ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e3a40aeceacee0cc92d5cb35dc4c49237c54d089b61273ade9cfd5dca538ccbf577cdf513618205f6757102aa1cd9958fb94def8df5536bd993686b4aebf4e23f080f',
 					});
 				});
 		});
 
-		describe(`transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 2 0 --asset=${transferAsset} --no-signature --json`, () => {
+		describe(`transaction:create 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 100000000 2 2 0 --asset=${transferAsset} --no-signature --json`, () => {
 			setupTest()
 				.command([
 					'transaction:create',
-					'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=',
+					'873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3',
 					'100000000',
 					'2',
 					'2',
@@ -352,11 +359,11 @@ describe('transaction:create command', () => {
 							assetID: 0,
 							nonce: '2',
 							fee: '100000000',
-							senderPublicKey: 'D+mj8aIbVTDyf4ekFLVJ55qUC/JP3ysvBefyKu7syGo=',
+							senderPublicKey: '0fe9a3f1a21b5530f27f87a414b549e79a940bf24fdf2b2f05e7f22aeeecc86a',
 							asset: {
 								amount: '100',
 								data: 'send token',
-								recipientAddress: 'qwBBp9P3ssKQtbg01Gvce364WBU=',
+								recipientAddress: 'ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815',
 							},
 							signatures: [],
 						});
@@ -364,11 +371,11 @@ describe('transaction:create command', () => {
 				);
 		});
 
-		describe(`transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 2 0 --asset=${transferAsset} --passphrase=${passphrase} --json`, () => {
+		describe(`transaction:create 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 100000000 2 2 0 --asset=${transferAsset} --passphrase=${passphrase} --json`, () => {
 			setupTest()
 				.command([
 					'transaction:create',
-					'hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=',
+					'873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3',
 					'100000000',
 					'2',
 					'2',
@@ -384,14 +391,14 @@ describe('transaction:create command', () => {
 						assetID: 0,
 						nonce: '2',
 						fee: '100000000',
-						senderPublicKey: 'D+mj8aIbVTDyf4ekFLVJ55qUC/JP3ysvBefyKu7syGo=',
+						senderPublicKey: '0fe9a3f1a21b5530f27f87a414b549e79a940bf24fdf2b2f05e7f22aeeecc86a',
 						asset: {
 							amount: '100',
 							data: 'send token',
-							recipientAddress: 'qwBBp9P3ssKQtbg01Gvce364WBU=',
+							recipientAddress: 'ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815',
 						},
 						signatures: [
-							'rs6s7gzJLVyzXcTEkjfFTQibYSc63pz9XcpTjMv1d831E2GCBfZ1cQKqHNmVj7lN7431U2vZk2hrSuv04j8IDw==',
+							'aeceacee0cc92d5cb35dc4c49237c54d089b61273ade9cfd5dca538ccbf577cdf513618205f6757102aa1cd9958fb94def8df5536bd993686b4aebf4e23f080f',
 						],
 					});
 				});

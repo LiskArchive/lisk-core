@@ -31,7 +31,7 @@ const processInputs = (passphrase: string, password: string, outputPublicKey: bo
 	return outputPublicKey
 		? {
 				encryptedPassphrase,
-				publicKey: cryptography.getKeys(passphrase).publicKey.toString('base64'),
+				publicKey: cryptography.getKeys(passphrase).publicKey.toString('hex'),
 		  }
 		: { encryptedPassphrase };
 };

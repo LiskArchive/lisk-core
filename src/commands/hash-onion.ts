@@ -64,7 +64,7 @@ export default class HashOnionCommand extends Command {
 		const seed = cryptography.generateHashOnionSeed();
 
 		const hashBuffers = cryptography.hashOnion(seed, count, distance);
-		const hashes = hashBuffers.map(buf => buf.toString('base64'));
+		const hashes = hashBuffers.map(buf => buf.toString('hex'));
 
 		const result = { count, distance, hashes };
 

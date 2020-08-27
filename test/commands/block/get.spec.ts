@@ -57,29 +57,29 @@ const blockHeadersAssets = {
 };
 
 describe('block:get command', () => {
-	const blockId = 'T35B9XRMDCpDTxOvsYa3f7SxdqUpj5HthmaA/17xOm0=';
+	const blockId = '4f7e41f5744c0c2a434f13afb186b77fb4b176a5298f91ed866680ff5ef13a6d';
 	const blockDataAtHeightTwo = {
 		header: {
 			asset: {
 				maxHeightPreviouslyForged: 0,
 				maxHeightPrevoted: 0,
-				seedReveal: 'iQPqbmfM1nuvocnAQYSjhw==',
+				seedReveal: '8903ea6e67ccd67bafa1c9c04184a387',
 			},
-			generatorPublicKey: 'qaPDY6caMIlWY1ISfPDm9504NOHWe0EyuY01r9O4U3U=',
+			generatorPublicKey: 'a9a3c363a71a3089566352127cf0e6f79d3834e1d67b4132b98d35afd3b85375',
 			height: 2,
-			id: 'CF18m3vdyAUr6e7+GF9AdoKklfG0SYZ33xSAAmt08uk=',
-			previousBlockID: 'T35B9XRMDCpDTxOvsYa3f7SxdqUpj5HthmaA/17xOm0=',
+			id: '085d7c9b7bddc8052be9eefe185f407682a495f1b4498677df1480026b74f2e9',
+			previousBlockID: '4f7e41f5744c0c2a434f13afb186b77fb4b176a5298f91ed866680ff5ef13a6d',
 			reward: '0',
 			signature:
-				'WqNtAMvNE1tVSEwXuonajsusTfLMwsDBK52wz05Ix0EixsjVEAz4P6g/edVoTszy755sVUCLrJ3qRcK1qlkKDA==',
+				'5aa36d00cbcd135b55484c17ba89da8ecbac4df2ccc2c0c12b9db0cf4e48c74122c6c8d5100cf83fa83f79d5684eccf2ef9e6c55408bac9dea45c2b5aa590a0c',
 			timestamp: 1592924699,
-			transactionRoot: '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=',
+			transactionRoot: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
 			version: 2,
 		},
 		payload: [],
 	};
 	const encodedBlockData =
-		'CswBCAIQm7TI9wUYAiIgT35B9XRMDCpDTxOvsYa3f7SxdqUpj5HthmaA/17xOm0qIOOwxEKY/BwUmvv0yJlvuSQnrkHkZJuTTKSVmRt4UrhVMiCpo8NjpxowiVZjUhJ88Ob3nTg04dZ7QTK5jTWv07hTdTgAQhYIABAAGhCJA+puZ8zWe6+hycBBhKOHSkBao20Ay80TW1VITBe6idqOy6xN8szCwMErnbDPTkjHQSLGyNUQDPg/qD951WhOzPLvnmxVQIusnepFwrWqWQoM';
+		'0acc010802109bb4c8f705180222204f7e41f5744c0c2a434f13afb186b77fb4b176a5298f91ed866680ff5ef13a6d2a20e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8553220a9a3c363a71a3089566352127cf0e6f79d3834e1d67b4132b98d35afd3b8537538004216080010001a108903ea6e67ccd67bafa1c9c04184a3874a405aa36d00cbcd135b55484c17ba89da8ecbac4df2ccc2c0c12b9db0cf4e48c74122c6c8d5100cf83fa83f79d5684eccf2ef9e6c55408bac9dea45c2b5aa590a0c';
 	const fsStub = sandbox.stub().returns(true);
 	const printJSONStub = sandbox.stub();
 	const ipcInvokeStub = sandbox.stub();
@@ -129,7 +129,7 @@ describe('block:get command', () => {
 
 	describe('block:get by id', () => {
 		setupTest()
-			.command(['block:get', 'T35B9XRMDCpDTxOvsYa3f7SxdqUpj5HthmaA/17xOm0='])
+			.command(['block:get', '4f7e41f5744c0c2a434f13afb186b77fb4b176a5298f91ed866680ff5ef13a6d'])
 			.it('should get block info for the given id and display as an object', () => {
 				expect(ipcInvokeStub).to.have.been.calledTwice;
 				expect(ipcInvokeStub).to.have.been.calledWithExactly('app:getSchema');

@@ -22,17 +22,19 @@ interface Args {
 
 export default class GetCommand extends BaseIPCCommand {
 	static description =
-		'Returns a transaction information for a given transaction Id from the blockchain';
+		'Returns a transaction information for a given transaction ID from the blockchain';
 
 	static args = [
 		{
 			name: 'id',
 			required: true,
-			description: 'Transaction Id in base64 format.',
+			description: 'Transaction ID in hex format.',
 		},
 	];
 
-	static examples = ['transaction:get 6rBsaiLoi8pxUOA0en2Xas0HDLkoRCPm6r7NZXrMEmM='];
+	static examples = [
+		'transaction:get eab06c6a22e88bca7150e0347a7d976acd070cb9284423e6eabecd657acc1263',
+	];
 
 	static flags = {
 		...BaseIPCCommand.flags,

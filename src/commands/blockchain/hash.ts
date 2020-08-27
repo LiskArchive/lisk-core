@@ -75,6 +75,6 @@ export default class HashCommand extends Command {
 
 		this.debug('Hash generation completed.');
 
-		this.log(hash.toString('base64'));
+		this.log(hash.toString('hex'));
 	}
 }

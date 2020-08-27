@@ -24,7 +24,7 @@ describe('account:get command', () => {
 	const queryResult = {
 		address: '',
 	};
-	const address = 'w6sqwjUS2b9isCd14iz4DfgU6xs=';
+	const address = 'c3ab2ac23512d9bf62b02775e22cf80df814eb1b';
 	const fsStub = sandbox.stub().returns(true);
 	const printJSONStub = sandbox.stub().returns(queryResult);
 	const ipcInvokeStub = sandbox.stub();
@@ -40,7 +40,7 @@ describe('account:get command', () => {
 		})
 		.withArgs('app:getAccount', { address })
 		.resolves(
-			'ChTDqyrCNRLZv2KwJ3XiLPgN+BTrGxAAGAAiAggAKjoKGQoKZ2VuZXNpc184NhgAIAAoADCAoJSljR0SHQoUw6sqwjUS2b9isCd14iz4DfgU6xsQgKCUpY0d',
+			'0a14c3ab2ac23512d9bf62b02775e22cf80df814eb1b10001800220208002a3a0a190a0a67656e657369735f38361800200028003080a094a58d1d121d0a14c3ab2ac23512d9bf62b02775e22cf80df814eb1b1080a094a58d1d',
 		);
 
 	const setupTest = () =>

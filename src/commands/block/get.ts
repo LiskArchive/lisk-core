@@ -24,11 +24,14 @@ export default class GetCommand extends BaseIPCCommand {
 		{
 			name: 'arg',
 			required: true,
-			description: 'Height in number or block id in base64 format.',
+			description: 'Height in number or block id in hex format.',
 		},
 	];
 
-	static examples = ['block:get 4ILnnQEBZjLEUcnfknbkhst/Rg3Hk/9bENj3HuzsKLQ=', 'block:get 2'];
+	static examples = [
+		'block:get e082e79d01016632c451c9df9276e486cb7f460dc793ff5b10d8f71eecec28b4',
+		'block:get 2',
+	];
 
 	static flags = {
 		...BaseIPCCommand.flags,

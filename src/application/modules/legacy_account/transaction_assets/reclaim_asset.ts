@@ -70,7 +70,7 @@ export class ReclaimAsset extends BaseAsset<Asset> {
 				`Invalid amount:${
 					// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
 					asset.amount.toString()
-				} claimed by the sender: ${addressWithoutPublickey.address.toString('base64')}`,
+				} claimed by the sender: ${addressWithoutPublickey.address.toString('hex')}`,
 			);
 		}
 		const newAddress = cryptography.getAddressFromPublicKey(senderPublicKey);

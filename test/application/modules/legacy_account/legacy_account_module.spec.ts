@@ -15,8 +15,7 @@
 
 import { expect } from 'chai';
 import * as sandbox from 'sinon';
-import { AfterGenesisBlockApplyContext, GenesisConfig, codec } from 'lisk-sdk';
-import { testing } from '@liskhq/lisk-utils';
+import { AfterGenesisBlockApplyContext, GenesisConfig, codec, testing } from 'lisk-sdk';
 import { LegacyAccountModule, getLegacyBytes } from '../../../../src/application/modules';
 import { createAccount, createFakeDefaultAccount } from '../../../utils/account';
 import { unregisteredAddressesSchema } from '../../../../src/application/modules/legacy_account/schema';

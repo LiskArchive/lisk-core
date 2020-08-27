@@ -27,11 +27,11 @@ export default class GetCommand extends BaseIPCCommand {
 		{
 			name: 'address',
 			required: true,
-			description: 'Address of an account in a base32 format.',
+			description: 'Address of an account in a hex format.',
 		},
 	];
 
-	static examples = ['account:get qwBBp9P3ssKQtbg01Gvce364WBU='];
+	static examples = ['account:get ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815'];
 
 	static flags = {
 		...BaseIPCCommand.flags,

@@ -60,13 +60,13 @@ const optionalPassphrases = [
 ];
 
 const mandatoryKeys = [
-	'8bn07nG11YV9OzRtRBypZ/J4cOvuiFads2T9E+KK26M=',
-	'SmdkakRjE9uWTDk3A1mEXFL86SJaOSl3DvQUSMJY/Tk=',
+	'f1b9f4ee71b5d5857d3b346d441ca967f27870ebee88569db364fd13e28adba3',
+	'4a67646a446313db964c39370359845c52fce9225a3929770ef41448c258fd39',
 ];
 
 const optionalKeys = [
-	'V99cOBGWGTn43PqFjG6u/r+qTelC9+cDv4gSfg7pzKQ=',
-	'+kBraVLTd/AniSDj642pGeTPXGiwLuul2LMzT9wDabY=',
+	'57df5c3811961939f8dcfa858c6eaefebfaa4de942f7e703bf88127e0ee9cca4',
+	'fa406b6952d377f0278920e3eb8da919e4cf5c68b02eeba5d8b3334fdc0369b6',
 ];
 
 const signMultiSigCmdArgs = (unsignedTransaction: string, passphraseToSign: string): string[] => {
@@ -146,7 +146,7 @@ describe('transaction:sign command', () => {
 
 	describe('sign transaction from single account', () => {
 		const unsignedTransaction =
-			'CAIQABgCIIDC1y8qIAshH85LYVCDcBy4qMmUB+RksvmqTzZwlTIt4bd+X8++MiQIZBIUqwBBp9P3ssKQtbg01Gvce364WBUaCnNlbmQgdG9rZW4=';
+			'0802100018022080c2d72f2a200b211fce4b615083701cb8a8c99407e464b2f9aa4f367095322de1b77e5fcfbe322408641214ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e';
 		setupTest()
 			.command([
 				'transaction:sign',
@@ -154,11 +154,11 @@ describe('transaction:sign command', () => {
 				unsignedTransaction,
 				`--passphrase=${senderPassphrase}`,
 			])
-			.it('should return signed transaction string in base64 format', () => {
+			.it('should return signed transaction string in hex format', () => {
 				expect(printJSONStub).to.be.calledOnce;
 				expect(printJSONStub).to.be.calledWithExactly({
 					transaction:
-						'CAIQABgCIIDC1y8qIAshH85LYVCDcBy4qMmUB+RksvmqTzZwlTIt4bd+X8++MiQIZBIUqwBBp9P3ssKQtbg01Gvce364WBUaCnNlbmQgdG9rZW46QHoSg+JORuxaBBbQsTpI/SyjvB9qTqPvg/l9VOvQs9RbAlv5HAC2DEzdreAL6KTakIirg75wK1g+ZyZTI6g5FAY=',
+						'0802100018022080c2d72f2a200b211fce4b615083701cb8a8c99407e464b2f9aa4f367095322de1b77e5fcfbe322408641214ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e3a407a1283e24e46ec5a0416d0b13a48fd2ca3bc1f6a4ea3ef83f97d54ebd0b3d45b025bf91c00b60c4cddade00be8a4da9088ab83be702b583e67265323a8391406',
 				});
 			});
 
@@ -177,14 +177,14 @@ describe('transaction:sign command', () => {
 					assetID: 0,
 					nonce: '2',
 					fee: '100000000',
-					senderPublicKey: 'CyEfzkthUINwHLioyZQH5GSy+apPNnCVMi3ht35fz74=',
+					senderPublicKey: '0b211fce4b615083701cb8a8c99407e464b2f9aa4f367095322de1b77e5fcfbe',
 					asset: {
 						amount: '100',
-						recipientAddress: 'qwBBp9P3ssKQtbg01Gvce364WBU=',
+						recipientAddress: 'ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815',
 						data: 'send token',
 					},
 					signatures: [
-						'ehKD4k5G7FoEFtCxOkj9LKO8H2pOo++D+X1U69Cz1FsCW/kcALYMTN2t4AvopNqQiKuDvnArWD5nJlMjqDkUBg==',
+						'7a1283e24e46ec5a0416d0b13a48fd2ca3bc1f6a4ea3ef83f97d54ebd0b3d45b025bf91c00b60c4cddade00be8a4da9088ab83be702b583e67265323a8391406',
 					],
 				});
 			});
@@ -192,17 +192,17 @@ describe('transaction:sign command', () => {
 
 	describe('sign multi signature registration transaction', () => {
 		const unsignedTransaction =
-			'CAQQABgCIIDC1y8qIAshH85LYVCDcBy4qMmUB+RksvmqTzZwlTIt4bd+X8++MooBCAQSIPG59O5xtdWFfTs0bUQcqWfyeHDr7ohWnbNk/RPiitujEiBKZ2RqRGMT25ZMOTcDWYRcUvzpIlo5KXcO9BRIwlj9ORog+kBraVLTd/AniSDj642pGeTPXGiwLuul2LMzT9wDabYaIFffXDgRlhk5+Nz6hYxurv6/qk3pQvfnA7+IEn4O6cyk';
+			'0804100018022080c2d72f2a200b211fce4b615083701cb8a8c99407e464b2f9aa4f367095322de1b77e5fcfbe328a0108041220f1b9f4ee71b5d5857d3b346d441ca967f27870ebee88569db364fd13e28adba312204a67646a446313db964c39370359845c52fce9225a3929770ef41448c258fd391a20fa406b6952d377f0278920e3eb8da919e4cf5c68b02eeba5d8b3334fdc0369b61a2057df5c3811961939f8dcfa858c6eaefebfaa4de942f7e703bf88127e0ee9cca4';
 		const sign1 =
-			'CAQQABgCIIDC1y8qIAshH85LYVCDcBy4qMmUB+RksvmqTzZwlTIt4bd+X8++MooBCAQSIPG59O5xtdWFfTs0bUQcqWfyeHDr7ohWnbNk/RPiitujEiBKZ2RqRGMT25ZMOTcDWYRcUvzpIlo5KXcO9BRIwlj9ORog+kBraVLTd/AniSDj642pGeTPXGiwLuul2LMzT9wDabYaIFffXDgRlhk5+Nz6hYxurv6/qk3pQvfnA7+IEn4O6cykOkBSIZcO40zXeNeM7ipSM4BqpCg2qmLit2OE1W/oz0zU9sAgBq8coLGh+f1FZsGkQqgRhcNC4WuP1LlYCLAaNSMCOgA6ADoAOgA=';
+			'0804100018022080c2d72f2a200b211fce4b615083701cb8a8c99407e464b2f9aa4f367095322de1b77e5fcfbe328a0108041220f1b9f4ee71b5d5857d3b346d441ca967f27870ebee88569db364fd13e28adba312204a67646a446313db964c39370359845c52fce9225a3929770ef41448c258fd391a20fa406b6952d377f0278920e3eb8da919e4cf5c68b02eeba5d8b3334fdc0369b61a2057df5c3811961939f8dcfa858c6eaefebfaa4de942f7e703bf88127e0ee9cca43a405221970ee34cd778d78cee2a5233806aa42836aa62e2b76384d56fe8cf4cd4f6c02006af1ca0b1a1f9fd4566c1a442a81185c342e16b8fd4b95808b01a3523023a003a003a003a00';
 		const sign2 =
-			'CAQQABgCIIDC1y8qIAshH85LYVCDcBy4qMmUB+RksvmqTzZwlTIt4bd+X8++MooBCAQSIPG59O5xtdWFfTs0bUQcqWfyeHDr7ohWnbNk/RPiitujEiBKZ2RqRGMT25ZMOTcDWYRcUvzpIlo5KXcO9BRIwlj9ORog+kBraVLTd/AniSDj642pGeTPXGiwLuul2LMzT9wDabYaIFffXDgRlhk5+Nz6hYxurv6/qk3pQvfnA7+IEn4O6cykOkBSIZcO40zXeNeM7ipSM4BqpCg2qmLit2OE1W/oz0zU9sAgBq8coLGh+f1FZsGkQqgRhcNC4WuP1LlYCLAaNSMCOgA6QECAYcnqROxcKiuq0DAdFc8BA1vOu54TNzhhloW38AVr5n0pWWU32Si5KIrbsSJC1PIzZHhz5dSB15nGtGCZAw86ADoA';
+			'0804100018022080c2d72f2a200b211fce4b615083701cb8a8c99407e464b2f9aa4f367095322de1b77e5fcfbe328a0108041220f1b9f4ee71b5d5857d3b346d441ca967f27870ebee88569db364fd13e28adba312204a67646a446313db964c39370359845c52fce9225a3929770ef41448c258fd391a20fa406b6952d377f0278920e3eb8da919e4cf5c68b02eeba5d8b3334fdc0369b61a2057df5c3811961939f8dcfa858c6eaefebfaa4de942f7e703bf88127e0ee9cca43a405221970ee34cd778d78cee2a5233806aa42836aa62e2b76384d56fe8cf4cd4f6c02006af1ca0b1a1f9fd4566c1a442a81185c342e16b8fd4b95808b01a3523023a003a40408061c9ea44ec5c2a2baad0301d15cf01035bcebb9e133738619685b7f0056be67d29596537d928b9288adbb12242d4f233647873e5d481d799c6b46099030f3a003a00';
 		const sign3 =
-			'CAQQABgCIIDC1y8qIAshH85LYVCDcBy4qMmUB+RksvmqTzZwlTIt4bd+X8++MooBCAQSIPG59O5xtdWFfTs0bUQcqWfyeHDr7ohWnbNk/RPiitujEiBKZ2RqRGMT25ZMOTcDWYRcUvzpIlo5KXcO9BRIwlj9ORog+kBraVLTd/AniSDj642pGeTPXGiwLuul2LMzT9wDabYaIFffXDgRlhk5+Nz6hYxurv6/qk3pQvfnA7+IEn4O6cykOkBSIZcO40zXeNeM7ipSM4BqpCg2qmLit2OE1W/oz0zU9sAgBq8coLGh+f1FZsGkQqgRhcNC4WuP1LlYCLAaNSMCOkBvBn4KfcZmpmBPRehDaYsFyMmHI5PTLYtJ95hgjvfifThpxjDDCTUqkrc69oIt36Ijtfvy7HT9WGDWMviPbXkKOkBAgGHJ6kTsXCorqtAwHRXPAQNbzrueEzc4YZaFt/AFa+Z9KVllN9kouSiK27EiQtTyM2R4c+XUgdeZxrRgmQMPOgA6AA==';
+			'0804100018022080c2d72f2a200b211fce4b615083701cb8a8c99407e464b2f9aa4f367095322de1b77e5fcfbe328a0108041220f1b9f4ee71b5d5857d3b346d441ca967f27870ebee88569db364fd13e28adba312204a67646a446313db964c39370359845c52fce9225a3929770ef41448c258fd391a20fa406b6952d377f0278920e3eb8da919e4cf5c68b02eeba5d8b3334fdc0369b61a2057df5c3811961939f8dcfa858c6eaefebfaa4de942f7e703bf88127e0ee9cca43a405221970ee34cd778d78cee2a5233806aa42836aa62e2b76384d56fe8cf4cd4f6c02006af1ca0b1a1f9fd4566c1a442a81185c342e16b8fd4b95808b01a3523023a406f067e0a7dc666a6604f45e843698b05c8c9872393d32d8b49f798608ef7e27d3869c630c309352a92b73af6822ddfa223b5fbf2ec74fd5860d632f88f6d790a3a40408061c9ea44ec5c2a2baad0301d15cf01035bcebb9e133738619685b7f0056be67d29596537d928b9288adbb12242d4f233647873e5d481d799c6b46099030f3a003a00';
 		const sign4 =
-			'CAQQABgCIIDC1y8qIAshH85LYVCDcBy4qMmUB+RksvmqTzZwlTIt4bd+X8++MooBCAQSIPG59O5xtdWFfTs0bUQcqWfyeHDr7ohWnbNk/RPiitujEiBKZ2RqRGMT25ZMOTcDWYRcUvzpIlo5KXcO9BRIwlj9ORog+kBraVLTd/AniSDj642pGeTPXGiwLuul2LMzT9wDabYaIFffXDgRlhk5+Nz6hYxurv6/qk3pQvfnA7+IEn4O6cykOkBSIZcO40zXeNeM7ipSM4BqpCg2qmLit2OE1W/oz0zU9sAgBq8coLGh+f1FZsGkQqgRhcNC4WuP1LlYCLAaNSMCOkBvBn4KfcZmpmBPRehDaYsFyMmHI5PTLYtJ95hgjvfifThpxjDDCTUqkrc69oIt36Ijtfvy7HT9WGDWMviPbXkKOkBAgGHJ6kTsXCorqtAwHRXPAQNbzrueEzc4YZaFt/AFa+Z9KVllN9kouSiK27EiQtTyM2R4c+XUgdeZxrRgmQMPOkDQHM/Bqexzx9cepxZJHB5SkLrZykc2P+eVI3ej1vPr4eLKFLZRtklwJaCtpmNdttVRlADE98y4WG2O6TEDE6IEOgA=';
+			'0804100018022080c2d72f2a200b211fce4b615083701cb8a8c99407e464b2f9aa4f367095322de1b77e5fcfbe328a0108041220f1b9f4ee71b5d5857d3b346d441ca967f27870ebee88569db364fd13e28adba312204a67646a446313db964c39370359845c52fce9225a3929770ef41448c258fd391a20fa406b6952d377f0278920e3eb8da919e4cf5c68b02eeba5d8b3334fdc0369b61a2057df5c3811961939f8dcfa858c6eaefebfaa4de942f7e703bf88127e0ee9cca43a405221970ee34cd778d78cee2a5233806aa42836aa62e2b76384d56fe8cf4cd4f6c02006af1ca0b1a1f9fd4566c1a442a81185c342e16b8fd4b95808b01a3523023a406f067e0a7dc666a6604f45e843698b05c8c9872393d32d8b49f798608ef7e27d3869c630c309352a92b73af6822ddfa223b5fbf2ec74fd5860d632f88f6d790a3a40408061c9ea44ec5c2a2baad0301d15cf01035bcebb9e133738619685b7f0056be67d29596537d928b9288adbb12242d4f233647873e5d481d799c6b46099030f3a40d01ccfc1a9ec73c7d71ea716491c1e5290bad9ca47363fe7952377a3d6f3ebe1e2ca14b651b6497025a0ada6635db6d5519400c4f7ccb8586d8ee9310313a2043a00';
 		const signedTransaction =
-			'CAQQABgCIIDC1y8qIAshH85LYVCDcBy4qMmUB+RksvmqTzZwlTIt4bd+X8++MooBCAQSIPG59O5xtdWFfTs0bUQcqWfyeHDr7ohWnbNk/RPiitujEiBKZ2RqRGMT25ZMOTcDWYRcUvzpIlo5KXcO9BRIwlj9ORog+kBraVLTd/AniSDj642pGeTPXGiwLuul2LMzT9wDabYaIFffXDgRlhk5+Nz6hYxurv6/qk3pQvfnA7+IEn4O6cykOkBSIZcO40zXeNeM7ipSM4BqpCg2qmLit2OE1W/oz0zU9sAgBq8coLGh+f1FZsGkQqgRhcNC4WuP1LlYCLAaNSMCOkBvBn4KfcZmpmBPRehDaYsFyMmHI5PTLYtJ95hgjvfifThpxjDDCTUqkrc69oIt36Ijtfvy7HT9WGDWMviPbXkKOkBAgGHJ6kTsXCorqtAwHRXPAQNbzrueEzc4YZaFt/AFa+Z9KVllN9kouSiK27EiQtTyM2R4c+XUgdeZxrRgmQMPOkDQHM/Bqexzx9cepxZJHB5SkLrZykc2P+eVI3ej1vPr4eLKFLZRtklwJaCtpmNdttVRlADE98y4WG2O6TEDE6IEOkDFuY6ElsslYkKb2DrnXuKHvN2upkurkeCxwErEVUgZzCtCYu8Zh9vu+EA4mbvCYQMIwHCHisq7AtpAR1i3SosA';
+			'0804100018022080c2d72f2a200b211fce4b615083701cb8a8c99407e464b2f9aa4f367095322de1b77e5fcfbe328a0108041220f1b9f4ee71b5d5857d3b346d441ca967f27870ebee88569db364fd13e28adba312204a67646a446313db964c39370359845c52fce9225a3929770ef41448c258fd391a20fa406b6952d377f0278920e3eb8da919e4cf5c68b02eeba5d8b3334fdc0369b61a2057df5c3811961939f8dcfa858c6eaefebfaa4de942f7e703bf88127e0ee9cca43a405221970ee34cd778d78cee2a5233806aa42836aa62e2b76384d56fe8cf4cd4f6c02006af1ca0b1a1f9fd4566c1a442a81185c342e16b8fd4b95808b01a3523023a406f067e0a7dc666a6604f45e843698b05c8c9872393d32d8b49f798608ef7e27d3869c630c309352a92b73af6822ddfa223b5fbf2ec74fd5860d632f88f6d790a3a40408061c9ea44ec5c2a2baad0301d15cf01035bcebb9e133738619685b7f0056be67d29596537d928b9288adbb12242d4f233647873e5d481d799c6b46099030f3a40d01ccfc1a9ec73c7d71ea716491c1e5290bad9ca47363fe7952377a3d6f3ebe1e2ca14b651b6497025a0ada6635db6d5519400c4f7ccb8586d8ee9310313a2043a40c5b98e8496cb2562429bd83ae75ee287bcddaea64bab91e0b1c04ac4554819cc2b4262ef1987dbeef8403899bbc2610308c070878acabb02da404758b74a8b00';
 
 		setupTest()
 			.command(signMultiSigCmdArgsIncludingSender(unsignedTransaction, senderPassphrase))
@@ -251,31 +251,31 @@ describe('transaction:sign command', () => {
 
 		setupTest()
 			.command(signMultiSigCmdArgsIncludingSenderJSON(sign4, optionalPassphrases[1]))
-			.it('should return fully signed transaction string in base64 format', () => {
+			.it('should return fully signed transaction string in hex format', () => {
 				expect(printJSONStub.callCount).to.equal(1);
 				expect(printJSONStub).to.be.calledWithExactly({
 					moduleID: 4,
 					assetID: 0,
 					nonce: '2',
 					fee: '100000000',
-					senderPublicKey: 'CyEfzkthUINwHLioyZQH5GSy+apPNnCVMi3ht35fz74=',
+					senderPublicKey: '0b211fce4b615083701cb8a8c99407e464b2f9aa4f367095322de1b77e5fcfbe',
 					asset: {
 						numberOfSignatures: 4,
 						mandatoryKeys: [
-							'8bn07nG11YV9OzRtRBypZ/J4cOvuiFads2T9E+KK26M=',
-							'SmdkakRjE9uWTDk3A1mEXFL86SJaOSl3DvQUSMJY/Tk=',
+							'f1b9f4ee71b5d5857d3b346d441ca967f27870ebee88569db364fd13e28adba3',
+							'4a67646a446313db964c39370359845c52fce9225a3929770ef41448c258fd39',
 						],
 						optionalKeys: [
-							'+kBraVLTd/AniSDj642pGeTPXGiwLuul2LMzT9wDabY=',
-							'V99cOBGWGTn43PqFjG6u/r+qTelC9+cDv4gSfg7pzKQ=',
+							'fa406b6952d377f0278920e3eb8da919e4cf5c68b02eeba5d8b3334fdc0369b6',
+							'57df5c3811961939f8dcfa858c6eaefebfaa4de942f7e703bf88127e0ee9cca4',
 						],
 					},
 					signatures: [
-						'UiGXDuNM13jXjO4qUjOAaqQoNqpi4rdjhNVv6M9M1PbAIAavHKCxofn9RWbBpEKoEYXDQuFrj9S5WAiwGjUjAg==',
-						'bwZ+Cn3GZqZgT0XoQ2mLBcjJhyOT0y2LSfeYYI734n04acYwwwk1KpK3OvaCLd+iI7X78ux0/Vhg1jL4j215Cg==',
-						'QIBhyepE7FwqK6rQMB0VzwEDW867nhM3OGGWhbfwBWvmfSlZZTfZKLkoituxIkLU8jNkeHPl1IHXmca0YJkDDw==',
-						'0BzPwansc8fXHqcWSRweUpC62cpHNj/nlSN3o9bz6+HiyhS2UbZJcCWgraZjXbbVUZQAxPfMuFhtjukxAxOiBA==',
-						'xbmOhJbLJWJCm9g6517ih7zdrqZLq5HgscBKxFVIGcwrQmLvGYfb7vhAOJm7wmEDCMBwh4rKuwLaQEdYt0qLAA==',
+						'5221970ee34cd778d78cee2a5233806aa42836aa62e2b76384d56fe8cf4cd4f6c02006af1ca0b1a1f9fd4566c1a442a81185c342e16b8fd4b95808b01a352302',
+						'6f067e0a7dc666a6604f45e843698b05c8c9872393d32d8b49f798608ef7e27d3869c630c309352a92b73af6822ddfa223b5fbf2ec74fd5860d632f88f6d790a',
+						'408061c9ea44ec5c2a2baad0301d15cf01035bcebb9e133738619685b7f0056be67d29596537d928b9288adbb12242d4f233647873e5d481d799c6b46099030f',
+						'd01ccfc1a9ec73c7d71ea716491c1e5290bad9ca47363fe7952377a3d6f3ebe1e2ca14b651b6497025a0ada6635db6d5519400c4f7ccb8586d8ee9310313a204',
+						'c5b98e8496cb2562429bd83ae75ee287bcddaea64bab91e0b1c04ac4554819cc2b4262ef1987dbeef8403899bbc2610308c070878acabb02da404758b74a8b00',
 					],
 				});
 			});
@@ -283,15 +283,15 @@ describe('transaction:sign command', () => {
 
 	describe('sign transaction from multi-signature accounts', () => {
 		const unsignedTransaction =
-			'CAIQABgCIIDC1y8qIPG59O5xtdWFfTs0bUQcqWfyeHDr7ohWnbNk/RPiitujMiQIZBIUqwBBp9P3ssKQtbg01Gvce364WBUaCnNlbmQgdG9rZW4=';
+			'0802100018022080c2d72f2a20f1b9f4ee71b5d5857d3b346d441ca967f27870ebee88569db364fd13e28adba3322408641214ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e';
 		const sign1 =
-			'CAIQABgCIIDC1y8qIPG59O5xtdWFfTs0bUQcqWfyeHDr7ohWnbNk/RPiitujMiQIZBIUqwBBp9P3ssKQtbg01Gvce364WBUaCnNlbmQgdG9rZW46ADpA85odkqOBSQ6b7WtxBcuvdoSfiYUlin6Ed5/Ojs3aP77FvKXLDfdJcxKU0DVnfr2yxmZCKesR7ExOmpoLhqABCjoAOgA=';
+			'0802100018022080c2d72f2a20f1b9f4ee71b5d5857d3b346d441ca967f27870ebee88569db364fd13e28adba3322408641214ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e3a003a40f39a1d92a381490e9bed6b7105cbaf76849f8985258a7e84779fce8ecdda3fbec5bca5cb0df749731294d035677ebdb2c6664229eb11ec4c4e9a9a0b86a0010a3a003a00';
 		const sign2 =
-			'CAIQABgCIIDC1y8qIPG59O5xtdWFfTs0bUQcqWfyeHDr7ohWnbNk/RPiitujMiQIZBIUqwBBp9P3ssKQtbg01Gvce364WBUaCnNlbmQgdG9rZW46QB8R0jAOyruF5dji1RoiflZv32/ndQNF3rYWL6E85E/PzwYKfwc5EsKpQOnQNRpnFTeyE1CfBMak5nVyqjhQsQM6QPOaHZKjgUkOm+1rcQXLr3aEn4mFJYp+hHefzo7N2j++xbylyw33SXMSlNA1Z369ssZmQinrEexMTpqaC4agAQo6ADoA';
+			'0802100018022080c2d72f2a20f1b9f4ee71b5d5857d3b346d441ca967f27870ebee88569db364fd13e28adba3322408641214ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e3a401f11d2300ecabb85e5d8e2d51a227e566fdf6fe7750345deb6162fa13ce44fcfcf060a7f073912c2a940e9d0351a671537b213509f04c6a4e67572aa3850b1033a40f39a1d92a381490e9bed6b7105cbaf76849f8985258a7e84779fce8ecdda3fbec5bca5cb0df749731294d035677ebdb2c6664229eb11ec4c4e9a9a0b86a0010a3a003a00';
 		const sign3 =
-			'CAIQABgCIIDC1y8qIPG59O5xtdWFfTs0bUQcqWfyeHDr7ohWnbNk/RPiitujMiQIZBIUqwBBp9P3ssKQtbg01Gvce364WBUaCnNlbmQgdG9rZW46QB8R0jAOyruF5dji1RoiflZv32/ndQNF3rYWL6E85E/PzwYKfwc5EsKpQOnQNRpnFTeyE1CfBMak5nVyqjhQsQM6QPOaHZKjgUkOm+1rcQXLr3aEn4mFJYp+hHefzo7N2j++xbylyw33SXMSlNA1Z369ssZmQinrEexMTpqaC4agAQo6QKQOVsCmqqVJvTTCuUiuwg/s08YGYdpHL7D/w86Ydm3eoReRONXREKuql/BXvt7NxdKqRhejKL7dQVSBvZ6H7w46AA==';
+			'0802100018022080c2d72f2a20f1b9f4ee71b5d5857d3b346d441ca967f27870ebee88569db364fd13e28adba3322408641214ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e3a401f11d2300ecabb85e5d8e2d51a227e566fdf6fe7750345deb6162fa13ce44fcfcf060a7f073912c2a940e9d0351a671537b213509f04c6a4e67572aa3850b1033a40f39a1d92a381490e9bed6b7105cbaf76849f8985258a7e84779fce8ecdda3fbec5bca5cb0df749731294d035677ebdb2c6664229eb11ec4c4e9a9a0b86a0010a3a40a40e56c0a6aaa549bd34c2b948aec20fecd3c60661da472fb0ffc3ce98766ddea1179138d5d110abaa97f057bedecdc5d2aa4617a328bedd415481bd9e87ef0e3a00';
 		const signedTransaction =
-			'CAIQABgCIIDC1y8qIPG59O5xtdWFfTs0bUQcqWfyeHDr7ohWnbNk/RPiitujMiQIZBIUqwBBp9P3ssKQtbg01Gvce364WBUaCnNlbmQgdG9rZW46QB8R0jAOyruF5dji1RoiflZv32/ndQNF3rYWL6E85E/PzwYKfwc5EsKpQOnQNRpnFTeyE1CfBMak5nVyqjhQsQM6QPOaHZKjgUkOm+1rcQXLr3aEn4mFJYp+hHefzo7N2j++xbylyw33SXMSlNA1Z369ssZmQinrEexMTpqaC4agAQo6QKQOVsCmqqVJvTTCuUiuwg/s08YGYdpHL7D/w86Ydm3eoReRONXREKuql/BXvt7NxdKqRhejKL7dQVSBvZ6H7w46QFXjX7xFXf0McUVaPE+zsDY72QgQ+uEdcVqV44koR6/E4+tCxpLj0Np8MuioIl3eylZe7ZyCHiSlfHTbGW2H7QE=';
+			'0802100018022080c2d72f2a20f1b9f4ee71b5d5857d3b346d441ca967f27870ebee88569db364fd13e28adba3322408641214ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e3a401f11d2300ecabb85e5d8e2d51a227e566fdf6fe7750345deb6162fa13ce44fcfcf060a7f073912c2a940e9d0351a671537b213509f04c6a4e67572aa3850b1033a40f39a1d92a381490e9bed6b7105cbaf76849f8985258a7e84779fce8ecdda3fbec5bca5cb0df749731294d035677ebdb2c6664229eb11ec4c4e9a9a0b86a0010a3a40a40e56c0a6aaa549bd34c2b948aec20fecd3c60661da472fb0ffc3ce98766ddea1179138d5d110abaa97f057bedecdc5d2aa4617a328bedd415481bd9e87ef0e3a4055e35fbc455dfd0c71455a3c4fb3b0363bd90810fae11d715a95e3892847afc4e3eb42c692e3d0da7c32e8a8225ddeca565eed9c821e24a57c74db196d87ed01';
 
 		describe('mandatory keys are specified', () => {
 			setupTest()
@@ -334,24 +334,24 @@ describe('transaction:sign command', () => {
 
 			setupTest()
 				.command(signMultiSigCmdArgsJSON(sign3, optionalPassphrases[1]))
-				.it('should return fully signed transaction string in base64 format', () => {
+				.it('should return fully signed transaction string in hex format', () => {
 					expect(printJSONStub.callCount).to.equal(1);
 					expect(printJSONStub).to.be.calledWithExactly({
 						asset: {
 							amount: '100',
 							data: 'send token',
-							recipientAddress: 'qwBBp9P3ssKQtbg01Gvce364WBU=',
+							recipientAddress: 'ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815',
 						},
 						assetID: 0,
 						fee: '100000000',
 						moduleID: 2,
 						nonce: '2',
-						senderPublicKey: '8bn07nG11YV9OzRtRBypZ/J4cOvuiFads2T9E+KK26M=',
+						senderPublicKey: 'f1b9f4ee71b5d5857d3b346d441ca967f27870ebee88569db364fd13e28adba3',
 						signatures: [
-							'HxHSMA7Ku4Xl2OLVGiJ+Vm/fb+d1A0XethYvoTzkT8/PBgp/BzkSwqlA6dA1GmcVN7ITUJ8ExqTmdXKqOFCxAw==',
-							'85odkqOBSQ6b7WtxBcuvdoSfiYUlin6Ed5/Ojs3aP77FvKXLDfdJcxKU0DVnfr2yxmZCKesR7ExOmpoLhqABCg==',
-							'pA5WwKaqpUm9NMK5SK7CD+zTxgZh2kcvsP/Dzph2bd6hF5E41dEQq6qX8Fe+3s3F0qpGF6Movt1BVIG9nofvDg==',
-							'VeNfvEVd/QxxRVo8T7OwNjvZCBD64R1xWpXjiShHr8Tj60LGkuPQ2nwy6KgiXd7KVl7tnIIeJKV8dNsZbYftAQ==',
+							'1f11d2300ecabb85e5d8e2d51a227e566fdf6fe7750345deb6162fa13ce44fcfcf060a7f073912c2a940e9d0351a671537b213509f04c6a4e67572aa3850b103',
+							'f39a1d92a381490e9bed6b7105cbaf76849f8985258a7e84779fce8ecdda3fbec5bca5cb0df749731294d035677ebdb2c6664229eb11ec4c4e9a9a0b86a0010a',
+							'a40e56c0a6aaa549bd34c2b948aec20fecd3c60661da472fb0ffc3ce98766ddea1179138d5d110abaa97f057bedecdc5d2aa4617a328bedd415481bd9e87ef0e',
+							'55e35fbc455dfd0c71455a3c4fb3b0363bd90810fae11d715a95e3892847afc4e3eb42c692e3d0da7c32e8a8225ddeca565eed9c821e24a57c74db196d87ed01',
 						],
 					});
 				});
