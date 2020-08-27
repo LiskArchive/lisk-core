@@ -12,6 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
+/* eslint-disable no-console, @typescript-eslint/restrict-template-expressions */
 
 import { IPCChannel, codec, transactions } from 'lisk-sdk';
 import { Schema } from '@liskhq/lisk-codec';
@@ -49,7 +50,7 @@ const generateRandomUserName = () => {
 
 	const base = [...allLowerAlpha];
 
-	return [...Array(20)].map(() => base[(Math.random() * base.length) | 0]).join('');
+	return [...Array(20)].map(() => base[Math.random() * base.length]).join('');
 };
 
 const nonceSequenceItems = (AccountNonce: number, count = 63) => [
@@ -106,7 +107,7 @@ export const sendTokenTransferTransactions = async (
 			: 0;
 
 		const { networkID } = nodeInfo as { networkID: string };
-		const transactions = nonceSequenceItems(AccountNonce).map((nonce, index) => {
+		const transferTransactions = nonceSequenceItems(AccountNonce).map((nonce, index) => {
 			return createTransferTransaction({
 				nonce: BigInt(nonce),
 				recipientAddress: accounts[index].address,
@@ -118,8 +119,8 @@ export const sendTokenTransferTransactions = async (
 		});
 
 		const result = await Promise.all(
-			transactions.map(
-				async transaction => await channel.invoke('app:postTransaction', { transaction }),
+			transferTransactions.map(async transaction =>
+				channel.invoke('app:postTransaction', { transaction }),
 			),
 		);
 
@@ -130,7 +131,7 @@ export const sendTokenTransferTransactions = async (
 				console.log(`Failed to send token transfer transaction: ${transaction}`);
 			}
 		}
-		console.log(`Sent token transfer transactions: ${transactions.length}`);
+		console.log(`Sent token transfer transactions: ${transferTransactions.length}`);
 	} catch (error) {
 		console.error('Error while sending token transfer transaction: \n', error);
 	}

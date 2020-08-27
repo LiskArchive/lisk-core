@@ -72,6 +72,7 @@
 		"axios": "0.19.2"
 	},
 	"devDependencies": {
+		"@liskhq/lisk-codec": "0.1.0-debug.1",
 		"@oclif/dev-cli": "1.22.2",
 		"@oclif/test": "1.2.6",
 		"@types/chai": "4.2.10",

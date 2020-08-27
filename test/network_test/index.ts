@@ -11,6 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+/* eslint-disable no-console */
 
 import { IPCChannel, systemDirs } from 'lisk-sdk';
 import { PassphraseAndKeys, createAccount, genesisAccount } from './accounts';
@@ -59,7 +60,7 @@ const startIPCChannel = async (): Promise<IPCChannel> => {
 	return channel;
 };
 
-const wait = (ms = 10000) => new Promise(resolve => setTimeout(() => resolve(), ms));
+const wait = async (ms = 10000) => new Promise(resolve => setTimeout(() => resolve(), ms));
 
 const start = async (count = TRANSACTIONS_PER_ACCOUNT * ITERATIONS) => {
 	const channel = await startIPCChannel();
@@ -70,11 +71,11 @@ const start = async (count = TRANSACTIONS_PER_ACCOUNT * ITERATIONS) => {
 	// Due to TPool limit of 64 trx/account, fund initial accounts
 	const fundInitialAccount: PassphraseAndKeys[] = accounts.slice(0, TRANSACTIONS_PER_ACCOUNT);
 	await sendTokenTransferTransactions(channel, nodeInfo, fundInitialAccount, genesisAccount);
-	//Wait for 2 blocks
+	// Wait for 2 blocks
 	await wait(20000);
 
 	const chunkedAccounts = chunkArray([...accounts]);
-	for (let i = 0; i < chunkedAccounts.length; i++) {
+	for (let i = 0; i < chunkedAccounts.length; i += 1) {
 		await sendTokenTransferTransactions(
 			channel,
 			nodeInfo,
@@ -87,14 +88,14 @@ const start = async (count = TRANSACTIONS_PER_ACCOUNT * ITERATIONS) => {
 	console.log('\n');
 	await wait(20000);
 
-	for (let i = 0; i < accountsLen; i++) {
+	for (let i = 0; i < accountsLen; i += 1) {
 		await sendDelegateRegistrationTransaction(channel, nodeInfo, accounts[i]);
 	}
 
 	console.log('\n');
 	await wait(20000);
 	// Vote
-	for (let i = 0; i < accountsLen; i++) {
+	for (let i = 0; i < accountsLen; i += 1) {
 		const votes = [
 			{ delegateAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('20') },
 		];
@@ -104,7 +105,7 @@ const start = async (count = TRANSACTIONS_PER_ACCOUNT * ITERATIONS) => {
 	console.log('\n');
 	await wait(20000);
 	// Unvote
-	for (let i = 0; i < accountsLen; i++) {
+	for (let i = 0; i < accountsLen; i += 1) {
 		const unVotes = [
 			{ delegateAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('-10') },
 		];
@@ -114,7 +115,7 @@ const start = async (count = TRANSACTIONS_PER_ACCOUNT * ITERATIONS) => {
 	console.log('\n');
 	await wait(20000);
 
-	for (let i = 0; i < accountsLen; i++) {
+	for (let i = 0; i < accountsLen; i += 1) {
 		const account1 = accounts[(i + 1) % accountsLen];
 		const account2 = accounts[(i + 2) % accountsLen];
 		const asset = {
@@ -129,7 +130,7 @@ const start = async (count = TRANSACTIONS_PER_ACCOUNT * ITERATIONS) => {
 	console.log('\n');
 	await wait(40000);
 
-	for (let i = 0; i < accountsLen; i++) {
+	for (let i = 0; i < accountsLen; i += 1) {
 		const account1 = accounts[(i + 1) % accountsLen];
 		const account2 = accounts[(i + 2) % accountsLen];
 		const asset = {
