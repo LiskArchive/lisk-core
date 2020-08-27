@@ -67,7 +67,7 @@ const getAccount = async (
 		address,
 	});
 
-	return codec.decodeJSON(schema.accountSchema, Buffer.from(account, 'base64'));
+	return codec.decodeJSON(schema.accountSchema, Buffer.from(account, 'hex'));
 };
 
 const getAccountNonce = async (channel: IPCChannel, address: string): Promise<number> => {
@@ -103,7 +103,7 @@ export const sendTokenTransferTransactions = async (
 ) => {
 	try {
 		const AccountNonce = fromGenesis
-			? await getAccountNonce(channel, fromAccount.address.toString('base64'))
+			? await getAccountNonce(channel, fromAccount.address.toString('hex'))
 			: 0;
 
 		const { networkID } = nodeInfo as { networkID: string };
@@ -113,7 +113,7 @@ export const sendTokenTransferTransactions = async (
 				recipientAddress: accounts[index].address,
 				amount: getBeddows(fromGenesis ? '2000' : '25'),
 				fee: getBeddows('0.1'),
-				networkIdentifier: Buffer.from(networkID, 'base64'),
+				networkIdentifier: Buffer.from(networkID, 'hex'),
 				passphrase: fromAccount.passphrase,
 			});
 		});
@@ -142,14 +142,14 @@ export const sendDelegateRegistrationTransaction = async (
 	nodeInfo: Record<string, unknown>,
 	fromAccount: PassphraseAndKeys,
 ) => {
-	const AccountNonce = await getAccountNonce(channel, fromAccount.address.toString('base64'));
+	const AccountNonce = await getAccountNonce(channel, fromAccount.address.toString('hex'));
 
 	const { networkID } = nodeInfo as { networkID: string };
 	const transaction = createDelegateRegisterTransaction({
 		nonce: BigInt(AccountNonce),
 		username: generateRandomUserName(),
 		fee: getBeddows('15'),
-		networkIdentifier: Buffer.from(networkID, 'base64'),
+		networkIdentifier: Buffer.from(networkID, 'hex'),
 		passphrase: fromAccount.passphrase,
 	});
 
@@ -162,14 +162,14 @@ export const sendVoteTransaction = async (
 	fromAccount: PassphraseAndKeys,
 	votes: Vote[],
 ) => {
-	const AccountNonce = await getAccountNonce(channel, fromAccount.address.toString('base64'));
+	const AccountNonce = await getAccountNonce(channel, fromAccount.address.toString('hex'));
 
 	const { networkID } = nodeInfo as { networkID: string };
 	const transaction = createDelegateVoteTransaction({
 		nonce: BigInt(AccountNonce),
 		votes,
 		fee: getBeddows('0.3'),
-		networkIdentifier: Buffer.from(networkID, 'base64'),
+		networkIdentifier: Buffer.from(networkID, 'hex'),
 		passphrase: fromAccount.passphrase,
 	});
 
@@ -183,7 +183,7 @@ export const sendMultiSigRegistrationTransaction = async (
 	asset: { mandatoryKeys: Buffer[]; optionalKeys: Buffer[]; numberOfSignatures: number },
 	passphrases: string[],
 ) => {
-	const AccountNonce = await getAccountNonce(channel, fromAccount.address.toString('base64'));
+	const AccountNonce = await getAccountNonce(channel, fromAccount.address.toString('hex'));
 
 	const { networkID } = nodeInfo as { networkID: string };
 	const transaction = createMultiSignRegisterTransaction({
@@ -193,7 +193,7 @@ export const sendMultiSigRegistrationTransaction = async (
 		numberOfSignatures: asset.numberOfSignatures,
 		senderPassphrase: fromAccount.passphrase,
 		fee: getBeddows('0.5'),
-		networkIdentifier: Buffer.from(networkID, 'base64'),
+		networkIdentifier: Buffer.from(networkID, 'hex'),
 		passphrases,
 	});
 
@@ -207,7 +207,7 @@ export const sendTransferTransactionFromMultiSigAccount = async (
 	asset: { mandatoryKeys: Buffer[]; optionalKeys: Buffer[] },
 	passphrases: string[],
 ) => {
-	const AccountNonce = await getAccountNonce(channel, fromAccount.address.toString('base64'));
+	const AccountNonce = await getAccountNonce(channel, fromAccount.address.toString('hex'));
 
 	const { networkID } = nodeInfo as { networkID: string };
 	const transaction = createMultisignatureTransferTransaction({
@@ -218,7 +218,7 @@ export const sendTransferTransactionFromMultiSigAccount = async (
 		mandatoryKeys: asset.mandatoryKeys,
 		optionalKeys: asset.optionalKeys,
 		fee: getBeddows('0.5'),
-		networkIdentifier: Buffer.from(networkID, 'base64'),
+		networkIdentifier: Buffer.from(networkID, 'hex'),
 		passphrases,
 	});
 
@@ -231,12 +231,12 @@ export const sendReclaimTransactions = async (
 	fromAccount: PassphraseAndKeys,
 ) => {
 	const { networkID } = nodeInfo as { networkID: string };
-	const AccountNonce = await getAccountNonce(channel, fromAccount.address.toString('base64'));
+	const AccountNonce = await getAccountNonce(channel, fromAccount.address.toString('hex'));
 	const transaction = createReclaimTransaction({
 		nonce: BigInt(AccountNonce),
 		amount: getBeddows('10000'),
 		fee: getBeddows('0.4'),
-		networkIdentifier: Buffer.from(networkID, 'base64'),
+		networkIdentifier: Buffer.from(networkID, 'hex'),
 		passphrase: fromAccount.passphrase,
 	});
 

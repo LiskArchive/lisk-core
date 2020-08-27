@@ -63,7 +63,7 @@ export const createTransferTransaction = (input: {
 		),
 	);
 
-	return tx.getBytes().toString('base64');
+	return tx.getBytes().toString('hex');
 };
 
 export const createDelegateRegisterTransaction = (input: {
@@ -94,7 +94,7 @@ export const createDelegateRegisterTransaction = (input: {
 		),
 	);
 
-	return tx.getBytes().toString('base64');
+	return tx.getBytes().toString('hex');
 };
 
 export const createDelegateVoteTransaction = (input: {
@@ -124,7 +124,7 @@ export const createDelegateVoteTransaction = (input: {
 			input.passphrase,
 		),
 	);
-	return tx.getBytes().toString('base64');
+	return tx.getBytes().toString('hex');
 };
 
 export const createMultiSignRegisterTransaction = (input: {
@@ -174,7 +174,7 @@ export const createMultiSignRegisterTransaction = (input: {
 	);
 
 	const tx = new Transaction({ ...transaction, asset: encodedAsset } as any);
-	return tx.getBytes().toString('base64');
+	return tx.getBytes().toString('hex');
 };
 
 export const createMultisignatureTransferTransaction = (input: {
@@ -220,7 +220,7 @@ export const createMultisignatureTransferTransaction = (input: {
 	);
 
 	const tx = new Transaction({ ...transaction, asset: encodedAsset } as any);
-	return tx.getBytes().toString('base64');
+	return tx.getBytes().toString('hex');
 };
 
 export const createReclaimTransaction = (input: {
@@ -252,5 +252,5 @@ export const createReclaimTransaction = (input: {
 		),
 	);
 
-	return tx.getBytes().toString('base64');
+	return tx.getBytes().toString('hex');
 };

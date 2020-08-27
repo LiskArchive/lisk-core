@@ -35,9 +35,11 @@ export const createAccount = () => {
 	};
 };
 
+const passphrase = 'peanut hundred pen hawk invite exclude brain chunk gadget wait wrong ready';
+
 export const genesisAccount = {
-	address: Buffer.from('0EaZ5XxKOEbJiPPBUwZ5b46uXBw=', 'base64'),
-	publicKey: Buffer.from('D+mj8aIbVTDyf4ekFLVJ55qUC/JP3ysvBefyKu7syGo=', 'base64'),
-	passphrase: 'peanut hundred pen hawk invite exclude brain chunk gadget wait wrong ready',
+	address: cryptography.getAddressFromPassphrase(passphrase),
+	...cryptography.getKeys(passphrase),
+	passphrase,
 	password: 'elephant tree paris dragon chair galaxy',
 };
