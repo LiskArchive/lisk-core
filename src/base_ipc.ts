@@ -14,7 +14,7 @@
  */
 
 import { Command, flags as flagParser } from '@oclif/command';
-import { codec, cryptography, IPCChannel } from 'lisk-sdk';
+import { codec, cryptography, IPCChannel, RegisteredSchema } from 'lisk-sdk';
 import { getDefaultPath, getSocketsPath, splitPath } from './utils/path';
 import { flags as commonFlags } from './utils/flags';
 import { isApplicationRunning } from './utils/application';
@@ -28,21 +28,6 @@ export interface Schema {
 	readonly $id: string;
 	readonly type: string;
 	readonly properties: Record<string, unknown>;
-}
-
-interface CodecSchema {
-	accountSchema: Schema;
-	blockSchema: Schema;
-	blockHeaderSchema: Schema;
-	blockHeadersAssets: {
-		[key: number]: Schema;
-	};
-	transactionSchema: Schema;
-	transactionsAssetSchemas: {
-		moduleID: number;
-		assetID: number;
-		schema: Schema;
-	}[];
 }
 
 export interface Codec {
@@ -79,7 +64,7 @@ export default abstract class BaseIPCCommand extends Command {
 	public baseIPCFlags: BaseIPCFlags = {};
 	protected _codec!: Codec;
 	protected _channel!: IPCChannel;
-	protected _schema!: CodecSchema;
+	protected _schema!: RegisteredSchema;
 
 	// eslint-disable-next-line @typescript-eslint/require-await
 	async finally(error?: Error | string): Promise<void> {
@@ -142,24 +127,23 @@ export default abstract class BaseIPCCommand extends Command {
 
 		this._codec = {
 			decodeAccount: (data: Buffer | string): Record<string, unknown> =>
-				codec.decodeJSON(this._schema.accountSchema, convertStrToBuffer(data)),
+				codec.decodeJSON(this._schema.account, convertStrToBuffer(data)),
 			decodeBlock: (data: Buffer | string): Record<string, unknown> => {
 				const blockBuffer: Buffer = Buffer.isBuffer(data) ? data : Buffer.from(data, 'hex');
-				const { blockSchema, blockHeaderSchema, blockHeadersAssets } = this._schema;
 				const {
 					header,
 					payload,
 				}: {
 					header: Buffer;
 					payload: ReadonlyArray<Buffer>;
-				} = codec.decode(blockSchema, blockBuffer);
+				} = codec.decode(this._schema.block, blockBuffer);
 
 				const baseHeaderJSON: {
 					asset: string;
 					version: string;
-				} = codec.decodeJSON(blockHeaderSchema, header);
+				} = codec.decodeJSON(this._schema.blockHeader, header);
 				const blockAssetJSON = codec.decodeJSON<Record<string, unknown>>(
-					blockHeadersAssets[baseHeaderJSON.version],
+					this._schema.blockHeadersAssets[baseHeaderJSON.version],
 					Buffer.from(baseHeaderJSON.asset, 'hex'),
 				);
 				const payloadJSON = payload.map(transactionBuffer =>
@@ -183,8 +167,8 @@ export default abstract class BaseIPCCommand extends Command {
 					moduleID: number;
 					assetID: number;
 					asset: string;
-				} = codec.decodeJSON(this._schema.transactionSchema, transactionBuffer);
-				const transactionTypeAssetSchema = this._schema.transactionsAssetSchemas.find(
+				} = codec.decodeJSON(this._schema.transaction, transactionBuffer);
+				const transactionTypeAssetSchema = this._schema.transactionsAssets.find(
 					as => as.moduleID === baseTransaction.moduleID && as.assetID === baseTransaction.assetID,
 				);
 				if (!transactionTypeAssetSchema) {
@@ -212,7 +196,7 @@ export default abstract class BaseIPCCommand extends Command {
 					codec.fromJSON(assetSchema, transactionObject.asset as object),
 				);
 
-				return codec.fromJSON(this._schema.transactionSchema, {
+				return codec.fromJSON(this._schema.transaction, {
 					...transactionObject,
 					asset: assetBuffer,
 				});
@@ -223,7 +207,7 @@ export default abstract class BaseIPCCommand extends Command {
 			): Record<string, unknown> => {
 				const assetJSON = codec.toJSON(assetSchema, transactionObject.asset as object);
 
-				const transactionJSON = codec.toJSON(this._schema.transactionSchema, {
+				const transactionJSON = codec.toJSON(this._schema.transaction, {
 					...transactionObject,
 					asset: Buffer.alloc(0),
 				});
@@ -239,7 +223,7 @@ export default abstract class BaseIPCCommand extends Command {
 			): string => {
 				const assetBuffer = codec.encode(assetSchema, transactionObject.asset as object);
 
-				const transactionBuffer = codec.encode(this._schema.transactionSchema, {
+				const transactionBuffer = codec.encode(this._schema.transaction, {
 					...transactionObject,
 					asset: assetBuffer,
 				});

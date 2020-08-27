@@ -24,7 +24,7 @@ import * as appUtils from '../../../src/utils/application';
 import * as readerUtils from '../../../src/utils/reader';
 import { dposVoteAssetSchema, tokenTransferAssetSchema } from '../../utils/transactions';
 
-const transactionsAssetSchemas = [
+const transactionsAssets = [
 	{
 		moduleID: 2,
 		assetID: 0,
@@ -56,8 +56,8 @@ describe('transaction:create command', () => {
 	});
 
 	ipcInvokeStub.withArgs('app:getSchema').resolves({
-		transactionSchema,
-		transactionsAssetSchemas,
+		transaction: transactionSchema,
+		transactionsAssets,
 	});
 
 	afterEach(() => {

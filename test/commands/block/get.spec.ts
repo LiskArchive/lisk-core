@@ -87,8 +87,8 @@ describe('block:get command', () => {
 	ipcInvokeStub
 		.withArgs('app:getSchema')
 		.resolves({
-			blockSchema,
-			blockHeaderSchema,
+			block: blockSchema,
+			blockHeader: blockHeaderSchema,
 			blockHeadersAssets,
 		})
 		.withArgs('app:getBlockByID', { id: blockId })
