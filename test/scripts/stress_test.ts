@@ -14,7 +14,7 @@
 /* eslint-disable no-console */
 
 import { IPCChannel, systemDirs } from 'lisk-sdk';
-import { PassphraseAndKeys, createAccount, genesisAccount } from './accounts';
+import { PassphraseAndKeys, createAccount, genesisAccount } from './utils/accounts';
 import {
 	sendTokenTransferTransactions,
 	sendDelegateRegistrationTransaction,
@@ -23,7 +23,7 @@ import {
 	sendMultiSigRegistrationTransaction,
 	sendTransferTransactionFromMultiSigAccount,
 	// sendReclaimTransactions,
-} from './transactions/send';
+} from './utils/transactions/send';
 
 const TRANSACTIONS_PER_ACCOUNT = 64;
 const ITERATIONS = 2;
@@ -147,13 +147,15 @@ const start = async (count = TRANSACTIONS_PER_ACCOUNT * ITERATIONS) => {
 		);
 	}
 
+	// TODO: Use unclaimed account from devnet/alphanet genesis config
+
 	// const accountToReclaim: CreateAccount = createAccount();
 	// await sendReclaimTransactions(channel, nodeInfo, accountToReclaim);
 	// console.log('\n');
 	// await wait();
 
 	console.info('Finished!!');
-	process.exit(0);
+	channel.cleanup();
 };
 
 start().catch(console.error);

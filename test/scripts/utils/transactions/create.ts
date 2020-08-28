@@ -24,7 +24,7 @@ import {
 	transactions,
 } from 'lisk-sdk';
 
-import { ReclaimAsset } from '../../../src/application/modules';
+import { ReclaimAsset } from '../../../../src/application/modules';
 
 export interface Vote {
 	delegateAddress: Buffer;
