@@ -14,8 +14,7 @@
  */
 /* eslint-disable no-console, @typescript-eslint/restrict-template-expressions */
 
-import { IPCChannel, codec, transactions } from 'lisk-sdk';
-import { Schema } from '@liskhq/lisk-codec';
+import { IPCChannel, codec, transactions, RegisteredSchema } from 'lisk-sdk';
 import { PassphraseAndKeys } from '../accounts';
 import {
 	createTransferTransaction,
@@ -26,21 +25,6 @@ import {
 	createMultiSignRegisterTransaction,
 	createMultisignatureTransferTransaction,
 } from './create';
-
-interface CodecSchema {
-	accountSchema: Schema;
-	blockSchema: Schema;
-	blockHeaderSchema: Schema;
-	blockHeadersAssets: {
-		[key: number]: Schema;
-	};
-	transactionSchema: Schema;
-	transactionsAssetSchemas: {
-		moduleType: number;
-		assetType: number;
-		schema: Schema;
-	}[];
-}
 
 export const getBeddows = (lskAmount: string) =>
 	BigInt(transactions.convertLSKToBeddows(lskAmount));
@@ -62,12 +46,12 @@ const getAccount = async (
 	channel: IPCChannel,
 	address: string,
 ): Promise<Record<string, unknown>> => {
-	const schema = await channel.invoke<CodecSchema>('app:getSchema');
+	const schema = await channel.invoke<RegisteredSchema>('app:getSchema');
 	const account = await channel.invoke<string>('app:getAccount', {
 		address,
 	});
 
-	return codec.decodeJSON(schema.accountSchema, Buffer.from(account, 'hex'));
+	return codec.decodeJSON(schema.account, Buffer.from(account, 'hex'));
 };
 
 const getAccountNonce = async (channel: IPCChannel, address: string): Promise<number> => {
