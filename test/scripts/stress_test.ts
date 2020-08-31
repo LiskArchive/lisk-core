@@ -26,7 +26,9 @@ import {
 } from './utils/transactions/send';
 
 const TRANSACTIONS_PER_ACCOUNT = 64;
-const ITERATIONS = 2;
+const ITERATIONS = process.env.ITERATIONS ?? '1';
+const NETWORK = process.env.NETWORK ?? 'default';
+const STRESS_COUNT = TRANSACTIONS_PER_ACCOUNT * parseInt(ITERATIONS, 10);
 
 const chunkArray = (myArray: PassphraseAndKeys[], chunkSize = TRANSACTIONS_PER_ACCOUNT) => {
 	if (myArray.length <= chunkSize) {
@@ -52,7 +54,7 @@ const startIPCChannel = async (): Promise<IPCChannel> => {
 	// rootPath: check configuration(network specific, devnet, alphanet, testnet, mainnet) to find rootPath name
 	// label: check configuration(network specific, devnet, alphanet, testnet, mainnet) to find label name
 
-	const socketsPath = getSocketsPath('/Users/manu/.lisk', 'default');
+	const socketsPath = getSocketsPath('/Users/manu/.lisk', NETWORK);
 	const channel = new IPCChannel('QAChannel', events, actions, { socketsPath });
 
 	await channel.startAndListen();
@@ -62,7 +64,7 @@ const startIPCChannel = async (): Promise<IPCChannel> => {
 
 const wait = async (ms = 10000) => new Promise(resolve => setTimeout(() => resolve(), ms));
 
-const start = async (count = TRANSACTIONS_PER_ACCOUNT * ITERATIONS) => {
+const start = async (count = STRESS_COUNT) => {
 	const channel = await startIPCChannel();
 	const nodeInfo = await channel.invoke<Record<string, unknown>>('app:getNodeInfo');
 
@@ -98,6 +100,10 @@ const start = async (count = TRANSACTIONS_PER_ACCOUNT * ITERATIONS) => {
 	for (let i = 0; i < accountsLen; i += 1) {
 		const votes = [
 			{ delegateAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('20') },
+			{
+				delegateAddress: Buffer.from('5ade564399e670bd1d429583059067f3a6ca2b7f', 'hex'),
+				amount: getBeddows('10'),
+			},
 		];
 		await sendVoteTransaction(channel, nodeInfo, accounts[i], votes);
 	}

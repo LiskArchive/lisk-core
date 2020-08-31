@@ -50,7 +50,7 @@ const generateRandomUserName = () => {
 
 	const base = [...allLowerAlpha];
 
-	return [...Array(20)].map(() => base[Math.random() * base.length]).join('');
+	return [...Array(20)].map(() => base[(Math.random() * base.length) | 0]).join('');
 };
 
 const nonceSequenceItems = (AccountNonce: number, count = 63) => [
@@ -143,11 +143,12 @@ export const sendDelegateRegistrationTransaction = async (
 	fromAccount: PassphraseAndKeys,
 ) => {
 	const AccountNonce = await getAccountNonce(channel, fromAccount.address.toString('hex'));
+	const username = generateRandomUserName();
 
 	const { networkID } = nodeInfo as { networkID: string };
 	const transaction = createDelegateRegisterTransaction({
 		nonce: BigInt(AccountNonce),
-		username: generateRandomUserName(),
+		username,
 		fee: getBeddows('15'),
 		networkIdentifier: Buffer.from(networkID, 'hex'),
 		passphrase: fromAccount.passphrase,
