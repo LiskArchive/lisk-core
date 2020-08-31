@@ -75,7 +75,7 @@ export default class SignCommand extends BaseIPCCommand {
 			transaction,
 		) as unknown) as TransactionJSON;
 		const { asset, assetID, moduleID } = transactionJSON;
-		const assetSchema = this._schema.transactionsAssetSchemas.find(
+		const assetSchema = this._schema.transactionsAssets.find(
 			as => as.moduleID === moduleID && as.assetID === assetID,
 		);
 

@@ -101,7 +101,7 @@ export default class CreateCommand extends BaseIPCCommand {
 			},
 		} = this.parse(CreateCommand);
 		const { fee, nonce, networkIdentifier, moduleID, assetID } = args as Args;
-		const assetSchema = this._schema.transactionsAssetSchemas.find(
+		const assetSchema = this._schema.transactionsAssets.find(
 			as => as.moduleID === Number(moduleID) && as.assetID === Number(assetID),
 		);
 
@@ -145,7 +145,7 @@ export default class CreateCommand extends BaseIPCCommand {
 		});
 
 		const transactionErrors = validator.validator.validate(
-			this._schema.transactionSchema,
+			this._schema.transaction,
 			transactionObject,
 		);
 		if (transactionErrors.length) {

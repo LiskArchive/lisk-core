@@ -28,7 +28,7 @@ import * as appUtils from '../../../src/utils/application';
 import baseIPC from '../../../src/base_ipc';
 import * as readerUtils from '../../../src/utils/reader';
 
-const transactionsAssetSchemas = [
+const transactionsAssets = [
 	{
 		moduleID: 2,
 		assetID: 0,
@@ -111,8 +111,8 @@ describe('transaction:sign command', () => {
 	const ipcStartAndListenStub = sandbox.stub();
 
 	ipcInvokeStub.withArgs('app:getSchema').resolves({
-		transactionSchema,
-		transactionsAssetSchemas,
+		transaction: transactionSchema,
+		transactionsAssets,
 	});
 
 	afterEach(() => {

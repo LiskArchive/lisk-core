@@ -47,7 +47,7 @@ const transferAssetSchema = {
 	},
 };
 
-const transactionsAssetSchemas = [
+const transactionsAssets = [
 	{
 		moduleID: 2,
 		assetID: 0,
@@ -65,7 +65,7 @@ describe('transaction:get command', () => {
 	const encodedTransaction = encodeTransactionFromJSON(
 		transferTransaction as any,
 		transactionSchema,
-		transactionsAssetSchemas,
+		transactionsAssets,
 	);
 	const fsStub = sandbox.stub().returns(true);
 	const printJSONStub = sandbox.stub();
@@ -74,8 +74,8 @@ describe('transaction:get command', () => {
 	ipcInvokeStub
 		.withArgs('app:getSchema')
 		.resolves({
-			transactionSchema,
-			transactionsAssetSchemas,
+			transaction: transactionSchema,
+			transactionsAssets,
 		})
 		.withArgs('app:getTransactionByID', { id: transactionId })
 		.resolves(encodedTransaction);
