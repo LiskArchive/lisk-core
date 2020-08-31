@@ -31,7 +31,8 @@
 		"prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme --multi --dir=docs/commands",
 		"prebuild": "if test -d dist; then rm -r dist; fi; rm -f tsconfig.tsbuildinfo",
 		"build": "tsc",
-		"test": "mocha test",
+		"test": "mocha test --exclude test/scripts/**",
+		"test:stress": "NETWORK=devnet npx ts-node test/scripts/stress_test.ts",
 		"version": "oclif-dev readme --multi --dir=docs/commands && git add README.md docs"
 	},
 	"bin": {
@@ -72,6 +73,7 @@
 		"axios": "0.19.2"
 	},
 	"devDependencies": {
+		"@liskhq/lisk-codec": "0.1.0-debug.1",
 		"@oclif/dev-cli": "1.22.2",
 		"@oclif/test": "1.2.6",
 		"@types/chai": "4.2.10",
