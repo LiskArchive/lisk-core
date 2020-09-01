@@ -90,14 +90,14 @@ export const sendTokenTransferTransactions = async (
 			? await getAccountNonce(channel, fromAccount.address.toString('hex'))
 			: 0;
 
-		const { networkID } = nodeInfo as { networkID: string };
+		const { networkIdentifier } = nodeInfo as { networkIdentifier: string };
 		const transferTransactions = nonceSequenceItems(AccountNonce).map((nonce, index) => {
 			return createTransferTransaction({
 				nonce: BigInt(nonce),
 				recipientAddress: accounts[index].address,
 				amount: getBeddows(fromGenesis ? '2000' : '25'),
 				fee: getBeddows('0.1'),
-				networkIdentifier: Buffer.from(networkID, 'hex'),
+				networkIdentifier: Buffer.from(networkIdentifier, 'hex'),
 				passphrase: fromAccount.passphrase,
 			});
 		});
@@ -129,12 +129,12 @@ export const sendDelegateRegistrationTransaction = async (
 	const AccountNonce = await getAccountNonce(channel, fromAccount.address.toString('hex'));
 	const username = generateRandomUserName();
 
-	const { networkID } = nodeInfo as { networkID: string };
+	const { networkIdentifier } = nodeInfo as { networkIdentifier: string };
 	const transaction = createDelegateRegisterTransaction({
 		nonce: BigInt(AccountNonce),
 		username,
 		fee: getBeddows('15'),
-		networkIdentifier: Buffer.from(networkID, 'hex'),
+		networkIdentifier: Buffer.from(networkIdentifier, 'hex'),
 		passphrase: fromAccount.passphrase,
 	});
 
@@ -149,12 +149,12 @@ export const sendVoteTransaction = async (
 ) => {
 	const AccountNonce = await getAccountNonce(channel, fromAccount.address.toString('hex'));
 
-	const { networkID } = nodeInfo as { networkID: string };
+	const { networkIdentifier } = nodeInfo as { networkIdentifier: string };
 	const transaction = createDelegateVoteTransaction({
 		nonce: BigInt(AccountNonce),
 		votes,
 		fee: getBeddows('0.3'),
-		networkIdentifier: Buffer.from(networkID, 'hex'),
+		networkIdentifier: Buffer.from(networkIdentifier, 'hex'),
 		passphrase: fromAccount.passphrase,
 	});
 
@@ -170,7 +170,7 @@ export const sendMultiSigRegistrationTransaction = async (
 ) => {
 	const AccountNonce = await getAccountNonce(channel, fromAccount.address.toString('hex'));
 
-	const { networkID } = nodeInfo as { networkID: string };
+	const { networkIdentifier } = nodeInfo as { networkIdentifier: string };
 	const transaction = createMultiSignRegisterTransaction({
 		nonce: BigInt(AccountNonce),
 		mandatoryKeys: asset.mandatoryKeys,
@@ -178,7 +178,7 @@ export const sendMultiSigRegistrationTransaction = async (
 		numberOfSignatures: asset.numberOfSignatures,
 		senderPassphrase: fromAccount.passphrase,
 		fee: getBeddows('0.5'),
-		networkIdentifier: Buffer.from(networkID, 'hex'),
+		networkIdentifier: Buffer.from(networkIdentifier, 'hex'),
 		passphrases,
 	});
 
@@ -194,7 +194,7 @@ export const sendTransferTransactionFromMultiSigAccount = async (
 ) => {
 	const AccountNonce = await getAccountNonce(channel, fromAccount.address.toString('hex'));
 
-	const { networkID } = nodeInfo as { networkID: string };
+	const { networkIdentifier } = nodeInfo as { networkIdentifier: string };
 	const transaction = createMultisignatureTransferTransaction({
 		senderPublicKey: fromAccount.publicKey,
 		recipientAddress: fromAccount.address,
@@ -203,7 +203,7 @@ export const sendTransferTransactionFromMultiSigAccount = async (
 		mandatoryKeys: asset.mandatoryKeys,
 		optionalKeys: asset.optionalKeys,
 		fee: getBeddows('0.5'),
-		networkIdentifier: Buffer.from(networkID, 'hex'),
+		networkIdentifier: Buffer.from(networkIdentifier, 'hex'),
 		passphrases,
 	});
 
@@ -215,13 +215,13 @@ export const sendReclaimTransactions = async (
 	nodeInfo: Record<string, unknown>,
 	fromAccount: PassphraseAndKeys,
 ) => {
-	const { networkID } = nodeInfo as { networkID: string };
+	const { networkIdentifier } = nodeInfo as { networkIdentifier: string };
 	const AccountNonce = await getAccountNonce(channel, fromAccount.address.toString('hex'));
 	const transaction = createReclaimTransaction({
 		nonce: BigInt(AccountNonce),
 		amount: getBeddows('10000'),
 		fee: getBeddows('0.4'),
-		networkIdentifier: Buffer.from(networkID, 'hex'),
+		networkIdentifier: Buffer.from(networkIdentifier, 'hex'),
 		passphrase: fromAccount.passphrase,
 	});
 
