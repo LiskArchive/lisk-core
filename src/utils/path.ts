@@ -14,6 +14,7 @@
  */
 
 import * as path from 'path';
+import * as fs from 'fs-extra';
 import * as os from 'os';
 import { systemDirs } from 'lisk-sdk';
 
@@ -48,8 +49,26 @@ export const getNetworkConfigFilesPath = (
 	};
 };
 
-export const getConfigFilePath = (dataPath: string, network: string): string =>
-	path.join(dataPath, 'config', network, 'config.json');
+export const getDefaultNetworkConfigFilesPath = (
+	network: string,
+): { genesisBlockFilePath: string; configFilePath: string } => {
+	const basePath = path.join(getDefaultConfigPath(), network);
+	return {
+		genesisBlockFilePath: path.join(basePath, 'genesis_block.json'),
+		configFilePath: path.join(basePath, 'config.json'),
+	};
+};
+
+export const getConfigDir = (configPath: string): string[] => {
+	const files = fs.readdirSync(configPath);
+	return files.filter(file => fs.statSync(path.join(configPath, file)).isDirectory());
+};
+
+export const removeConfigDir = (configPath: string, folder: string): void =>
+	fs.removeSync(path.join(configPath, folder));
+
+export const ensureConfigDir = (configPath: string, folder: string): void =>
+	fs.ensureDirSync(path.join(configPath, folder));
 
 export const getBlockchainDBPath = (dataPath: string): string =>
 	path.join(dataPath, 'data', 'blockchain.db');
