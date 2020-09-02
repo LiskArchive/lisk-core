@@ -63,8 +63,8 @@ npm run build
 $ npm install -g lisk-core
 $ lisk-core COMMAND
 running command...
-$ core (-v|--version|version)
-lisk-core/3.0.0-debug.0 darwin-x64 node-v12.18.3
+$ lisk-core (-v|--version|version)
+lisk-core/3.0.0-debug.2 darwin-x64 node-v12.18.3
 $ lisk-core --help [COMMAND]
 USAGE
   $ lisk-core COMMAND
@@ -86,7 +86,7 @@ USAGE
 - [`lisk-core forger-info`](docs/commands/forger-info.md) - Export forger data to a given data path
 - [`lisk-core forging`](docs/commands/forging.md) - Disable forging for given delegate address
 - [`lisk-core hash-onion`](docs/commands/hash-onion.md) - Creates hash onion output to be used by forger.
-- [`lisk-core help`](docs/commands/help.md) - display help for core
+- [`lisk-core help`](docs/commands/help.md) - display help for lisk-core
 - [`lisk-core node`](docs/commands/node.md) - Gets node information from a running application
 - [`lisk-core passphrase`](docs/commands/passphrase.md) - Decrypts your secret passphrase using the password which was provided at the time of encryption.
 - [`lisk-core sdk`](docs/commands/sdk.md) - Link an specific SDK folder given the parameter

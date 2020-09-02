@@ -1,19 +1,19 @@
-# `core copyright`
+# `lisk-core copyright`
 
 Displays copyright notice.
 
-- [`core copyright`](#core-copyright)
+- [`lisk-core copyright`](#lisk-core-copyright)
 
-## `core copyright`
+## `lisk-core copyright`
 
 Displays copyright notice.
 
 ```
 USAGE
-  $ core copyright
+  $ lisk-core copyright
 
 EXAMPLE
   copyright
 ```
 
-_See code: [dist/commands/copyright.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.0/dist/commands/copyright.ts)_
+_See code: [dist/commands/copyright.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/copyright.ts)_

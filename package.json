@@ -1,6 +1,6 @@
 {
 	"name": "lisk-core",
-	"version": "3.0.0-debug.1",
+	"version": "3.0.0-debug.2",
 	"description": "Lisk blockchain application platform",
 	"author": "Lisk Foundation <admin@lisk.io>, lightcurve GmbH <admin@lightcurve.io>",
 	"license": "Apache-2.0",
@@ -59,21 +59,21 @@
 		}
 	},
 	"dependencies": {
-		"@liskhq/lisk-db": "0.1.0-debug.1",
-		"@liskhq/lisk-passphrase": "3.0.1-debug.1",
-		"@liskhq/lisk-utils": "0.1.0-debug.1",
+		"@liskhq/lisk-db": "0.1.0-debug.2",
+		"@liskhq/lisk-passphrase": "3.0.1-debug.2",
+		"@liskhq/lisk-utils": "0.1.0-debug.2",
 		"@oclif/command": "1.6.1",
 		"@oclif/config": "1.15.1",
 		"@oclif/plugin-help": "3.1.0",
 		"fs-extra": "9.0.1",
 		"inquirer": "7.3.2",
-		"lisk-sdk": "5.0.0-debug.1",
+		"lisk-sdk": "5.0.0-debug.2",
 		"tar": "6.0.2",
 		"tslib": "1.13.0",
 		"axios": "0.19.2"
 	},
 	"devDependencies": {
-		"@liskhq/lisk-codec": "0.1.0-debug.1",
+		"@liskhq/lisk-codec": "0.1.0-debug.2",
 		"@oclif/dev-cli": "1.22.2",
 		"@oclif/test": "1.2.6",
 		"@types/chai": "4.2.10",

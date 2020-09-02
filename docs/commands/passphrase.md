@@ -1,17 +1,17 @@
-# `core passphrase`
+# `lisk-core passphrase`
 
 Decrypts your secret passphrase using the password which was provided at the time of encryption.
 
-- [`core passphrase:decrypt ENCRYPTEDPASSPHRASE`](#core-passphrasedecrypt-encryptedpassphrase)
-- [`core passphrase:encrypt`](#core-passphraseencrypt)
+- [`lisk-core passphrase:decrypt ENCRYPTEDPASSPHRASE`](#lisk-core-passphrasedecrypt-encryptedpassphrase)
+- [`lisk-core passphrase:encrypt`](#lisk-core-passphraseencrypt)
 
-## `core passphrase:decrypt ENCRYPTEDPASSPHRASE`
+## `lisk-core passphrase:decrypt ENCRYPTEDPASSPHRASE`
 
 Decrypts your secret passphrase using the password which was provided at the time of encryption.
 
 ```
 USAGE
-  $ core passphrase:decrypt ENCRYPTEDPASSPHRASE
+  $ lisk-core passphrase:decrypt ENCRYPTEDPASSPHRASE
 
 ARGUMENTS
   ENCRYPTEDPASSPHRASE  Encrypted passphrase to decrypt.
@@ -31,15 +31,15 @@ EXAMPLE
   4317a63bcf3d41ea74e83b&version=1"
 ```
 
-_See code: [dist/commands/passphrase/decrypt.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.0/dist/commands/passphrase/decrypt.ts)_
+_See code: [dist/commands/passphrase/decrypt.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/passphrase/decrypt.ts)_
 
-## `core passphrase:encrypt`
+## `lisk-core passphrase:encrypt`
 
 Encrypts your secret passphrase under a password.
 
 ```
 USAGE
-  $ core passphrase:encrypt
+  $ lisk-core passphrase:encrypt
 
 OPTIONS
   -p, --passphrase=passphrase  Specifies a source for your secret passphrase. Command will prompt you for input if this
@@ -63,4 +63,4 @@ EXAMPLE
   passphrase:encrypt
 ```
 
-_See code: [dist/commands/passphrase/encrypt.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.0/dist/commands/passphrase/encrypt.ts)_
+_See code: [dist/commands/passphrase/encrypt.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/passphrase/encrypt.ts)_

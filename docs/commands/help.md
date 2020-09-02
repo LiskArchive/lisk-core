@@ -1,16 +1,16 @@
-# `core help`
+# `lisk-core help`
 
-display help for core
+display help for lisk-core
 
-- [`core help [COMMAND]`](#core-help-command)
+- [`lisk-core help [COMMAND]`](#lisk-core-help-command)
 
-## `core help [COMMAND]`
+## `lisk-core help [COMMAND]`
 
-display help for core
+display help for lisk-core
 
 ```
 USAGE
-  $ core help [COMMAND]
+  $ lisk-core help [COMMAND]
 
 ARGUMENTS
   COMMAND  command to show help for
