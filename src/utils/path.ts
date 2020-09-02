@@ -58,7 +58,7 @@ export const getDefaultNetworkConfigFilesPath = (
 	};
 };
 
-export const getConfigDir = (dataPath: string): string[] => {
+export const getConfigDirs = (dataPath: string): string[] => {
 	const configPath = getConfigPath(dataPath);
 	const files = fs.readdirSync(configPath);
 	return files.filter(file => fs.statSync(path.join(configPath, file)).isDirectory());
