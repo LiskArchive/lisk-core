@@ -17,7 +17,17 @@
 import { Command, flags as flagParser } from '@oclif/command';
 import * as fs from 'fs-extra';
 import { ApplicationConfig, utils, HTTPAPIPlugin, ForgerPlugin } from 'lisk-sdk';
-import { getDefaultPath, splitPath, getFullPath, getConfigDirs, getNetworkConfigFilesPath, removeConfigDir, ensureConfigDir, getDefaultConfigDir, getDefaultNetworkConfigFilesPath } from '../utils/path';
+import {
+	getDefaultPath,
+	splitPath,
+	getFullPath,
+	getConfigDirs,
+	getNetworkConfigFilesPath,
+	removeConfigDir,
+	ensureConfigDir,
+	getDefaultConfigDir,
+	getDefaultNetworkConfigFilesPath,
+} from '../utils/path';
 import { flags as commonFlags } from '../utils/flags';
 import { getApplication } from '../application';
 import { DEFAULT_NETWORK } from '../constants';
@@ -126,15 +136,21 @@ export default class StartCommand extends Command {
 		const defaultNetworkConfigs = getDefaultConfigDir();
 		const defaultNetworkConfigDir = getConfigDirs(defaultNetworkConfigs);
 		if (!defaultNetworkConfigDir.includes(flags.network)) {
-			this.error(`Network must be one of ${defaultNetworkConfigDir.join(',')} but received ${flags.network}`);
+			this.error(
+				`Network must be one of ${defaultNetworkConfigDir.join(',')} but received ${flags.network}`,
+			);
 		}
 
 		// Validate dataPath/config if config for other network exists, throw error and exit unless overwrite-config is specified
 		const configDir = getConfigDirs(dataPath);
 		// If config file exist, do not copy unless overwrite-config is specified
-		if ((configDir.length > 1 || configDir.length === 1 && configDir[0] !== flags.network)) {
+		if (configDir.length > 1 || (configDir.length === 1 && configDir[0] !== flags.network)) {
 			if (!flags['overwrite-config']) {
-				this.error(`Datapath ${dataPath} already contains configs for ${configDir.join(',')}. Please use --overwrite-config to overwrite the config`);
+				this.error(
+					`Datapath ${dataPath} already contains configs for ${configDir.join(
+						',',
+					)}. Please use --overwrite-config to overwrite the config`,
+				);
 			}
 			// Remove other network configs
 			for (const configFolder of configDir) {
@@ -147,12 +163,24 @@ export default class StartCommand extends Command {
 		ensureConfigDir(dataPath, flags.network);
 
 		// Read network genesis block and config from the folder
-		const { genesisBlockFilePath, configFilePath } = getNetworkConfigFilesPath(dataPath, flags.network);
-		const { genesisBlockFilePath: defaultGenesisBlockFilePath, configFilePath: defaultConfigFilepath } = getDefaultNetworkConfigFilesPath(flags.network);
-		if (!fs.existsSync(genesisBlockFilePath) || (fs.existsSync(genesisBlockFilePath) && flags['overwrite-config'])) {
+		const { genesisBlockFilePath, configFilePath } = getNetworkConfigFilesPath(
+			dataPath,
+			flags.network,
+		);
+		const {
+			genesisBlockFilePath: defaultGenesisBlockFilePath,
+			configFilePath: defaultConfigFilepath,
+		} = getDefaultNetworkConfigFilesPath(flags.network);
+		if (
+			!fs.existsSync(genesisBlockFilePath) ||
+			(fs.existsSync(genesisBlockFilePath) && flags['overwrite-config'])
+		) {
 			fs.copyFileSync(defaultGenesisBlockFilePath, genesisBlockFilePath);
 		}
-		if (!fs.existsSync(configFilePath) || (fs.existsSync(configFilePath) && flags['overwrite-config'])) {
+		if (
+			!fs.existsSync(configFilePath) ||
+			(fs.existsSync(configFilePath) && flags['overwrite-config'])
+		) {
 			fs.copyFileSync(defaultConfigFilepath, configFilePath);
 		}
 

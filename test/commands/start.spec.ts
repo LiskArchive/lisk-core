@@ -36,8 +36,12 @@ describe('start', () => {
 			consoleLogLevel: 'error',
 		},
 	});
-	readJSONStub.withArgs('~/.lisk/default/config/mainnet/genesis_block.json').resolves(devnetGenesisBlock);
-	readJSONStub.withArgs('~/.lisk/default/config/devnet/genesis_block.json').resolves(devnetGenesisBlock);
+	readJSONStub
+		.withArgs('~/.lisk/default/config/mainnet/genesis_block.json')
+		.resolves(devnetGenesisBlock);
+	readJSONStub
+		.withArgs('~/.lisk/default/config/devnet/genesis_block.json')
+		.resolves(devnetGenesisBlock);
 	const readdirSyncStub = sandbox.stub();
 	readdirSyncStub.withArgs(path.join(__dirname, '../../config')).returns(['mainnet', 'devnet']);
 	readdirSyncStub.returns(['mainnet']);
@@ -77,20 +81,22 @@ describe('start', () => {
 
 	describe('when config already exist in the folder', () => {
 		setupTest()
-		.command(['start', '-n', 'devnet'])
-		.catch(err => {
-			expect(err.message).to.contain('Datapath ~/.lisk/default already contains configs for mainnet.');
-		})
-		.it('should fail with already existing config');
+			.command(['start', '-n', 'devnet'])
+			.catch(err => {
+				expect(err.message).to.contain(
+					'Datapath ~/.lisk/default already contains configs for mainnet.',
+				);
+			})
+			.it('should fail with already existing config');
 	});
 
 	describe('when config already exist in the folder and called with --overwrite-config', () => {
 		setupTest()
-		.command(['start', '-n', 'devnet', '--overwrite-config'])
-		.it('should delete the mainnet config and save the devnet config', () => {
-			expect(fs.removeSync).to.have.been.calledOnce;
-			expect(fs.copyFileSync).to.have.been.calledTwice;
-		});
+			.command(['start', '-n', 'devnet', '--overwrite-config'])
+			.it('should delete the mainnet config and save the devnet config', () => {
+				expect(fs.removeSync).to.have.been.calledOnce;
+				expect(fs.copyFileSync).to.have.been.calledTwice;
+			});
 	});
 
 	describe('when unknown network is specidied', () => {
