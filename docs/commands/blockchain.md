@@ -1,20 +1,20 @@
-# `core blockchain`
+# `lisk-core blockchain`
 
 Download blockchain data from a provided snapshot.
 
-- [`core blockchain:download`](#core-blockchaindownload)
-- [`core blockchain:export`](#core-blockchainexport)
-- [`core blockchain:hash`](#core-blockchainhash)
-- [`core blockchain:import FILEPATH`](#core-blockchainimport-filepath)
-- [`core blockchain:reset`](#core-blockchainreset)
+- [`lisk-core blockchain:download`](#lisk-core-blockchaindownload)
+- [`lisk-core blockchain:export`](#lisk-core-blockchainexport)
+- [`lisk-core blockchain:hash`](#lisk-core-blockchainhash)
+- [`lisk-core blockchain:import FILEPATH`](#lisk-core-blockchainimport-filepath)
+- [`lisk-core blockchain:reset`](#lisk-core-blockchainreset)
 
-## `core blockchain:download`
+## `lisk-core blockchain:download`
 
 Download blockchain data from a provided snapshot.
 
 ```
 USAGE
-  $ core blockchain:download
+  $ lisk-core blockchain:download
 
 OPTIONS
   -n, --network=network  [default: mainnet] Default network config to use. Environment variable "LISK_NETWORK" can also
@@ -31,15 +31,15 @@ EXAMPLES
   download --url https://downloads.lisk.io/lisk/mainnet/blockchain.db.gz --output ./downloads
 ```
 
-_See code: [dist/commands/blockchain/download.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.0/dist/commands/blockchain/download.ts)_
+_See code: [dist/commands/blockchain/download.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/blockchain/download.ts)_
 
-## `core blockchain:export`
+## `lisk-core blockchain:export`
 
 Export blockchain data for given data path
 
 ```
 USAGE
-  $ core blockchain:export
+  $ lisk-core blockchain:export
 
 OPTIONS
   -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
@@ -52,15 +52,15 @@ EXAMPLES
   blockchain:export --data-path ./data --output ./my/path/
 ```
 
-_See code: [dist/commands/blockchain/export.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.0/dist/commands/blockchain/export.ts)_
+_See code: [dist/commands/blockchain/export.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/blockchain/export.ts)_
 
-## `core blockchain:hash`
+## `lisk-core blockchain:hash`
 
 Generate hash for blockchain data for given data path
 
 ```
 USAGE
-  $ core blockchain:hash
+  $ lisk-core blockchain:hash
 
 OPTIONS
   -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
@@ -71,15 +71,15 @@ EXAMPLES
   blockchain:hash --data-path ./data
 ```
 
-_See code: [dist/commands/blockchain/hash.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.0/dist/commands/blockchain/hash.ts)_
+_See code: [dist/commands/blockchain/hash.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/blockchain/hash.ts)_
 
-## `core blockchain:import FILEPATH`
+## `lisk-core blockchain:import FILEPATH`
 
 Import blockchain data for given data path
 
 ```
 USAGE
-  $ core blockchain:import FILEPATH
+  $ lisk-core blockchain:import FILEPATH
 
 ARGUMENTS
   FILEPATH  Path to the gzipped blockchain data.
@@ -95,15 +95,15 @@ EXAMPLES
   blockchain:import ./path/to/blockchain.db.gz --data-path ./lisk/
 ```
 
-_See code: [dist/commands/blockchain/import.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.0/dist/commands/blockchain/import.ts)_
+_See code: [dist/commands/blockchain/import.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/blockchain/import.ts)_
 
-## `core blockchain:reset`
+## `lisk-core blockchain:reset`
 
 Resets the blockchain data.
 
 ```
 USAGE
-  $ core blockchain:reset
+  $ lisk-core blockchain:reset
 
 OPTIONS
   -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
@@ -117,4 +117,4 @@ EXAMPLES
   blockchain:reset --yes
 ```
 
-_See code: [dist/commands/blockchain/reset.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.0/dist/commands/blockchain/reset.ts)_
+_See code: [dist/commands/blockchain/reset.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/blockchain/reset.ts)_

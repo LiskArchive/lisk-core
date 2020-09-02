@@ -1,19 +1,19 @@
-# `core transaction`
+# `lisk-core transaction`
 
 Creates a transaction which can be broadcasted to the network. Note: fee and amount should be in Beddows!!
 
-- [`core transaction:create NETWORKIDENTIFIER FEE NONCE MODULEID ASSETID`](#core-transactioncreate-networkidentifier-fee-nonce-moduleid-assetid)
-- [`core transaction:get ID`](#core-transactionget-id)
-- [`core transaction:send TRANSACTION`](#core-transactionsend-transaction)
-- [`core transaction:sign NETWORKIDENTIFIER TRANSACTION`](#core-transactionsign-networkidentifier-transaction)
+- [`lisk-core transaction:create NETWORKIDENTIFIER FEE NONCE MODULEID ASSETID`](#lisk-core-transactioncreate-networkidentifier-fee-nonce-moduleid-assetid)
+- [`lisk-core transaction:get ID`](#lisk-core-transactionget-id)
+- [`lisk-core transaction:send TRANSACTION`](#lisk-core-transactionsend-transaction)
+- [`lisk-core transaction:sign NETWORKIDENTIFIER TRANSACTION`](#lisk-core-transactionsign-networkidentifier-transaction)
 
-## `core transaction:create NETWORKIDENTIFIER FEE NONCE MODULEID ASSETID`
+## `lisk-core transaction:create NETWORKIDENTIFIER FEE NONCE MODULEID ASSETID`
 
 Creates a transaction which can be broadcasted to the network. Note: fee and amount should be in Beddows!!
 
 ```
 USAGE
-  $ core transaction:create NETWORKIDENTIFIER FEE NONCE MODULEID ASSETID
+  $ lisk-core transaction:create NETWORKIDENTIFIER FEE NONCE MODULEID ASSETID
 
 ARGUMENTS
   NETWORKIDENTIFIER  Network identifier defined for the network or main | test for the Lisk Network.
@@ -45,23 +45,23 @@ OPTIONS
   --pretty                                 Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
-  transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 2 0
-  --asset='{"amount":100000000,"recipientAddress":"qwBBp9P3ssKQtbg01Gvce364WBU=","data":"send token"}'
-  transaction:create hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM= 100000000 2 2 0
+  transaction:create 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 100000000 2 2 0
+  --asset='{"amount":100000000,"recipientAddress":"ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815","data":"send token"}'
+  transaction:create 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 100000000 2 2 0
 ```
 
-_See code: [dist/commands/transaction/create.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.0/dist/commands/transaction/create.ts)_
+_See code: [dist/commands/transaction/create.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/transaction/create.ts)_
 
-## `core transaction:get ID`
+## `lisk-core transaction:get ID`
 
-Returns a transaction information for a given transaction Id from the blockchain
+Returns a transaction information for a given transaction ID from the blockchain
 
 ```
 USAGE
-  $ core transaction:get ID
+  $ lisk-core transaction:get ID
 
 ARGUMENTS
-  ID  Transaction Id in base64 format.
+  ID  Transaction ID in hex format.
 
 OPTIONS
   -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
@@ -70,21 +70,21 @@ OPTIONS
   --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLE
-  transaction:get 6rBsaiLoi8pxUOA0en2Xas0HDLkoRCPm6r7NZXrMEmM=
+  transaction:get eab06c6a22e88bca7150e0347a7d976acd070cb9284423e6eabecd657acc1263
 ```
 
-_See code: [dist/commands/transaction/get.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.0/dist/commands/transaction/get.ts)_
+_See code: [dist/commands/transaction/get.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/transaction/get.ts)_
 
-## `core transaction:send TRANSACTION`
+## `lisk-core transaction:send TRANSACTION`
 
 Send a transaction to the local node.
 
 ```
 USAGE
-  $ core transaction:send TRANSACTION
+  $ lisk-core transaction:send TRANSACTION
 
 ARGUMENTS
-  TRANSACTION  The transaction to be sent to the node encoded as base64 string
+  TRANSACTION  A transaction to be sent to the node encoded as hex string
 
 OPTIONS
   -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
@@ -94,23 +94,24 @@ OPTIONS
 
 EXAMPLE
   transaction:send
-  CAgQARiAyrXuASIg/QYbkUZpHzxWUEvgURddW3bRsdAXnFxDcOGFNMWIISIqJAhkEhSrAEGn0/eywpC1uDTUa9x7frhYFRoKc2VuZCB0b2tlbjJAKO3TYB
-  zcNaQbsjQVoNnzw+nPGI2Zca3xh0LOo51YqoSAmqh7z+b+qsRiEcgEcq2Sl/2HcncJ9dfntBNMrxBrAg==
+  080810011880cab5ee012220fd061b9146691f3c56504be051175d5b76d1b1d0179c5c4370e18534c58821222a2408641214ab0041a7d3f7b2c290
+  b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e324028edd3601cdc35a41bb23415a0d9f3c3e9cf188d9971adf18742cea39d58aa84809a
+  a87bcfe6feaac46211c80472ad9297fd87727709f5d7e7b4134caf106b02
 ```
 
-_See code: [dist/commands/transaction/send.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.0/dist/commands/transaction/send.ts)_
+_See code: [dist/commands/transaction/send.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/transaction/send.ts)_
 
-## `core transaction:sign NETWORKIDENTIFIER TRANSACTION`
+## `lisk-core transaction:sign NETWORKIDENTIFIER TRANSACTION`
 
 Sign an encoded transaction.
 
 ```
 USAGE
-  $ core transaction:sign NETWORKIDENTIFIER TRANSACTION
+  $ lisk-core transaction:sign NETWORKIDENTIFIER TRANSACTION
 
 ARGUMENTS
   NETWORKIDENTIFIER  Network identifier defined for a network(mainnet | testnet).
-  TRANSACTION        The transaction to be signed encoded as base64 string
+  TRANSACTION        The transaction to be signed encoded as hex string
 
 OPTIONS
   -d, --data-path=data-path        Directory path to specify where node data is stored. Environment variable
@@ -126,16 +127,17 @@ OPTIONS
 
   --include-sender-signature       Include sender signature in transaction.
 
-  --mandatory-keys=mandatory-keys  Mandatory publicKey string in base64 format.
+  --mandatory-keys=mandatory-keys  Mandatory publicKey string in hex format.
 
-  --optional-keys=optional-keys    Optional publicKey string in base64 format.
+  --optional-keys=optional-keys    Optional publicKey string in hex format.
 
   --pretty                         Prints JSON in pretty format rather than condensed.
 
 EXAMPLE
-  transaction:sign hz2oWizucNpjHZCw8X+tqMOsm4OyYT9Mpf3dN00QNLM=
-  CAIQABgCIIDC1y8qIA/po/GiG1Uw8n+HpBS1SeealAvyT98rLwXn8iru7MhqMicIgMLXLxIUqwBBp9P3ssKQtbg01Gvce364WBUaCnNlbmQgdG9rZW46QG
-  tgC2NbDYXDv/HlmxYg4Qg4B/3kzSZUWl0Y0qgfzvege/XsB50JBjC7i6NH1dgr9CbL/6qotUBPEZCnZ2yL1AY=
+  transaction:sign 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3
+  0802100018022080c2d72f2a200fe9a3f1a21b5530f27f87a414b549e79a940bf24fdf2b2f05e7f22aeeecc86a32270880c2d72f1214ab0041a7d3
+  f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e3a406b600b635b0d85c3bff1e59b1620e1083807fde4cd26545a5d18d2a81fce
+  f7a07bf5ec079d090630bb8ba347d5d82bf426cbffaaa8b5404f1190a7676c8bd406
 ```
 
-_See code: [dist/commands/transaction/sign.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.0/dist/commands/transaction/sign.ts)_
+_See code: [dist/commands/transaction/sign.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/transaction/sign.ts)_
