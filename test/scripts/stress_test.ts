@@ -13,7 +13,8 @@
  */
 /* eslint-disable no-console */
 
-import { IPCChannel, systemDirs } from 'lisk-sdk';
+import * as os from 'os';
+import { IPCChannel } from 'lisk-sdk';
 import { PassphraseAndKeys, createAccount, genesisAccount } from './utils/accounts';
 import {
 	sendTokenTransferTransactions,
@@ -27,7 +28,7 @@ import {
 
 const TRANSACTIONS_PER_ACCOUNT = 64;
 const ITERATIONS = process.env.ITERATIONS ?? '1';
-const NETWORK = process.env.NETWORK ?? 'default';
+const DATAPATH = process.env.DATAPATH ?? '~/.lisk/default';
 const STRESS_COUNT = TRANSACTIONS_PER_ACCOUNT * parseInt(ITERATIONS, 10);
 
 const chunkArray = (myArray: PassphraseAndKeys[], chunkSize = TRANSACTIONS_PER_ACCOUNT) => {
@@ -38,23 +39,22 @@ const chunkArray = (myArray: PassphraseAndKeys[], chunkSize = TRANSACTIONS_PER_A
 	return [myArray.slice(0, chunkSize), ...chunkArray(myArray.slice(chunkSize), chunkSize)];
 };
 
-const getSocketsPath = (dataPath: string, network: string) => {
-	const dirs = systemDirs(network, dataPath);
+const getSocketsPath = (dataPath: string) => {
+	const resolvedPath = dataPath.replace('~', os.homedir());
+	const socketsDir = `${resolvedPath}/tmp/sockets`;
+
 	return {
-		root: `unix://${dirs.sockets}`,
-		pub: `unix://${dirs.sockets}/lisk_pub.sock`,
-		sub: `unix://${dirs.sockets}/lisk_sub.sock`,
-		rpc: `unix://${dirs.sockets}/bus_rpc_socket.sock`,
+		root: `unix://${socketsDir}`,
+		pub: `unix://${socketsDir}/lisk_pub.sock`,
+		sub: `unix://${socketsDir}/lisk_sub.sock`,
+		rpc: `unix://${socketsDir}/bus_rpc_socket.sock`,
 	};
 };
 
 const startIPCChannel = async (): Promise<IPCChannel> => {
 	const events: string[] = [];
 	const actions = {};
-	// rootPath: check configuration(network specific, devnet, alphanet, testnet, mainnet) to find rootPath name
-	// label: check configuration(network specific, devnet, alphanet, testnet, mainnet) to find label name
-
-	const socketsPath = getSocketsPath('/Users/manu/.lisk', NETWORK);
+	const socketsPath = getSocketsPath(DATAPATH);
 	const channel = new IPCChannel('QAChannel', events, actions, { socketsPath });
 
 	await channel.startAndListen();
