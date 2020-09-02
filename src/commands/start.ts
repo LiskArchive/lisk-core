@@ -17,7 +17,7 @@
 import { Command, flags as flagParser } from '@oclif/command';
 import * as fs from 'fs-extra';
 import { ApplicationConfig, utils, HTTPAPIPlugin, ForgerPlugin } from 'lisk-sdk';
-import { getDefaultPath, splitPath, getFullPath, getConfigPath, getConfigDir, getNetworkConfigFilesPath, removeConfigDir, ensureConfigDir, getDefaultConfigPath, getDefaultNetworkConfigFilesPath } from '../utils/path';
+import { getDefaultPath, splitPath, getFullPath, getConfigDir, getNetworkConfigFilesPath, removeConfigDir, ensureConfigDir, getDefaultConfigDir, getDefaultNetworkConfigFilesPath } from '../utils/path';
 import { flags as commonFlags } from '../utils/flags';
 import { getApplication } from '../application';
 import { DEFAULT_NETWORK } from '../constants';
@@ -123,15 +123,14 @@ export default class StartCommand extends Command {
 		this.log(`Starting Lisk Core at ${getFullPath(dataPath)}`);
 		const pathConfig = splitPath(dataPath);
 
-		const defaultNetworkConfigs = getDefaultConfigPath();
+		const defaultNetworkConfigs = getDefaultConfigDir();
 		const defaultNetworkConfigDir = getConfigDir(defaultNetworkConfigs);
 		if (!defaultNetworkConfigDir.includes(flags.network)) {
 			this.error(`Network must be one of ${defaultNetworkConfigDir.join(',')} but received ${flags.network}`);
 		}
 
 		// Validate dataPath/config if config for other network exists, throw error and exit unless overwrite-config is specified
-		const configPath = getConfigPath(dataPath);
-		const configDir = getConfigDir(configPath);
+		const configDir = getConfigDir(dataPath);
 		// If config file exist, do not copy unless overwrite-config is specified
 		if ((configDir.length > 1 || configDir.length === 1 && configDir[0] !== flags.network)) {
 			if (!flags['overwrite-config']) {
@@ -140,12 +139,12 @@ export default class StartCommand extends Command {
 			// Remove other network configs
 			for (const configFolder of configDir) {
 				if (configFolder !== flags.network) {
-					removeConfigDir(configPath, configFolder);
+					removeConfigDir(dataPath, configFolder);
 				}
 			}
 		}
 		// If genesis block file exist, do not copy unless overwrite-config is specified
-		ensureConfigDir(configPath, flags.network);
+		ensureConfigDir(dataPath, flags.network);
 
 		// Read network genesis block and config from the folder
 		const { genesisBlockFilePath, configFilePath } = getNetworkConfigFilesPath(dataPath, flags.network);

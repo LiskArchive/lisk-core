@@ -20,6 +20,7 @@ import { systemDirs } from 'lisk-sdk';
 
 const defaultDir = '.lisk';
 const defaultFolder = 'default';
+const getConfigPath = (dataPath: string): string => path.join(dataPath, 'config');
 
 export const getDefaultPath = (): string => path.join(os.homedir(), defaultDir, defaultFolder);
 
@@ -34,9 +35,7 @@ export const splitPath = (dataPath: string): { rootPath: string; label: string }
 	};
 };
 
-export const getDefaultConfigPath = (): string => path.join(__dirname, '../../config');
-
-export const getConfigPath = (dataPath: string): string => path.join(dataPath, 'config');
+export const getDefaultConfigDir = (): string => path.join(__dirname, '../..');
 
 export const getNetworkConfigFilesPath = (
 	dataPath: string,
@@ -52,23 +51,24 @@ export const getNetworkConfigFilesPath = (
 export const getDefaultNetworkConfigFilesPath = (
 	network: string,
 ): { genesisBlockFilePath: string; configFilePath: string } => {
-	const basePath = path.join(getDefaultConfigPath(), network);
+	const basePath = path.join(getDefaultConfigDir(), 'config', network);
 	return {
 		genesisBlockFilePath: path.join(basePath, 'genesis_block.json'),
 		configFilePath: path.join(basePath, 'config.json'),
 	};
 };
 
-export const getConfigDir = (configPath: string): string[] => {
+export const getConfigDir = (dataPath: string): string[] => {
+	const configPath = getConfigPath(dataPath);
 	const files = fs.readdirSync(configPath);
 	return files.filter(file => fs.statSync(path.join(configPath, file)).isDirectory());
 };
 
-export const removeConfigDir = (configPath: string, folder: string): void =>
-	fs.removeSync(path.join(configPath, folder));
+export const removeConfigDir = (dataPath: string, network: string): void =>
+	fs.removeSync(path.join(dataPath, 'config', network));
 
-export const ensureConfigDir = (configPath: string, folder: string): void =>
-	fs.ensureDirSync(path.join(configPath, folder));
+export const ensureConfigDir = (dataPath: string, network: string): void =>
+	fs.ensureDirSync(path.join(dataPath, 'config', network));
 
 export const getBlockchainDBPath = (dataPath: string): string =>
 	path.join(dataPath, 'data', 'blockchain.db');
