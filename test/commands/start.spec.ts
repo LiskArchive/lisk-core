@@ -17,20 +17,36 @@ import { expect, test } from '@oclif/test';
 import * as sandbox from 'sinon';
 import * as fs from 'fs-extra';
 import * as os from 'os';
+import * as path from 'path';
 import { Application } from 'lisk-sdk';
 import * as application from '../../src/application';
-import * as mainnetGenesisBlock from '../../src/config/mainnet/genesis_block.json';
+import * as devnetGenesisBlock from '../../config/devnet/genesis_block.json';
 
 import pJSON = require('../../package.json');
 
 describe('start', () => {
 	const readJSONStub = sandbox.stub();
-	readJSONStub.withArgs('./config.json').resolves({
+	readJSONStub.withArgs('~/.lisk/default/config/mainnet/config.json').resolves({
 		logger: {
 			consoleLogLevel: 'error',
 		},
 	});
+	readJSONStub.withArgs('~/.lisk/default/config/devnet/config.json').resolves({
+		logger: {
+			consoleLogLevel: 'error',
+		},
+	});
+	readJSONStub
+		.withArgs('~/.lisk/default/config/mainnet/genesis_block.json')
+		.resolves(devnetGenesisBlock);
+	readJSONStub
+		.withArgs('~/.lisk/default/config/devnet/genesis_block.json')
+		.resolves(devnetGenesisBlock);
+	const readdirSyncStub = sandbox.stub();
+	readdirSyncStub.withArgs(path.join(__dirname, '../../config')).returns(['mainnet', 'devnet']);
+	readdirSyncStub.returns(['mainnet']);
 
+	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 	const setupTest = () =>
 		test
 			.stub(
@@ -41,6 +57,11 @@ describe('start', () => {
 				} as Application),
 			)
 			.stub(fs, 'readJSON', readJSONStub)
+			.stub(fs, 'ensureDirSync', sandbox.stub())
+			.stub(fs, 'removeSync', sandbox.stub())
+			.stub(fs, 'copyFileSync', sandbox.stub())
+			.stub(fs, 'statSync', sandbox.stub().returns({ isDirectory: () => true }))
+			.stub(fs, 'readdirSync', readdirSyncStub)
 			.stub(os, 'homedir', sandbox.stub().returns('~'))
 			.stdout();
 
@@ -52,9 +73,29 @@ describe('start', () => {
 					usedGenesisBlock,
 					usedConfig,
 				] = (application.getApplication as sinon.SinonStub).getCall(0).args;
-				expect(usedGenesisBlock.id).to.eql(mainnetGenesisBlock.id);
+				expect(usedGenesisBlock.header.id).to.eql(devnetGenesisBlock.header.id);
 				expect(usedConfig.version).to.equal(pJSON.version);
 				expect(usedConfig.label).to.equal('default');
+			});
+	});
+
+	describe('when config already exist in the folder', () => {
+		setupTest()
+			.command(['start', '-n', 'devnet'])
+			.catch(err => {
+				expect(err.message).to.contain(
+					'Datapath ~/.lisk/default already contains configs for mainnet.',
+				);
+			})
+			.it('should fail with already existing config');
+	});
+
+	describe('when config already exist in the folder and called with --overwrite-config', () => {
+		setupTest()
+			.command(['start', '-n', 'devnet', '--overwrite-config'])
+			.it('should delete the mainnet config and save the devnet config', () => {
+				expect(fs.removeSync).to.have.been.calledOnce;
+				expect(fs.copyFileSync).to.have.been.calledTwice;
 			});
 	});
 
@@ -63,7 +104,7 @@ describe('start', () => {
 			.command(['start', '--network=unknown'])
 			.catch(err =>
 				expect(err.message).to.include(
-					'Network must be one of devnet,alphanet,betanet,testnet,mainnet',
+					'Network must be one of mainnet,devnet but received unknown',
 				),
 			)
 			.it('should throw an error');

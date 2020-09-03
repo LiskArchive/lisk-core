@@ -14,11 +14,13 @@
  */
 
 import * as path from 'path';
+import * as fs from 'fs-extra';
 import * as os from 'os';
 import { systemDirs } from 'lisk-sdk';
 
 const defaultDir = '.lisk';
 const defaultFolder = 'default';
+const getConfigPath = (dataPath: string): string => path.join(dataPath, 'config');
 
 export const getDefaultPath = (): string => path.join(os.homedir(), defaultDir, defaultFolder);
 
@@ -33,9 +35,7 @@ export const splitPath = (dataPath: string): { rootPath: string; label: string }
 	};
 };
 
-export const getDefaultConfigPath = (): string => path.join(__dirname, '../../config');
-
-export const getConfigPath = (dataPath: string): string => path.join(dataPath, 'config');
+export const getDefaultConfigDir = (): string => path.join(__dirname, '../..');
 
 export const getNetworkConfigFilesPath = (
 	dataPath: string,
@@ -48,8 +48,27 @@ export const getNetworkConfigFilesPath = (
 	};
 };
 
-export const getConfigFilePath = (dataPath: string, network: string): string =>
-	path.join(dataPath, 'config', network, 'config.json');
+export const getDefaultNetworkConfigFilesPath = (
+	network: string,
+): { genesisBlockFilePath: string; configFilePath: string } => {
+	const basePath = path.join(getDefaultConfigDir(), 'config', network);
+	return {
+		genesisBlockFilePath: path.join(basePath, 'genesis_block.json'),
+		configFilePath: path.join(basePath, 'config.json'),
+	};
+};
+
+export const getConfigDirs = (dataPath: string): string[] => {
+	const configPath = getConfigPath(dataPath);
+	const files = fs.readdirSync(configPath);
+	return files.filter(file => fs.statSync(path.join(configPath, file)).isDirectory());
+};
+
+export const removeConfigDir = (dataPath: string, network: string): void =>
+	fs.removeSync(path.join(dataPath, 'config', network));
+
+export const ensureConfigDir = (dataPath: string, network: string): void =>
+	fs.ensureDirSync(path.join(dataPath, 'config', network));
 
 export const getBlockchainDBPath = (dataPath: string): string =>
 	path.join(dataPath, 'data', 'blockchain.db');
