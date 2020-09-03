@@ -94,6 +94,7 @@ describe('start', () => {
 		setupTest()
 			.command(['start', '-n', 'devnet', '--overwrite-config'])
 			.it('should delete the mainnet config and save the devnet config', () => {
+				expect(fs.ensureDirSync).to.have.been.calledWith('~/.lisk/default/config');
 				expect(fs.removeSync).to.have.been.calledOnce;
 				expect(fs.copyFileSync).to.have.been.calledTwice;
 			});
