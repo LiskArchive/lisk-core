@@ -17,6 +17,7 @@ import * as crypto from 'crypto';
 import * as axios from 'axios';
 import * as fs from 'fs-extra';
 import * as tar from 'tar';
+import * as path from 'path';
 
 export interface FileInfo {
 	readonly fileName: string;
@@ -27,7 +28,7 @@ export interface FileInfo {
 export const getDownloadedFileInfo = (url: string, downloadDir: string): FileInfo => {
 	const pathWithoutProtocol = url.replace(/(^\w+:|^)\/\//, '').split('/');
 	const fileName = pathWithoutProtocol.pop() as string;
-	const filePath = `${downloadDir}/${fileName}`;
+	const filePath = path.join(downloadDir, fileName);
 
 	return {
 		fileName,

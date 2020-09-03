@@ -39,7 +39,7 @@ export default class DownloadCommand extends Command {
 			char: 'o',
 			description:
 				'Directory path to specify where snapshot is downloaded. By default outputs the files to current working directory.',
-			default: '.',
+			default: process.cwd(),
 		}),
 		url: flagParser.string({
 			char: 'u',
