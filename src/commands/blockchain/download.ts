@@ -38,8 +38,8 @@ export default class DownloadCommand extends Command {
 		output: flagParser.string({
 			char: 'o',
 			description:
-				'Directory path to specify where snapshot is downloaded. Environment variable "LISK_DATA_PATH" can also be used.',
-			env: 'LISK_DATA_PATH',
+				'Directory path to specify where snapshot is downloaded. By default outputs the files to current working directory.',
+			default: '.',
 		}),
 		url: flagParser.string({
 			char: 'u',
