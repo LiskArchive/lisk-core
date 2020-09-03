@@ -120,8 +120,8 @@ describe('LegacyAccountModule', () => {
 
 		it('should delete unregistered accounts from state store', async () => {
 			await legacyAccountModule.afterGenesisBlockApply(afterGenesisBlockApplyInput);
-			const updatedAccounts = afterGenesisBlockApplyInput.stateStore.account.getUpdated();
-			expect(updatedAccounts).to.have.lengthOf(1);
+			await expect(afterGenesisBlockApplyInput.stateStore.account.get(legacyAccount1.address)).to.be.rejectedWith('Account not defined');
+			await expect(afterGenesisBlockApplyInput.stateStore.account.get(legacyAccount2.address)).to.be.rejectedWith('Account not defined');
 		});
 	});
 });
