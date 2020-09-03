@@ -60,6 +60,7 @@ export const getDefaultNetworkConfigFilesPath = (
 
 export const getConfigDirs = (dataPath: string): string[] => {
 	const configPath = getConfigPath(dataPath);
+	fs.ensureDirSync(configPath);
 	const files = fs.readdirSync(configPath);
 	return files.filter(file => fs.statSync(path.join(configPath, file)).isDirectory());
 };
