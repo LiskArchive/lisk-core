@@ -86,10 +86,10 @@ pipeline {
 				dir('lisk-core') {
 					sh '''
 					core_version="$( jq --raw-output .version package.json )"
-					cd dist/channels/beta/core-v${core_version}
-					sha256sum "core-v${core_version}-linux-x64.tar.gz" >"core-v${core_version}-linux-x64.tar.gz.SHA256"
-					s3cmd put --acl-public "core-v${core_version}-linux-x64.tar.gz"        "s3://lisk-releases/core/core-v${core_version}-linux-x64.tar.gz"
-					s3cmd put --acl-public "core-v${core_version}-linux-x64.tar.gz.SHA256" "s3://lisk-releases/core/core-v${core_version}-linux-x64.tar.gz.SHA256"
+					cd dist/channels/*/lisk-core-v${core_version}
+					sha256sum "lisk-core-v${core_version}-linux-x64.tar.gz" >"lisk-core-v${core_version}-linux-x64.tar.gz.SHA256"
+					s3cmd put --acl-public "lisk-core-v${core_version}-linux-x64.tar.gz"        "s3://lisk-releases/core/lisk-core-v${core_version}-linux-x64.tar.gz"
+					s3cmd put --acl-public "lisk-core-v${core_version}-linux-x64.tar.gz.SHA256" "s3://lisk-releases/core/lisk-core-v${core_version}-linux-x64.tar.gz.SHA256"
 					'''
 				}
 			}
