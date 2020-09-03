@@ -17,11 +17,19 @@
 import { Command, flags as flagParser } from '@oclif/command';
 import * as fs from 'fs-extra';
 import { ApplicationConfig, utils, HTTPAPIPlugin, ForgerPlugin } from 'lisk-sdk';
-import { getDefaultPath, splitPath, getFullPath } from '../utils/path';
+import {
+	getDefaultPath,
+	splitPath,
+	getFullPath,
+	getConfigDirs,
+	getNetworkConfigFilesPath,
+	removeConfigDir,
+	ensureConfigDir,
+	getDefaultConfigDir,
+	getDefaultNetworkConfigFilesPath,
+} from '../utils/path';
 import { flags as commonFlags } from '../utils/flags';
 import { getApplication } from '../application';
-// eslint-disable-next-line import/namespace
-import * as configs from '../config';
 import { DEFAULT_NETWORK } from '../constants';
 
 const LOG_OPTIONS = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
@@ -48,6 +56,10 @@ export default class StartCommand extends Command {
 			description:
 				'File path to a custom config. Environment variable "LISK_CONFIG_FILE" can also be used.',
 			env: 'LISK_CONFIG_FILE',
+		}),
+		'overwrite-config': flagParser.boolean({
+			description: 'Overwrite network configs if they exist already',
+			default: false,
 		}),
 		port: flagParser.integer({
 			char: 'p',
@@ -120,19 +132,62 @@ export default class StartCommand extends Command {
 		const dataPath = flags['data-path'] ? flags['data-path'] : getDefaultPath();
 		this.log(`Starting Lisk Core at ${getFullPath(dataPath)}`);
 		const pathConfig = splitPath(dataPath);
-		// Make sure data path exists
 
-		// Copy all default configs to datapath if not exist
-		// eslint-disable-next-line import/namespace
-		const networkConfigs = configs[flags.network] as
-			| { config: ApplicationConfig; genesisBlock: Record<string, unknown> }
-			| undefined;
-		if (networkConfigs === undefined) {
-			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-			throw new Error(`Network must be one of ${Object.keys(configs)}.`);
+		const defaultNetworkConfigs = getDefaultConfigDir();
+		const defaultNetworkConfigDir = getConfigDirs(defaultNetworkConfigs);
+		if (!defaultNetworkConfigDir.includes(flags.network)) {
+			this.error(
+				`Network must be one of ${defaultNetworkConfigDir.join(',')} but received ${flags.network}`,
+			);
 		}
+
+		// Validate dataPath/config if config for other network exists, throw error and exit unless overwrite-config is specified
+		const configDir = getConfigDirs(dataPath);
+		// If config file exist, do not copy unless overwrite-config is specified
+		if (configDir.length > 1 || (configDir.length === 1 && configDir[0] !== flags.network)) {
+			if (!flags['overwrite-config']) {
+				this.error(
+					`Datapath ${dataPath} already contains configs for ${configDir.join(
+						',',
+					)}. Please use --overwrite-config to overwrite the config`,
+				);
+			}
+			// Remove other network configs
+			for (const configFolder of configDir) {
+				if (configFolder !== flags.network) {
+					removeConfigDir(dataPath, configFolder);
+				}
+			}
+		}
+		// If genesis block file exist, do not copy unless overwrite-config is specified
+		ensureConfigDir(dataPath, flags.network);
+
+		// Read network genesis block and config from the folder
+		const { genesisBlockFilePath, configFilePath } = getNetworkConfigFilesPath(
+			dataPath,
+			flags.network,
+		);
+		const {
+			genesisBlockFilePath: defaultGenesisBlockFilePath,
+			configFilePath: defaultConfigFilepath,
+		} = getDefaultNetworkConfigFilesPath(flags.network);
+		if (
+			!fs.existsSync(genesisBlockFilePath) ||
+			(fs.existsSync(genesisBlockFilePath) && flags['overwrite-config'])
+		) {
+			fs.copyFileSync(defaultGenesisBlockFilePath, genesisBlockFilePath);
+		}
+		if (
+			!fs.existsSync(configFilePath) ||
+			(fs.existsSync(configFilePath) && flags['overwrite-config'])
+		) {
+			fs.copyFileSync(defaultConfigFilepath, configFilePath);
+		}
+
 		// Get config from network config or config specifeid
-		let { config } = networkConfigs;
+		const genesisBlock = await fs.readJSON(genesisBlockFilePath);
+		let config = await fs.readJSON(configFilePath);
+
 		if (flags.config) {
 			const customConfig: ApplicationConfig = await fs.readJSON(flags.config);
 			config = utils.objects.mergeDeep({}, config, customConfig) as ApplicationConfig;
@@ -197,7 +252,7 @@ export default class StartCommand extends Command {
 		}
 		// Get application and start
 		try {
-			const app = getApplication(networkConfigs.genesisBlock, config, {
+			const app = getApplication(genesisBlock, config, {
 				enableHTTPAPI: flags['enable-http-api'],
 				enableForger: flags['enable-forger'],
 			});

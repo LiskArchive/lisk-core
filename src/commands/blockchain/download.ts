@@ -13,12 +13,10 @@
  *
  */
 import { Command, flags as flagParser } from '@oclif/command';
-import { ApplicationConfig } from 'lisk-sdk';
 import { NETWORK, RELEASE_URL, DEFAULT_NETWORK } from '../../constants';
 import { liskSnapshotUrl } from '../../utils/commons';
 import { getDefaultPath, getFullPath } from '../../utils/path';
 import { downloadAndValidate } from '../../utils/download';
-import * as configs from '../../config';
 
 export default class DownloadCommand extends Command {
 	static description = 'Download blockchain data from a provided snapshot.';
@@ -55,14 +53,6 @@ export default class DownloadCommand extends Command {
 		const url = flags.url ? flags.url : liskSnapshotUrl(RELEASE_URL, network);
 		const dataPath = flags.output ? flags.output : getDefaultPath();
 		this.log(`Downloading snapshot from ${url} to ${getFullPath(dataPath)}`);
-
-		const networkConfigs = configs[flags.network] as
-			| { config: ApplicationConfig; genesisBlock: Record<string, unknown> }
-			| undefined;
-		if (networkConfigs === undefined) {
-			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-			throw new Error(`Network must be one of ${Object.keys(configs)}.`);
-		}
 
 		try {
 			await downloadAndValidate(url, dataPath);
