@@ -31,7 +31,7 @@ interface PropertyValue {
 }
 
 interface Question {
-	readonly [key: string]: string | boolean;
+	readonly [key: string]: unknown;
 }
 
 const capitalise = (text: string): string => `${text.charAt(0).toUpperCase()}${text.slice(1)}`;
@@ -117,8 +117,15 @@ const getNestedPropertyTemplate = (schema: Schema): NestedPropertyTemplate => {
 	return template;
 };
 
-const castValue = (strVal: string): number | string =>
-	Number.isInteger(Number(strVal)) ? Number(strVal) : strVal;
+const castValue = (
+	strVal: string,
+	schemaType: string,
+): number | string | Record<string, unknown> => {
+	if (schemaType === 'object') {
+		return JSON.parse(strVal);
+	}
+	return Number.isInteger(Number(strVal)) ? Number(strVal) : strVal;
+};
 
 export const transformAsset = (
 	schema: Schema,
@@ -127,10 +134,8 @@ export const transformAsset = (
 	const propertySchema = Object.values(schema.properties);
 
 	return Object.entries(data).reduce((acc, curr, index) => {
-		acc[curr[0]] =
-			(propertySchema[index] as { type: string }).type === 'array'
-				? curr[1].split(',')
-				: castValue(curr[1]);
+		const schemaType = (propertySchema[index] as { type: string }).type;
+		acc[curr[0]] = schemaType === 'array' ? curr[1].split(',') : castValue(curr[1], schemaType);
 		return acc;
 	}, {});
 };

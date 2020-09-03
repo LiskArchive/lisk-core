@@ -110,10 +110,12 @@ export default class CreateCommand extends BaseIPCCommand {
 				`Transaction moduleID:${moduleID} with assetID:${assetID} is not registered in the application`,
 			);
 		}
+
 		const rawAsset = assetSource
 			? JSON.parse(assetSource)
 			: await getAssetFromPrompt(assetSchema.schema);
 		const assetObject = codec.fromJSON(assetSchema.schema, rawAsset);
+
 		const assetErrors = validator.validator.validate(assetSchema.schema, assetObject);
 		if (assetErrors.length) {
 			throw new validator.LiskValidationError([...assetErrors]);
