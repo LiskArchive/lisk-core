@@ -20,7 +20,7 @@ import {
 	splitPath,
 	getConfigDirs,
 	getNetworkConfigFilesPath,
-} from '../..//utils/path';
+} from '../../utils/path';
 import { flags as commonFlags } from '../../utils/flags';
 
 export default class ShowCommand extends Command {
