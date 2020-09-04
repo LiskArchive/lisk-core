@@ -18,12 +18,11 @@ import * as sandbox from 'sinon';
 import { Application } from 'lisk-sdk';
 import * as application from '../../../src/application';
 import * as downloadUtils from '../../../src/utils/download';
-import { getDefaultPath } from '../../../src/utils/path';
 
 const SNAPSHOT_URL = 'https://downloads.lisk.io/lisk/mainnet/blockchain.db.gz';
 
 describe('blockchain:download', () => {
-	const dataPath = getDefaultPath();
+	const dataPath = process.cwd();
 	const downloadAndValidateStub = sandbox.stub().resolves(undefined);
 
 	const setupTest = () =>
