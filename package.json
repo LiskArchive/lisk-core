@@ -38,6 +38,9 @@
 	"bin": {
 		"lisk-core": "./bin/run"
 	},
+	"lisk": {
+		"addressPrefix": "lsk"
+	},
 	"oclif": {
 		"bin": "lisk-core",
 		"commands": "./dist/commands",
