@@ -66,15 +66,27 @@ export const createFakeDefaultAccount = (account: any) => ({
 export const uninitializedAccount = [
 	{
 		passphrase: 'salad lawn air dentist enforce purity arctic jewel net neck alone mention',
-		privateKey: Buffer.from('80989c2bac40fc16819b87ee35257386ac852eac042dd8043eb19192b2fa21f438262844cf23c096aca2dad2e4cd75d50491ac30c89f84c83932d04ea903ef4c', 'hex'),
-		publicKey: Buffer.from('38262844cf23c096aca2dad2e4cd75d50491ac30c89f84c83932d04ea903ef4c', 'hex'),
+		privateKey: Buffer.from(
+			'80989c2bac40fc16819b87ee35257386ac852eac042dd8043eb19192b2fa21f438262844cf23c096aca2dad2e4cd75d50491ac30c89f84c83932d04ea903ef4c',
+			'hex',
+		),
+		publicKey: Buffer.from(
+			'38262844cf23c096aca2dad2e4cd75d50491ac30c89f84c83932d04ea903ef4c',
+			'hex',
+		),
 		address: Buffer.from('8789de4316d79d22', 'hex'),
 		oldAddress: '9766581646657035554L',
 	},
 	{
 		passphrase: 'one mask tip slush fog topple acid noodle visual gadget trial wool',
-		privateKey: Buffer.from('855ce4e2ba5bdb1207f0cc48fb9ac180a6ce9f4cd3f10956a64a013feef82cc78cc7044fcf1b5b98f121e97d6af7b7b03049e49b7b184ba59627b68f0f059e76', 'hex'),
-		publicKey: Buffer.from('8cc7044fcf1b5b98f121e97d6af7b7b03049e49b7b184ba59627b68f0f059e76', 'hex'),
+		privateKey: Buffer.from(
+			'855ce4e2ba5bdb1207f0cc48fb9ac180a6ce9f4cd3f10956a64a013feef82cc78cc7044fcf1b5b98f121e97d6af7b7b03049e49b7b184ba59627b68f0f059e76',
+			'hex',
+		),
+		publicKey: Buffer.from(
+			'8cc7044fcf1b5b98f121e97d6af7b7b03049e49b7b184ba59627b68f0f059e76',
+			'hex',
+		),
 		address: Buffer.from('bdf994ff9c884ffa', 'hex'),
 		oldAddress: '13689136367933083642L',
 	},
