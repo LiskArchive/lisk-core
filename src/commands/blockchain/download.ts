@@ -17,6 +17,7 @@ import { NETWORK, RELEASE_URL, DEFAULT_NETWORK } from '../../constants';
 import { liskSnapshotUrl } from '../../utils/commons';
 import { getFullPath } from '../../utils/path';
 import { downloadAndValidate } from '../../utils/download';
+import { flags as commonFlags } from '../../utils/flags';
 
 export default class DownloadCommand extends Command {
 	static description = 'Download blockchain data from a provided snapshot.';
@@ -29,9 +30,7 @@ export default class DownloadCommand extends Command {
 
 	static flags = {
 		network: flagParser.string({
-			char: 'n',
-			description:
-				'Default network config to use. Environment variable "LISK_NETWORK" can also be used.',
+			...commonFlags.network,
 			env: 'LISK_NETWORK',
 			default: DEFAULT_NETWORK,
 		}),

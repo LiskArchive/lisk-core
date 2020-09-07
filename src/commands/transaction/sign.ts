@@ -18,6 +18,7 @@ import { transactions, codec, TransactionJSON } from 'lisk-sdk';
 import BaseIPCCommand from '../../base_ipc';
 import { flags as commonFlags } from '../../utils/flags';
 import { getPassphraseFromPrompt } from '../../utils/reader';
+import { DEFAULT_NETWORK } from '../../constants';
 
 export default class SignCommand extends BaseIPCCommand {
 	static description = 'Sign an encoded transaction.';
@@ -52,6 +53,14 @@ export default class SignCommand extends BaseIPCCommand {
 		json: flagParser.boolean({
 			char: 'j',
 			description: 'Print the transaction in JSON format.',
+		}),
+		offline: flagParser.boolean({
+			...commonFlags.offline,
+			hidden: false,
+		}),
+		network: flagParser.string({
+			...commonFlags.network,
+			hidden: false,
 		}),
 	};
 

@@ -15,13 +15,17 @@
 
 import { Command, flags as flagParser } from '@oclif/command';
 import { codec, cryptography, IPCChannel, RegisteredSchema } from 'lisk-sdk';
-import { getDefaultPath, getSocketsPath, splitPath } from './utils/path';
+import { getDefaultPath, getSocketsPath, splitPath, getGenesisBlockAndConfig } from './utils/path';
 import { flags as commonFlags } from './utils/flags';
 import { isApplicationRunning } from './utils/application';
+import { getApplication } from './application';
+import { DEFAULT_NETWORK } from './constants';
 
 interface BaseIPCFlags {
-	readonly pretty?: boolean;
 	readonly 'data-path'?: string;
+	readonly network: string;
+	readonly offline?: boolean;
+	readonly pretty?: boolean;
 }
 
 export interface Schema {
@@ -59,9 +63,20 @@ export default abstract class BaseIPCCommand extends Command {
 			...commonFlags.dataPath,
 			env: 'LISK_DATA_PATH',
 		}),
+		offline: flagParser.boolean({
+			...commonFlags.offline,
+			default: false,
+			hidden: true,
+		}),
+		network: flagParser.string({
+			...commonFlags.network,
+			env: 'LISK_NETWORK',
+			default: DEFAULT_NETWORK,
+			hidden: true,
+		}),
 	};
 
-	public baseIPCFlags: BaseIPCFlags = {};
+	public baseIPCFlags!: BaseIPCFlags;
 	protected _codec!: Codec;
 	protected _channel!: IPCChannel;
 	protected _schema!: RegisteredSchema;
@@ -77,21 +92,30 @@ export default abstract class BaseIPCCommand extends Command {
 			}
 			this.error(error instanceof Error ? error.message : error);
 		}
-		this._channel.cleanup();
+		if (!this.baseIPCFlags.offline) {
+			this._channel.cleanup();
+		}
 	}
 
 	async init(): Promise<void> {
-		// Typing problem where constructor is not allowed as Input<any> but it requires to be the type
-		const { flags } = this.parse(
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			(this.constructor as unknown) as flagParser.Input<any>,
-		);
-		this.baseIPCFlags = flags as BaseIPCFlags;
-
+		const { flags } = this.parse(this.constructor as typeof BaseIPCCommand);
+		this.baseIPCFlags = flags;
 		const dataPath = this.baseIPCFlags['data-path']
 			? this.baseIPCFlags['data-path']
 			: getDefaultPath();
-		await this._createIPCChannel(dataPath);
+
+		if (this.baseIPCFlags.offline) {
+			// Read network genesis block and config from the folder
+			const { genesisBlock, config } = await getGenesisBlockAndConfig(this.baseIPCFlags.network);
+			const app = getApplication(genesisBlock, config, {
+				enableHTTPAPI: false,
+				enableForger: false,
+			});
+			this._schema = app.getSchema();
+		} else {
+			await this._createIPCChannel(dataPath);
+			this._schema = await this._channel.invoke('app:getSchema');
+		}
 		await this._setCodec();
 	}
 
@@ -123,8 +147,6 @@ export default abstract class BaseIPCCommand extends Command {
 	}
 
 	private async _setCodec(): Promise<void> {
-		this._schema = await this._channel.invoke('app:getSchema');
-
 		this._codec = {
 			decodeAccount: (data: Buffer | string): Record<string, unknown> =>
 				codec.decodeJSON(this._schema.account, convertStrToBuffer(data)),

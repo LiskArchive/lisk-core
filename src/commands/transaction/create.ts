@@ -19,6 +19,7 @@ import { codec, cryptography, transactions, validator } from 'lisk-sdk';
 import BaseIPCCommand from '../../base_ipc';
 import { flags as commonFlags } from '../../utils/flags';
 import { getAssetFromPrompt, getPassphraseFromPrompt } from '../../utils/reader';
+import { DEFAULT_NETWORK } from '../../constants';
 
 interface Args {
 	readonly nonce: string;
@@ -86,6 +87,14 @@ export default class CreateCommand extends BaseIPCCommand {
 		json: flagParser.boolean({
 			char: 'j',
 			description: 'Print the transaction in JSON format',
+		}),
+		offline: flagParser.boolean({
+			...commonFlags.offline,
+			hidden: false,
+		}),
+		network: flagParser.string({
+			...commonFlags.network,
+			hidden: false,
 		}),
 	};
 

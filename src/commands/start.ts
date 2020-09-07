@@ -22,10 +22,10 @@ import {
 	splitPath,
 	getFullPath,
 	getConfigDirs,
-	getNetworkConfigFilesPath,
 	removeConfigDir,
 	ensureConfigDir,
 	getDefaultConfigDir,
+	getNetworkConfigFilesPath,
 	getDefaultNetworkConfigFilesPath,
 } from '../utils/path';
 import { flags as commonFlags } from '../utils/flags';
@@ -45,9 +45,7 @@ export default class StartCommand extends Command {
 			env: 'LISK_DATA_PATH',
 		}),
 		network: flagParser.string({
-			char: 'n',
-			description:
-				'Default network config to use. Environment variable "LISK_NETWORK" can also be used.',
+			...commonFlags.network,
 			env: 'LISK_NETWORK',
 			default: DEFAULT_NETWORK,
 		}),
@@ -184,7 +182,7 @@ export default class StartCommand extends Command {
 			fs.copyFileSync(defaultConfigFilepath, configFilePath);
 		}
 
-		// Get config from network config or config specifeid
+		// Get config from network config or config specified
 		const genesisBlock = await fs.readJSON(genesisBlockFilePath);
 		let config = await fs.readJSON(configFilePath);
 
