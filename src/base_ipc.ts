@@ -116,7 +116,7 @@ export default abstract class BaseIPCCommand extends Command {
 			await this._createIPCChannel(dataPath);
 			this._schema = await this._channel.invoke('app:getSchema');
 		}
-		await this._setCodec();
+		this._setCodec();
 	}
 
 	printJSON(message?: string | Record<string, unknown>): void {
@@ -146,10 +146,10 @@ export default abstract class BaseIPCCommand extends Command {
 		await this._channel.startAndListen();
 	}
 
-	private async _setCodec(): Promise<void> {
+	private _setCodec(): void {
 		this._codec = {
 			decodeAccount: (data: Buffer | string): Record<string, unknown> =>
-				codec.decodeJSON(this._schema.account, convertStrToBuffer(data)),
+				codec.decodeJSON<Record<string, unknown>>(this._schema.account, convertStrToBuffer(data)),
 			decodeBlock: (data: Buffer | string): Record<string, unknown> => {
 				const blockBuffer: Buffer = Buffer.isBuffer(data) ? data : Buffer.from(data, 'hex');
 				const {

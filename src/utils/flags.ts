@@ -80,4 +80,7 @@ export const flags: FlagMap = {
 		description:
 			'Default network config to use. Environment variable "LISK_NETWORK" can also be used.',
 	},
+	networkIdentifier: {
+		description: 'Network identifier defined for the network or main | test for the Lisk Network.',
+	},
 };

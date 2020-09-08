@@ -35,6 +35,148 @@ const tokenTransferAsset = new TokenTransferAsset(BigInt(500000));
 export const tokenTransferAssetSchema = tokenTransferAsset.schema;
 export const keysRegisterAssetSchema = new KeysRegisterAsset().schema;
 export const dposVoteAssetSchema = new DPoSVoteAsset().schema;
+export const accountSchema = {
+	$id: '/account/base',
+	properties: {
+		address: {
+			dataType: 'bytes',
+			fieldNumber: 1,
+		},
+		dpos: {
+			fieldNumber: 5,
+			properties: {
+				delegate: {
+					fieldNumber: 1,
+					properties: {
+						consecutiveMissedBlocks: {
+							dataType: 'uint32',
+							fieldNumber: 3,
+						},
+						isBanned: {
+							dataType: 'boolean',
+							fieldNumber: 5,
+						},
+						lastForgedHeight: {
+							dataType: 'uint32',
+							fieldNumber: 4,
+						},
+						pomHeights: {
+							fieldNumber: 2,
+							items: {
+								dataType: 'uint32',
+							},
+							type: 'array',
+						},
+						totalVotesReceived: {
+							dataType: 'uint64',
+							fieldNumber: 6,
+						},
+						username: {
+							dataType: 'string',
+							fieldNumber: 1,
+						},
+					},
+					required: [
+						'username',
+						'pomHeights',
+						'consecutiveMissedBlocks',
+						'lastForgedHeight',
+						'isBanned',
+						'totalVotesReceived',
+					],
+					type: 'object',
+				},
+				sentVotes: {
+					fieldNumber: 2,
+					items: {
+						properties: {
+							amount: {
+								dataType: 'uint64',
+								fieldNumber: 2,
+							},
+							delegateAddress: {
+								dataType: 'bytes',
+								fieldNumber: 1,
+							},
+						},
+						required: ['delegateAddress', 'amount'],
+						type: 'object',
+					},
+					type: 'array',
+				},
+				unlocking: {
+					fieldNumber: 3,
+					items: {
+						properties: {
+							amount: {
+								dataType: 'uint64',
+								fieldNumber: 2,
+							},
+							delegateAddress: {
+								dataType: 'bytes',
+								fieldNumber: 1,
+							},
+							unvoteHeight: {
+								dataType: 'uint32',
+								fieldNumber: 3,
+							},
+						},
+						required: ['delegateAddress', 'amount', 'unvoteHeight'],
+						type: 'object',
+					},
+					type: 'array',
+				},
+			},
+			type: 'object',
+		},
+		keys: {
+			fieldNumber: 4,
+			properties: {
+				mandatoryKeys: {
+					fieldNumber: 2,
+					items: {
+						dataType: 'bytes',
+					},
+					type: 'array',
+				},
+				numberOfSignatures: {
+					dataType: 'uint32',
+					fieldNumber: 1,
+				},
+				optionalKeys: {
+					fieldNumber: 3,
+					items: {
+						dataType: 'bytes',
+					},
+					type: 'array',
+				},
+			},
+			type: 'object',
+		},
+		sequence: {
+			fieldNumber: 3,
+			properties: {
+				nonce: {
+					dataType: 'uint64',
+					fieldNumber: 1,
+				},
+			},
+			type: 'object',
+		},
+		token: {
+			fieldNumber: 2,
+			properties: {
+				balance: {
+					dataType: 'uint64',
+					fieldNumber: 1,
+				},
+			},
+			type: 'object',
+		},
+	},
+	required: ['address', 'token', 'sequence', 'keys', 'dpos'],
+	type: 'object',
+};
 
 export const genesisBlockID = Buffer.from(
 	'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',

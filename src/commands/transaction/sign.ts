@@ -14,21 +14,20 @@
  */
 
 import { flags as flagParser } from '@oclif/command';
-import { transactions, codec, TransactionJSON } from 'lisk-sdk';
+import { transactions, codec, TransactionJSON, cryptography } from 'lisk-sdk';
 import BaseIPCCommand from '../../base_ipc';
 import { flags as commonFlags } from '../../utils/flags';
 import { getPassphraseFromPrompt } from '../../utils/reader';
 import { DEFAULT_NETWORK } from '../../constants';
 
+interface KeysAsset {
+	mandatoryKeys: Array<Readonly<string>>;
+	optionalKeys: Array<Readonly<string>>;
+}
 export default class SignCommand extends BaseIPCCommand {
 	static description = 'Sign an encoded transaction.';
 
 	static args = [
-		{
-			name: 'networkIdentifier',
-			required: true,
-			description: 'Network identifier defined for a network(mainnet | testnet).',
-		},
 		{
 			name: 'transaction',
 			required: true,
@@ -39,8 +38,9 @@ export default class SignCommand extends BaseIPCCommand {
 	static flags = {
 		...BaseIPCCommand.flags,
 		passphrase: flagParser.string(commonFlags.passphrase),
-		'include-sender-signature': flagParser.boolean({
+		'include-sender': flagParser.boolean({
 			description: 'Include sender signature in transaction.',
+			default: false,
 		}),
 		'mandatory-keys': flagParser.string({
 			multiple: true,
@@ -50,16 +50,24 @@ export default class SignCommand extends BaseIPCCommand {
 			multiple: true,
 			description: 'Optional publicKey string in hex format.',
 		}),
+		'network-identifier': flagParser.string(commonFlags.networkIdentifier),
 		json: flagParser.boolean({
 			char: 'j',
 			description: 'Print the transaction in JSON format.',
 		}),
+		'sender-publickey': flagParser.string({
+			char: 's',
+			description:
+				'Sign the transaction with provided sender publickey, when passphrase is not provided',
+		}),
 		offline: flagParser.boolean({
 			...commonFlags.offline,
 			hidden: false,
+			default: false,
 		}),
 		network: flagParser.string({
 			...commonFlags.network,
+			default: DEFAULT_NETWORK,
 			hidden: false,
 		}),
 	};
@@ -70,15 +78,39 @@ export default class SignCommand extends BaseIPCCommand {
 
 	async run(): Promise<void> {
 		const {
-			args: { networkIdentifier, transaction },
+			args: { transaction },
 			flags: {
-				'include-sender-signature': includeSenderSignature,
-				json,
+				'data-path': dataPath,
+				'include-sender': includeSender,
+				'sender-publickey': senderPublicKey,
 				'mandatory-keys': mandatoryKeys,
 				'optional-keys': optionalKeys,
+				json,
 				passphrase: passphraseSource,
+				offline,
+				'network-identifier': networkIdentifierSource,
 			},
 		} = this.parse(SignCommand);
+
+		if (offline && !dataPath) {
+			throw new Error('Flag: --data-path must be specified while signing offline.');
+		}
+
+		if (offline && !networkIdentifierSource) {
+			throw new Error('Flag: --network-identifier must be specified while signing offline.');
+		}
+
+		let networkIdentifier = networkIdentifierSource as string;
+		if (!offline) {
+			const nodeInfo = await this._channel.invoke<Record<string, unknown>>('app:getNodeInfo');
+			networkIdentifier = nodeInfo.networkIdentifier as string;
+		}
+
+		if (!offline && networkIdentifierSource && networkIdentifier !== networkIdentifierSource) {
+			throw new Error(
+				`Invalid networkIdentifier specified, actual: ${networkIdentifierSource}, expected: ${networkIdentifier}.`,
+			);
+		}
 
 		const transactionJSON = (this._codec.decodeTransaction(
 			transaction,
@@ -108,7 +140,20 @@ export default class SignCommand extends BaseIPCCommand {
 		transactionObject.asset = codec.fromJSON(assetSchema.schema, asset);
 		let signedTransaction: Record<string, unknown>;
 
-		if (mandatoryKeys || optionalKeys) {
+		// sign from multi sig account offline using input keys
+		if (!includeSender && !senderPublicKey) {
+			signedTransaction = transactions.signTransaction(
+				assetSchema.schema,
+				transactionObject,
+				networkIdentifierBuffer,
+				passphrase,
+			);
+		} else if (offline) {
+			if (!mandatoryKeys.length || !optionalKeys.length) {
+				throw new Error(
+					'--mandatory-keys or --optional-keys flag must be specified to sign transaction from multi signature account.',
+				);
+			}
 			const keys = {
 				mandatoryKeys: mandatoryKeys ? mandatoryKeys.map(k => Buffer.from(k, 'hex')) : [],
 				optionalKeys: optionalKeys ? optionalKeys.map(k => Buffer.from(k, 'hex')) : [],
@@ -120,14 +165,42 @@ export default class SignCommand extends BaseIPCCommand {
 				networkIdentifierBuffer,
 				passphrase,
 				keys,
-				includeSenderSignature,
+				includeSender,
 			);
 		} else {
-			signedTransaction = transactions.signTransaction(
+			// sign from multi sig account online using account keys
+			if (!senderPublicKey) {
+				throw new Error(
+					'Sender publickey must be specified for signing transactions from multi signature account.',
+				);
+			}
+			const address = cryptography.getAddressFromPublicKey(Buffer.from(senderPublicKey, 'hex'));
+			const account = await this._channel.invoke<string>('app:getAccount', {
+				address: address.toString('hex'),
+			});
+
+			const decodeAccount = this._codec.decodeAccount(account) as { keys: KeysAsset };
+			let keysAsset: KeysAsset;
+			if (
+				decodeAccount.keys?.mandatoryKeys.length === 0 &&
+				decodeAccount.keys?.optionalKeys.length === 0
+			) {
+				keysAsset = transactionObject.asset as KeysAsset;
+			} else {
+				keysAsset = decodeAccount.keys;
+			}
+			const keys = {
+				mandatoryKeys: keysAsset.mandatoryKeys.map(k => Buffer.from(k, 'hex')),
+				optionalKeys: keysAsset.optionalKeys.map(k => Buffer.from(k, 'hex')),
+			};
+
+			signedTransaction = transactions.signMultiSignatureTransaction(
 				assetSchema.schema,
 				transactionObject,
 				networkIdentifierBuffer,
 				passphrase,
+				keys,
+				includeSender,
 			);
 		}
 
