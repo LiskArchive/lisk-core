@@ -90,7 +90,7 @@ USAGE
 
 ## Managing Lisk Node
 
-In order to start a Lisk Core node in a background process, we recommend to use process management tool, such as [PM2](https://pm2.keymetrics.io/).
+In order to start a Lisk Core node as a background process, we recommend to use a process management tool, such as [PM2](https://pm2.keymetrics.io/).
 
 ### Example using PM2
 
