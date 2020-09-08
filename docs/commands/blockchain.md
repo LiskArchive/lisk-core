@@ -1,6 +1,6 @@
 # `lisk-core blockchain`
 
-Download blockchain data from a provided snapshot.
+Commands relating to Lisk Core blockchain data.
 
 - [`lisk-core blockchain:download`](#lisk-core-blockchaindownload)
 - [`lisk-core blockchain:export`](#lisk-core-blockchainexport)
@@ -20,8 +20,8 @@ OPTIONS
   -n, --network=network  [default: mainnet] Default network config to use. Environment variable "LISK_NETWORK" can also
                          be used.
 
-  -o, --output=output    Directory path to specify where snapshot is downloaded. Environment variable "LISK_DATA_PATH"
-                         can also be used.
+  -o, --output=output    [default: /Users/shuse2/Documents/10_lisk/lisk-core] Directory path to specify where snapshot
+                         is downloaded. By default outputs the files to current working directory.
 
   -u, --url=url          The url to the snapshot.
 

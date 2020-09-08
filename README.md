@@ -70,19 +70,20 @@ USAGE
 
 ## Command Topics
 
-- [`lisk-core account`](docs/commands/account.md) - Gets account information for a given address from the blockchain
-- [`lisk-core block`](docs/commands/block.md) - Gets block information for a given block id or height from the blockchain
-- [`lisk-core blockchain`](docs/commands/blockchain.md) - Download blockchain data from a provided snapshot.
+- [`lisk-core account`](docs/commands/account.md) - Commands relating to Lisk Core accounts.
+- [`lisk-core block`](docs/commands/block.md) - Commands relating to Lisk Core blocks.
+- [`lisk-core blockchain`](docs/commands/blockchain.md) - Commands relating to Lisk Core blockchain data.
+- [`lisk-core config`](docs/commands/config.md) - Commands relating to Lisk Core node configuration.
 - [`lisk-core copyright`](docs/commands/copyright.md) - Displays copyright notice.
-- [`lisk-core forger-info`](docs/commands/forger-info.md) - Export forger data to a given data path
-- [`lisk-core forging`](docs/commands/forging.md) - Disable forging for given delegate address
+- [`lisk-core forger-info`](docs/commands/forger-info.md) - Commands relating to Lisk Core forger-info data.
+- [`lisk-core forging`](docs/commands/forging.md) - Commands relating to Lisk Core forging.
 - [`lisk-core hash-onion`](docs/commands/hash-onion.md) - Creates hash onion output to be used by forger.
 - [`lisk-core help`](docs/commands/help.md) - display help for lisk-core
-- [`lisk-core node`](docs/commands/node.md) - Gets node information from a running application
-- [`lisk-core passphrase`](docs/commands/passphrase.md) - Decrypts your secret passphrase using the password which was provided at the time of encryption.
-- [`lisk-core sdk`](docs/commands/sdk.md) - Link an specific SDK folder given the parameter
+- [`lisk-core node`](docs/commands/node.md) - Commands relating to Lisk Core node.
+- [`lisk-core passphrase`](docs/commands/passphrase.md) - Commands relating to Lisk passphrases.
+- [`lisk-core sdk`](docs/commands/sdk.md) - Commands relating to Lisk SDK development.
 - [`lisk-core start`](docs/commands/start.md) - Start Lisk Core Node with given config parameters
-- [`lisk-core transaction`](docs/commands/transaction.md) - Creates a transaction which can be broadcasted to the network. Note: fee and amount should be in Beddows!!
+- [`lisk-core transaction`](docs/commands/transaction.md) - Commands relating to Lisk transactions.
 - [`lisk-core warranty`](docs/commands/warranty.md) - Displays warranty notice.
 
 <!-- commandsstop -->

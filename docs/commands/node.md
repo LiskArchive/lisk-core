@@ -1,6 +1,6 @@
 # `lisk-core node`
 
-Gets node information from a running application
+Commands relating to Lisk Core node.
 
 - [`lisk-core node:info`](#lisk-core-nodeinfo)
 

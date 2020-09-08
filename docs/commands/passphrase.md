@@ -1,6 +1,6 @@
 # `lisk-core passphrase`
 
-Decrypts your secret passphrase using the password which was provided at the time of encryption.
+Commands relating to Lisk passphrases.
 
 - [`lisk-core passphrase:decrypt ENCRYPTEDPASSPHRASE`](#lisk-core-passphrasedecrypt-encryptedpassphrase)
 - [`lisk-core passphrase:encrypt`](#lisk-core-passphraseencrypt)
@@ -21,9 +21,6 @@ OPTIONS
                            is not set.
                            Examples:
                            - --password=pass:password123 (should only be used where security is not important)
-
-DESCRIPTION
-  Decrypts your secret passphrase using the password which was provided at the time of encryption.
 
 EXAMPLE
   passphrase:decrypt
@@ -55,9 +52,6 @@ OPTIONS
 
   --outputPublicKey            Includes the public key in the output. This option is provided for the convenience of
                                node operators.
-
-DESCRIPTION
-  Encrypts your secret passphrase under a password.
 
 EXAMPLE
   passphrase:encrypt

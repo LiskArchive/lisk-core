@@ -51,6 +51,8 @@ OPTIONS
   --http-api-whitelist=http-api-whitelist          List of IPs in comma separated value to allow the connection.
                                                    Environment variable "LISK_HTTP_API_WHITELIST" can also be used.
 
+  --overwrite-config                               Overwrite network configs if they exist already
+
   --peers=peers                                    Seed peers to initially connect to in format of comma separated
                                                    "ip:port". IP can be DNS name or IPV4 format. Environment variable
                                                    "LISK_PEERS" can also be used.

@@ -1,6 +1,6 @@
 # `lisk-core sdk`
 
-Link an specific SDK folder given the parameter
+Commands relating to Lisk SDK development.
 
 - [`lisk-core sdk:link TARGETSDKFOLDER`](#lisk-core-sdklink-targetsdkfolder)
 

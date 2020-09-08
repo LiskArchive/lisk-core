@@ -1,6 +1,6 @@
 # `lisk-core transaction`
 
-Creates a transaction which can be broadcasted to the network. Note: fee and amount should be in Beddows!!
+Commands relating to Lisk transactions.
 
 - [`lisk-core transaction:create NETWORKIDENTIFIER FEE NONCE MODULEID ASSETID`](#lisk-core-transactioncreate-networkidentifier-fee-nonce-moduleid-assetid)
 - [`lisk-core transaction:get ID`](#lisk-core-transactionget-id)
