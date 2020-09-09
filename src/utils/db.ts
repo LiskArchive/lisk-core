@@ -13,8 +13,8 @@
  *
  */
 
-import { KVStore } from '@liskhq/lisk-db';
+import { db } from 'lisk-sdk';
 import { getBlockchainDBPath } from './path';
 
-export const getBlockchainDB = (dataPath: string): KVStore =>
-	new KVStore(getBlockchainDBPath(dataPath));
+export const getBlockchainDB = (dataPath: string): db.KVStore =>
+	new db.KVStore(getBlockchainDBPath(dataPath));
