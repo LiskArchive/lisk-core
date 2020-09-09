@@ -140,14 +140,15 @@ describe('transaction:create command', () => {
 						'--asset={"amount": "abc"}',
 						`--passphrase=${passphrase}`,
 						'--offline',
+						'--data-path=/tmp',
 						'--network=devnet',
 					])
 					.catch((error: Error) =>
 						expect(error.message).to.contain(
-							'Flag: --data-path must be specified while creating transaction offline',
+							'Flag: --data-path should not be specified while creating transaction offline',
 						),
 					)
-					.it('should throw error for missing data path flag.');
+					.it('should throw error for data path flag.');
 			});
 
 			describe(`transaction:create 2 0 100000000 --asset='{"amount": "abc"}' --passphrase=${passphrase} --offline`, () => {
@@ -160,7 +161,6 @@ describe('transaction:create command', () => {
 						'--asset={"amount": "abc"}',
 						`--passphrase=${passphrase}`,
 						'--offline',
-						'--data-path=/tmp',
 						'--network=devnet',
 					])
 					.catch((error: Error) =>
@@ -181,7 +181,6 @@ describe('transaction:create command', () => {
 						'--asset={"amount": "abc"}',
 						`--passphrase=${passphrase}`,
 						'--offline',
-						'--data-path=/tmp',
 						'--network=devnet',
 						'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
 					])
@@ -203,7 +202,6 @@ describe('transaction:create command', () => {
 						`--asset=${transferAsset}`,
 						'--no-signature',
 						'--offline',
-						'--data-path=/tmp',
 						'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
 						'--nonce=1',
 						'--network=devnet',
@@ -228,7 +226,6 @@ describe('transaction:create command', () => {
 						'--offline',
 						`--asset=${transferAsset}`,
 						`--passphrase=${passphrase}`,
-						'--data-path=/tmp',
 						'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
 						'--nonce=1',
 						'--network=devnet',
@@ -253,7 +250,6 @@ describe('transaction:create command', () => {
 						`--asset=${transferAsset}`,
 						'--no-signature',
 						`--sender-publickey=${senderPublickey}`,
-						'--data-path=/tmp',
 						'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
 						'--nonce=1',
 						'--network=devnet',
@@ -277,7 +273,6 @@ describe('transaction:create command', () => {
 						'--offline',
 						`--asset=${voteAsset}`,
 						`--passphrase=${passphrase}`,
-						'--data-path=/tmp',
 						'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
 						'--nonce=1',
 						'--network=devnet',
@@ -301,7 +296,6 @@ describe('transaction:create command', () => {
 						'--offline',
 						`--asset=${unVoteAsset}`,
 						`--passphrase=${passphrase}`,
-						'--data-path=/tmp',
 						'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
 						'--nonce=1',
 						'--network=devnet',
@@ -327,7 +321,6 @@ describe('transaction:create command', () => {
 						`--passphrase=${passphrase}`,
 						'--offline',
 						'--network=devnet',
-						'--data-path=/tmp',
 						'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
 						'--nonce=1',
 					])
@@ -359,7 +352,6 @@ describe('transaction:create command', () => {
 						'100000000',
 						'--offline',
 						'--network=devnet',
-						'--data-path=/tmp',
 						'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
 						'--nonce=1',
 					])
@@ -396,7 +388,6 @@ describe('transaction:create command', () => {
 						'--json',
 						'--offline',
 						'--network=devnet',
-						'--data-path=/tmp',
 						'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
 						'--nonce=1',
 					])
@@ -433,7 +424,6 @@ describe('transaction:create command', () => {
 						'--json',
 						'--offline',
 						'--network=devnet',
-						'--data-path=/tmp',
 						'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
 						'--nonce=1',
 					])

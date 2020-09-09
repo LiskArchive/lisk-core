@@ -81,7 +81,6 @@ const signMultiSigCmdArgs = (unsignedTransaction: string, passphraseToSign: stri
 		`--optional-keys=${optionalKeys[1]}`,
 		`--network-identifier=${networkIdentifierStr}`,
 		'--offline',
-		'--data-path=/tmp',
 		'--network=devnet',
 		'--sender-publickey=f1b9f4ee71b5d5857d3b346d441ca967f27870ebee88569db364fd13e28adba3',
 	];
@@ -156,7 +155,7 @@ describe('transaction:sign command', () => {
 		const unsignedTransaction =
 		'0802100018022080c2d72f2a200b211fce4b615083701cb8a8c99407e464b2f9aa4f367095322de1b77e5fcfbe322408641214ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e';
 
-		describe('missing data path flag', () => {
+		describe('data path flag', () => {
 			setupTest()
 				.command([
 					'transaction:sign',
@@ -165,13 +164,14 @@ describe('transaction:sign command', () => {
 					`--network-identifier=${networkIdentifierStr}`,
 					'--network=devnet',
 					'--offline',
+					'--data-path=/tmp'
 				])
 				.catch((error: Error) =>
 					expect(error.message).to.contain(
-						'Flag: --data-path must be specified while signing offline.',
+						'Flag: --data-path should not be specified while signing offline.',
 					),
 				)
-				.it('should throw an error when missing data path flag.');
+				.it('should throw an error when data path flag specified.');
 		});
 
 		describe('missing network identifier flag', () => {
@@ -181,7 +181,7 @@ describe('transaction:sign command', () => {
 					unsignedTransaction,
 					`--passphrase=${senderPassphrase}`,
 					'--network=devnet',
-					'--data-path=/tmp',
+
 					'--offline',
 				])
 				.catch((error: Error) =>
@@ -200,7 +200,7 @@ describe('transaction:sign command', () => {
 					`--passphrase=${senderPassphrase}`,
 					`--network-identifier=${networkIdentifierStr}`,
 					'--offline',
-					'--data-path=/tmp',
+
 					'--network=devnet',
 				])
 				.it('should return signed transaction string in hex format', () => {
@@ -219,7 +219,7 @@ describe('transaction:sign command', () => {
 					`--network-identifier=${networkIdentifierStr}`,
 					'--json',
 					'--offline',
-					'--data-path=/tmp',
+
 					'--network=devnet',
 				])
 				.it('should return signed transaction in json format', () => {

@@ -73,7 +73,7 @@ export const flags: FlagMap = {
 			'Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.',
 	},
 	offline: {
-		description: 'Create and sign transaction without connecting to a local node.',
+		description: 'Specify whether to connect to a local node or not.',
 	},
 	network: {
 		char: 'n',

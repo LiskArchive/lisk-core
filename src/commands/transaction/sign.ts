@@ -92,8 +92,8 @@ export default class SignCommand extends BaseIPCCommand {
 			},
 		} = this.parse(SignCommand);
 
-		if (offline && !dataPath) {
-			throw new Error('Flag: --data-path must be specified while signing offline.');
+		if (offline && dataPath) {
+			throw new Error('Flag: --data-path should not be specified while signing offline.');
 		}
 
 		if (offline && !networkIdentifierSource) {
