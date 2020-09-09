@@ -17,9 +17,6 @@ OPTIONS
   -d, --distance=distance  [default: 1000] Distance between each hashes
   -o, --output=output      Output file path
 
-DESCRIPTION
-  Creates hash onion output to be used by forger.
-
 EXAMPLE
   hash-onion --count=1000000 --distance=2000
 ```

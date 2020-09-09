@@ -13,25 +13,15 @@ Lisk is a next-generation crypto-currency and decentralized application platform
 
 [Lisk Core](https://lisk.io/documentation/lisk-core) is the program that implements the [Lisk Protocol](https://lisk.io/documentation/lisk-protocol). In other words, Lisk Core is what every machine needs to set-up to run a node that allows for participation in the network.
 
-This document details how to install Lisk Core from source, but there are two other ways to participate in the network: [binaries](https://lisk.io/documentation/lisk-core/setup/pre-install/binary) and [Docker images](https://lisk.io/documentation/lisk-core/setup/pre-install/docker).
+This document details how to install Lisk Core from source and from npm registry, but there are two other ways to participate in the network: [binaries](https://lisk.io/documentation/lisk-core/setup/pre-install/binary) and [Docker images](https://lisk.io/documentation/lisk-core/setup/pre-install/docker).
 If you have satisfied the requirements from the Pre-Installation section, you can jump directly to the next section [Installation Steps](#installation).
 
 ## Index
 
 - [Installation](#installation)
-  - [Dependencies](#dependencies)
-- [Managing Lisk](#tool)
-- [Configuring Lisk](#configuring-lisk)
-  - [Structure](#structure)
-  - [Command Line Options](#command-line-options)
-  - [Examples](#examples)
+- [Managing Lisk Node](#managing-lisk-node)
+- [Configuring Lisk Node](#configuring-lisk-node)
 - [Tests](#tests)
-  - [Preparing Node](#preparing-node)
-  - [Running Tests](#running-tests)
-    - [Running Mocha Tests](#running-mocha-tests)
-    - [Running Jest Tests](#running-jest-tests)
-- [Utility Scripts](#utility-scripts)
-- [Performance Monitoring](#performance-monitoring)
 - [License](#license)
 
 ## Installation
@@ -42,10 +32,12 @@ The following dependencies need to be installed in order to run applications cre
 
 | Dependencies | Version |
 | ------------ | ------- |
-| NodeJS       | 12.18.0 |
+| NodeJS       | 12.18.3 |
 
 You can find further details on installing these dependencies in our [pre-installation setup guide](https://lisk.io/documentation/lisk-core/setup/source#pre-install).
 Clone the Lisk Core repository using Git and initialize the modules.
+
+## From Source
 
 ```bash
 git clone https://github.com/LiskHQ/lisk-core.git
@@ -53,9 +45,10 @@ cd lisk-core
 git checkout master
 npm ci
 npm run build
+./bin/run --help
 ```
 
-## Usage
+## From NPM
 
 <!-- usage -->
 
@@ -73,160 +66,126 @@ USAGE
 
 <!-- usagestop -->
 
-## Commands
-
 <!-- commands -->
 
 # Command Topics
 
-- [`lisk-core account`](docs/commands/account.md) - Gets account information for a given address from the blockchain
-- [`lisk-core block`](docs/commands/block.md) - Gets block information for a given block id or height from the blockchain
-- [`lisk-core blockchain`](docs/commands/blockchain.md) - Download blockchain data from a provided snapshot.
+- [`lisk-core account`](docs/commands/account.md) - Commands relating to Lisk Core accounts.
+- [`lisk-core block`](docs/commands/block.md) - Commands relating to Lisk Core blocks.
+- [`lisk-core blockchain`](docs/commands/blockchain.md) - Commands relating to Lisk Core blockchain data.
+- [`lisk-core config`](docs/commands/config.md) - Commands relating to Lisk Core node configuration.
 - [`lisk-core copyright`](docs/commands/copyright.md) - Displays copyright notice.
-- [`lisk-core forger-info`](docs/commands/forger-info.md) - Export forger data to a given data path
-- [`lisk-core forging`](docs/commands/forging.md) - Disable forging for given delegate address
+- [`lisk-core forger-info`](docs/commands/forger-info.md) - Commands relating to Lisk Core forger-info data.
+- [`lisk-core forging`](docs/commands/forging.md) - Commands relating to Lisk Core forging.
 - [`lisk-core hash-onion`](docs/commands/hash-onion.md) - Creates hash onion output to be used by forger.
 - [`lisk-core help`](docs/commands/help.md) - display help for lisk-core
-- [`lisk-core node`](docs/commands/node.md) - Gets node information from a running application
-- [`lisk-core passphrase`](docs/commands/passphrase.md) - Decrypts your secret passphrase using the password which was provided at the time of encryption.
-- [`lisk-core sdk`](docs/commands/sdk.md) - Link an specific SDK folder given the parameter
+- [`lisk-core node`](docs/commands/node.md) - Commands relating to Lisk Core node.
+- [`lisk-core passphrase`](docs/commands/passphrase.md) - Commands relating to Lisk Core passphrases.
+- [`lisk-core sdk`](docs/commands/sdk.md) - Commands relating to Lisk SDK development.
 - [`lisk-core start`](docs/commands/start.md) - Start Lisk Core Node with given config parameters
-- [`lisk-core transaction`](docs/commands/transaction.md) - Creates a transaction which can be broadcasted to the network. Note: fee and amount should be in Beddows!!
+- [`lisk-core transaction`](docs/commands/transaction.md) - Commands relating to Lisk Core transactions.
 - [`lisk-core warranty`](docs/commands/warranty.md) - Displays warranty notice.
 
 <!-- commandsstop -->
 
-## Managing Lisk
+## Managing Lisk Node
 
-To test Lisk is built and configured correctly, issue the following command at the root level of the project:
+To start a Lisk Core node as a background process, we recommend using a process management tool, such as [PM2](https://pm2.keymetrics.io/).
 
-```
-node dist/index.js
-```
-
-To pretty-print the console logs:
+### Example using PM2
 
 ```
-node dist/index.js
+npm i -g pm2
+pm2 start "lisk-core start" --name lisk-mainnet
+pm2 status
+pm2 logs lisk-mainnet
 ```
 
-This will start the lisk instance with `devnet` configuration. Once the process is verified as running correctly, use `CTRL+C` to quit the running application.
-Optionally, start the process with `pm2`. This will fork the process into the background and automatically recover the process if it fails.
+For a more advanced options refer to [PM2 documentation](https://pm2.keymetrics.io/docs/usage/pm2-doc-single-page/).
+
+## Configuring Lisk Node
+
+[`lisk-core start`](docs/commands/start.md) supports flag and environment variable options to configure a node.
+
+Also, custom configuration through JSON file is available through the `--config, -c` flag.
+
+### Example
+
+With custom config file `./custom-config.json` below
 
 ```
-npx pm2 start --name lisk dist/index.js
+{
+  "network": {
+    "port": 5000,
+  },
+  "transactionPool": {
+    "maxTransactions": 8096,
+    "maxTransactionsPerAccount": 1024,
+  },
+  "forging": {
+    "delegates": [{
+      "encryptedPassphrase": "iterations=10&cipherText=0dbd21ac5c154dbb72ce90a4e252a64b692203a4f8e25f8bfa1b1993e2ba7a9bd9e1ef1896d8d584a62daf17a8ccf12b99f29521b92cc98b74434ff501374f7e1c6d8371a6ce4e2d083489&iv=98a89678d1ccd054b85e3b3c&salt=c9cb4e7783cacca6c0e1c210cb9252e1&tag=5c66c5e75a6241538695fb16d8f0cdc9&version=1",
+      "hashOnion": {
+        "count": 10000,
+        "distance": 1000,
+        "hashes": [
+          "aaf012545a584890a169cf57d8f7e688",
+          "f7a3fb976e50d882c709edb63bde4d9c",
+          "1bd121882cb1dee1107699001c2676fb",
+          "c4ad7d98da02c94ef8bda2f80d35290a",
+          "096f0e77f963face5e99b9db460ce45f",
+          "de3d0c34bdcbdcfa2b7b1871c99d4948",
+          "5deb5e369a98510932835d74768cf86c",
+          "c0cd6ce3f75256149c8fe5d0bffdc99a",
+          "1a32706893f1523db0c7bb81be5e55ac",
+          "7e8f1ea4aa317993152e1a6b55b16f25",
+          "5e5100bbd2c2d5e00197d4ec19102dd6"
+        ]
+      },
+      "address": "9cabee3d27426676b852ce6b804cb2fdff7cd0b5"
+    }],
+  },
+  "plugins": {
+    "httpApi": {
+      "port": 7000,
+    },
+  },
+}
 ```
 
-After the process is started, its runtime status and log location can be retrieved by issuing the following command:
+Running a command will overwrite the default config and use the specified options.
 
-```
-npx pm2 show lisk
-```
-
-To stop Lisk after it has been started with `pm2`, issue the following command:
-
-```
-npx pm2 stop lisk
+```bash
+lisk-core start -n devnet -c ./custom-config.json
 ```
 
-**NOTE:** The **port**, **address** and **config-path** can be overridden by providing the relevant command switch:
-
-```
-npx pm2 start --name lisk dist/index.js -- -p [port] -a [address] -c [config-path] -n [network]
-```
-
-You can pass any of `devnet`, `alphanet`, `betanet`, `testnet` or `mainnet` for the network option.
-More information about options can be found at [Command Line Options](#command-line-options).
-
-## Configuring Lisk
-
-### Structure
-
-1. The Lisk configuration is managed under different folder structures.
-2. Root folder for all configuration is `./config/`.
-3. The default configuration file that used as a base is `config/default/config.json`
-4. You can find network specific configurations under `config/<network>/config.json`
-5. Don't override any value in files mentioned above if you need custom configuration.
-6. Create your own `json` file and pass it as command line options `-c` or `LISK_CONFIG_FILE`
-7. Configurations will be loaded in the following order, lowest in the list has the highest priority:
-   - Default configuration file
-   - Network specific configuration file
-   - Custom configuration file (if specified by the user)
-   - Command line configurations, specified as command `flags` or `env` variables
-8. Any config option of array type gets completely overridden. If you specify one peer at `peers.list` in your custom config file, it will replace every default peer for the network.
-9. For development use `devnet` as the network option.
-
-### Command Line Options
-
-There are plenty of options available that you can use to override configuration on runtime while starting the lisk.
-
-```
-node dist/index.js -- [options]
-```
-
-Each of that option can be appended to the command-line. There are also a few `ENV` variables that can be utilized for this purpose.
-
-| Option                               | ENV Variable           | Config Option                                   | Description                                                                                                                                                                                                                                                                                                          |
-| ------------------------------------ | ---------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| <pre nowrap>--network<br>-n</pre>    | LISK_NETWORK           |                                                 | Which configurations set to use, associated to lisk networks. Any of this option can be used `devnet`, `alphanet`, `betanet`, `testnet` and `mainnet`. Default value is `devnet`.                                                                                                                                    |
-| <pre nowrap>--config<br> -c</pre>    | LISK_CONFIG_FILE       |                                                 | Path to the custom configuration file, which will override values of `config/default/config.json`. Should be relative path from root of project.                                                                                                                                                                     |
-| <pre nowrap>--port<br> -p</pre>      | LISK_WS_PORT           | modules.network.wsPort                          | TCP port for P2P layer                                                                                                                                                                                                                                                                                               |
-| <pre nowrap>--http-port<br> -h</pre> | LISK_HTTP_PORT         | modules.http_api.httpPort                       | TCP port for HTTP API                                                                                                                                                                                                                                                                                                |
-| <pre nowrap>--address<br> -a</pre>   | LISK_ADDRESS           | modules.http_api.address,modules.network.hostIp | Listening host name or ip                                                                                                                                                                                                                                                                                            |
-| <pre nowrap>--log<br> -l</pre>       | LISK_FILE_LOG_LEVEL    | components.logger.fileLogLevel                  | Log level for file output                                                                                                                                                                                                                                                                                            |
-|                                      | LISK_CONSOLE_LOG_LEVEL | components.logger.consoleLogLevel               | Log level for console output                                                                                                                                                                                                                                                                                         |
-|                                      | LISK_CACHE_ENABLED     | components.cache.enabled                        | Enable or disable cache. Must be set to true/false                                                                                                                                                                                                                                                                   |
-| <pre nowrap>--database<br> -d</pre>  | LISK_DB_NAME           | components.storage.database                     | PostgreSQL database name to connect to                                                                                                                                                                                                                                                                               |
-|                                      | LISK_DB_HOST           | components.storage.host                         | PostgreSQL database host name                                                                                                                                                                                                                                                                                        |
-|                                      | LISK_DB_PORT           | components.storage.port                         | PostgreSQL database port                                                                                                                                                                                                                                                                                             |
-|                                      | LISK_DB_USER           | components.storage.user                         | PostgreSQL database username to connect to                                                                                                                                                                                                                                                                           |
-|                                      | LISK_DB_PASSWORD       | components.storage.password                     | PostgreSQL database password to connect to                                                                                                                                                                                                                                                                           |
-| <pre nowrap>--redis<br> -r</pre>     | LISK_REDIS_HOST        | components.cache.host                           | Redis host name                                                                                                                                                                                                                                                                                                      |
-|                                      | LISK_REDIS_PORT        | components.cache.port                           | Redis port                                                                                                                                                                                                                                                                                                           |
-|                                      | LISK_REDIS_DB_NAME     | components.cache.db                             | Redis database name to connect to                                                                                                                                                                                                                                                                                    |
-|                                      | LISK_REDIS_DB_PASSWORD | components.cache.password                       | Redis database password to connect to                                                                                                                                                                                                                                                                                |
-| <pre nowrap>--peers<br> -x</pre>     | LISK_PEERS             | modules.network.seedPeers                       | Comma separated list of peers to connect to in the format `192.168.99.100:5000,172.169.99.77:5000`                                                                                                                                                                                                                   |
-|                                      | LISK_API_PUBLIC        | modules.http_api.access.public                  | Enable or disable public access of http API. Must be set to true/false                                                                                                                                                                                                                                               |
-|                                      | LISK_API_WHITELIST     | modules.http_api.access.whiteList               | Comma separated list of IPs to enable API access. Format `192.168.99.100,172.169.99.77`                                                                                                                                                                                                                              |
-|                                      | LISK_FORGING_DELEGATES | modules.chain.forging.delegates                 | Comma separated list of delegates to load in the format _publicKey&#x7c;encryptedPassphrase,publicKey2&#x7c;encryptedPassphrase2_                                                                                                                                                                                    |
-|                                      | LISK_FORGING_WHITELIST | modules.http_api.forging.access.whiteList       | Comma separated list of IPs to enable access to forging endpoints. Format `192.168.99.100,172.169.99.77`                                                                                                                                                                                                             |
-| <pre nowrap>--rebuild<br> -b</pre>   |                        | modules.chain.loading.rebuildUpToRound          | Number of rounds to rebuild the chain, must be a positive integer equal to or greater than `0`. When `0` is passed, this corresponds to the inclusion of all rounds. Any other number equals to its corresponding round. Bear in mind this mode disables all the network features of the node to ensure reliability. |
-
-#### Note
-
-- All `ENV` variables restricted with operating system constraint of `ENV` variable maximum length.
-- Comma-separated lists will replace the original config values. e.g. If you specify `LISK_PEERS`, original `modules.network.seedPeers`, which is specific to the network, will be replaced completely.
-
-For a more detailed understanding of configuration read this [online documentation](https://lisk.io/documentation/lisk-core/user-guide/configuration)
-
-### Examples
-
-#### Change Redis Port
-
-Update the `redis.port` configuration attribute in `config/devnet/config.json` or any other network you want to configure.
+For a more detailed understanding of configuration read this [online documentation](https://lisk.io/documentation/lisk-core/user-guide/configuration).
 
 ## Tests
 
-## Utility Scripts
+### Automated tests
 
-There are a couple of command line scripts that facilitate users of lisk to perform handy operations. All scripts are located under `./framework/src/modules/chain/scripts/` directory and can be executed directly by `node framework/src/modules/chain/scripts/<file_name>`.
-
-#### Generate Config
-
-This script will help you to generate a unified version of the configuration file for any network. Here is the usage of the script:
+All automated tests will run with the below command.
 
 ```
-Usage: generate_config [options]
-
-Options:
-
--h, --help               output usage information
--V, --version            output the version number
--c, --config [config]    custom config file
--n, --network [network]  specify the network or use LISK_NETWORK
+npm test
 ```
 
-Argument `network` is required and can by `devnet`, `testnet`, `mainnet` or any other network folder available under `./config` directory.
+### Running a local development node
+
+In order to run a node for a local test, in a root folder of lisk-core, run below command.
+
+```
+./bin/run start -n devnet --data-path ./devnet-data --port 3333 --enable-ipc --enable-http-api --http-api-port 3334 --enable-forger --forger-port 3335
+```
+
+This command will start a lisk-core node using data path `./devent-data` with HTTPAPI and Forger Plugins.
+Data on the node can be obtained by commands like
+
+```
+./bin/run node:info --data-path ./devnet-data
+./bin/run block:get 3 --data-path ./devnet-data
+```
 
 ## Contributors
 
@@ -234,7 +193,7 @@ https://github.com/LiskHQ/lisk-core/graphs/contributors
 
 ## License
 
-Copyright 2016-2019 Lisk Foundation
+Copyright 2016-2020 Lisk Foundation
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -250,7 +209,7 @@ limitations under the License.
 
 ---
 
-Copyright © 2016-2019 Lisk Foundation
+Copyright © 2016-2020 Lisk Foundation
 
 Copyright © 2015 Crypti
 

@@ -1,6 +1,6 @@
 # `lisk-core block`
 
-Gets block information for a given block id or height from the blockchain
+Commands relating to Lisk Core blocks.
 
 - [`lisk-core block:get ARG`](#lisk-core-blockget-arg)
 

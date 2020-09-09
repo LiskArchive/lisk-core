@@ -28,7 +28,7 @@
 		"lint": "eslint --ext .js,.ts .",
 		"lint:fix": "eslint --fix --ext .js,.ts .",
 		"format": "prettier --write '**/*'",
-		"prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme --multi --dir=docs/commands",
+		"prepack": "rm -rf lib && tsc -b && oclif-dev manifest && npm shrinkwrap && oclif-dev readme --multi --dir=docs/commands",
 		"prebuild": "if test -d dist; then rm -r dist; fi; rm -f tsconfig.tsbuildinfo",
 		"build": "tsc",
 		"test": "mocha test --exclude 'test/scripts/**'",
@@ -46,7 +46,39 @@
 		"commands": "./dist/commands",
 		"plugins": [
 			"@oclif/plugin-help"
-		]
+		],
+		"topics": {
+			"account": {
+				"description": "Commands relating to Lisk Core accounts."
+			},
+			"block": {
+				"description": "Commands relating to Lisk Core blocks."
+			},
+			"blockchain": {
+				"description": "Commands relating to Lisk Core blockchain data."
+			},
+			"forger-info": {
+				"description": "Commands relating to Lisk Core forger-info data."
+			},
+			"forging": {
+				"description": "Commands relating to Lisk Core forging."
+			},
+			"node": {
+				"description": "Commands relating to Lisk Core node."
+			},
+			"config": {
+				"description": "Commands relating to Lisk Core node configuration."
+			},
+			"passphrase": {
+				"description": "Commands relating to Lisk Core passphrases."
+			},
+			"sdk": {
+				"description": "Commands relating to Lisk SDK development."
+			},
+			"transaction": {
+				"description": "Commands relating to Lisk Core transactions."
+			}
+		}
 	},
 	"files": [
 		"/bin",

@@ -1,6 +1,6 @@
 # `lisk-core forger-info`
 
-Export forger data to a given data path
+Commands relating to Lisk Core forger-info data.
 
 - [`lisk-core forger-info:export`](#lisk-core-forger-infoexport)
 - [`lisk-core forger-info:import SOURCEPATH`](#lisk-core-forger-infoimport-sourcepath)

@@ -15,7 +15,7 @@
 import { Command, flags as flagParser } from '@oclif/command';
 import { NETWORK, RELEASE_URL, DEFAULT_NETWORK } from '../../constants';
 import { liskSnapshotUrl } from '../../utils/commons';
-import { getDefaultPath, getFullPath } from '../../utils/path';
+import { getFullPath } from '../../utils/path';
 import { downloadAndValidate } from '../../utils/download';
 
 export default class DownloadCommand extends Command {
@@ -39,7 +39,6 @@ export default class DownloadCommand extends Command {
 			char: 'o',
 			description:
 				'Directory path to specify where snapshot is downloaded. By default outputs the files to current working directory.',
-			default: process.cwd(),
 		}),
 		url: flagParser.string({
 			char: 'u',
@@ -51,7 +50,7 @@ export default class DownloadCommand extends Command {
 		const { flags } = this.parse(DownloadCommand);
 		const network = flags.network ? (flags.network as NETWORK) : DEFAULT_NETWORK;
 		const url = flags.url ? flags.url : liskSnapshotUrl(RELEASE_URL, network);
-		const dataPath = flags.output ? flags.output : getDefaultPath();
+		const dataPath = flags.output ? flags.output : process.cwd();
 		this.log(`Downloading snapshot from ${url} to ${getFullPath(dataPath)}`);
 
 		try {

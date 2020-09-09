@@ -1,6 +1,6 @@
 # `lisk-core forging`
 
-Disable forging for given delegate address
+Commands relating to Lisk Core forging.
 
 - [`lisk-core forging:disable ADDRESS`](#lisk-core-forgingdisable-address)
 - [`lisk-core forging:enable ADDRESS`](#lisk-core-forgingenable-address)
