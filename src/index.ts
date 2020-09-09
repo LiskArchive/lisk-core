@@ -11,37 +11,4 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { Application } from 'lisk-sdk';
-
-try {
-	/**
-	 * We have to keep it in try/catch block as it can throw
-	 * exception while validating the configuration
-	 */
-
-	// tslint:disable-next-line no-require-imports no-var-requires
-	const { config } = require('./helpers/config');
-
-	const { NETWORK } = config;
-	// tslint:disable-next-line no-var-requires
-	const genesisBlock = require(`../config/${NETWORK}/genesis_block.json`);
-
-	const app = new Application(genesisBlock, config);
-
-	app
-		.run()
-		.then(() => app.logger.info('App started...'))
-		.catch(error => {
-			if (error instanceof Error) {
-				app.logger.error('App stopped with error', error.message);
-				app.logger.debug(error.stack);
-			} else {
-				app.logger.error('App stopped with error', error);
-			}
-			process.exit();
-		});
-} catch (e) {
-	// tslint:disable-next-line no-console
-	console.error('Application start error.', e);
-	process.exit();
-}
+export default {};

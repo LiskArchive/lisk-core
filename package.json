@@ -1,10 +1,9 @@
 {
 	"name": "lisk-core",
-	"version": "3.0.0-beta.1",
+	"version": "3.0.0-debug.2",
 	"description": "Lisk blockchain application platform",
 	"author": "Lisk Foundation <admin@lisk.io>, lightcurve GmbH <admin@lightcurve.io>",
 	"license": "Apache-2.0",
-	"private": true,
 	"keywords": [
 		"cryptocurrency",
 		"blockchain",
@@ -21,39 +20,122 @@
 		"url": "https://github.com/LiskHQ/lisk-sdk/issues"
 	},
 	"engines": {
-		"node": ">=12.14.1",
-		"npm": ">=6.13.4"
+		"node": ">=12.18.3",
+		"npm": ">=6.14.4"
 	},
 	"main": "dist/index.js",
 	"scripts": {
-		"start": "node dist/index.js",
-		"console": "node scripts/console.js",
-		"lint": "tslint --format verbose --project .",
-		"lint:fix": "tslint --fix --project .",
+		"lint": "eslint --ext .js,.ts .",
+		"lint:fix": "eslint --fix --ext .js,.ts .",
 		"format": "prettier --write '**/*'",
+		"prepack": "rm -rf lib && tsc -b && oclif-dev manifest && npm shrinkwrap && oclif-dev readme --multi --dir=docs/commands",
 		"prebuild": "if test -d dist; then rm -r dist; fi; rm -f tsconfig.tsbuildinfo",
 		"build": "tsc",
-		"test": "mocha test"
+		"test": "mocha test --exclude 'test/scripts/**'",
+		"test:stress": "npx ts-node test/scripts/stress_test.ts",
+		"version": "oclif-dev readme --multi --dir=docs/commands && git add README.md docs"
 	},
-	"dependencies": {
-		"lisk-commander": "4.0.0-alpha.0",
-		"lisk-sdk": "4.0.0-alpha.1",
-		"pm2": "4.2.3"
-	},
-	"devDependencies": {
-		"chai": "4.2.0",
-		"chai-as-promised": "7.1.1",
-		"co-mocha": "1.2.2",
-		"mocha": "5.2.0",
-		"prettier": "1.19.1",
-		"sinon": "9.0.0",
-		"sinon-chai": "3.5.0",
-		"tslint": "6.0.0",
-		"tslint-config-prettier": "1.18.0",
-		"tslint-immutable": "6.0.1",
-		"typescript": "3.8.3"
+	"bin": {
+		"lisk-core": "./bin/run"
 	},
 	"lisk": {
-		"protocolVersion": "2.0"
+		"addressPrefix": "lsk"
+	},
+	"oclif": {
+		"bin": "lisk-core",
+		"commands": "./dist/commands",
+		"plugins": [
+			"@oclif/plugin-help"
+		],
+		"topics": {
+			"account": {
+				"description": "Commands relating to Lisk Core accounts."
+			},
+			"block": {
+				"description": "Commands relating to Lisk Core blocks."
+			},
+			"blockchain": {
+				"description": "Commands relating to Lisk Core blockchain data."
+			},
+			"forger-info": {
+				"description": "Commands relating to Lisk Core forger-info data."
+			},
+			"forging": {
+				"description": "Commands relating to Lisk Core forging."
+			},
+			"node": {
+				"description": "Commands relating to Lisk Core node."
+			},
+			"config": {
+				"description": "Commands relating to Lisk Core node configuration."
+			},
+			"passphrase": {
+				"description": "Commands relating to Lisk Core passphrases."
+			},
+			"sdk": {
+				"description": "Commands relating to Lisk SDK development."
+			},
+			"transaction": {
+				"description": "Commands relating to Lisk Core transactions."
+			}
+		}
+	},
+	"files": [
+		"/bin",
+		"/npm-shrinkwrap.json",
+		"/oclif.manifest.json",
+		"/dist",
+		"/config",
+		"/docs"
+	],
+	"husky": {
+		"hooks": {
+			"pre-commit": "lint-staged"
+		}
+	},
+	"dependencies": {
+		"@oclif/command": "1.6.1",
+		"@oclif/config": "1.15.1",
+		"@oclif/plugin-help": "3.1.0",
+		"fs-extra": "9.0.1",
+		"inquirer": "7.3.2",
+		"lisk-sdk": "5.0.0-debug.2",
+		"tar": "6.0.2",
+		"tslib": "1.13.0",
+		"axios": "0.19.2"
+	},
+	"devDependencies": {
+		"@oclif/dev-cli": "1.22.2",
+		"@oclif/test": "1.2.6",
+		"@types/chai": "4.2.10",
+		"@types/chai-as-promised": "7.1.2",
+		"@types/expect": "24.3.0",
+		"@types/fs-extra": "9.0.1",
+		"@types/mocha": "7.0.2",
+		"@types/node": "12.12.11",
+		"@types/sinon": "7.5.2",
+		"@types/sinon-chai": "3.2.3",
+		"@types/tar": "4.0.3",
+		"@typescript-eslint/eslint-plugin": "2.28.0",
+		"@typescript-eslint/parser": "2.28.0",
+		"chai": "4.2.0",
+		"chai-as-promised": "7.1.1",
+		"eslint": "6.8.0",
+		"eslint-config-airbnb-base": "14.0.0",
+		"eslint-config-lisk-base": "1.2.2",
+		"eslint-config-prettier": "6.10.0",
+		"eslint-plugin-chai-expect": "2.1.0",
+		"eslint-plugin-import": "2.20.1",
+		"eslint-plugin-mocha": "6.3.0",
+		"globby": "10.0.2",
+		"husky": "4.2.5",
+		"lint-staged": "10.2.11",
+		"mocha": "7.1.0",
+		"nyc": "15.0.0",
+		"prettier": "2.0.5",
+		"sinon": "9.0.0",
+		"sinon-chai": "3.5.0",
+		"ts-node": "8.6.2",
+		"typescript": "3.8.3"
 	}
 }

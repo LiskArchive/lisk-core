@@ -5,6 +5,7 @@
 		"module": "commonjs",
 		"moduleResolution": "node",
 		"newLine": "lf",
+		"importHelpers": true,
 		"noFallthroughCasesInSwitch": true,
 		"noImplicitReturns": true,
 		"noUnusedLocals": true,
@@ -16,10 +17,9 @@
 		"strict": true,
 		"composite": true,
 		"declaration": true,
-		"esModuleInterop": true,
 		"noImplicitAny": false,
 		"rootDir": "./src",
 		"outDir": "./dist"
 	},
-	"include": ["./src/**/*"]
+	"include": ["./src/**/*.ts", "./src/**/*.json"]
 }

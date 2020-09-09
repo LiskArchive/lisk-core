@@ -10,24 +10,13 @@
  * LICENSE file.
  *
  * Removal or modification of this copyright notice is prohibited.
+ *
  */
-
-'use strict';
-
-const mocha = require('mocha');
-const coMocha = require('co-mocha');
+/* eslint-disable @typescript-eslint/no-var-requires */
 const chai = require('chai');
-const sinon = require('sinon');
-const sinonChai = require('sinon-chai');
 const chaiAsPromised = require('chai-as-promised');
-
-coMocha(mocha);
+const sinonChai = require('sinon-chai');
 
 process.env.NODE_ENV = 'test';
 
-chai.use(sinonChai);
-chai.use(chaiAsPromised);
-
-// Cloning the constants object to remove immutability
-global.expect = chai.expect;
-global.sinonSandbox = sinon.createSandbox();
+[sinonChai, chaiAsPromised].forEach(chai.use);
