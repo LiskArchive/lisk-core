@@ -94,9 +94,6 @@
 		}
 	},
 	"dependencies": {
-		"@liskhq/lisk-db": "0.1.0-debug.2",
-		"@liskhq/lisk-passphrase": "3.0.1-debug.2",
-		"@liskhq/lisk-utils": "0.1.0-debug.2",
 		"@oclif/command": "1.6.1",
 		"@oclif/config": "1.15.1",
 		"@oclif/plugin-help": "3.1.0",
@@ -108,7 +105,6 @@
 		"axios": "0.19.2"
 	},
 	"devDependencies": {
-		"@liskhq/lisk-codec": "0.1.0-debug.2",
 		"@oclif/dev-cli": "1.22.2",
 		"@oclif/test": "1.2.6",
 		"@types/chai": "4.2.10",
