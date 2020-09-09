@@ -109,7 +109,9 @@ export default class CreateCommand extends BaseIPCCommand {
 		const { fee, moduleID, assetID } = args as Args;
 
 		if (offline && dataPath) {
-			throw new Error('Flag: --data-path should not be specified while creating transaction offline.');
+			throw new Error(
+				'Flag: --data-path should not be specified while creating transaction offline.',
+			);
 		}
 
 		if (!senderPublicKeySource && noSignature) {

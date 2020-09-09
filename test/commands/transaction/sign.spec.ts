@@ -153,7 +153,7 @@ describe('transaction:sign command', () => {
 
 	describe('offline', () => {
 		const unsignedTransaction =
-		'0802100018022080c2d72f2a200b211fce4b615083701cb8a8c99407e464b2f9aa4f367095322de1b77e5fcfbe322408641214ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e';
+			'0802100018022080c2d72f2a200b211fce4b615083701cb8a8c99407e464b2f9aa4f367095322de1b77e5fcfbe322408641214ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e';
 
 		describe('data path flag', () => {
 			setupTest()
@@ -164,7 +164,7 @@ describe('transaction:sign command', () => {
 					`--network-identifier=${networkIdentifierStr}`,
 					'--network=devnet',
 					'--offline',
-					'--data-path=/tmp'
+					'--data-path=/tmp',
 				])
 				.catch((error: Error) =>
 					expect(error.message).to.contain(
