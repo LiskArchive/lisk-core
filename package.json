@@ -70,13 +70,13 @@
 				"description": "Commands relating to Lisk Core node configuration."
 			},
 			"passphrase": {
-				"description": "Commands relating to Lisk passphrases."
+				"description": "Commands relating to Lisk Core passphrases."
 			},
 			"sdk": {
 				"description": "Commands relating to Lisk SDK development."
 			},
 			"transaction": {
-				"description": "Commands relating to Lisk transactions."
+				"description": "Commands relating to Lisk Core transactions."
 			}
 		}
 	},

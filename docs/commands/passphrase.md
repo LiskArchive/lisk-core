@@ -1,6 +1,6 @@
 # `lisk-core passphrase`
 
-Commands relating to Lisk passphrases.
+Commands relating to Lisk Core passphrases.
 
 - [`lisk-core passphrase:decrypt ENCRYPTEDPASSPHRASE`](#lisk-core-passphrasedecrypt-encryptedpassphrase)
 - [`lisk-core passphrase:encrypt`](#lisk-core-passphraseencrypt)

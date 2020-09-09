@@ -68,7 +68,7 @@ USAGE
 
 <!-- commands -->
 
-## Command Topics
+# Command Topics
 
 - [`lisk-core account`](docs/commands/account.md) - Commands relating to Lisk Core accounts.
 - [`lisk-core block`](docs/commands/block.md) - Commands relating to Lisk Core blocks.
@@ -80,10 +80,10 @@ USAGE
 - [`lisk-core hash-onion`](docs/commands/hash-onion.md) - Creates hash onion output to be used by forger.
 - [`lisk-core help`](docs/commands/help.md) - display help for lisk-core
 - [`lisk-core node`](docs/commands/node.md) - Commands relating to Lisk Core node.
-- [`lisk-core passphrase`](docs/commands/passphrase.md) - Commands relating to Lisk passphrases.
+- [`lisk-core passphrase`](docs/commands/passphrase.md) - Commands relating to Lisk Core passphrases.
 - [`lisk-core sdk`](docs/commands/sdk.md) - Commands relating to Lisk SDK development.
 - [`lisk-core start`](docs/commands/start.md) - Start Lisk Core Node with given config parameters
-- [`lisk-core transaction`](docs/commands/transaction.md) - Commands relating to Lisk transactions.
+- [`lisk-core transaction`](docs/commands/transaction.md) - Commands relating to Lisk Core transactions.
 - [`lisk-core warranty`](docs/commands/warranty.md) - Displays warranty notice.
 
 <!-- commandsstop -->

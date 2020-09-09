@@ -1,6 +1,6 @@
 # `lisk-core transaction`
 
-Commands relating to Lisk transactions.
+Commands relating to Lisk Core transactions.
 
 - [`lisk-core transaction:create NETWORKIDENTIFIER FEE NONCE MODULEID ASSETID`](#lisk-core-transactioncreate-networkidentifier-fee-nonce-moduleid-assetid)
 - [`lisk-core transaction:get ID`](#lisk-core-transactionget-id)
