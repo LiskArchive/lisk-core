@@ -149,7 +149,7 @@ export default class SignCommand extends BaseIPCCommand {
 				passphrase,
 			);
 		} else if (offline) {
-			if (!mandatoryKeys.length || !optionalKeys.length) {
+			if (!mandatoryKeys.length && !optionalKeys.length) {
 				throw new Error(
 					'--mandatory-keys or --optional-keys flag must be specified to sign transaction from multi signature account.',
 				);
