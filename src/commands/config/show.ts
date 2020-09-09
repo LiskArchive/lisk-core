@@ -60,7 +60,7 @@ export default class ShowCommand extends Command {
 
 		// Read network genesis block and config from the folder
 		const { configFilePath } = getNetworkConfigFilesPath(dataPath, network);
-		// Get config from network config or config specifeid
+		// Get config from network config or config specified
 		let config = await fs.readJSON(configFilePath);
 
 		if (flags.config) {

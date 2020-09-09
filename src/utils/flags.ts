@@ -72,4 +72,15 @@ export const flags: FlagMap = {
 		description:
 			'Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.',
 	},
+	offline: {
+		description: 'Specify whether to connect to a local node or not.',
+	},
+	network: {
+		char: 'n',
+		description:
+			'Default network config to use. Environment variable "LISK_NETWORK" can also be used.',
+	},
+	networkIdentifier: {
+		description: 'Network identifier defined for the network or main | test for the Lisk Network.',
+	},
 };

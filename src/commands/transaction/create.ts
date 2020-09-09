@@ -19,13 +19,12 @@ import { codec, cryptography, transactions, validator } from 'lisk-sdk';
 import BaseIPCCommand from '../../base_ipc';
 import { flags as commonFlags } from '../../utils/flags';
 import { getAssetFromPrompt, getPassphraseFromPrompt } from '../../utils/reader';
+import { DEFAULT_NETWORK } from '../../constants';
 
 interface Args {
-	readonly nonce: string;
-	readonly fee: string;
 	readonly moduleID: number;
 	readonly assetID: number;
-	readonly networkIdentifier: string;
+	readonly fee: string;
 }
 
 export default class CreateCommand extends BaseIPCCommand {
@@ -34,22 +33,6 @@ export default class CreateCommand extends BaseIPCCommand {
 		'Creates a transaction which can be broadcasted to the network. Note: fee and amount should be in Beddows!!';
 
 	static args = [
-		{
-			name: 'networkIdentifier',
-			required: true,
-			description:
-				'Network identifier defined for the network or main | test for the Lisk Network.',
-		},
-		{
-			name: 'fee',
-			required: true,
-			description: 'Transaction fee in Beddows.',
-		},
-		{
-			name: 'nonce',
-			required: true,
-			description: 'Nonce of the transaction.',
-		},
 		{
 			name: 'moduleID',
 			required: true,
@@ -60,20 +43,29 @@ export default class CreateCommand extends BaseIPCCommand {
 			required: true,
 			description: 'Register transaction asset id.',
 		},
+		{
+			name: 'fee',
+			required: true,
+			description: 'Transaction fee in Beddows.',
+		},
 	];
 
 	static examples = [
-		'transaction:create 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 100000000 2 2 0 --asset=\'{"amount":100000000,"recipientAddress":"ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815","data":"send token"}\'',
-		'transaction:create 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 100000000 2 2 0',
+		'transaction:create 2 0 100000000 --asset=\'{"amount":100000000,"recipientAddress":"ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815","data":"send token"}\'',
+		'transaction:create 2 0 100000000 --offline --network mainnet --network-identifier 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 --nonce 1 --asset=\'{"amount":100000000,"recipientAddress":"ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815","data":"send token"}\'',
 	];
 
 	static flags = {
 		...BaseIPCCommand.flags,
-		passphrase: flagParser.string(commonFlags.passphrase),
+		'network-identifier': flagParser.string(commonFlags.networkIdentifier),
+		nonce: flagParser.string({
+			description: 'Nonce of the transaction.',
+		}),
 		'no-signature': flagParser.boolean({
 			description:
 				'Creates the transaction without a signature. Your passphrase will therefore not be required',
 		}),
+		passphrase: flagParser.string(commonFlags.passphrase),
 		'sender-publickey': flagParser.string({
 			char: 's',
 			description:
@@ -87,27 +79,62 @@ export default class CreateCommand extends BaseIPCCommand {
 			char: 'j',
 			description: 'Print the transaction in JSON format',
 		}),
+		offline: flagParser.boolean({
+			...commonFlags.offline,
+			hidden: false,
+			default: false,
+		}),
+		network: flagParser.string({
+			...commonFlags.network,
+			default: DEFAULT_NETWORK,
+			hidden: false,
+		}),
 	};
 
 	async run(): Promise<void> {
 		const {
 			args,
 			flags: {
+				'data-path': dataPath,
 				passphrase: passphraseSource,
 				'no-signature': noSignature,
 				'sender-publickey': senderPublicKeySource,
 				asset: assetSource,
 				json,
+				'network-identifier': networkIdentifierSource,
+				nonce: nonceSource,
+				offline,
 			},
 		} = this.parse(CreateCommand);
-		const { fee, nonce, networkIdentifier, moduleID, assetID } = args as Args;
+		const { fee, moduleID, assetID } = args as Args;
+
+		if (offline && dataPath) {
+			throw new Error(
+				'Flag: --data-path should not be specified while creating transaction offline.',
+			);
+		}
+
+		if (!senderPublicKeySource && noSignature) {
+			throw new Error('Sender publickey must be specified when no-signature flags is used.');
+		}
+
+		if (offline && !networkIdentifierSource) {
+			throw new Error(
+				'Flag: --network-identifier must be specified while creating transaction offline.',
+			);
+		}
+
+		if (offline && !nonceSource) {
+			throw new Error('Flag: --nonce must be specified while creating transaction offline.');
+		}
+
 		const assetSchema = this._schema.transactionsAssets.find(
 			as => as.moduleID === Number(moduleID) && as.assetID === Number(assetID),
 		);
 
 		if (!assetSchema) {
 			throw new Error(
-				`Transaction moduleID:${moduleID} with assetID:${assetID} is not registered in the application`,
+				`Transaction moduleID:${moduleID} with assetID:${assetID} is not registered in the application.`,
 			);
 		}
 
@@ -121,14 +148,22 @@ export default class CreateCommand extends BaseIPCCommand {
 			throw new validator.LiskValidationError([...assetErrors]);
 		}
 
-		if (!senderPublicKeySource && noSignature) {
-			throw new Error('Sender publickey must be specified when no-signature flags is used');
+		let networkIdentifier = networkIdentifierSource as string;
+		if (!offline) {
+			const nodeInfo = await this._channel.invoke<Record<string, unknown>>('app:getNodeInfo');
+			networkIdentifier = nodeInfo.networkIdentifier as string;
+		}
+
+		if (!offline && networkIdentifierSource && networkIdentifier !== networkIdentifierSource) {
+			throw new Error(
+				`Invalid networkIdentifier specified, actual: ${networkIdentifierSource}, expected: ${networkIdentifier}.`,
+			);
 		}
 
 		const incompleteTransaction: Record<string, unknown> = {
 			moduleID: Number(moduleID),
 			assetID: Number(assetID),
-			nonce,
+			nonce: nonceSource,
 			fee,
 			senderPublicKey: senderPublicKeySource,
 			asset: assetObject,
@@ -140,6 +175,28 @@ export default class CreateCommand extends BaseIPCCommand {
 			passphrase = passphraseSource ?? (await getPassphraseFromPrompt('passphrase', true));
 			const { publicKey } = cryptography.getAddressAndPublicKeyFromPassphrase(passphrase);
 			incompleteTransaction.senderPublicKey = publicKey.toString('hex');
+		}
+
+		if (!offline) {
+			const address = cryptography.getAddressFromPublicKey(
+				Buffer.from(incompleteTransaction.senderPublicKey as string, 'hex'),
+			);
+			const account = await this._channel.invoke<string>('app:getAccount', {
+				address: address.toString('hex'),
+			});
+
+			const {
+				sequence: { nonce },
+			} = this._codec.decodeAccount(account) as { sequence: { nonce: string } };
+			incompleteTransaction.nonce = nonce;
+		}
+
+		if (!offline && nonceSource && incompleteTransaction.nonce !== nonceSource) {
+			throw new Error(
+				`Invalid nonce specified, actual: ${nonceSource}, expected: ${
+					incompleteTransaction.nonce as string
+				}`,
+			);
 		}
 
 		const transactionObject = this._codec.transactionFromJSON(assetSchema.schema, {

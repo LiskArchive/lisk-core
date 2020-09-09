@@ -100,7 +100,7 @@ describe('start', () => {
 			});
 	});
 
-	describe('when unknown network is specidied', () => {
+	describe('when unknown network is specified', () => {
 		setupTest()
 			.command(['start', '--network=unknown'])
 			.catch(err =>
