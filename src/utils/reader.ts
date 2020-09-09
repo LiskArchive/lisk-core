@@ -13,7 +13,7 @@
  *
  */
 
-import * as liskPassphrase from '@liskhq/lisk-passphrase';
+import { passphrase as liskPassphrase } from 'lisk-sdk';
 import * as inquirer from 'inquirer';
 
 import { ValidationError } from './error';

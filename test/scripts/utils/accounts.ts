@@ -12,8 +12,10 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-import { Mnemonic } from '@liskhq/lisk-passphrase';
+import { passphrase as liskPassphrase } from 'lisk-sdk';
 import { cryptography } from 'lisk-sdk';
+
+const { Mnemonic } = liskPassphrase;
 
 export interface PassphraseAndKeys {
 	passphrase: string;

@@ -13,8 +13,9 @@
  *
  */
 
-import { Mnemonic } from '@liskhq/lisk-passphrase';
-import { cryptography } from 'lisk-sdk';
+import { passphrase as liskPassphrase, cryptography } from 'lisk-sdk';
+
+const { Mnemonic } = liskPassphrase;
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const createAccount = () => {
