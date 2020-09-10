@@ -8,8 +8,8 @@ services:
     volumes:
       - lisk-data:/home/lisk/.lisk
     ports:
-      - ${ENV_LISK_HTTP_PORT}:${ENV_LISK_HTTP_PORT}
-      - ${ENV_LISK_WS_PORT}:${ENV_LISK_WS_PORT}
+      - ${ENV_LISK_HTTP_API_PORT}:${ENV_LISK_HTTP_API_PORT}
+      - ${ENV_LISK_PORT}:${ENV_LISK_PORT}
     networks:
       - lisk
     restart: unless-stopped
@@ -17,7 +17,6 @@ services:
     environment:
       - LISK_FILE_LOG_LEVEL=none
       - LISK_CONSOLE_LOG_LEVEL=info
-      - LISK_CACHE_ENABLED=false
 
 networks:
   lisk:
