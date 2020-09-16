@@ -19,7 +19,7 @@ import { ReclaimAsset } from './transaction_assets/reclaim_asset';
 
 export class LegacyAccountModule extends BaseModule {
 	public name = 'legacyAccount';
-	public id = 6;
+	public id = 1000;
 	public transactionAssets = [new ReclaimAsset()];
 
 	// eslint-disable-next-line class-methods-use-this
