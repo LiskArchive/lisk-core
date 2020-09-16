@@ -76,13 +76,3 @@ services:
       - LISK_API_WHITELIST=127.0.0.1,172.17.0.1
       - LISK_FORGING_WHITELIST=127.0.0.1,172.17.0.1
 ```
-
-## For advanced users
-
-### Use redis for caching
-
-Caching using redis can be enabled with the `docker-compose.redis.yml` file, e.g.:
-
-`docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.redis.yml up -d`
-
-Note that this could be done in the `docker-compose.override.yml` as well.

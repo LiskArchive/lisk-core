@@ -2,13 +2,9 @@
 # You should never need to modify it.
 version: '3'
 services:
-  db-task:
-    image: postgres:10-alpine
-    networks:
-      - lisk
-    environment:
-      - PGUSER=${ENV_LISK_DB_USER}
-      - PGPASSWORD=${ENV_LISK_DB_PASSWORD}
-      - PGDATABASE=${ENV_LISK_DB_DATABASE}
-      - PGHOST=db
+  lisk-task:
+    image: lisk/core:${ENV_LISK_VERSION}
+    volumes:
+      - lisk-data:/home/lisk/.lisk
+    entrypoint: /home/lisk/node_modules/.bin/lisk-core
     command: /bin/true

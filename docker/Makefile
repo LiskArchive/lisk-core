@@ -1,42 +1,44 @@
-.PHONY: clean coldstart mrproper up
+.PHONY: build clean coldstart mrproper up
 all: up
 
-lisk_net := $(shell grep ^ENV_LISK_NETWORK= .env |tail -n 1 |awk -F = '{ gsub("net$$", ""); print $$2 }')
-ifeq ($(lisk_net),)
+lisk_network := $(shell grep ^ENV_LISK_NETWORK= .env |tail -n 1 |awk -F = '{ print $$2 }')
+ifeq ($(lisk_network),)
 $(error .env file does not exist or ENV_LISK_NETWORK variable is not set.)
 endif
-lisk_db := $(shell grep ^ENV_LISK_DB_DATABASE= .env |tail -n 1 |awk -F = '{ gsub("net$$", ""); print $$2 }')
-ifeq ($(lisk_net),)
+ifeq ($(lisk_network),)
 $(error .env file does not exist or ENV_LISK_DB_DATABASE variable is not set.)
-endif
-
-%blockchain.db.gz:
-ifeq ($(lisk_net),$(filter $(lisk_net),main test))
-	curl --output $(lisk_net)_blockchain.db.gz https://downloads.lisk.io/lisk/$(lisk_net)/blockchain.db.gz
-else
-	touch $(lisk_net)_blockchain.db
-	gzip $(lisk_net)_blockchain.db
 endif
 
 up:
 	docker-compose up -d
 
 compose := docker-compose -f docker-compose.yml -f docker-compose.make.yml
-coldstart: $(lisk_net)_blockchain.db.gz up
+coldstart: up
 	docker-compose stop lisk
-	docker-compose start db
-	$(compose) run --rm db-task dropdb --if-exists $(lisk_db)
-	$(compose) run --rm db-task createdb $(lisk_db)
-	gzip --decompress --to-stdout $(lisk_net)_blockchain.db.gz |$(compose) run --rm db-task psql >/dev/null
+ifeq ($(lisk_network),$(filter $(lisk_network),mainnet testnet betanet))
+	$(compose) run --rm --entrypoint /home/lisk/coldstart.sh lisk-task $(lisk_network)
+else
+	# workaround for https://github.com/LiskHQ/lisk-sdk/issues/5798
+	$(compose) run --rm --entrypoint /bin/rm lisk-task -f /home/lisk/.lisk/default/tmp/pids/controller.pid
+	$(compose) run --rm lisk-task blockchain:reset --yes
+endif
 	docker-compose start lisk
-
-clean:
-	rm -f *blockchain.db.gz
 
 LOGS_TAIL_LINES?=1000
 LOGS_BUNYAN_OPTIONS=-o short
 logs:
 	docker logs --tail=$(LOGS_TAIL_LINES) --follow $$( docker-compose ps --quiet lisk ) |docker-compose exec -T lisk npx bunyan $(LOGS_BUNYAN_OPTIONS)
 
-mrproper: clean
+# for backwards compatibility
+clean:
+	true
+
+mrproper:
 	docker-compose down --volumes --remove-orphans
+
+
+ifeq ($(CORE_VERSION),)
+CORE_VERSION := $(shell jq --raw-output .version ../package.json )
+endif
+build:
+	docker build --build-arg REGISTRY_URL=https://npm.lisk.io --build-arg NODEJS_VERSION=$(shell cat ../.nvmrc ) --build-arg CORE_VERSION=$(CORE_VERSION) -t=lisk/core:$(CORE_VERSION) .
