@@ -50,13 +50,13 @@ export default class ExportCommand extends Command {
 		await tar.create(
 			{
 				gzip: true,
-				file: join(exportPath, 'blockchain.db.gz'),
+				file: join(exportPath, 'blockchain.db.tar.gz'),
 				cwd: join(dataPath, 'data'),
 			},
 			['blockchain.db'],
 		);
 
 		this.log('Export completed:');
-		this.log(`   ${getFullPath(exportPath)}`);
+		this.log(`   ${getFullPath(exportPath)}/blockchain.db.tar.gz`);
 	}
 }
