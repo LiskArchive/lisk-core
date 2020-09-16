@@ -38,7 +38,7 @@ describe('blockchain:export', () => {
 				expect(tarCreateStub).to.have.been.calledWithExactly(
 					{
 						cwd: join(defaultDataPath, 'data'),
-						file: join(process.cwd(), 'blockchain.db.gz'),
+						file: join(process.cwd(), 'blockchain.db.tar.gz'),
 						gzip: true,
 					},
 					['blockchain.db'],
@@ -54,7 +54,7 @@ describe('blockchain:export', () => {
 				expect(tarCreateStub).to.have.been.calledWithExactly(
 					{
 						cwd: join('/my/app/', 'data'),
-						file: join(process.cwd(), 'blockchain.db.gz'),
+						file: join(process.cwd(), 'blockchain.db.tar.gz'),
 						gzip: true,
 					},
 					['blockchain.db'],
@@ -70,7 +70,7 @@ describe('blockchain:export', () => {
 				expect(tarCreateStub).to.have.been.calledWithExactly(
 					{
 						cwd: join(defaultDataPath, 'data'),
-						file: join('/my/dir/', 'blockchain.db.gz'),
+						file: join('/my/dir/', 'blockchain.db.tar.gz'),
 						gzip: true,
 					},
 					['blockchain.db'],
