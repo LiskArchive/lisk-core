@@ -15,6 +15,9 @@ pipeline {
 		stage('Checkout SCM') {
 			steps {
 				cleanWs()
+				dir('oclif-dev') {
+					checkout([$class: 'GitSCM', branches: [[name: "master" ]], userRemoteConfigs: [[url: 'https://github.com/LiskHQ/oclif-dev']]])
+				}
 				dir('lisk-sdk') {
 					checkout([$class: 'GitSCM', branches: [[name: "${params.COMMITISH_SDK}" ]], userRemoteConfigs: [[url: 'https://github.com/LiskHQ/lisk-sdk']]])
 				}
@@ -28,6 +31,20 @@ pipeline {
 						exit 1
 					fi
 					'''
+				}
+			}
+		}
+		stage('Build oclif-dev') {
+			steps {
+				dir('oclif-dev') {
+					nvm(readFile(".nvmrc").trim()) {
+						sh '''
+						npm install --global yarn
+						yarn
+						yarn build
+						npm i -g
+						'''
+					}
 				}
 			}
 		}
@@ -76,7 +93,7 @@ pipeline {
 			steps {
 				dir('lisk-core') {
 					nvm(readFile(".nvmrc").trim()) {
-						sh './node_modules/.bin/oclif-dev pack --targets=linux-x64'
+						sh 'oclif-dev pack --targets=linux-x64'
 					}
 				}
 			}
