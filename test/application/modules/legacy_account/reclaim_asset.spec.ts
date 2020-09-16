@@ -78,7 +78,7 @@ describe('ReclaimAsset', () => {
 		});
 
 		it('should have valid name', () => {
-			expect(reclaimAsset.name).to.equal('reclaim');
+			expect(reclaimAsset.name).to.equal('reclaimLSK');
 		});
 
 		it('should have valid schema', () => {

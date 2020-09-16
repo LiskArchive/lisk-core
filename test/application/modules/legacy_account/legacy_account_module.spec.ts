@@ -73,7 +73,7 @@ describe('LegacyAccountModule', () => {
 
 	describe('constructor', () => {
 		it('should have valid id', () => {
-			expect(legacyAccountModule.id).to.equal(6);
+			expect(legacyAccountModule.id).to.equal(1000);
 		});
 
 		it('should have valid name', () => {
