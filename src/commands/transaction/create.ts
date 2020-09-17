@@ -191,7 +191,7 @@ export default class CreateCommand extends BaseIPCCommand {
 			incompleteTransaction.nonce = nonce;
 		}
 
-		if (!offline && nonceSource && incompleteTransaction.nonce !== nonceSource) {
+		if (!offline && nonceSource && BigInt(incompleteTransaction.nonce) > BigInt(nonceSource)) {
 			throw new Error(
 				`Invalid nonce specified, actual: ${nonceSource}, expected: ${
 					incompleteTransaction.nonce as string

@@ -588,7 +588,30 @@ describe('transaction:create command', () => {
 					});
 			});
 
-			describe('transaction:create 2 0 100000000 ', () => {
+			describe('transaction:create 2 0 100000000 --nonce=999', () => {
+				setupTest()
+					.command(['transaction:create', '2', '0', '100000000', '--nonce=999'])
+					.it('should prompt user for asset and passphrase.', () => {
+						expect(promptAssetStub).to.be.calledOnce;
+						expect(promptAssetStub).to.be.calledWithExactly([
+							{ message: 'Please enter: amount: ', name: 'amount', type: 'input' },
+							{
+								message: 'Please enter: recipientAddress: ',
+								name: 'recipientAddress',
+								type: 'input',
+							},
+							{ message: 'Please enter: data: ', name: 'data', type: 'input' },
+						]);
+						expect(readerUtils.getPassphraseFromPrompt).to.be.calledWithExactly('passphrase', true);
+						expect(printJSONStub).to.be.calledOnce;
+						expect(printJSONStub).to.be.calledWithExactly({
+							transaction:
+								'0802100018002080c2d72f2a200fe9a3f1a21b5530f27f87a414b549e79a940bf24fdf2b2f05e7f22aeeecc86a322408641214ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e3a403cc8c8c81097fe59d9df356b3c3f1dd10f619bfabb54f5d187866092c67e0102c64dbe24f357df493cc7ebacdd2e55995db8912245b718d88ebf7f4f4ac01f04',
+						});
+					});
+			});
+
+			describe('transaction:create 2 0 100000000', () => {
 				setupTest()
 					.command(['transaction:create', '2', '0', '100000000'])
 					.it('should prompt user for asset and passphrase.', () => {
