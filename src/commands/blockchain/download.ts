@@ -55,7 +55,8 @@ export default class DownloadCommand extends Command {
 		try {
 			await downloadAndValidate(url, dataPath);
 			const checksum = getChecksum(url, dataPath);
-			this.log(`Downloaded verified snapshot: ${checksum}.`);
+			this.log(`Downloaded to path: ${dataPath}.`);
+			this.log(`Verified checksum: ${checksum}.`);
 		} catch (errors) {
 			this.error(
 				Array.isArray(errors) ? errors.map(err => (err as Error).message).join(',') : errors,
