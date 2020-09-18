@@ -30,10 +30,10 @@ export const getApplication = (
 	app.registerModule(LegacyAccountModule);
 
 	if (options.enableHTTPAPI) {
-		app.registerPlugin(HTTPAPIPlugin);
+		app.registerPlugin(HTTPAPIPlugin, { loadAsChildProcess: true });
 	}
 	if (options.enableForger) {
-		app.registerPlugin(ForgerPlugin);
+		app.registerPlugin(ForgerPlugin, { loadAsChildProcess: true });
 	}
 
 	return app;
