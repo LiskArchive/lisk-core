@@ -50,7 +50,7 @@ describe('blockchain:reset', () => {
 				.command(['blockchain:reset'])
 				.catch(error => {
 					expect(error.message).to.equal(
-						`Can't clear db while running application. Application at data path ${defaultDataPath} is running with pid ${pid}.`,
+						`Can't reset db while running application. Application at data path ${defaultDataPath} is running with pid ${pid}.`,
 					);
 				})
 				.it('should log error and return');
@@ -62,7 +62,7 @@ describe('blockchain:reset', () => {
 				.command(['blockchain:reset', '--data-path=/my/app/'])
 				.catch(error => {
 					expect(error.message).to.equal(
-						`Can't clear db while running application. Application at data path /my/app/ is running with pid ${pid}.`,
+						`Can't reset db while running application. Application at data path /my/app/ is running with pid ${pid}.`,
 					);
 				})
 				.it('should log error and return');
@@ -74,7 +74,7 @@ describe('blockchain:reset', () => {
 				.command(['blockchain:reset', '--yes'])
 				.catch(error => {
 					expect(error.message).to.equal(
-						`Can't clear db while running application. Application at data path ${defaultDataPath} is running with pid ${pid}.`,
+						`Can't reset db while running application. Application at data path ${defaultDataPath} is running with pid ${pid}.`,
 					);
 				})
 				.it('should log error and return');
@@ -99,7 +99,7 @@ describe('blockchain:reset', () => {
 					expect(promptStub).to.be.calledWithExactly([
 						{
 							name: 'answer',
-							message: 'Are you sure you want to clear the db?',
+							message: 'Are you sure you want to reset the db?',
 							type: 'list',
 							choices: ['yes', 'no'],
 						},
@@ -131,7 +131,7 @@ describe('blockchain:reset', () => {
 					expect(promptStub).to.be.calledWithExactly([
 						{
 							name: 'answer',
-							message: 'Are you sure you want to clear the db?',
+							message: 'Are you sure you want to reset the db?',
 							type: 'list',
 							choices: ['yes', 'no'],
 						},
