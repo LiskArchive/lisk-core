@@ -19,7 +19,7 @@ import * as sandbox from 'sinon';
 import { homedir } from 'os';
 import { join } from 'path';
 
-const defaultDataPath = join(homedir(), '.lisk', 'default');
+const defaultDataPath = join(homedir(), '.lisk', 'lisk-core');
 
 describe('blockchain:export', () => {
 	const tarCreateStub = sandbox.stub().resolves(true);
