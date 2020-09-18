@@ -66,7 +66,7 @@ export default class StartCommand extends Command {
 			env: 'LISK_PORT',
 		}),
 		'enable-ipc': flagParser.boolean({
-			description: 'Enable IPC communication.',
+			description: 'Enable IPC communication. This will also load up plugins in child process and communicate over IPC.',
 			default: false,
 		}),
 		'console-log': flagParser.string({
