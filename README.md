@@ -57,7 +57,7 @@ $ npm install -g lisk-core
 $ lisk-core COMMAND
 running command...
 $ lisk-core (-v|--version|version)
-lisk-core/3.0.0-debug.2 darwin-x64 node-v12.18.3
+lisk-core/3.0.0-beta.2.0 darwin-x64 node-v12.18.3
 $ lisk-core --help [COMMAND]
 USAGE
   $ lisk-core COMMAND
@@ -74,17 +74,15 @@ USAGE
 - [`lisk-core block`](docs/commands/block.md) - Commands relating to Lisk Core blocks.
 - [`lisk-core blockchain`](docs/commands/blockchain.md) - Commands relating to Lisk Core blockchain data.
 - [`lisk-core config`](docs/commands/config.md) - Commands relating to Lisk Core node configuration.
-- [`lisk-core copyright`](docs/commands/copyright.md) - Displays copyright notice.
 - [`lisk-core forger-info`](docs/commands/forger-info.md) - Commands relating to Lisk Core forger-info data.
 - [`lisk-core forging`](docs/commands/forging.md) - Commands relating to Lisk Core forging.
-- [`lisk-core hash-onion`](docs/commands/hash-onion.md) - Creates hash onion output to be used by forger.
+- [`lisk-core hash-onion`](docs/commands/hash-onion.md) - Create hash onions to be used by the forger.
 - [`lisk-core help`](docs/commands/help.md) - display help for lisk-core
 - [`lisk-core node`](docs/commands/node.md) - Commands relating to Lisk Core node.
 - [`lisk-core passphrase`](docs/commands/passphrase.md) - Commands relating to Lisk Core passphrases.
 - [`lisk-core sdk`](docs/commands/sdk.md) - Commands relating to Lisk SDK development.
-- [`lisk-core start`](docs/commands/start.md) - Start Lisk Core Node with given config parameters
+- [`lisk-core start`](docs/commands/start.md) - Start Lisk Core Node.
 - [`lisk-core transaction`](docs/commands/transaction.md) - Commands relating to Lisk Core transactions.
-- [`lisk-core warranty`](docs/commands/warranty.md) - Displays warranty notice.
 
 <!-- commandsstop -->
 

@@ -7,7 +7,7 @@ Commands relating to Lisk Core forger-info data.
 
 ## `lisk-core forger-info:export`
 
-Export forger data to a given data path
+Export to <FILE>.
 
 ```
 USAGE
@@ -24,11 +24,9 @@ EXAMPLES
   forger-info:export --data-path ./data --output ./my/path/
 ```
 
-_See code: [dist/commands/forger-info/export.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/forger-info/export.ts)_
-
 ## `lisk-core forger-info:import SOURCEPATH`
 
-Export forger data to a given data path
+Import from <FILE>.
 
 ```
 USAGE
@@ -47,5 +45,3 @@ EXAMPLES
   forger-info:import ./my/path
   forger-info:import --data-path ./data --force
 ```
-
-_See code: [dist/commands/forger-info/import.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/forger-info/import.ts)_
