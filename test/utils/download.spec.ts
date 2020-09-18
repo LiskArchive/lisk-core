@@ -50,10 +50,12 @@ describe('download utils', () => {
 	describe('#downloadLiskAndValidate', () => {
 		let readFileSyncStub: SinonStub;
 		let verifyChecksumStub: SinonStub;
+		let getChecksumStub: SinonStub;
 
 		beforeEach(() => {
 			sandbox.stub(downloadUtil, 'download');
 			verifyChecksumStub = sandbox.stub(downloadUtil, 'verifyChecksum');
+			getChecksumStub = sandbox.stub(downloadUtil, 'getChecksum');
 			sandbox
 				.stub(downloadUtil, 'getDownloadedFileInfo')
 				.returns({ fileDir: '', fileName: '', filePath: '' });
@@ -66,9 +68,11 @@ describe('download utils', () => {
 				.returns(
 					'7607d6792843d6003c12495b54e34517a508d2a8622526aff1884422c5478971 tar filename here',
 				);
+			getChecksumStub.returns('valid checksum');
 
 			await downloadUtil.downloadAndValidate(url, outDir);
 			expect(downloadUtil.download).to.be.calledTwice;
+			expect(downloadUtil.getChecksum).to.be.calledOnce;
 			return expect(downloadUtil.getDownloadedFileInfo).to.be.calledOnce;
 		});
 

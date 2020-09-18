@@ -10,7 +10,7 @@ Commands relating to Lisk Core blockchain data.
 
 ## `lisk-core blockchain:download`
 
-Download blockchain data from a provided snapshot.
+Download snapshot from <URL>.
 
 ```
 USAGE
@@ -31,11 +31,9 @@ EXAMPLES
   download --url https://downloads.lisk.io/lisk/mainnet/blockchain.db.gz --output ./downloads
 ```
 
-_See code: [dist/commands/blockchain/download.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/blockchain/download.ts)_
-
 ## `lisk-core blockchain:export`
 
-Export blockchain data for given data path
+Export to <FILE>.
 
 ```
 USAGE
@@ -52,11 +50,9 @@ EXAMPLES
   blockchain:export --data-path ./data --output ./my/path/
 ```
 
-_See code: [dist/commands/blockchain/export.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/blockchain/export.ts)_
-
 ## `lisk-core blockchain:hash`
 
-Generate hash for blockchain data for given data path
+Generate SHA256 hash from <PATH>.
 
 ```
 USAGE
@@ -71,11 +67,9 @@ EXAMPLES
   blockchain:hash --data-path ./data
 ```
 
-_See code: [dist/commands/blockchain/hash.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/blockchain/hash.ts)_
-
 ## `lisk-core blockchain:import FILEPATH`
 
-Import blockchain data for given data path
+Import from <FILE>.
 
 ```
 USAGE
@@ -95,11 +89,9 @@ EXAMPLES
   blockchain:import ./path/to/blockchain.db.gz --data-path ./lisk/
 ```
 
-_See code: [dist/commands/blockchain/import.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/blockchain/import.ts)_
-
 ## `lisk-core blockchain:reset`
 
-Resets the blockchain data.
+Reset the blockchain data.
 
 ```
 USAGE
@@ -116,5 +108,3 @@ EXAMPLES
   blockchain:reset --data-path ./lisk
   blockchain:reset --yes
 ```
-
-_See code: [dist/commands/blockchain/reset.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/blockchain/reset.ts)_

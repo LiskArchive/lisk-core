@@ -25,7 +25,7 @@ interface KeysAsset {
 	optionalKeys: Array<Readonly<string>>;
 }
 export default class SignCommand extends BaseIPCCommand {
-	static description = 'Sign an encoded transaction.';
+	static description = 'Sign encoded transaction.';
 
 	static args = [
 		{

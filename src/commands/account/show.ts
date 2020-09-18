@@ -42,7 +42,7 @@ const processInput = (
 
 export default class ShowCommand extends Command {
 	static description = `
-		Shows account information for a given passphrase.
+		Show account information for a given passphrase.
 	`;
 
 	static examples = ['account:show'];
