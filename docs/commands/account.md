@@ -18,9 +18,6 @@ USAGE
 OPTIONS
   -c, --count=count  [default: 1] Number of accounts to create.
 
-DESCRIPTION
-  Return randomly-generated mnemonic passphrase with its corresponding public/private key pair and Lisk address.
-
 EXAMPLES
   account:create
   account:create --count=3
@@ -62,9 +59,6 @@ OPTIONS
                                - --passphrase='my secret passphrase' (should only be used where security is not
                                important)
 
-DESCRIPTION
-  Show account information for a given passphrase.
-
 EXAMPLE
   account:show
 ```
@@ -79,9 +73,6 @@ USAGE
 
 ARGUMENTS
   ADDRESS  Address in base32 format to validate.
-
-DESCRIPTION
-  Validate base32 address.
 
 EXAMPLE
   account:validate lskoaknq582o6fw7sp82bm2hnj7pzp47mpmbmux2g

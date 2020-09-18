@@ -41,9 +41,7 @@ const createAccount = (prefix: string): AccountInfo => {
 };
 
 export default class CreateCommand extends Command {
-	static description = `
-		Return randomly-generated mnemonic passphrase with its corresponding public/private key pair and Lisk address.
-	`;
+	static description = 'Return randomly-generated mnemonic passphrase with its corresponding public/private key pair and Lisk address.';
 
 	static examples = ['account:create', 'account:create --count=3'];
 
