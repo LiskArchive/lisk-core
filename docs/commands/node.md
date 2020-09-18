@@ -6,7 +6,7 @@ Commands relating to Lisk Core node.
 
 ## `lisk-core node:info`
 
-Gets node information from a running application
+Get node information from a running application.
 
 ```
 USAGE
@@ -22,5 +22,3 @@ EXAMPLES
   node:info
   node:info --data-path ./lisk
 ```
-
-_See code: [dist/commands/node/info.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/node/info.ts)_

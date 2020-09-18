@@ -16,7 +16,7 @@
 import { BaseForgingCommand } from '../../base_forging';
 
 export default class DisableForgingCommand extends BaseForgingCommand {
-	static description = 'Disable forging for given delegate address';
+	static description = 'Disable forging for given delegate address.';
 
 	static examples = [
 		'forging:disable address',

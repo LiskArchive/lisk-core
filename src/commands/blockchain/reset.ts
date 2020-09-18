@@ -20,7 +20,7 @@ import { getPid, isApplicationRunning } from '../../utils/application';
 import { getBlockchainDB } from '../../utils/db';
 
 export default class ResetCommand extends Command {
-	static description = 'Resets the blockchain data.';
+	static description = 'Reset the blockchain data.';
 
 	static examples = [
 		'blockchain:reset',

@@ -35,7 +35,7 @@ import { DEFAULT_NETWORK } from '../constants';
 const LOG_OPTIONS = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
 
 export default class StartCommand extends Command {
-	static description = 'Start Lisk Core Node with given config parameters';
+	static description = 'Start Lisk Core Node.';
 
 	static examples = ['start', 'start --network dev --data-path ./data --log debug'];
 
@@ -81,46 +81,46 @@ export default class StartCommand extends Command {
 			env: 'LISK_FILE_LOG_LEVEL',
 			options: LOG_OPTIONS,
 		}),
-		peers: flagParser.string({
-			env: 'LISK_PEERS',
+		'seed-peers': flagParser.string({
+			env: 'LISK_SEED_PEERS',
 			description:
-				'Seed peers to initially connect to in format of comma separated "ip:port". IP can be DNS name or IPV4 format. Environment variable "LISK_PEERS" can also be used.',
+				'Seed peers to initially connect to in format of comma separated "ip:port". IP can be DNS name or IPV4 format. Environment variable "LISK_SEED_PEERS" can also be used.',
 		}),
-		'enable-http-api': flagParser.boolean({
+		'enable-http-api-plugin': flagParser.boolean({
 			description:
-				'Enable HTTP API Plugin. Environment variable "LISK_ENABLE_HTTP_API" can also be used.',
-			env: 'LISK_ENABLE_HTTP_API',
+				'Enable HTTP API Plugin. Environment variable "LISK_ENABLE_HTTP_API_PLUGIN" can also be used.',
+			env: 'LISK_ENABLE_HTTP_API_PLUGIN',
 			default: false,
 		}),
-		'http-api-port': flagParser.integer({
+		'http-api-plugin-port': flagParser.integer({
 			description:
-				'Port to be used for HTTP API Plugin. Environment variable "LISK_HTTP_API_PORT" can also be used.',
-			env: 'LISK_HTTP_API_PORT',
-			dependsOn: ['enable-http-api'],
+				'Port to be used for HTTP API Plugin. Environment variable "LISK_HTTP_API_PLUGIN_PORT" can also be used.',
+			env: 'LISK_HTTP_API_PLUGIN_PORT',
+			dependsOn: ['enable-http-api-plugin'],
 		}),
-		'http-api-whitelist': flagParser.string({
+		'http-api-plugin-whitelist': flagParser.string({
 			description:
-				'List of IPs in comma separated value to allow the connection. Environment variable "LISK_HTTP_API_WHITELIST" can also be used.',
-			env: 'LISK_HTTP_API_WHITELIST',
-			dependsOn: ['enable-http-api'],
+				'List of IPs in comma separated value to allow the connection. Environment variable "LISK_HTTP_API_PLUGIN_WHITELIST" can also be used.',
+			env: 'LISK_HTTP_API_PLUGIN_WHITELIST',
+			dependsOn: ['enable-http-api-plugin'],
 		}),
-		'enable-forger': flagParser.boolean({
+		'enable-forger-plugin': flagParser.boolean({
 			description:
-				'Enable Forger Plugin. Environment variable "LISK_ENABLE_FORGER" can also be used.',
-			env: 'LISK_ENABLE_FORGER',
+				'Enable Forger Plugin. Environment variable "LISK_ENABLE_FORGER_PLUGIN" can also be used.',
+			env: 'LISK_ENABLE_FORGER_PLUGIN',
 			default: false,
 		}),
-		'forger-port': flagParser.integer({
+		'forger-plugin-port': flagParser.integer({
 			description:
-				'Port to be used for Forger Plugin. Environment variable "LISK_FORGER_PORT" can also be used.',
-			env: 'LISK_FORGER_PORT',
-			dependsOn: ['enable-forger'],
+				'Port to be used for Forger Plugin. Environment variable "LISK_FORGER_PLUGIN_PORT" can also be used.',
+			env: 'LISK_FORGER_PLUGIN_PORT',
+			dependsOn: ['enable-forger-plugin'],
 		}),
-		'forger-whitelist': flagParser.string({
+		'forger-plugin-whitelist': flagParser.string({
 			description:
-				'List of IPs in comma separated value to allow the connection. Environment variable "LISK_FORGER_WHITELIST" can also be used.',
-			env: 'LISK_FORGER_WHITELIST',
-			dependsOn: ['enable-forger'],
+				'List of IPs in comma separated value to allow the connection. Environment variable "LISK_FORGER_PLUGIN_WHITELIST" can also be used.',
+			env: 'LISK_FORGER_PLUGIN_WHITELIST',
+			dependsOn: ['enable-forger-plugin'],
 		}),
 	};
 
@@ -214,11 +214,11 @@ export default class StartCommand extends Command {
 			config.network.port = flags.port;
 		}
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		if (flags.peers) {
+		if (flags['seed-peers']) {
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			config.network = config.network ?? {};
 			config.network.seedPeers = [];
-			const peers = flags.peers.split(',');
+			const peers = flags['seed-peers'].split(',');
 			for (const seed of peers) {
 				const [ip, port] = seed.split(':');
 				if (!ip || !port || Number.isNaN(Number(port))) {

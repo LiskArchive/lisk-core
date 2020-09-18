@@ -19,7 +19,7 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 
 export default class HashOnionCommand extends Command {
-	static description = 'Creates hash onion output to be used by forger.';
+	static description = 'Create hash onions to be used by the forger.';
 
 	static examples = ['hash-onion --count=1000000 --distance=2000'];
 

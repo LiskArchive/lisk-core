@@ -6,7 +6,7 @@ Commands relating to Lisk SDK development.
 
 ## `lisk-core sdk:link TARGETSDKFOLDER`
 
-Link an specific SDK folder given the parameter
+Symlink specific SDK folder during development.
 
 ```
 USAGE
@@ -18,5 +18,3 @@ ARGUMENTS
 EXAMPLE
   sdk:link /sdk/location/
 ```
-
-_See code: [dist/commands/sdk/link.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/sdk/link.ts)_

@@ -21,7 +21,7 @@ interface Args {
 }
 
 export default class GetCommand extends BaseIPCCommand {
-	static description = 'Gets account information for a given address from the blockchain';
+	static description = 'Get account information for a given address.';
 
 	static args = [
 		{

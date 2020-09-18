@@ -1,12 +1,12 @@
 # `lisk-core hash-onion`
 
-Creates hash onion output to be used by forger.
+Create hash onions to be used by the forger.
 
 - [`lisk-core hash-onion`](#lisk-core-hash-onion)
 
 ## `lisk-core hash-onion`
 
-Creates hash onion output to be used by forger.
+Create hash onions to be used by the forger.
 
 ```
 USAGE
@@ -20,5 +20,3 @@ OPTIONS
 EXAMPLE
   hash-onion --count=1000000 --distance=2000
 ```
-
-_See code: [dist/commands/hash-onion.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/hash-onion.ts)_
