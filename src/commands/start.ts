@@ -228,31 +228,31 @@ export default class StartCommand extends Command {
 			}
 		}
 		// Plugin configs
-		if (flags['http-api-port'] !== undefined) {
+		if (flags['http-api-plugin-port'] !== undefined) {
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			config.plugins[HTTPAPIPlugin.alias] = config.plugins[HTTPAPIPlugin.alias] ?? {};
-			config.plugins[HTTPAPIPlugin.alias].port = flags['http-api-port'];
+			config.plugins[HTTPAPIPlugin.alias].port = flags['http-api-plugin-port'];
 		}
-		if (flags['http-api-whitelist'] !== undefined) {
+		if (flags['http-api-plugin-whitelist'] !== undefined) {
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			config.plugins[HTTPAPIPlugin.alias] = config.plugins[HTTPAPIPlugin.alias] ?? {};
-			config.plugins[HTTPAPIPlugin.alias].whiteList = flags['http-api-whitelist'].split(',');
+			config.plugins[HTTPAPIPlugin.alias].whiteList = flags['http-api-plugin-whitelist'].split(',');
 		}
-		if (flags['forger-port'] !== undefined) {
+		if (flags['forger-plugin-port'] !== undefined) {
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			config.plugins[ForgerPlugin.alias] = config.plugins[ForgerPlugin.alias] ?? {};
-			config.plugins[ForgerPlugin.alias].port = flags['forger-port'];
+			config.plugins[ForgerPlugin.alias].port = flags['forger-plugin-port'];
 		}
-		if (flags['forger-whitelist'] !== undefined) {
+		if (flags['forger-plugin-whitelist'] !== undefined) {
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			config.plugins[ForgerPlugin.alias] = config.plugins[ForgerPlugin.alias] ?? {};
-			config.plugins[ForgerPlugin.alias].whiteList = flags['forger-whitelist'].split(',');
+			config.plugins[ForgerPlugin.alias].whiteList = flags['forger-plugin-whitelist'].split(',');
 		}
 		// Get application and start
 		try {
 			const app = getApplication(genesisBlock, config, {
-				enableHTTPAPI: flags['enable-http-api'],
-				enableForger: flags['enable-forger'],
+				enableHTTPAPIPlugin: flags['enable-http-api-plugin'],
+				enableForgerPlugin: flags['enable-forger-plugin'],
 			});
 			await app.run();
 		} catch (errors) {

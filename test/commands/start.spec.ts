@@ -30,11 +30,13 @@ describe('start', () => {
 		logger: {
 			consoleLogLevel: 'error',
 		},
+		plugins: {},
 	});
 	readJSONStub.withArgs('~/.lisk/lisk-core/config/devnet/config.json').resolves({
 		logger: {
 			consoleLogLevel: 'error',
 		},
+		plugins: {},
 	});
 	readJSONStub
 		.withArgs('~/.lisk/lisk-core/config/mainnet/genesis_block.json')
@@ -111,12 +113,66 @@ describe('start', () => {
 			.it('should throw an error');
 	});
 
-	describe('when enable-ipc is specified', () => {
+	describe('when --enable-ipc is specified', () => {
 		setupTest()
 			.command(['start', '--enable-ipc'])
 			.it('should update the config value', () => {
 				const [, usedConfig] = (application.getApplication as sinon.SinonStub).getCall(0).args;
 				expect(usedConfig.ipc.enabled).to.equal(true);
+			});
+	});
+
+	describe('when --enable-http-api-plugin is specified', () => {
+		setupTest()
+			.command(['start', '--enable-http-api-plugin'])
+			.it('should pass this value to configuration', () => {
+				const [, , options] = (application.getApplication as sinon.SinonStub).getCall(0).args;
+				expect(options.enableHTTPAPIPlugin).to.equal(true);
+			});
+	});
+
+	describe('when custom port with --http-api-plugin-port is specified along with --enable-http-api-plugin', () => {
+		setupTest()
+			.command(['start', '--enable-http-api-plugin', '--http-api-plugin-port', '8888'])
+			.it('should update the config value', () => {
+				const [, usedConfig] = (application.getApplication as sinon.SinonStub).getCall(0).args;
+				expect(usedConfig.plugins.httpApi.port).to.equal(8888);
+			});
+	});
+
+	describe('when custom white list with --http-api-plugin-whitelist is specified along with --enable-http-api-plugin', () => {
+		setupTest()
+			.command(['start', '--enable-http-api-plugin', '--http-api-plugin-whitelist', '192.08.0.1:8888,192.08.0.2:8888'])
+			.it('should update the config value', () => {
+				const [, usedConfig] = (application.getApplication as sinon.SinonStub).getCall(0).args;
+				expect(usedConfig.plugins.httpApi.whiteList).to.deep.equal(['192.08.0.1:8888', '192.08.0.2:8888']);
+			});
+	});
+
+	describe('when --enable-forger-plugin is specified', () => {
+		setupTest()
+			.command(['start', '--enable-forger-plugin'])
+			.it('should pass this value to configuration', () => {
+				const [, , options] = (application.getApplication as sinon.SinonStub).getCall(0).args;
+				expect(options.enableForgerPlugin).to.equal(true);
+			});
+	});
+
+	describe('when custom port with --forger-plugin-port is specified along with --enable-forger-plugin', () => {
+		setupTest()
+			.command(['start', '--enable-forger-plugin', '--forger-plugin-port', '8888'])
+			.it('should update the config value', () => {
+				const [, usedConfig] = (application.getApplication as sinon.SinonStub).getCall(0).args;
+				expect(usedConfig.plugins.forger.port).to.equal(8888);
+			});
+	});
+
+	describe('when custom white list with --forger-plugin-whitelist is specified along with --enable-forger-plugin', () => {
+		setupTest()
+			.command(['start', '--enable-forger-plugin', '--forger-plugin-whitelist', '192.08.0.1:8888,192.08.0.2:8888'])
+			.it('should update the config value', () => {
+				const [, usedConfig] = (application.getApplication as sinon.SinonStub).getCall(0).args;
+				expect(usedConfig.plugins.forger.whiteList).to.deep.equal(['192.08.0.1:8888', '192.08.0.2:8888']);
 			});
 	});
 
