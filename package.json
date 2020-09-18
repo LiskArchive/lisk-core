@@ -1,6 +1,6 @@
 {
 	"name": "lisk-core",
-	"version": "3.0.0-beta.2.0",
+	"version": "3.0.0-beta.2.1",
 	"description": "Lisk blockchain application platform",
 	"author": "Lisk Foundation <admin@lisk.io>, lightcurve GmbH <admin@lightcurve.io>",
 	"license": "Apache-2.0",
@@ -28,7 +28,7 @@
 		"lint": "eslint --ext .js,.ts .",
 		"lint:fix": "eslint --fix --ext .js,.ts .",
 		"format": "prettier --write '**/*'",
-		"prepack": "rm -rf lib && tsc -b && oclif-dev manifest && npm shrinkwrap && oclif-dev readme --multi --dir=docs/commands",
+		"prepack": "oclif-dev manifest && npm shrinkwrap && oclif-dev readme --multi --dir=docs/commands",
 		"prebuild": "if test -d dist; then rm -r dist; fi; rm -f tsconfig.tsbuildinfo",
 		"build": "tsc",
 		"test": "mocha test --exclude 'test/scripts/**'",
@@ -99,7 +99,7 @@
 		"@oclif/plugin-help": "3.1.0",
 		"fs-extra": "9.0.1",
 		"inquirer": "7.3.2",
-		"lisk-sdk": "5.0.0-alpha.0",
+		"lisk-sdk": "5.0.0-alpha.1",
 		"tar": "6.0.2",
 		"tslib": "1.13.0",
 		"axios": "0.19.2"

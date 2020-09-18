@@ -42,7 +42,7 @@ pipeline {
 						npm install --global yarn
 						yarn
 						yarn build
-						npm install --global
+						yarn global add
 						'''
 					}
 				}
