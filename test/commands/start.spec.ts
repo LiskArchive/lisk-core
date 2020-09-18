@@ -142,10 +142,18 @@ describe('start', () => {
 
 	describe('when custom white list with --http-api-plugin-whitelist is specified along with --enable-http-api-plugin', () => {
 		setupTest()
-			.command(['start', '--enable-http-api-plugin', '--http-api-plugin-whitelist', '192.08.0.1:8888,192.08.0.2:8888'])
+			.command([
+				'start',
+				'--enable-http-api-plugin',
+				'--http-api-plugin-whitelist',
+				'192.08.0.1:8888,192.08.0.2:8888',
+			])
 			.it('should update the config value', () => {
 				const [, usedConfig] = (application.getApplication as sinon.SinonStub).getCall(0).args;
-				expect(usedConfig.plugins.httpApi.whiteList).to.deep.equal(['192.08.0.1:8888', '192.08.0.2:8888']);
+				expect(usedConfig.plugins.httpApi.whiteList).to.deep.equal([
+					'192.08.0.1:8888',
+					'192.08.0.2:8888',
+				]);
 			});
 	});
 
@@ -169,10 +177,18 @@ describe('start', () => {
 
 	describe('when custom white list with --forger-plugin-whitelist is specified along with --enable-forger-plugin', () => {
 		setupTest()
-			.command(['start', '--enable-forger-plugin', '--forger-plugin-whitelist', '192.08.0.1:8888,192.08.0.2:8888'])
+			.command([
+				'start',
+				'--enable-forger-plugin',
+				'--forger-plugin-whitelist',
+				'192.08.0.1:8888,192.08.0.2:8888',
+			])
 			.it('should update the config value', () => {
 				const [, usedConfig] = (application.getApplication as sinon.SinonStub).getCall(0).args;
-				expect(usedConfig.plugins.forger.whiteList).to.deep.equal(['192.08.0.1:8888', '192.08.0.2:8888']);
+				expect(usedConfig.plugins.forger.whiteList).to.deep.equal([
+					'192.08.0.1:8888',
+					'192.08.0.2:8888',
+				]);
 			});
 	});
 
