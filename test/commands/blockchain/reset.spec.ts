@@ -21,7 +21,7 @@ import { join } from 'path';
 import * as appUtils from '../../../src/utils/application';
 import * as dbUtils from '../../../src/utils/db';
 
-const defaultDataPath = join(homedir(), '.lisk', 'default');
+const defaultDataPath = join(homedir(), '.lisk', 'lisk-core');
 
 describe('blockchain:reset', () => {
 	const pid = 56869;

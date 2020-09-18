@@ -26,21 +26,21 @@ import pJSON = require('../../package.json');
 
 describe('start', () => {
 	const readJSONStub = sandbox.stub();
-	readJSONStub.withArgs('~/.lisk/default/config/mainnet/config.json').resolves({
+	readJSONStub.withArgs('~/.lisk/lisk-core/config/mainnet/config.json').resolves({
 		logger: {
 			consoleLogLevel: 'error',
 		},
 	});
-	readJSONStub.withArgs('~/.lisk/default/config/devnet/config.json').resolves({
+	readJSONStub.withArgs('~/.lisk/lisk-core/config/devnet/config.json').resolves({
 		logger: {
 			consoleLogLevel: 'error',
 		},
 	});
 	readJSONStub
-		.withArgs('~/.lisk/default/config/mainnet/genesis_block.json')
+		.withArgs('~/.lisk/lisk-core/config/mainnet/genesis_block.json')
 		.resolves(devnetGenesisBlock);
 	readJSONStub
-		.withArgs('~/.lisk/default/config/devnet/genesis_block.json')
+		.withArgs('~/.lisk/lisk-core/config/devnet/genesis_block.json')
 		.resolves(devnetGenesisBlock);
 	const readdirSyncStub = sandbox.stub();
 	readdirSyncStub.withArgs(path.join(__dirname, '../../config')).returns(['mainnet', 'devnet']);
@@ -75,7 +75,7 @@ describe('start', () => {
 				] = (application.getApplication as sinon.SinonStub).getCall(0).args;
 				expect(usedGenesisBlock.header.id).to.eql(devnetGenesisBlock.header.id);
 				expect(usedConfig.version).to.equal(pJSON.version);
-				expect(usedConfig.label).to.equal('default');
+				expect(usedConfig.label).to.equal('lisk-core');
 			});
 	});
 
@@ -84,7 +84,7 @@ describe('start', () => {
 			.command(['start', '-n', 'devnet'])
 			.catch(err => {
 				expect(err.message).to.contain(
-					'Datapath ~/.lisk/default already contains configs for mainnet.',
+					'Datapath ~/.lisk/lisk-core already contains configs for mainnet.',
 				);
 			})
 			.it('should fail with already existing config');
@@ -94,7 +94,7 @@ describe('start', () => {
 		setupTest()
 			.command(['start', '-n', 'devnet', '--overwrite-config'])
 			.it('should delete the mainnet config and save the devnet config', () => {
-				expect(fs.ensureDirSync).to.have.been.calledWith('~/.lisk/default/config');
+				expect(fs.ensureDirSync).to.have.been.calledWith('~/.lisk/lisk-core/config');
 				expect(fs.removeSync).to.have.been.calledOnce;
 				expect(fs.copyFileSync).to.have.been.calledTwice;
 			});

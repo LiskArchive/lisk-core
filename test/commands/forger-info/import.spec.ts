@@ -21,7 +21,7 @@ import * as path from 'path';
 import { getForgerDBPath } from '../../../src/utils/path';
 import * as downloadUtils from '../../../src/utils/download';
 
-const defaultDataPath = path.join(homedir(), '.lisk', 'default');
+const defaultDataPath = path.join(homedir(), '.lisk', 'lisk-core');
 const defaultForgerDBPath = getForgerDBPath(defaultDataPath);
 const pathToForgerGzip = '/path/to/forger.db.gz';
 
