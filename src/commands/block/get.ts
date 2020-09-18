@@ -57,7 +57,7 @@ export default class GetCommand extends BaseIPCCommand {
 				? errors.map(err => (err as Error).message).join(',')
 				: errors;
 
-			if (/^Specified key block:id:(.*)does not exist/.test((errors as Error).message)) {
+			if (/^Specified key block(.*)does not exist/.test((errors as Error).message)) {
 				if (arg) {
 					this.error('Block with given id or height was not found');
 				}
