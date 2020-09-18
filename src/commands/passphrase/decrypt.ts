@@ -42,7 +42,7 @@ export default class DecryptCommand extends Command {
 	];
 
 	static description =
-		'Decrypts your secret passphrase using the password which was provided at the time of encryption.';
+		'Decrypt secret passphrase using the password provided at the time of encryption.';
 
 	static examples = [
 		'passphrase:decrypt "iterations=1000000&cipherText=9b1c60&iv=5c8843f52ed3c0f2aa0086b0&salt=2240b7f1aa9c899894e528cf5b600e9c&tag=23c01112134317a63bcf3d41ea74e83b&version=1"',

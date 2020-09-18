@@ -21,8 +21,7 @@ interface Args {
 }
 
 export default class GetCommand extends BaseIPCCommand {
-	static description =
-		'Returns a transaction information for a given transaction ID from the blockchain';
+	static description = 'Get transaction from local node by ID.';
 
 	static args = [
 		{

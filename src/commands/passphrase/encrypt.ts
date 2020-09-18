@@ -37,7 +37,7 @@ const processInputs = (passphrase: string, password: string, outputPublicKey: bo
 };
 
 export default class EncryptCommand extends Command {
-	static description = 'Encrypts your secret passphrase under a password.';
+	static description = 'Encrypt secret passphrase using password.';
 
 	static examples = ['passphrase:encrypt'];
 

@@ -24,7 +24,7 @@ import {
 import { flags as commonFlags } from '../../utils/flags';
 
 export default class ShowCommand extends Command {
-	static description = 'Show the config used to run an application on data path';
+	static description = 'Show application config.';
 
 	static examples = ['config:show', 'config:show --config ./custom-config.json --data-path ./data'];
 

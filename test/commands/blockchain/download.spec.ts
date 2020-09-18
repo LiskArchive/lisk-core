@@ -24,6 +24,7 @@ const SNAPSHOT_URL = 'https://downloads.lisk.io/lisk/mainnet/blockchain.db.gz';
 describe('blockchain:download', () => {
 	const dataPath = process.cwd();
 	const downloadAndValidateStub = sandbox.stub().resolves(undefined);
+	const getChecksumStub = sandbox.stub().resolves('checksum');
 
 	const setupTest = () =>
 		test
@@ -35,6 +36,7 @@ describe('blockchain:download', () => {
 				} as Application),
 			)
 			.stub(downloadUtils, 'downloadAndValidate', downloadAndValidateStub)
+			.stub(downloadUtils, 'getChecksum', getChecksumStub)
 			.stdout();
 
 	afterEach(() => {

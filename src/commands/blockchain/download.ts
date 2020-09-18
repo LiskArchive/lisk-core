@@ -16,11 +16,11 @@ import { Command, flags as flagParser } from '@oclif/command';
 import { NETWORK, RELEASE_URL, DEFAULT_NETWORK } from '../../constants';
 import { liskSnapshotUrl } from '../../utils/commons';
 import { getFullPath } from '../../utils/path';
-import { downloadAndValidate } from '../../utils/download';
+import { downloadAndValidate, getChecksum } from '../../utils/download';
 import { flags as commonFlags } from '../../utils/flags';
 
 export default class DownloadCommand extends Command {
-	static description = 'Download blockchain data from a provided snapshot.';
+	static description = 'Download snapshot from <URL>.';
 
 	static examples = [
 		'download',
@@ -54,7 +54,8 @@ export default class DownloadCommand extends Command {
 
 		try {
 			await downloadAndValidate(url, dataPath);
-			this.log('Download complete.');
+			const checksum = getChecksum(url, dataPath);
+			this.log(`Downloaded verified snapshot: ${checksum}.`);
 		} catch (errors) {
 			this.error(
 				Array.isArray(errors) ? errors.map(err => (err as Error).message).join(',') : errors,

@@ -181,17 +181,18 @@ describe('start', () => {
 			});
 	});
 
-	describe('when peer is specified', () => {
+	describe('when seed peer is specified', () => {
 		setupTest()
-			.command(['start', '--peers=localhost:12234'])
+			.command(['start', '--seed-peers=localhost:12234'])
 			.it('should update the config value', () => {
 				const [, usedConfig] = (application.getApplication as sinon.SinonStub).getCall(0).args;
 				expect(usedConfig.network.seedPeers).to.eql([{ ip: 'localhost', port: 12234 }]);
 			});
 
 		setupTest()
-			.command(['start', '--peers=localhost:12234,74.49.3.35:2238'])
-			.it('should update the config value', () => {
+			.env({ LISK_SEED_PEERS: 'localhost:12234,74.49.3.35:2238' })
+			.command(['start'])
+			.it('should update the config value using env variable', () => {
 				const [, usedConfig] = (application.getApplication as sinon.SinonStub).getCall(0).args;
 				expect(usedConfig.network.seedPeers).to.eql([
 					{ ip: 'localhost', port: 12234 },

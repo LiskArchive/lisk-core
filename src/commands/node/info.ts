@@ -15,7 +15,7 @@
 import BaseIPCCommand from '../../base_ipc';
 
 export default class InfoCommand extends BaseIPCCommand {
-	static description = 'Gets node information from a running application';
+	static description = 'Get node information from a running application.';
 
 	static examples = ['node:info', 'node:info --data-path ./lisk'];
 

@@ -20,7 +20,7 @@ import { getBlockchainDBPath, getDefaultPath, getFullPath } from '../../utils/pa
 import { extract } from '../../utils/download';
 
 export default class ImportCommand extends Command {
-	static description = 'Import blockchain data for given data path';
+	static description = 'Import from <FILE>.';
 
 	static args = [
 		{

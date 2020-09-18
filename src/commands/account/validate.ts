@@ -13,17 +13,15 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import { Command, flags as flagParser } from '@oclif/command';
+import { Command } from '@oclif/command';
 import { cryptography } from 'lisk-sdk';
-
-import { flags as commonFlags } from '../../utils/flags';
 
 export default class ValidateCommand extends Command {
 	static description = `
-		Validates base32 address.
+		Validate base32 address.
 	`;
 
-	static examples = ['account:validate'];
+	static examples = ['account:validate lskoaknq582o6fw7sp82bm2hnj7pzp47mpmbmux2g'];
 
 	static args = [
 		{
@@ -32,10 +30,6 @@ export default class ValidateCommand extends Command {
 			description: 'Address in base32 format to validate.',
 		},
 	];
-
-	static flags = {
-		passphrase: flagParser.string(commonFlags.passphrase),
-	};
 
 	// eslint-disable-next-line @typescript-eslint/require-await
 	async run(): Promise<void> {

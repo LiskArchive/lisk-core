@@ -23,7 +23,7 @@ interface Args {
 }
 
 export default class ImportCommand extends Command {
-	static description = 'Export forger data to a given data path';
+	static description = 'Import from <FILE>.';
 
 	static args = [
 		{

@@ -19,7 +19,7 @@ import { Command, flags as flagParser } from '@oclif/command';
 import { getBlockchainDBPath, getDefaultPath, getFullPath } from '../../utils/path';
 
 export default class ExportCommand extends Command {
-	static description = 'Export blockchain data for given data path';
+	static description = 'Export to <FILE>.';
 
 	static examples = [
 		'blockchain:export',
