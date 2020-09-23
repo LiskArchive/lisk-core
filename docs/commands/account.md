@@ -23,6 +23,8 @@ EXAMPLES
   account:create --count=3
 ```
 
+_See code: [dist/commands/account/create.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/account/create.ts)_
+
 ## `lisk-core account:get ADDRESS`
 
 Get account information for a given address.
@@ -44,6 +46,8 @@ EXAMPLE
   account:get ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815
 ```
 
+_See code: [dist/commands/account/get.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/account/get.ts)_
+
 ## `lisk-core account:show`
 
 Show account information for a given passphrase.
@@ -63,6 +67,8 @@ EXAMPLE
   account:show
 ```
 
+_See code: [dist/commands/account/show.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/account/show.ts)_
+
 ## `lisk-core account:validate ADDRESS`
 
 Validate base32 address.
@@ -77,3 +83,5 @@ ARGUMENTS
 EXAMPLE
   account:validate lskoaknq582o6fw7sp82bm2hnj7pzp47mpmbmux2g
 ```
+
+_See code: [dist/commands/account/validate.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/account/validate.ts)_

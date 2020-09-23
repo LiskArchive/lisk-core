@@ -33,6 +33,8 @@ EXAMPLES
   forging:disable address --data-path ./data --password your_password
 ```
 
+_See code: [dist/commands/forging/disable.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/forging/disable.ts)_
+
 ## `lisk-core forging:enable ADDRESS`
 
 Enable forging for given delegate address.
@@ -60,3 +62,5 @@ EXAMPLES
   forging:enable address --data-path ./data
   forging:enable address --data-path ./data --password your_password
 ```
+
+_See code: [dist/commands/forging/enable.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/forging/enable.ts)_

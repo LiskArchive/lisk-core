@@ -37,7 +37,8 @@ OPTIONS
   --enable-http-api-plugin                               Enable HTTP API Plugin. Environment variable
                                                          "LISK_ENABLE_HTTP_API_PLUGIN" can also be used.
 
-  --enable-ipc                                           Enable IPC communication.
+  --enable-ipc                                           Enable IPC communication. This will also load up plugins in
+                                                         child process and communicate over IPC.
 
   --forger-plugin-port=forger-plugin-port                Port to be used for Forger Plugin. Environment variable
                                                          "LISK_FORGER_PLUGIN_PORT" can also be used.
@@ -63,3 +64,5 @@ EXAMPLES
   start
   start --network dev --data-path ./data --log debug
 ```
+
+_See code: [dist/commands/start.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/start.ts)_

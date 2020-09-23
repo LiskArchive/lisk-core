@@ -18,3 +18,5 @@ ARGUMENTS
 EXAMPLE
   sdk:link /sdk/location/
 ```
+
+_See code: [dist/commands/sdk/link.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/sdk/link.ts)_

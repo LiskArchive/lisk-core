@@ -24,6 +24,8 @@ EXAMPLES
   forger-info:export --data-path ./data --output ./my/path/
 ```
 
+_See code: [dist/commands/forger-info/export.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/forger-info/export.ts)_
+
 ## `lisk-core forger-info:import SOURCEPATH`
 
 Import from <FILE>.
@@ -45,3 +47,5 @@ EXAMPLES
   forger-info:import ./my/path
   forger-info:import --data-path ./data --force
 ```
+
+_See code: [dist/commands/forger-info/import.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/forger-info/import.ts)_

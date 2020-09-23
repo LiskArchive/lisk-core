@@ -31,6 +31,8 @@ EXAMPLES
   download --url https://downloads.lisk.io/lisk/mainnet/blockchain.db.gz --output ./downloads
 ```
 
+_See code: [dist/commands/blockchain/download.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/blockchain/download.ts)_
+
 ## `lisk-core blockchain:export`
 
 Export to <FILE>.
@@ -50,6 +52,8 @@ EXAMPLES
   blockchain:export --data-path ./data --output ./my/path/
 ```
 
+_See code: [dist/commands/blockchain/export.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/blockchain/export.ts)_
+
 ## `lisk-core blockchain:hash`
 
 Generate SHA256 hash from <PATH>.
@@ -66,6 +70,8 @@ EXAMPLES
   blockchain:hash
   blockchain:hash --data-path ./data
 ```
+
+_See code: [dist/commands/blockchain/hash.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/blockchain/hash.ts)_
 
 ## `lisk-core blockchain:import FILEPATH`
 
@@ -89,6 +95,8 @@ EXAMPLES
   blockchain:import ./path/to/blockchain.db.gz --data-path ./lisk/
 ```
 
+_See code: [dist/commands/blockchain/import.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/blockchain/import.ts)_
+
 ## `lisk-core blockchain:reset`
 
 Reset the blockchain data.
@@ -108,3 +116,5 @@ EXAMPLES
   blockchain:reset --data-path ./lisk
   blockchain:reset --yes
 ```
+
+_See code: [dist/commands/blockchain/reset.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/blockchain/reset.ts)_

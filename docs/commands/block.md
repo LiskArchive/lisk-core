@@ -25,3 +25,5 @@ EXAMPLES
   block:get e082e79d01016632c451c9df9276e486cb7f460dc793ff5b10d8f71eecec28b4
   block:get 2
 ```
+
+_See code: [dist/commands/block/get.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/block/get.ts)_

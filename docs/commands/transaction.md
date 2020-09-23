@@ -60,6 +60,8 @@ EXAMPLES
   --asset='{"amount":100000000,"recipientAddress":"ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815","data":"send token"}'
 ```
 
+_See code: [dist/commands/transaction/create.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/transaction/create.ts)_
+
 ## `lisk-core transaction:get ID`
 
 Get transaction from local node by ID.
@@ -80,6 +82,8 @@ OPTIONS
 EXAMPLE
   transaction:get eab06c6a22e88bca7150e0347a7d976acd070cb9284423e6eabecd657acc1263
 ```
+
+_See code: [dist/commands/transaction/get.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/transaction/get.ts)_
 
 ## `lisk-core transaction:send TRANSACTION`
 
@@ -104,6 +108,8 @@ EXAMPLE
   b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e324028edd3601cdc35a41bb23415a0d9f3c3e9cf188d9971adf18742cea39d58aa84809a
   a87bcfe6feaac46211c80472ad9297fd87727709f5d7e7b4134caf106b02
 ```
+
+_See code: [dist/commands/transaction/send.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/transaction/send.ts)_
 
 ## `lisk-core transaction:sign TRANSACTION`
 
@@ -153,3 +159,5 @@ EXAMPLE
   f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e3a406b600b635b0d85c3bff1e59b1620e1083807fde4cd26545a5d18d2a81fce
   f7a07bf5ec079d090630bb8ba347d5d82bf426cbffaaa8b5404f1190a7676c8bd406
 ```
+
+_See code: [dist/commands/transaction/sign.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/transaction/sign.ts)_
