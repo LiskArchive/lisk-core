@@ -105,7 +105,7 @@ export const downloadAndValidate = async (url: string, dir: string): Promise<voi
 
 export const extract = async (filePath: string, fileName: string, outDir: string): Promise<void> =>
 	tar.x({
-		file: `${filePath}/${fileName}`,
+		file: path.join(filePath, fileName),
 		cwd: outDir,
 		strip: 1,
 	});
