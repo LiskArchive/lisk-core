@@ -61,7 +61,9 @@ export default class ImportCommand extends Command {
 
 		if (fs.existsSync(blockchainDBPath)) {
 			if (!flags.force) {
-				this.error(`There is already a blockchain data file found at ${dataPath}. Use --force to override.`);
+				this.error(
+					`There is already a blockchain data file found at ${dataPath}. Use --force to override.`,
+				);
 			}
 			fs.removeSync(blockchainDBPath);
 		}
