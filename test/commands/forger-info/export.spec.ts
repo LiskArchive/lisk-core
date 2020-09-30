@@ -38,7 +38,7 @@ describe('forger-info:export', () => {
 				expect(tarCreateStub).to.have.been.calledWithExactly(
 					{
 						cwd: join(defaultDataPath, 'data'),
-						file: join(process.cwd(), 'forger.db.gz'),
+						file: join(process.cwd(), 'forger.db.tar.gz'),
 						gzip: true,
 					},
 					['forger.db'],
@@ -54,7 +54,7 @@ describe('forger-info:export', () => {
 				expect(tarCreateStub).to.have.been.calledWithExactly(
 					{
 						cwd: join('/my/app/', 'data'),
-						file: join(process.cwd(), 'forger.db.gz'),
+						file: join(process.cwd(), 'forger.db.tar.gz'),
 						gzip: true,
 					},
 					['forger.db'],
@@ -70,7 +70,7 @@ describe('forger-info:export', () => {
 				expect(tarCreateStub).to.have.been.calledWithExactly(
 					{
 						cwd: join(defaultDataPath, 'data'),
-						file: join('/my/dir/', 'forger.db.gz'),
+						file: join('/my/dir/', 'forger.db.tar.gz'),
 						gzip: true,
 					},
 					['forger.db'],
