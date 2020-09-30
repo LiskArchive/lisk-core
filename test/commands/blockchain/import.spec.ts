@@ -23,7 +23,7 @@ import * as downloadUtils from '../../../src/utils/download';
 
 const defaultDataPath = path.join(homedir(), '.lisk', 'lisk-core');
 const defaultBlockchainDBPath = getBlockchainDBPath(defaultDataPath);
-const pathToBlockchainGzip = '/path/to/blockchain.db.gz';
+const pathToBlockchainGzip = '/path/to/blockchain.db.tar.gz';
 
 describe('blockchain:import', () => {
 	const fsExistsSyncStub = sandbox.stub().returns(false);
@@ -34,6 +34,7 @@ describe('blockchain:import', () => {
 	const setupTest = () =>
 		test
 			.stub(fs, 'existsSync', fsExistsSyncStub)
+			.stub(fs, 'removeSync', sandbox.stub())
 			.stub(path, 'extname', pathExtnameStub)
 			.stub(fs, 'ensureDirSync', fsEnsureDirSyncStub)
 			.stub(downloadUtils, 'extract', extractStub)
@@ -65,7 +66,7 @@ describe('blockchain:import', () => {
 				expect(extractStub).to.have.been.calledOnce;
 				expect(extractStub).to.have.been.calledWithExactly(
 					path.dirname(pathToBlockchainGzip),
-					'blockchain.db.gz',
+					'blockchain.db.tar.gz',
 					defaultBlockchainDBPath,
 				);
 			});
@@ -83,7 +84,7 @@ describe('blockchain:import', () => {
 				expect(extractStub).to.have.been.calledOnce;
 				expect(extractStub).to.have.been.calledWithExactly(
 					path.dirname(pathToBlockchainGzip),
-					'blockchain.db.gz',
+					'blockchain.db.tar.gz',
 					dataPath,
 				);
 			});
@@ -112,9 +113,10 @@ describe('blockchain:import', () => {
 					expect(fsEnsureDirSyncStub).to.have.been.calledOnce;
 					expect(fsEnsureDirSyncStub).to.have.been.calledWithExactly(defaultBlockchainDBPath);
 					expect(extractStub).to.have.been.calledOnce;
+					expect(fs.removeSync).to.have.been.calledWithExactly(defaultBlockchainDBPath);
 					expect(extractStub).to.have.been.calledWithExactly(
 						path.dirname(pathToBlockchainGzip),
-						'blockchain.db.gz',
+						'blockchain.db.tar.gz',
 						defaultBlockchainDBPath,
 					);
 				});

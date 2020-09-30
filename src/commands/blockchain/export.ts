@@ -47,16 +47,17 @@ export default class ExportCommand extends Command {
 
 		this.log('Exporting blockchain:');
 		this.log(`   ${getFullPath(blockchainPath)}`);
+		const filePath = join(exportPath, 'blockchain.db.tar.gz');
 		await tar.create(
 			{
 				gzip: true,
-				file: join(exportPath, 'blockchain.db.tar.gz'),
+				file: filePath,
 				cwd: join(dataPath, 'data'),
 			},
 			['blockchain.db'],
 		);
 
 		this.log('Export completed:');
-		this.log(`   ${getFullPath(exportPath)}/blockchain.db.tar.gz`);
+		this.log(`   ${filePath}`);
 	}
 }
