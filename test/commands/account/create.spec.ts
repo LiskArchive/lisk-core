@@ -78,10 +78,10 @@ describe('account:create', () => {
 			});
 	});
 
-	describe('account:create --number=x', () => {
+	describe('account:create --count=x', () => {
 		const defaultNumber = 2;
 		setupTest()
-			.command(['account:create', `--number=${defaultNumber}`])
+			.command(['account:create', `--count=${defaultNumber}`])
 			.it('should create account', (output: any) => {
 				const result = [
 					{
@@ -111,30 +111,24 @@ describe('account:create', () => {
 			});
 
 		setupTest()
-			.command(['account:create', '--number=NaN'])
+			.command(['account:create', '--count=NaN'])
 			.catch((error: Error) => {
-				return expect(error.message).to.contain(
-					'Number flag must be an integer and greater than 0',
-				);
+				return expect(error.message).to.contain('Count flag must be an integer and greater than 0');
 			})
 			.it('should throw an error if the flag is invalid number');
 
 		setupTest()
-			.command(['account:create', '--number=0'])
+			.command(['account:create', '--count=0'])
 			.catch((error: Error) => {
-				return expect(error.message).to.contain(
-					'Number flag must be an integer and greater than 0',
-				);
+				return expect(error.message).to.contain('Count flag must be an integer and greater than 0');
 			})
-			.it('should throw an error if the number flag is less than 1');
+			.it('should throw an error if the Count flag is less than 1');
 
 		setupTest()
-			.command(['account:create', '--number=10sk24'])
+			.command(['account:create', '--count=10sk24'])
 			.catch((error: Error) => {
-				return expect(error.message).to.contain(
-					'Number flag must be an integer and greater than 0',
-				);
+				return expect(error.message).to.contain('Count flag must be an integer and greater than 0');
 			})
-			.it('should throw an error if the number flag contains non-number characters');
+			.it('should throw an error if the Count flag contains non-number characters');
 	});
 });

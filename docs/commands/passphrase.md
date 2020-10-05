@@ -7,7 +7,7 @@ Commands relating to Lisk Core passphrases.
 
 ## `lisk-core passphrase:decrypt ENCRYPTEDPASSPHRASE`
 
-Decrypts your secret passphrase using the password which was provided at the time of encryption.
+Decrypt secret passphrase using the password provided at the time of encryption.
 
 ```
 USAGE
@@ -28,11 +28,11 @@ EXAMPLE
   4317a63bcf3d41ea74e83b&version=1"
 ```
 
-_See code: [dist/commands/passphrase/decrypt.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/passphrase/decrypt.ts)_
+_See code: [dist/commands/passphrase/decrypt.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/passphrase/decrypt.ts)_
 
 ## `lisk-core passphrase:encrypt`
 
-Encrypts your secret passphrase under a password.
+Encrypt secret passphrase using password.
 
 ```
 USAGE
@@ -57,4 +57,4 @@ EXAMPLE
   passphrase:encrypt
 ```
 
-_See code: [dist/commands/passphrase/encrypt.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/passphrase/encrypt.ts)_
+_See code: [dist/commands/passphrase/encrypt.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/passphrase/encrypt.ts)_

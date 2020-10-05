@@ -16,7 +16,7 @@ ifeq ($(lisk_network),$(filter $(lisk_network),mainnet testnet betanet))
 	$(compose) run --rm --entrypoint /home/lisk/coldstart.sh lisk-task $(lisk_network)
 else
 	# workaround for https://github.com/LiskHQ/lisk-sdk/issues/5798
-	$(compose) run --rm --entrypoint /bin/rm lisk-task /home/lisk/.lisk/default/tmp/pids/controller.pid
+	$(compose) run --rm --entrypoint /bin/rm lisk-task -f /home/lisk/.lisk/default/tmp/pids/controller.pid
 	$(compose) run --rm lisk-task blockchain:reset --yes
 endif
 	docker-compose start lisk

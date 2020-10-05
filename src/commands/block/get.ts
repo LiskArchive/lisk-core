@@ -15,14 +15,14 @@
 import BaseIPCCommand from '../../base_ipc';
 
 interface Args {
-	readonly arg: string;
+	readonly input: string;
 }
 export default class GetCommand extends BaseIPCCommand {
-	static description = 'Gets block information for a given block id or height from the blockchain';
+	static description = 'Get block information for a given id or height.';
 
 	static args = [
 		{
-			name: 'arg',
+			name: 'input',
 			required: true,
 			description: 'Height in number or block id in hex format.',
 		},
@@ -39,16 +39,16 @@ export default class GetCommand extends BaseIPCCommand {
 
 	async run(): Promise<void> {
 		const { args } = this.parse(GetCommand);
-		const { arg } = args as Args;
+		const { input } = args as Args;
 
 		let block;
 		try {
-			if (!Number.isNaN(Number(arg))) {
+			if (!Number.isNaN(Number(input))) {
 				block = await this._channel.invoke<string>('app:getBlockByHeight', {
-					height: parseInt(arg, 10),
+					height: parseInt(input, 10),
 				});
 			} else {
-				block = await this._channel.invoke<string>('app:getBlockByID', { id: arg });
+				block = await this._channel.invoke<string>('app:getBlockByID', { id: input });
 			}
 
 			this.printJSON(this._codec.decodeBlock(block));
@@ -57,8 +57,8 @@ export default class GetCommand extends BaseIPCCommand {
 				? errors.map(err => (err as Error).message).join(',')
 				: errors;
 
-			if (/^Specified key block:id:(.*)does not exist/.test((errors as Error).message)) {
-				if (arg) {
+			if (/^Specified key block(.*)does not exist/.test((errors as Error).message)) {
+				if (input) {
 					this.error('Block with given id or height was not found');
 				}
 			} else {

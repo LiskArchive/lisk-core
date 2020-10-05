@@ -30,18 +30,18 @@ interface Args {
 export default class CreateCommand extends BaseIPCCommand {
 	static strict = false;
 	static description =
-		'Creates a transaction which can be broadcasted to the network. Note: fee and amount should be in Beddows!!';
+		'Create transaction which can be broadcasted to the network. Note: fee and amount should be in Beddows!!';
 
 	static args = [
 		{
 			name: 'moduleID',
 			required: true,
-			description: 'Register transaction module id.',
+			description: 'Registered transaction module id.',
 		},
 		{
 			name: 'assetID',
 			required: true,
-			description: 'Register transaction asset id.',
+			description: 'Registered transaction asset id.',
 		},
 		{
 			name: 'fee',
@@ -191,7 +191,7 @@ export default class CreateCommand extends BaseIPCCommand {
 			incompleteTransaction.nonce = nonce;
 		}
 
-		if (!offline && nonceSource && incompleteTransaction.nonce !== nonceSource) {
+		if (!offline && nonceSource && BigInt(incompleteTransaction.nonce) > BigInt(nonceSource)) {
 			throw new Error(
 				`Invalid nonce specified, actual: ${nonceSource}, expected: ${
 					incompleteTransaction.nonce as string

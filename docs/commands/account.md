@@ -9,28 +9,25 @@ Commands relating to Lisk Core accounts.
 
 ## `lisk-core account:create`
 
-Returns a randomly-generated mnemonic passphrase with its corresponding public/private key pair and Lisk address.
+Return randomly-generated mnemonic passphrase with its corresponding public/private key pair and Lisk address.
 
 ```
 USAGE
   $ lisk-core account:create
 
 OPTIONS
-  -n, --number=number  [default: 1] Number of accounts to create.
-
-DESCRIPTION
-  Returns a randomly-generated mnemonic passphrase with its corresponding public/private key pair and Lisk address.
+  -c, --count=count  [default: 1] Number of accounts to create.
 
 EXAMPLES
   account:create
-  account:create --number=3
+  account:create --count=3
 ```
 
-_See code: [dist/commands/account/create.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/account/create.ts)_
+_See code: [dist/commands/account/create.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/account/create.ts)_
 
 ## `lisk-core account:get ADDRESS`
 
-Gets account information for a given address from the blockchain
+Get account information for a given address.
 
 ```
 USAGE
@@ -49,11 +46,11 @@ EXAMPLE
   account:get ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815
 ```
 
-_See code: [dist/commands/account/get.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/account/get.ts)_
+_See code: [dist/commands/account/get.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/account/get.ts)_
 
 ## `lisk-core account:show`
 
-Shows account information for a given passphrase.
+Show account information for a given passphrase.
 
 ```
 USAGE
@@ -66,18 +63,15 @@ OPTIONS
                                - --passphrase='my secret passphrase' (should only be used where security is not
                                important)
 
-DESCRIPTION
-  Shows account information for a given passphrase.
-
 EXAMPLE
   account:show
 ```
 
-_See code: [dist/commands/account/show.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/account/show.ts)_
+_See code: [dist/commands/account/show.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/account/show.ts)_
 
 ## `lisk-core account:validate ADDRESS`
 
-Validates base32 address.
+Validate base32 address.
 
 ```
 USAGE
@@ -86,18 +80,8 @@ USAGE
 ARGUMENTS
   ADDRESS  Address in base32 format to validate.
 
-OPTIONS
-  -p, --passphrase=passphrase  Specifies a source for your secret passphrase. Command will prompt you for input if this
-                               option is not set.
-                               Examples:
-                               - --passphrase='my secret passphrase' (should only be used where security is not
-                               important)
-
-DESCRIPTION
-  Validates base32 address.
-
 EXAMPLE
-  account:validate
+  account:validate lskoaknq582o6fw7sp82bm2hnj7pzp47mpmbmux2g
 ```
 
-_See code: [dist/commands/account/validate.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/account/validate.ts)_
+_See code: [dist/commands/account/validate.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/account/validate.ts)_

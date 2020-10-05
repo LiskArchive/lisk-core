@@ -20,7 +20,7 @@ import { getBlockchainDBPath, getDefaultPath, getFullPath } from '../../utils/pa
 import { extract } from '../../utils/download';
 
 export default class ImportCommand extends Command {
-	static description = 'Import blockchain data for given data path';
+	static description = 'Import from <FILE>.';
 
 	static args = [
 		{
@@ -59,16 +59,19 @@ export default class ImportCommand extends Command {
 			this.error('The blockchain data file must be a gzip file.');
 		}
 
-		if (!flags.force && fs.existsSync(blockchainDBPath)) {
-			const errorMessage = `There is already a blockchain data file found at ${dataPath}. Use --force to override.`;
-
-			this.error(errorMessage);
+		if (fs.existsSync(blockchainDBPath)) {
+			if (!flags.force) {
+				this.error(
+					`There is already a blockchain data file found at ${dataPath}. Use --force to override.`,
+				);
+			}
+			fs.removeSync(blockchainDBPath);
 		}
 
 		fs.ensureDirSync(blockchainDBPath);
 		this.log(`Importing blockchain from ${getFullPath(filepath)}`);
 
-		await extract(path.dirname(filepath), 'blockchain.db.gz', blockchainDBPath);
+		await extract(path.dirname(filepath), path.basename(filepath), blockchainDBPath);
 
 		this.log('Import completed.');
 		this.log(`   ${getFullPath(dataPath)}`);

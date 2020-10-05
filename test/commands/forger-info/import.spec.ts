@@ -21,9 +21,9 @@ import * as path from 'path';
 import { getForgerDBPath } from '../../../src/utils/path';
 import * as downloadUtils from '../../../src/utils/download';
 
-const defaultDataPath = path.join(homedir(), '.lisk', 'default');
+const defaultDataPath = path.join(homedir(), '.lisk', 'lisk-core');
 const defaultForgerDBPath = getForgerDBPath(defaultDataPath);
-const pathToForgerGzip = '/path/to/forger.db.gz';
+const pathToForgerGzip = '/path/to/forger.db.tar.gz';
 
 describe('forger-info:import', () => {
 	const fsExistsSyncStub = sandbox.stub().returns(false);
@@ -34,6 +34,7 @@ describe('forger-info:import', () => {
 	const setupTest = () =>
 		test
 			.stub(fs, 'existsSync', fsExistsSyncStub)
+			.stub(fs, 'removeSync', sandbox.stub())
 			.stub(path, 'extname', pathExtnameStub)
 			.stub(fs, 'ensureDirSync', fsEnsureDirSyncStub)
 			.stub(downloadUtils, 'extract', extractStub)
@@ -65,7 +66,7 @@ describe('forger-info:import', () => {
 				expect(extractStub).to.have.been.calledOnce;
 				expect(extractStub).to.have.been.calledWithExactly(
 					path.dirname(pathToForgerGzip),
-					'forger.db.gz',
+					'forger.db.tar.gz',
 					defaultForgerDBPath,
 				);
 			});
@@ -83,7 +84,7 @@ describe('forger-info:import', () => {
 				expect(extractStub).to.have.been.calledOnce;
 				expect(extractStub).to.have.been.calledWithExactly(
 					path.dirname(pathToForgerGzip),
-					'forger.db.gz',
+					'forger.db.tar.gz',
 					dataPath,
 				);
 			});
@@ -112,9 +113,10 @@ describe('forger-info:import', () => {
 					expect(fsEnsureDirSyncStub).to.have.been.calledOnce;
 					expect(fsEnsureDirSyncStub).to.have.been.calledWithExactly(defaultForgerDBPath);
 					expect(extractStub).to.have.been.calledOnce;
+					expect(fs.removeSync).to.have.been.calledWithExactly(defaultForgerDBPath);
 					expect(extractStub).to.have.been.calledWithExactly(
 						path.dirname(pathToForgerGzip),
-						'forger.db.gz',
+						'forger.db.tar.gz',
 						defaultForgerDBPath,
 					);
 				});

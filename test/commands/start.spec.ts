@@ -26,21 +26,23 @@ import pJSON = require('../../package.json');
 
 describe('start', () => {
 	const readJSONStub = sandbox.stub();
-	readJSONStub.withArgs('~/.lisk/default/config/mainnet/config.json').resolves({
+	readJSONStub.withArgs('~/.lisk/lisk-core/config/mainnet/config.json').resolves({
 		logger: {
 			consoleLogLevel: 'error',
 		},
+		plugins: {},
 	});
-	readJSONStub.withArgs('~/.lisk/default/config/devnet/config.json').resolves({
+	readJSONStub.withArgs('~/.lisk/lisk-core/config/devnet/config.json').resolves({
 		logger: {
 			consoleLogLevel: 'error',
 		},
+		plugins: {},
 	});
 	readJSONStub
-		.withArgs('~/.lisk/default/config/mainnet/genesis_block.json')
+		.withArgs('~/.lisk/lisk-core/config/mainnet/genesis_block.json')
 		.resolves(devnetGenesisBlock);
 	readJSONStub
-		.withArgs('~/.lisk/default/config/devnet/genesis_block.json')
+		.withArgs('~/.lisk/lisk-core/config/devnet/genesis_block.json')
 		.resolves(devnetGenesisBlock);
 	const readdirSyncStub = sandbox.stub();
 	readdirSyncStub.withArgs(path.join(__dirname, '../../config')).returns(['mainnet', 'devnet']);
@@ -75,7 +77,7 @@ describe('start', () => {
 				] = (application.getApplication as sinon.SinonStub).getCall(0).args;
 				expect(usedGenesisBlock.header.id).to.eql(devnetGenesisBlock.header.id);
 				expect(usedConfig.version).to.equal(pJSON.version);
-				expect(usedConfig.label).to.equal('default');
+				expect(usedConfig.label).to.equal('lisk-core');
 			});
 	});
 
@@ -84,7 +86,7 @@ describe('start', () => {
 			.command(['start', '-n', 'devnet'])
 			.catch(err => {
 				expect(err.message).to.contain(
-					'Datapath ~/.lisk/default already contains configs for mainnet.',
+					'Datapath ~/.lisk/lisk-core already contains configs for mainnet.',
 				);
 			})
 			.it('should fail with already existing config');
@@ -94,7 +96,7 @@ describe('start', () => {
 		setupTest()
 			.command(['start', '-n', 'devnet', '--overwrite-config'])
 			.it('should delete the mainnet config and save the devnet config', () => {
-				expect(fs.ensureDirSync).to.have.been.calledWith('~/.lisk/default/config');
+				expect(fs.ensureDirSync).to.have.been.calledWith('~/.lisk/lisk-core/config');
 				expect(fs.removeSync).to.have.been.calledOnce;
 				expect(fs.copyFileSync).to.have.been.calledTwice;
 			});
@@ -111,12 +113,82 @@ describe('start', () => {
 			.it('should throw an error');
 	});
 
-	describe('when enable-ipc is specified', () => {
+	describe('when --enable-ipc is specified', () => {
 		setupTest()
 			.command(['start', '--enable-ipc'])
 			.it('should update the config value', () => {
 				const [, usedConfig] = (application.getApplication as sinon.SinonStub).getCall(0).args;
 				expect(usedConfig.ipc.enabled).to.equal(true);
+			});
+	});
+
+	describe('when --enable-http-api-plugin is specified', () => {
+		setupTest()
+			.command(['start', '--enable-http-api-plugin'])
+			.it('should pass this value to configuration', () => {
+				const [, , options] = (application.getApplication as sinon.SinonStub).getCall(0).args;
+				expect(options.enableHTTPAPIPlugin).to.equal(true);
+			});
+	});
+
+	describe('when custom port with --http-api-plugin-port is specified along with --enable-http-api-plugin', () => {
+		setupTest()
+			.command(['start', '--enable-http-api-plugin', '--http-api-plugin-port', '8888'])
+			.it('should update the config value', () => {
+				const [, usedConfig] = (application.getApplication as sinon.SinonStub).getCall(0).args;
+				expect(usedConfig.plugins.httpApi.port).to.equal(8888);
+			});
+	});
+
+	describe('when custom white list with --http-api-plugin-whitelist is specified along with --enable-http-api-plugin', () => {
+		setupTest()
+			.command([
+				'start',
+				'--enable-http-api-plugin',
+				'--http-api-plugin-whitelist',
+				'192.08.0.1:8888,192.08.0.2:8888',
+			])
+			.it('should update the config value', () => {
+				const [, usedConfig] = (application.getApplication as sinon.SinonStub).getCall(0).args;
+				expect(usedConfig.plugins.httpApi.whiteList).to.deep.equal([
+					'192.08.0.1:8888',
+					'192.08.0.2:8888',
+				]);
+			});
+	});
+
+	describe('when --enable-forger-plugin is specified', () => {
+		setupTest()
+			.command(['start', '--enable-forger-plugin'])
+			.it('should pass this value to configuration', () => {
+				const [, , options] = (application.getApplication as sinon.SinonStub).getCall(0).args;
+				expect(options.enableForgerPlugin).to.equal(true);
+			});
+	});
+
+	describe('when custom port with --forger-plugin-port is specified along with --enable-forger-plugin', () => {
+		setupTest()
+			.command(['start', '--enable-forger-plugin', '--forger-plugin-port', '8888'])
+			.it('should update the config value', () => {
+				const [, usedConfig] = (application.getApplication as sinon.SinonStub).getCall(0).args;
+				expect(usedConfig.plugins.forger.port).to.equal(8888);
+			});
+	});
+
+	describe('when custom white list with --forger-plugin-whitelist is specified along with --enable-forger-plugin', () => {
+		setupTest()
+			.command([
+				'start',
+				'--enable-forger-plugin',
+				'--forger-plugin-whitelist',
+				'192.08.0.1:8888,192.08.0.2:8888',
+			])
+			.it('should update the config value', () => {
+				const [, usedConfig] = (application.getApplication as sinon.SinonStub).getCall(0).args;
+				expect(usedConfig.plugins.forger.whiteList).to.deep.equal([
+					'192.08.0.1:8888',
+					'192.08.0.2:8888',
+				]);
 			});
 	});
 
@@ -181,17 +253,18 @@ describe('start', () => {
 			});
 	});
 
-	describe('when peer is specified', () => {
+	describe('when seed peer is specified', () => {
 		setupTest()
-			.command(['start', '--peers=localhost:12234'])
+			.command(['start', '--seed-peers=localhost:12234'])
 			.it('should update the config value', () => {
 				const [, usedConfig] = (application.getApplication as sinon.SinonStub).getCall(0).args;
 				expect(usedConfig.network.seedPeers).to.eql([{ ip: 'localhost', port: 12234 }]);
 			});
 
 		setupTest()
-			.command(['start', '--peers=localhost:12234,74.49.3.35:2238'])
-			.it('should update the config value', () => {
+			.env({ LISK_SEED_PEERS: 'localhost:12234,74.49.3.35:2238' })
+			.command(['start'])
+			.it('should update the config value using env variable', () => {
 				const [, usedConfig] = (application.getApplication as sinon.SinonStub).getCall(0).args;
 				expect(usedConfig.network.seedPeers).to.eql([
 					{ ip: 'localhost', port: 12234 },

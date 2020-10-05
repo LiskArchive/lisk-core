@@ -33,7 +33,7 @@ export const getLegacyBytes = (publicKey: string | Buffer): Buffer =>
 	cryptography.getFirstEightBytesReversed(cryptography.hash(publicKey));
 
 export class ReclaimAsset extends BaseAsset<Asset> {
-	public name = 'reclaim';
+	public name = 'reclaimLSK';
 	public id = 0;
 	public schema = reclaimAssetSchema;
 

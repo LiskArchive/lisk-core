@@ -20,7 +20,7 @@ import { getPid, isApplicationRunning } from '../../utils/application';
 import { getBlockchainDB } from '../../utils/db';
 
 export default class HashCommand extends Command {
-	static description = 'Generate hash for blockchain data for given data path';
+	static description = 'Generate SHA256 hash from <PATH>.';
 
 	static examples = ['blockchain:hash', 'blockchain:hash --data-path ./data'];
 

@@ -15,8 +15,8 @@ import { Application, ApplicationConfig, HTTPAPIPlugin, ForgerPlugin } from 'lis
 import { LegacyAccountModule } from './modules';
 
 export interface Options {
-	enableHTTPAPI: boolean;
-	enableForger: boolean;
+	enableHTTPAPIPlugin: boolean;
+	enableForgerPlugin: boolean;
 }
 
 // Temporally disable eslint
@@ -29,11 +29,11 @@ export const getApplication = (
 	const app = Application.defaultApplication(genesisBlock, config);
 	app.registerModule(LegacyAccountModule);
 
-	if (options.enableHTTPAPI) {
-		app.registerPlugin(HTTPAPIPlugin);
+	if (options.enableHTTPAPIPlugin) {
+		app.registerPlugin(HTTPAPIPlugin, { loadAsChildProcess: true });
 	}
-	if (options.enableForger) {
-		app.registerPlugin(ForgerPlugin);
+	if (options.enableForgerPlugin) {
+		app.registerPlugin(ForgerPlugin, { loadAsChildProcess: true });
 	}
 
 	return app;

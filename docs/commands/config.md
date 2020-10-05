@@ -6,7 +6,7 @@ Commands relating to Lisk Core node configuration.
 
 ## `lisk-core config:show`
 
-Show the config used to run an application on data path
+Show application config.
 
 ```
 USAGE
@@ -25,4 +25,4 @@ EXAMPLES
   config:show --config ./custom-config.json --data-path ./data
 ```
 
-_See code: [dist/commands/config/show.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/config/show.ts)_
+_See code: [dist/commands/config/show.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/config/show.ts)_
