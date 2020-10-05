@@ -3,10 +3,7 @@ all: up
 
 lisk_network := $(shell grep ^ENV_LISK_NETWORK= .env |tail -n 1 |awk -F = '{ print $$2 }')
 ifeq ($(lisk_network),)
-$(error .env file does not exist or ENV_LISK_NETWORK variable is not set.)
-endif
-ifeq ($(lisk_network),)
-$(error .env file does not exist or ENV_LISK_DB_DATABASE variable is not set.)
+lisk_network := mainnet
 endif
 
 up:
