@@ -41,15 +41,14 @@ const createAccount = (prefix: string): AccountInfo => {
 };
 
 export default class CreateCommand extends Command {
-	static description = `
-		Returns a randomly-generated mnemonic passphrase with its corresponding public/private key pair and Lisk address.
-	`;
+	static description =
+		'Return randomly-generated mnemonic passphrase with its corresponding public/private key pair and Lisk address.';
 
-	static examples = ['account:create', 'account:create --number=3'];
+	static examples = ['account:create', 'account:create --count=3'];
 
 	static flags = {
-		number: flagParser.string({
-			char: 'n',
+		count: flagParser.string({
+			char: 'c',
 			description: 'Number of accounts to create.',
 			default: '1',
 		}),
@@ -58,15 +57,15 @@ export default class CreateCommand extends Command {
 	// eslint-disable-next-line @typescript-eslint/require-await
 	async run(): Promise<void> {
 		const {
-			flags: { number: numberStr },
+			flags: { count },
 		} = this.parse(CreateCommand);
-		const numberOfAccounts = parseInt(numberStr, 10);
+		const numberOfAccounts = parseInt(count, 10);
 		if (
-			numberStr !== numberOfAccounts.toString() ||
+			count !== numberOfAccounts.toString() ||
 			!Number.isInteger(numberOfAccounts) ||
 			numberOfAccounts <= 0
 		) {
-			throw new Error('Number flag must be an integer and greater than 0');
+			throw new Error('Count flag must be an integer and greater than 0');
 		}
 		const accounts = new Array(numberOfAccounts)
 			.fill(0)

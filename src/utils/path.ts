@@ -19,7 +19,7 @@ import * as os from 'os';
 import { systemDirs, ApplicationConfig } from 'lisk-sdk';
 
 const defaultDir = '.lisk';
-const defaultFolder = 'default';
+const defaultFolder = 'lisk-core';
 const getConfigPath = (dataPath: string): string => path.join(dataPath, 'config');
 
 export const getDefaultPath = (): string => path.join(os.homedir(), defaultDir, defaultFolder);

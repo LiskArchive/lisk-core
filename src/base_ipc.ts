@@ -108,8 +108,8 @@ export default abstract class BaseIPCCommand extends Command {
 			// Read network genesis block and config from the folder
 			const { genesisBlock, config } = await getGenesisBlockAndConfig(this.baseIPCFlags.network);
 			const app = getApplication(genesisBlock, config, {
-				enableHTTPAPI: false,
-				enableForger: false,
+				enableHTTPAPIPlugin: false,
+				enableForgerPlugin: false,
 			});
 			this._schema = app.getSchema();
 		} else {

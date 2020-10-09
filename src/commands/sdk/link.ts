@@ -19,7 +19,7 @@ import { symlinkSync, pathExistsSync, removeSync } from 'fs-extra';
 import { join } from 'path';
 
 export default class LinkCommand extends Command {
-	static description = 'Link an specific SDK folder given the parameter';
+	static description = 'Symlink specific SDK folder during development.';
 
 	static examples = ['sdk:link /sdk/location/'];
 

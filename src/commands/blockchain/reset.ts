@@ -20,7 +20,7 @@ import { getPid, isApplicationRunning } from '../../utils/application';
 import { getBlockchainDB } from '../../utils/db';
 
 export default class ResetCommand extends Command {
-	static description = 'Resets the blockchain data.';
+	static description = 'Reset the blockchain data.';
 
 	static examples = [
 		'blockchain:reset',
@@ -45,7 +45,7 @@ export default class ResetCommand extends Command {
 		const skipPrompt = flags.yes ?? false;
 
 		if (isApplicationRunning(dataPath)) {
-			const errorMessage = `Can't clear db while running application. Application at data path ${dataPath} is running with pid ${getPid(
+			const errorMessage = `Can't reset db while running application. Application at data path ${dataPath} is running with pid ${getPid(
 				dataPath,
 			)}.`;
 
@@ -56,7 +56,7 @@ export default class ResetCommand extends Command {
 			const { answer } = await inquirer.prompt([
 				{
 					name: 'answer',
-					message: 'Are you sure you want to clear the db?',
+					message: 'Are you sure you want to reset the db?',
 					type: 'list',
 					choices: ['yes', 'no'],
 				},
@@ -68,7 +68,7 @@ export default class ResetCommand extends Command {
 		}
 
 		const db = getBlockchainDB(dataPath);
-		db.clear();
-		this.log('Blockchain data has been cleared from db.');
+		await db.clear();
+		this.log('Blockchain data has been reset.');
 	}
 }

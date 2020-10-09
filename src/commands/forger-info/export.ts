@@ -19,7 +19,7 @@ import { Command, flags as flagParser } from '@oclif/command';
 import { getDefaultPath, getFullPath, getForgerDBPath } from '../../utils/path';
 
 export default class ExportCommand extends Command {
-	static description = 'Export forger data to a given data path';
+	static description = 'Export to <FILE>.';
 
 	static examples = [
 		'forger-info:export',
@@ -47,16 +47,17 @@ export default class ExportCommand extends Command {
 
 		this.log('Exporting ForgerInfo:');
 		this.log(`   ${getFullPath(forgerDataPath)}`);
+		const filePath = join(exportPath, 'forger.db.tar.gz');
 		await tar.create(
 			{
 				gzip: true,
-				file: join(exportPath, 'forger.db.gz'),
+				file: filePath,
 				cwd: join(dataPath, 'data'),
 			},
 			['forger.db'],
 		);
 
 		this.log('Export completed:');
-		this.log(`   ${getFullPath(exportPath)}`);
+		this.log(`   ${filePath}`);
 	}
 }

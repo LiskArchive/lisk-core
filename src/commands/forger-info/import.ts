@@ -23,7 +23,7 @@ interface Args {
 }
 
 export default class ImportCommand extends Command {
-	static description = 'Export forger data to a given data path';
+	static description = 'Import from <FILE>.';
 
 	static args = [
 		{
@@ -61,14 +61,17 @@ export default class ImportCommand extends Command {
 			this.error('Forger data should be provided in gzip format.');
 		}
 
-		if (!flags.force && fs.existsSync(forgerDBPath)) {
-			this.error(`Forger data already exists at ${dataPath}. Use --force flag to overwrite`);
+		if (fs.existsSync(forgerDBPath)) {
+			if (!flags.force) {
+				this.error(`Forger data already exists at ${dataPath}. Use --force flag to overwrite`);
+			}
+			fs.removeSync(forgerDBPath);
 		}
 
 		fs.ensureDirSync(forgerDBPath);
 		this.log(`Importing forger data from ${getFullPath(sourcePath)}`);
 
-		await downloadUtils.extract(path.dirname(sourcePath), 'forger.db.gz', forgerDBPath);
+		await downloadUtils.extract(path.dirname(sourcePath), path.basename(sourcePath), forgerDBPath);
 
 		this.log('Import completed.');
 		this.log(`   ${getFullPath(dataPath)}`);

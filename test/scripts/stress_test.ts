@@ -15,6 +15,7 @@
 
 import * as os from 'os';
 import { IPCChannel } from 'lisk-sdk';
+import { getDefaultPath } from '../../src/utils/path';
 import { PassphraseAndKeys, createAccount, genesisAccount } from './utils/accounts';
 import {
 	sendTokenTransferTransactions,
@@ -28,7 +29,7 @@ import {
 
 const TRANSACTIONS_PER_ACCOUNT = 64;
 const ITERATIONS = process.env.ITERATIONS ?? '1';
-const DATAPATH = process.env.DATAPATH ?? '~/.lisk/default';
+const DATAPATH = process.env.DATAPATH ?? getDefaultPath();
 const STRESS_COUNT = TRANSACTIONS_PER_ACCOUNT * parseInt(ITERATIONS, 10);
 
 const chunkArray = (myArray: PassphraseAndKeys[], chunkSize = TRANSACTIONS_PER_ACCOUNT) => {

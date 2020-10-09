@@ -2,25 +2,23 @@
 
 Commands relating to Lisk Core transactions.
 
-- [`lisk-core transaction:create NETWORKIDENTIFIER FEE NONCE MODULEID ASSETID`](#lisk-core-transactioncreate-networkidentifier-fee-nonce-moduleid-assetid)
+- [`lisk-core transaction:create MODULEID ASSETID FEE`](#lisk-core-transactioncreate-moduleid-assetid-fee)
 - [`lisk-core transaction:get ID`](#lisk-core-transactionget-id)
 - [`lisk-core transaction:send TRANSACTION`](#lisk-core-transactionsend-transaction)
-- [`lisk-core transaction:sign NETWORKIDENTIFIER TRANSACTION`](#lisk-core-transactionsign-networkidentifier-transaction)
+- [`lisk-core transaction:sign TRANSACTION`](#lisk-core-transactionsign-transaction)
 
-## `lisk-core transaction:create NETWORKIDENTIFIER FEE NONCE MODULEID ASSETID`
+## `lisk-core transaction:create MODULEID ASSETID FEE`
 
-Creates a transaction which can be broadcasted to the network. Note: fee and amount should be in Beddows!!
+Create transaction which can be broadcasted to the network. Note: fee and amount should be in Beddows!!
 
 ```
 USAGE
-  $ lisk-core transaction:create NETWORKIDENTIFIER FEE NONCE MODULEID ASSETID
+  $ lisk-core transaction:create MODULEID ASSETID FEE
 
 ARGUMENTS
-  NETWORKIDENTIFIER  Network identifier defined for the network or main | test for the Lisk Network.
-  FEE                Transaction fee in Beddows.
-  NONCE              Nonce of the transaction.
-  MODULEID           Register transaction module id.
-  ASSETID            Register transaction asset id.
+  MODULEID  Registered transaction module id.
+  ASSETID   Registered transaction asset id.
+  FEE       Transaction fee in Beddows.
 
 OPTIONS
   -a, --asset=asset                        Creates transaction with specific asset information
@@ -29,6 +27,9 @@ OPTIONS
                                            "LISK_DATA_PATH" can also be used.
 
   -j, --json                               Print the transaction in JSON format
+
+  -n, --network=network                    [default: mainnet] Default network config to use. Environment variable
+                                           "LISK_NETWORK" can also be used.
 
   -p, --passphrase=passphrase              Specifies a source for your secret passphrase. Command will prompt you for
                                            input if this option is not set.
@@ -39,22 +40,31 @@ OPTIONS
   -s, --sender-publickey=sender-publickey  Creates the transaction with provided sender publickey, when passphrase is
                                            not provided
 
+  --network-identifier=network-identifier  Network identifier defined for the network or main | test for the Lisk
+                                           Network.
+
   --no-signature                           Creates the transaction without a signature. Your passphrase will therefore
                                            not be required
+
+  --nonce=nonce                            Nonce of the transaction.
+
+  --offline                                Specify whether to connect to a local node or not.
 
   --pretty                                 Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
-  transaction:create 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 100000000 2 2 0
+  transaction:create 2 0 100000000
   --asset='{"amount":100000000,"recipientAddress":"ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815","data":"send token"}'
-  transaction:create 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 100000000 2 2 0
+  transaction:create 2 0 100000000 --offline --network mainnet --network-identifier
+  873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 --nonce 1
+  --asset='{"amount":100000000,"recipientAddress":"ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815","data":"send token"}'
 ```
 
-_See code: [dist/commands/transaction/create.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/transaction/create.ts)_
+_See code: [dist/commands/transaction/create.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/transaction/create.ts)_
 
 ## `lisk-core transaction:get ID`
 
-Returns a transaction information for a given transaction ID from the blockchain
+Get transaction from local node by ID.
 
 ```
 USAGE
@@ -73,11 +83,11 @@ EXAMPLE
   transaction:get eab06c6a22e88bca7150e0347a7d976acd070cb9284423e6eabecd657acc1263
 ```
 
-_See code: [dist/commands/transaction/get.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/transaction/get.ts)_
+_See code: [dist/commands/transaction/get.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/transaction/get.ts)_
 
 ## `lisk-core transaction:send TRANSACTION`
 
-Send a transaction to the local node.
+Send transaction to the local node.
 
 ```
 USAGE
@@ -99,39 +109,49 @@ EXAMPLE
   a87bcfe6feaac46211c80472ad9297fd87727709f5d7e7b4134caf106b02
 ```
 
-_See code: [dist/commands/transaction/send.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/transaction/send.ts)_
+_See code: [dist/commands/transaction/send.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/transaction/send.ts)_
 
-## `lisk-core transaction:sign NETWORKIDENTIFIER TRANSACTION`
+## `lisk-core transaction:sign TRANSACTION`
 
-Sign an encoded transaction.
+Sign encoded transaction.
 
 ```
 USAGE
-  $ lisk-core transaction:sign NETWORKIDENTIFIER TRANSACTION
+  $ lisk-core transaction:sign TRANSACTION
 
 ARGUMENTS
-  NETWORKIDENTIFIER  Network identifier defined for a network(mainnet | testnet).
-  TRANSACTION        The transaction to be signed encoded as hex string
+  TRANSACTION  The transaction to be signed encoded as hex string
 
 OPTIONS
-  -d, --data-path=data-path        Directory path to specify where node data is stored. Environment variable
-                                   "LISK_DATA_PATH" can also be used.
+  -d, --data-path=data-path                Directory path to specify where node data is stored. Environment variable
+                                           "LISK_DATA_PATH" can also be used.
 
-  -j, --json                       Print the transaction in JSON format.
+  -j, --json                               Print the transaction in JSON format.
 
-  -p, --passphrase=passphrase      Specifies a source for your secret passphrase. Command will prompt you for input if
-                                   this option is not set.
-                                   Examples:
-                                   - --passphrase='my secret passphrase' (should only be used where security is not
-                                   important)
+  -n, --network=network                    [default: mainnet] Default network config to use. Environment variable
+                                           "LISK_NETWORK" can also be used.
 
-  --include-sender-signature       Include sender signature in transaction.
+  -p, --passphrase=passphrase              Specifies a source for your secret passphrase. Command will prompt you for
+                                           input if this option is not set.
+                                           Examples:
+                                           - --passphrase='my secret passphrase' (should only be used where security is
+                                           not important)
 
-  --mandatory-keys=mandatory-keys  Mandatory publicKey string in hex format.
+  -s, --sender-publickey=sender-publickey  Sign the transaction with provided sender publickey, when passphrase is not
+                                           provided
 
-  --optional-keys=optional-keys    Optional publicKey string in hex format.
+  --include-sender                         Include sender signature in transaction.
 
-  --pretty                         Prints JSON in pretty format rather than condensed.
+  --mandatory-keys=mandatory-keys          Mandatory publicKey string in hex format.
+
+  --network-identifier=network-identifier  Network identifier defined for the network or main | test for the Lisk
+                                           Network.
+
+  --offline                                Specify whether to connect to a local node or not.
+
+  --optional-keys=optional-keys            Optional publicKey string in hex format.
+
+  --pretty                                 Prints JSON in pretty format rather than condensed.
 
 EXAMPLE
   transaction:sign 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3
@@ -140,4 +160,4 @@ EXAMPLE
   f7a07bf5ec079d090630bb8ba347d5d82bf426cbffaaa8b5404f1190a7676c8bd406
 ```
 
-_See code: [dist/commands/transaction/sign.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-debug.2/dist/commands/transaction/sign.ts)_
+_See code: [dist/commands/transaction/sign.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/transaction/sign.ts)_
