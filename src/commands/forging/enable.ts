@@ -28,7 +28,19 @@ export default class EnableForgingCommand extends BaseForgingCommand {
 		...BaseForgingCommand.flags,
 	};
 
-	static args = [...BaseForgingCommand.args];
+	static args = [
+		...BaseForgingCommand.args,
+		{
+			name: 'maxHeightPreviouslyForged',
+			required: true,
+			description: 'Max height previously forged.',
+		},
+		{
+			name: 'force',
+			required: false,
+			description: 'Height in number or block id in hex format.',
+		},
+	];
 
 	async init(): Promise<void> {
 		await super.init();

@@ -21,6 +21,8 @@ import BaseIPCCommand from './base_ipc';
 
 interface Args {
 	readonly address: string;
+	readonly maxHeightPreviouslyForged?: number;
+	readonly force?: boolean;
 }
 
 export class BaseForgingCommand extends BaseIPCCommand {
@@ -41,8 +43,12 @@ export class BaseForgingCommand extends BaseIPCCommand {
 
 	async run(): Promise<void> {
 		const { args, flags } = this.parse(this.constructor as typeof BaseForgingCommand);
-		const { address } = args as Args;
+		const { address, maxHeightPreviouslyForged, force } = args as Args;
 		let password;
+
+		if (this.forging && maxHeightPreviouslyForged && maxHeightPreviouslyForged < 0) {
+			throw new Error('The maxHeightPreviouslyForged parameter must be greater than or equal to 0');
+		}
 
 		if (flags.password) {
 			password = flags.password;
@@ -65,6 +71,8 @@ export class BaseForgingCommand extends BaseIPCCommand {
 					address,
 					password,
 					forging: this.forging,
+					maxHeightPreviouslyForged: maxHeightPreviouslyForged ?? 0,
+					force: force ?? false,
 				},
 			);
 			this.log('Forging status:');
