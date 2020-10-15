@@ -13,8 +13,6 @@
  *
  */
 
-import { expect } from 'chai';
-import * as sandbox from 'sinon';
 import { AfterGenesisBlockApplyContext, GenesisConfig, codec, testing } from 'lisk-sdk';
 import { LegacyAccountModule, getLegacyBytes } from '../../../../src/application/modules';
 import { createAccount, createFakeDefaultAccount } from '../../../utils/account';
@@ -31,9 +29,6 @@ describe('LegacyAccountModule', () => {
 	let legacyAccount2;
 	let newAccount;
 	const legacyBalance = BigInt(100000000000);
-	const reducerHandlerStub = {
-		invoke: sandbox.stub().resolves(legacyBalance),
-	};
 
 	beforeEach(() => {
 		[defaultAccount1, defaultAccount2, defaultAccount3] = [
@@ -60,24 +55,22 @@ describe('LegacyAccountModule', () => {
 
 		afterGenesisBlockApplyInput = {
 			genesisBlock,
-			reducerHandler: reducerHandlerStub,
+			reducerHandler: {
+				invoke: jest.fn().mockResolvedValue(legacyBalance),
+			},
 			stateStore: new testing.StateStoreMock({
 				accounts: [legacyAccount1, legacyAccount2, newAccount],
 			}),
 		} as any;
 	});
 
-	afterEach(() => {
-		reducerHandlerStub.invoke.resetHistory();
-	});
-
 	describe('constructor', () => {
 		it('should have valid id', () => {
-			expect(legacyAccountModule.id).to.equal(1000);
+			expect(legacyAccountModule.id).toBe(1000);
 		});
 
 		it('should have valid name', () => {
-			expect(legacyAccountModule.name).to.equal('legacyAccount');
+			expect(legacyAccountModule.name).toBe('legacyAccount');
 		});
 	});
 
@@ -87,13 +80,19 @@ describe('LegacyAccountModule', () => {
 
 			const oldAddress1 = getLegacyBytes(defaultAccount1.publicKey);
 			const oldAddress2 = getLegacyBytes(defaultAccount2.publicKey);
-			expect(reducerHandlerStub.invoke).to.be.calledTwice;
-			expect(reducerHandlerStub.invoke).to.be.calledWithExactly('token:getBalance', {
-				address: oldAddress1,
-			});
-			expect(reducerHandlerStub.invoke).to.be.calledWithExactly('token:getBalance', {
-				address: oldAddress2,
-			});
+			expect(afterGenesisBlockApplyInput.reducerHandler.invoke).toHaveBeenCalledTimes(2);
+			expect(afterGenesisBlockApplyInput.reducerHandler.invoke).toHaveBeenCalledWith(
+				'token:getBalance',
+				{
+					address: oldAddress1,
+				},
+			);
+			expect(afterGenesisBlockApplyInput.reducerHandler.invoke).toHaveBeenCalledWith(
+				'token:getBalance',
+				{
+					address: oldAddress2,
+				},
+			);
 		});
 
 		it('should save unregistered accounts to state store', async () => {
@@ -115,17 +114,17 @@ describe('LegacyAccountModule', () => {
 			const savedResult = await afterGenesisBlockApplyInput.stateStore.chain.get(
 				CHAIN_STATE_UNREGISTERED_ADDRESSES,
 			);
-			expect(encodedUnregisteredAddresses).to.deep.equal(savedResult);
+			expect(encodedUnregisteredAddresses).toEqual(savedResult);
 		});
 
 		it('should delete unregistered accounts from state store', async () => {
 			await legacyAccountModule.afterGenesisBlockApply(afterGenesisBlockApplyInput);
 			await expect(
 				afterGenesisBlockApplyInput.stateStore.account.get(legacyAccount1.address),
-			).to.be.rejectedWith('Account not defined');
+			).rejects.toThrow('Account not defined');
 			await expect(
 				afterGenesisBlockApplyInput.stateStore.account.get(legacyAccount2.address),
-			).to.be.rejectedWith('Account not defined');
+			).rejects.toThrow('Account not defined');
 		});
 	});
 });

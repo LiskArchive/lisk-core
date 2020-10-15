@@ -12,69 +12,67 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-
 import * as tar from 'tar';
-import { expect, test } from '@oclif/test';
-import * as sandbox from 'sinon';
 import { homedir } from 'os';
 import { join } from 'path';
-
-const defaultDataPath = join(homedir(), '.lisk', 'lisk-core');
+import ExportCommand from '../../../src/commands/blockchain/export';
 
 describe('blockchain:export', () => {
-	const tarCreateStub = sandbox.stub().resolves(true);
+	const defaultDataPath = join(homedir(), '.lisk', 'lisk-core');
 
-	const setupTest = () => test.stub(tar, 'create', tarCreateStub).stdout();
+	let stdout: string[];
+	let stderr: string[];
 
-	afterEach(() => {
-		tarCreateStub.reset();
+	beforeEach(() => {
+		stdout = [];
+		stderr = [];
+		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
+		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
+		jest.spyOn(tar, 'create').mockResolvedValue(true as never);
 	});
 
 	describe('when starting without flag', () => {
-		setupTest()
-			.command(['blockchain:export'])
-			.it('should compress "blockchain.db" for default data path', () => {
-				expect(tarCreateStub).to.have.been.calledOnce;
-				expect(tarCreateStub).to.have.been.calledWithExactly(
-					{
-						cwd: join(defaultDataPath, 'data'),
-						file: join(process.cwd(), 'blockchain.db.tar.gz'),
-						gzip: true,
-					},
-					['blockchain.db'],
-				);
-			});
+		it('should compress "blockchain.db" for default data path', async () => {
+			await ExportCommand.run([]);
+			expect(tar.create).toHaveBeenCalledTimes(1);
+			expect(tar.create).toHaveBeenCalledWith(
+				{
+					cwd: join(defaultDataPath, 'data'),
+					file: join(process.cwd(), 'blockchain.db.tar.gz'),
+					gzip: true,
+				},
+				['blockchain.db'],
+			);
+		});
 	});
 
 	describe('when starting with particular data-path', () => {
-		setupTest()
-			.command(['blockchain:export', '--data-path=/my/app/'])
-			.it('should compress "blockchain.db" for given data path', () => {
-				expect(tarCreateStub).to.have.been.calledOnce;
-				expect(tarCreateStub).to.have.been.calledWithExactly(
-					{
-						cwd: join('/my/app/', 'data'),
-						file: join(process.cwd(), 'blockchain.db.tar.gz'),
-						gzip: true,
-					},
-					['blockchain.db'],
-				);
-			});
+		it('should compress "blockchain.db" for given data path', async () => {
+			await ExportCommand.run(['--data-path=/my/app/']);
+			expect(tar.create).toHaveBeenCalledTimes(1);
+			expect(tar.create).toHaveBeenCalledWith(
+				{
+					cwd: join('/my/app/', 'data'),
+					file: join(process.cwd(), 'blockchain.db.tar.gz'),
+					gzip: true,
+				},
+				['blockchain.db'],
+			);
+		});
 	});
 
 	describe('when starting with particular export path', () => {
-		setupTest()
-			.command(['blockchain:export', '--output=/my/dir/'])
-			.it('should compress "blockchain.db" for given data path', () => {
-				expect(tarCreateStub).to.have.been.calledOnce;
-				expect(tarCreateStub).to.have.been.calledWithExactly(
-					{
-						cwd: join(defaultDataPath, 'data'),
-						file: join('/my/dir/', 'blockchain.db.tar.gz'),
-						gzip: true,
-					},
-					['blockchain.db'],
-				);
-			});
+		it('should compress "blockchain.db" for given data path', async () => {
+			await ExportCommand.run(['--output=/my/dir/']);
+			expect(tar.create).toHaveBeenCalledTimes(1);
+			expect(tar.create).toHaveBeenCalledWith(
+				{
+					cwd: join(defaultDataPath, 'data'),
+					file: join('/my/dir/', 'blockchain.db.tar.gz'),
+					gzip: true,
+				},
+				['blockchain.db'],
+			);
+		});
 	});
 });

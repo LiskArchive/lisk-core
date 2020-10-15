@@ -12,64 +12,71 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import { expect, test } from '@oclif/test';
-import * as sandbox from 'sinon';
 import * as fs from 'fs-extra';
 import * as os from 'os';
+import { when } from 'jest-when';
+import ShowCommand from '../../../src/commands/config/show';
 
 describe('config:show command', () => {
-	const readJSONStub = sandbox.stub().resolves({
-		network: { port: 3000 },
-		logger: {
-			consoleLogLevel: 'error',
-		},
+	let stdout: string[];
+	let stderr: string[];
+
+	beforeEach(() => {
+		stdout = [];
+		stderr = [];
+		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
+		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
+		jest.spyOn(fs, 'readJSON').mockResolvedValue({
+			network: { port: 3000 },
+			logger: {
+				consoleLogLevel: 'error',
+			},
+		} as never);
+		jest.spyOn(fs, 'statSync').mockReturnValue({ isDirectory: () => true } as never);
+		jest.spyOn(fs, 'ensureDirSync').mockReturnValue();
+		jest.spyOn(fs, 'removeSync').mockReturnValue(null as never);
+		jest.spyOn(fs, 'readdirSync').mockReturnValue(['mainnet'] as never);
+		// when(readdirSyncStub)
+		// .calledWith('new-folder/config', undefined as any).mockReturnValue([]);
+		jest.spyOn(os, 'homedir').mockReturnValue('~');
 	});
-	const readDirSync = sandbox.stub().returns(['mainnet']);
-	readDirSync.withArgs('new-folder/config').returns([]);
-	const setupTest = () =>
-		test
-			.stub(fs, 'readJSON', readJSONStub)
-			.stub(fs, 'ensureDirSync', sandbox.stub())
-			.stub(fs, 'statSync', sandbox.stub().returns({ isDirectory: () => true }))
-			.stub(fs, 'removeSync', sandbox.stub().returns(null))
-			.stub(fs, 'readdirSync', readDirSync)
-			.stub(os, 'homedir', sandbox.stub().returns('~'))
-			.stdout();
 
 	describe('config:show', () => {
-		setupTest()
-			.command(['config:show'])
-			.it('should get the config from default path', out => {
-				expect(JSON.parse(out.stdout).network.port).to.eql(3000);
-			});
+		it('should get the config from default path', async () => {
+			await ShowCommand.run([]);
+			expect(JSON.parse(stdout[0]).network.port).toEqual(3000);
+		});
 	});
 
 	describe('config:show -d ./new-folder', () => {
-		setupTest()
-			.command(['config:show', '-d', './new-folder'])
-			.catch(err => expect(err.message).to.contain('does not contain valid config'))
-			.it('should throw an error if the data path does not contain config');
+		it('should throw an error if the data path does not contain config', async () => {
+			when(fs.readdirSync as jest.Mock)
+				.calledWith('new-folder/config')
+				.mockReturnValue([]);
+			await expect(ShowCommand.run(['-d', './new-folder'])).rejects.toThrow(
+				'does not contain valid config',
+			);
+		});
 	});
 
 	describe('config:show -d ./config', () => {
-		setupTest()
-			.command(['config:show', '-d', './existing'])
-			.it('should get the config from specified data path', () => {
-				expect(fs.readdirSync).to.have.been.calledWith('existing/config');
-				expect(fs.readJSON).to.have.been.calledWith('existing/config/mainnet/config.json');
-			});
+		it('should get the config from default path', async () => {
+			await ShowCommand.run(['-d', './existing']);
+			expect(fs.readdirSync).toHaveBeenCalledWith('existing/config');
+			expect(fs.readJSON).toHaveBeenCalledWith('existing/config/mainnet/config.json');
+		});
 	});
 
 	describe('config:show -c ./constom-config.json', () => {
 		const configPath = './custom-config.json';
-
 		const customConfig = { network: { port: 9999 } };
 
-		setupTest()
-			.stub(fs, 'readJSON', sandbox.stub().withArgs(customConfig).resolves(customConfig))
-			.command(['config:show', '-c', configPath])
-			.it('should overwrite the config with provided custom config', out => {
-				expect(JSON.parse(out.stdout).network.port).to.eql(9999);
-			});
+		it('should overwrite the config with provided custom config', async () => {
+			when(fs.readJSON as jest.Mock)
+				.calledWith(configPath)
+				.mockResolvedValue(customConfig);
+			await ShowCommand.run(['-c', configPath]);
+			expect(JSON.parse(stdout[0]).network.port).toEqual(9999);
+		});
 	});
 });

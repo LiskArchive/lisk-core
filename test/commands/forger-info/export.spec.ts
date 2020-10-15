@@ -14,67 +14,66 @@
  */
 
 import * as tar from 'tar';
-import { expect, test } from '@oclif/test';
-import * as sandbox from 'sinon';
 import { homedir } from 'os';
 import { join } from 'path';
-
-const defaultDataPath = join(homedir(), '.lisk', 'lisk-core');
+import ExportCommand from '../../../src/commands/forger-info/export';
 
 describe('forger-info:export', () => {
-	const tarCreateStub = sandbox.stub().resolves(true);
+	const defaultDataPath = join(homedir(), '.lisk', 'lisk-core');
 
-	const setupTest = () => test.stub(tar, 'create', tarCreateStub).stdout();
+	let stdout: string[];
+	let stderr: string[];
 
-	afterEach(() => {
-		tarCreateStub.reset();
+	beforeEach(() => {
+		stdout = [];
+		stderr = [];
+		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
+		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
+		jest.spyOn(tar, 'create').mockResolvedValue(true as never);
 	});
 
 	describe('when starting without flag', () => {
-		setupTest()
-			.command(['forger-info:export'])
-			.it('should compress "forger.db" for default data path', () => {
-				expect(tarCreateStub).to.have.been.calledOnce;
-				expect(tarCreateStub).to.have.been.calledWithExactly(
-					{
-						cwd: join(defaultDataPath, 'data'),
-						file: join(process.cwd(), 'forger.db.tar.gz'),
-						gzip: true,
-					},
-					['forger.db'],
-				);
-			});
+		it('should compress "forger.db" for default data path', async () => {
+			await ExportCommand.run([]);
+			expect(tar.create).toHaveBeenCalledTimes(1);
+			expect(tar.create).toHaveBeenCalledWith(
+				{
+					cwd: join(defaultDataPath, 'data'),
+					file: join(process.cwd(), 'forger.db.tar.gz'),
+					gzip: true,
+				},
+				['forger.db'],
+			);
+		});
 	});
 
 	describe('when starting with particular data-path', () => {
-		setupTest()
-			.command(['forger-info:export', '--data-path=/my/app/'])
-			.it('should compress "forger.db" for given data path', () => {
-				expect(tarCreateStub).to.have.been.calledOnce;
-				expect(tarCreateStub).to.have.been.calledWithExactly(
-					{
-						cwd: join('/my/app/', 'data'),
-						file: join(process.cwd(), 'forger.db.tar.gz'),
-						gzip: true,
-					},
-					['forger.db'],
-				);
-			});
+		it('should compress "forger.db" for given data path', async () => {
+			await ExportCommand.run(['--data-path=/my/app/']);
+			expect(tar.create).toHaveBeenCalledTimes(1);
+			expect(tar.create).toHaveBeenCalledWith(
+				{
+					cwd: join('/my/app/', 'data'),
+					file: join(process.cwd(), 'forger.db.tar.gz'),
+					gzip: true,
+				},
+				['forger.db'],
+			);
+		});
 	});
 
 	describe('when starting with particular export path', () => {
-		setupTest()
-			.command(['forger-info:export', '--output=/my/dir/'])
-			.it('should compress "forger.db" for given data path', () => {
-				expect(tarCreateStub).to.have.been.calledOnce;
-				expect(tarCreateStub).to.have.been.calledWithExactly(
-					{
-						cwd: join(defaultDataPath, 'data'),
-						file: join('/my/dir/', 'forger.db.tar.gz'),
-						gzip: true,
-					},
-					['forger.db'],
-				);
-			});
+		it('should compress "forger.db" for given data path', async () => {
+			await ExportCommand.run(['--output=/my/dir/']);
+			expect(tar.create).toHaveBeenCalledTimes(1);
+			expect(tar.create).toHaveBeenCalledWith(
+				{
+					cwd: join(defaultDataPath, 'data'),
+					file: join('/my/dir/', 'forger.db.tar.gz'),
+					gzip: true,
+				},
+				['forger.db'],
+			);
+		});
 	});
 });

@@ -13,85 +13,76 @@
  *
  */
 
-import * as sandbox from 'sinon';
 import * as fs from 'fs-extra';
-import { expect, test } from '@oclif/test';
 import { cryptography } from 'lisk-sdk';
 import HashOnionCommand from '../../src/commands/hash-onion';
 
 describe('hash-onion command', () => {
-	const printMethodStub = sandbox.stub();
+	let stdout: string[];
+	let stderr: string[];
 
-	const setupTest = () =>
-		test
-			.stub(HashOnionCommand.prototype, 'printJSON', printMethodStub)
-			.stub(fs, 'ensureDirSync', sandbox.stub().returns({}))
-			.stub(fs, 'writeJSONSync', sandbox.stub().returns({}))
-			.stdout();
+	beforeEach(() => {
+		stdout = [];
+		stderr = [];
+		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
+		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
+		jest.spyOn(HashOnionCommand.prototype, 'printJSON').mockReturnValue();
+		jest.spyOn(fs, 'ensureDirSync').mockReturnValue();
+		jest.spyOn(fs, 'writeJSONSync').mockReturnValue();
+	});
 
 	describe('hash-onion --count=1000 --distance=200', () => {
-		setupTest()
-			.command(['hash-onion', '--count=1000', '--distance=200'])
-			.it('should generate valid hash onion', () => {
-				const { lastArg: result } = printMethodStub.getCall(0);
-				for (let i = 0; i < result.hashes.length - 1; i += 1) {
-					let nextHash = Buffer.from(result.hashes[i + 1], 'hex');
-					for (let j = 0; j < result.distance; j += 1) {
-						nextHash = cryptography.hash(nextHash).slice(0, 16);
-					}
-					expect(result.hashes[i]).to.equal(nextHash.toString('hex'));
+		it('should generate valid hash onion', async () => {
+			await HashOnionCommand.run(['--count=1000', '--distance=200']);
+			const { length } = (HashOnionCommand.prototype.printJSON as jest.Mock).mock.calls;
+			const result = (HashOnionCommand.prototype.printJSON as jest.Mock).mock.calls[length - 1][0];
+			for (let i = 0; i < result.hashes.length - 1; i += 1) {
+				let nextHash = Buffer.from(result.hashes[i + 1], 'hex');
+				for (let j = 0; j < result.distance; j += 1) {
+					nextHash = cryptography.hash(nextHash).slice(0, 16);
 				}
-			});
+				expect(result.hashes[i]).toBe(nextHash.toString('hex'));
+			}
+		});
 	});
 
 	describe('hash-onion --count=1000 --distance=200 --output=./test/sample.json', () => {
-		setupTest()
-			.command(['hash-onion', '--count=1000', '--distance=200', '--output=./test/sample.json'])
-			.it('should write to file', () => {
-				expect(fs.ensureDirSync).to.be.calledWith('./test');
-				expect(fs.writeJSONSync).to.be.calledWith('./test/sample.json');
-			});
+		it('should write to file', async () => {
+			await HashOnionCommand.run(['--count=1000', '--distance=200', '--output=./test/sample.json']);
+			expect(fs.ensureDirSync).toHaveBeenCalledWith('./test');
+			expect(fs.writeJSONSync).toHaveBeenCalledWith('./test/sample.json', expect.anything());
+		});
 	});
 
 	describe('hash-onion --count=777 --distance=200', () => {
-		setupTest()
-			.command(['hash-onion', '--count=777', '--distance=200'])
-			.catch(error => {
-				return expect(error.message).to.contain(
-					'Invalid count. Count must be multiple of distance',
-				);
-			})
-			.it('should throw an error');
+		it('should throw an error', async () => {
+			await expect(HashOnionCommand.run(['--count=777', '--distance=200'])).rejects.toThrow(
+				'Invalid count. Count must be multiple of distance',
+			);
+		});
 	});
 
 	describe('hash-onion --count=100 --distance=200', () => {
-		setupTest()
-			.command(['hash-onion', '--count=100', '--distance=200'])
-			.catch(error => {
-				return expect(error.message).to.contain(
-					'Invalid count or distance. Count must be greater than distance',
-				);
-			})
-			.it('should throw an error');
+		it('should throw an error', async () => {
+			await expect(HashOnionCommand.run(['--count=100', '--distance=200'])).rejects.toThrow(
+				'Invalid count or distance. Count must be greater than distance',
+			);
+		});
 	});
 
 	describe('hash-onion --count=-1 --distance=200', () => {
-		setupTest()
-			.command(['hash-onion', '--count=-1', '--distance=200'])
-			.catch(error => {
-				return expect(error.message).to.contain('Invalid count. Count has to be positive integer');
-			})
-			.it('should throw an error');
+		it('should throw an error', async () => {
+			await expect(HashOnionCommand.run(['--count=-1', '--distance=200'])).rejects.toThrow(
+				'Invalid count. Count has to be positive integer',
+			);
+		});
 	});
 
 	describe('hash-onion --count=1000 --distance=-1', () => {
-		setupTest()
-			.command(['hash-onion', '--count=1000', '--distance=-1'])
-			.catch(error => {
-				return expect(error.message).to.contain(
-					'Invalid distance. Distance has to be positive integer',
-				);
-			})
-			.it('should throw an error');
+		it('should throw an error', async () => {
+			await expect(HashOnionCommand.run(['--count=1000', '--distance=-1'])).rejects.toThrow(
+				'Invalid distance. Distance has to be positive integer',
+			);
+		});
 	});
 });

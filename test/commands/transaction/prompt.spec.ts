@@ -13,7 +13,6 @@
  *
  */
 
-import { expect } from '@oclif/test';
 import { prepareQuestions, transformAsset, transformNestedAsset } from '../../../src/utils/reader';
 import {
 	tokenTransferAssetSchema,
@@ -25,7 +24,7 @@ describe('prompt', () => {
 	describe('prepareQuestions', () => {
 		it('should return array of questions for given asset schema', () => {
 			const questions = prepareQuestions(tokenTransferAssetSchema);
-			expect(questions).to.deep.equal([
+			expect(questions).toEqual([
 				{ type: 'input', name: 'amount', message: 'Please enter: amount: ' },
 				{
 					type: 'input',
@@ -45,7 +44,7 @@ describe('prompt', () => {
 				mandatoryKeys: 'a,b',
 				optionalKeys: 'c,d',
 			});
-			expect(questions).to.deep.equal([
+			expect(questions).toEqual([
 				{
 					type: 'input',
 					name: 'numberOfSignatures',
@@ -62,7 +61,7 @@ describe('prompt', () => {
 					message: 'Please enter: optionalKeys(comma separated values (a,b)): ',
 				},
 			]);
-			expect(transformedAsset).to.deep.equal({
+			expect(transformedAsset).toEqual({
 				numberOfSignatures: 4,
 				mandatoryKeys: ['a', 'b'],
 				optionalKeys: ['c', 'd'],
@@ -78,7 +77,7 @@ describe('prompt', () => {
 				{ votes: 'b,300' },
 			]);
 
-			expect(questions).to.deep.equal([
+			expect(questions).toEqual([
 				{
 					type: 'input',
 					name: 'votes',
@@ -90,7 +89,7 @@ describe('prompt', () => {
 					message: 'Want to enter another votes(delegateAddress, amount)',
 				},
 			]);
-			expect(transformedAsset).to.deep.equal({
+			expect(transformedAsset).toEqual({
 				votes: [
 					{ delegateAddress: 'a', amount: 100 },
 					{ delegateAddress: 'b', amount: 300 },

@@ -13,8 +13,6 @@
  *
  */
 
-import { expect } from 'chai';
-import * as sandbox from 'sinon';
 import { ApplyAssetContext, cryptography, codec, testing } from 'lisk-sdk';
 import { ReclaimAsset, getLegacyBytes } from '../../../../src/application/modules';
 import {
@@ -33,7 +31,7 @@ describe('ReclaimAsset', () => {
 	let sender;
 	const chainMockData = {};
 	const reducerHandlerStub = {
-		invoke: sandbox.stub().resolves(),
+		invoke: jest.fn(),
 	};
 	const randomPublicKey = Buffer.from(
 		'0fe9a3f1a21b5530f27f87a414b549e79a940bf24fdf2b2f05e7f22aeeecc86a',
@@ -68,36 +66,32 @@ describe('ReclaimAsset', () => {
 		} as any;
 	});
 
-	afterEach(() => {
-		reducerHandlerStub.invoke.resetHistory();
-	});
-
 	describe('constructor', () => {
 		it('should have valid id', () => {
-			expect(reclaimAsset.id).to.equal(0);
+			expect(reclaimAsset.id).toBe(0);
 		});
 
 		it('should have valid name', () => {
-			expect(reclaimAsset.name).to.equal('reclaimLSK');
+			expect(reclaimAsset.name).toBe('reclaimLSK');
 		});
 
 		it('should have valid schema', () => {
-			expect(reclaimAsset.schema).to.deep.equal(reclaimAssetSchema);
+			expect(reclaimAsset.schema).toEqual(reclaimAssetSchema);
 		});
 	});
 
 	describe('apply', () => {
-		it('should throw error when chain state store does not have unregistered addresses', () => {
+		it('should throw error when chain state store does not have unregistered addresses', async () => {
 			reclaimAssetInput.stateStore = new testing.StateStoreMock({
 				accounts: [sender],
 				chain: {},
 			}) as any;
-			expect(reclaimAsset.apply(reclaimAssetInput)).to.rejectedWith(
+			await expect(reclaimAsset.apply(reclaimAssetInput)).rejects.toThrow(
 				'Chain state does not contain any unregistered addresses',
 			);
 		});
 
-		it('should throw error when reclaim senderPublickey corresponding address is not found in unregistered address', () => {
+		it('should throw error when reclaim senderPublickey corresponding address is not found in unregistered address', async () => {
 			const unregisteredAddresses = [
 				{ address: getLegacyBytes(randomPublicKey), balance: balanceToClaim },
 			];
@@ -109,12 +103,12 @@ describe('ReclaimAsset', () => {
 				accounts: [sender],
 				chain: chainMockData,
 			}) as any;
-			expect(reclaimAsset.apply(reclaimAssetInput)).to.rejectedWith(
+			await expect(reclaimAsset.apply(reclaimAssetInput)).rejects.toThrow(
 				'Legacy address corresponding to sender publickey was not found genesis account state',
 			);
 		});
 
-		it('should throw error when reclaim amount does not match unregistered address amount', () => {
+		it('should throw error when reclaim amount does not match unregistered address amount', async () => {
 			const unregisteredAddresses = [
 				{ address: getLegacyBytes(defaultAccount.publicKey), amount: BigInt(500000000000) },
 			];
@@ -126,7 +120,7 @@ describe('ReclaimAsset', () => {
 				accounts: [sender],
 				chain: chainMockData,
 			}) as any;
-			expect(reclaimAsset.apply(reclaimAssetInput)).to.rejectedWith(
+			await expect(reclaimAsset.apply(reclaimAssetInput)).rejects.toThrow(
 				'Invalid amount:100000000000 claimed by the sender',
 			);
 		});
@@ -134,22 +128,24 @@ describe('ReclaimAsset', () => {
 		it('should credit amount from unregistered address to new address', async () => {
 			await reclaimAsset.apply(reclaimAssetInput);
 			const newAddress = cryptography.getAddressFromPublicKey(defaultAccount.publicKey);
-			expect(reducerHandlerStub.invoke).to.be.calledOnce;
-			expect(reducerHandlerStub.invoke).to.be.calledOnceWithExactly('token:credit', {
+			expect(reducerHandlerStub.invoke).toHaveBeenCalledTimes(1);
+			expect(reducerHandlerStub.invoke).toHaveBeenCalledWith('token:credit', {
 				address: newAddress,
 				amount: balanceToClaim,
 			});
-			expect(reclaimAssetInput.stateStore.chain.get(CHAIN_STATE_UNREGISTERED_ADDRESSES)).to.be
-				.empty;
+			await expect(
+				reclaimAssetInput.stateStore.chain.get(CHAIN_STATE_UNREGISTERED_ADDRESSES),
+			).resolves.toHaveLength(0);
 		});
 
 		it('should fail to reclaim twice for same account', async () => {
 			await reclaimAsset.apply(reclaimAssetInput);
-			expect(reclaimAsset.apply(reclaimAssetInput)).to.rejectedWith(
+			await expect(reclaimAsset.apply(reclaimAssetInput)).rejects.toThrow(
 				'Legacy address corresponding to sender publickey was not found genesis account state',
 			);
-			expect(reclaimAssetInput.stateStore.chain.get(CHAIN_STATE_UNREGISTERED_ADDRESSES)).to.be
-				.empty;
+			await expect(
+				reclaimAssetInput.stateStore.chain.get(CHAIN_STATE_UNREGISTERED_ADDRESSES),
+			).resolves.toHaveLength(0);
 		});
 	});
 });

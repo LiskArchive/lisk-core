@@ -12,69 +12,58 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-
-import { expect, test } from '@oclif/test';
-import * as sandbox from 'sinon';
 import { Application } from 'lisk-sdk';
 import * as application from '../../../src/application';
 import * as downloadUtils from '../../../src/utils/download';
-
-const SNAPSHOT_URL = 'https://downloads.lisk.io/lisk/mainnet/blockchain.db.gz';
+import DownloadCommand from '../../../src/commands/blockchain/download';
 
 describe('blockchain:download', () => {
+	const SNAPSHOT_URL = 'https://downloads.lisk.io/lisk/mainnet/blockchain.db.gz';
 	const dataPath = process.cwd();
-	const downloadAndValidateStub = sandbox.stub().resolves(undefined);
-	const getChecksumStub = sandbox.stub().resolves('checksum');
 
-	const setupTest = () =>
-		test
-			.stub(
-				application,
-				'getApplication',
-				sandbox.stub().returns({
-					run: async () => Promise.resolve(),
-				} as Application),
-			)
-			.stub(downloadUtils, 'downloadAndValidate', downloadAndValidateStub)
-			.stub(downloadUtils, 'getChecksum', getChecksumStub)
-			.stdout();
+	let stdout: string[];
+	let stderr: string[];
 
-	afterEach(() => {
-		downloadAndValidateStub.resetHistory();
+	beforeEach(() => {
+		stdout = [];
+		stderr = [];
+		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
+		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
+		jest.spyOn(application, 'getApplication').mockReturnValue({
+			run: async () => Promise.resolve(),
+		} as Application);
+		jest.spyOn(downloadUtils, 'downloadAndValidate').mockResolvedValue(undefined);
+		jest.spyOn(downloadUtils, 'getChecksum').mockResolvedValue('checksum' as never);
 	});
 
 	describe('when downloading without flags', () => {
-		setupTest()
-			.command(['blockchain:download'])
-			.it('should call downloadAndValidate', () => {
-				expect(downloadAndValidateStub).to.be.calledOnceWithExactly(SNAPSHOT_URL, dataPath);
-			});
+		it('should call downloadAndValidate', async () => {
+			await DownloadCommand.run([]);
+			expect(downloadUtils.downloadAndValidate).toHaveBeenCalledWith(SNAPSHOT_URL, dataPath);
+		});
 	});
 
 	describe('when downloading with network flag', () => {
-		setupTest()
-			.command(['blockchain:download', '--network=betanet'])
-			.it('should call downloadAndValidate', () => {
-				expect(downloadAndValidateStub).to.be.calledWithExactly(
-					SNAPSHOT_URL.replace('mainnet', 'betanet'),
-					dataPath,
-				);
-			});
+		it('should call downloadAndValidate', async () => {
+			await DownloadCommand.run(['--network=betanet']);
+			expect(downloadUtils.downloadAndValidate).toHaveBeenCalledWith(
+				SNAPSHOT_URL.replace('mainnet', 'betanet'),
+				dataPath,
+			);
+		});
 	});
 
 	describe('when downloading with output flag', () => {
-		setupTest()
-			.command(['blockchain:download', '--output=yourpath'])
-			.it('should call downloadAndValidate', () => {
-				expect(downloadAndValidateStub).to.be.calledWithExactly(SNAPSHOT_URL, 'yourpath');
-			});
+		it('should call downloadAndValidate', async () => {
+			await DownloadCommand.run(['--output=yourpath']);
+			expect(downloadUtils.downloadAndValidate).toHaveBeenCalledWith(SNAPSHOT_URL, 'yourpath');
+		});
 	});
 
 	describe('when downloading with url flag', () => {
-		setupTest()
-			.command(['blockchain:download', '--url=yoururl'])
-			.it('should call downloadAndValidate', () => {
-				expect(downloadAndValidateStub).to.be.calledWithExactly('yoururl', dataPath);
-			});
+		it('should call downloadAndValidate', async () => {
+			await DownloadCommand.run(['--url=yoururl']);
+			expect(downloadUtils.downloadAndValidate).toHaveBeenCalledWith('yoururl', dataPath);
+		});
 	});
 });

@@ -13,113 +13,98 @@
  *
  */
 
-import { expect, test } from '@oclif/test';
-import * as sandbox from 'sinon';
 import * as fs from 'fs-extra';
 import { homedir } from 'os';
 import * as path from 'path';
 import { getBlockchainDBPath } from '../../../src/utils/path';
 import * as downloadUtils from '../../../src/utils/download';
-
-const defaultDataPath = path.join(homedir(), '.lisk', 'lisk-core');
-const defaultBlockchainDBPath = getBlockchainDBPath(defaultDataPath);
-const pathToBlockchainGzip = '/path/to/blockchain.db.tar.gz';
+import ImportCommand from '../../../src/commands/blockchain/import';
 
 describe('blockchain:import', () => {
-	const fsExistsSyncStub = sandbox.stub().returns(false);
-	const pathExtnameStub = sandbox.stub().returns('.gz');
-	const fsEnsureDirSyncStub = sandbox.stub();
-	const extractStub = sandbox.stub();
+	const defaultDataPath = path.join(homedir(), '.lisk', 'lisk-core');
+	const defaultBlockchainDBPath = getBlockchainDBPath(defaultDataPath);
+	const pathToBlockchainGzip = '/path/to/blockchain.db.tar.gz';
+	let stdout: string[];
+	let stderr: string[];
 
-	const setupTest = () =>
-		test
-			.stub(fs, 'existsSync', fsExistsSyncStub)
-			.stub(fs, 'removeSync', sandbox.stub())
-			.stub(path, 'extname', pathExtnameStub)
-			.stub(fs, 'ensureDirSync', fsEnsureDirSyncStub)
-			.stub(downloadUtils, 'extract', extractStub)
-			.stdout()
-			.stderr();
-
-	afterEach(() => {
-		fsExistsSyncStub.resetHistory();
-		pathExtnameStub.resetHistory();
-		fsEnsureDirSyncStub.resetHistory();
-		extractStub.resetHistory();
+	beforeEach(() => {
+		stdout = [];
+		stderr = [];
+		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
+		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
+		jest.spyOn(fs, 'existsSync').mockReturnValue(false);
+		jest.spyOn(fs, 'removeSync').mockReturnValue();
+		jest.spyOn(fs, 'ensureDirSync').mockReturnValue();
+		jest.spyOn(path, 'extname').mockReturnValue('.gz');
+		jest.spyOn(downloadUtils, 'extract').mockReturnValue('' as never);
 	});
 
 	describe('when importing with no path argument', () => {
-		setupTest()
-			.command(['blockchain:import'])
-			.catch((error: Error) => expect(error.message).to.contain('Missing 1 required arg:'))
-			.it('should throw an error when no arguments are provided.');
+		it('should log error and return', async () => {
+			await expect(ImportCommand.run([])).rejects.toThrow('Missing 1 required arg:');
+		});
 	});
 
 	describe('when importing with no existing blockchain data', () => {
-		setupTest()
-			.command(['blockchain:import', pathToBlockchainGzip])
-			.it('should import "blockchain.db" from given path', () => {
-				expect(fsExistsSyncStub).to.have.been.calledOnce;
-				expect(fsExistsSyncStub).to.have.been.calledWithExactly(defaultBlockchainDBPath);
-				expect(fsEnsureDirSyncStub).to.have.been.calledOnce;
-				expect(fsEnsureDirSyncStub).to.have.been.calledWithExactly(defaultBlockchainDBPath);
-				expect(extractStub).to.have.been.calledOnce;
-				expect(extractStub).to.have.been.calledWithExactly(
+		it('should import "blockchain.db" from given path', async () => {
+			await ImportCommand.run([pathToBlockchainGzip]);
+			expect(fs.existsSync).toHaveBeenCalledTimes(1);
+			expect(fs.existsSync).toHaveBeenCalledWith(defaultBlockchainDBPath);
+			expect(fs.ensureDirSync).toHaveBeenCalledTimes(1);
+			expect(fs.ensureDirSync).toHaveBeenCalledWith(defaultBlockchainDBPath);
+			expect(downloadUtils.extract).toHaveBeenCalledTimes(1);
+			expect(downloadUtils.extract).toHaveBeenCalledWith(
+				path.dirname(pathToBlockchainGzip),
+				'blockchain.db.tar.gz',
+				defaultBlockchainDBPath,
+			);
+		});
+	});
+
+	describe('when importing with --data-path flag', () => {
+		const dataPath = getBlockchainDBPath('/my/app/');
+		it('should import "blockchain.db" from given path', async () => {
+			await ImportCommand.run([pathToBlockchainGzip, '--data-path=/my/app/']);
+			expect(fs.existsSync).toHaveBeenCalledTimes(1);
+			expect(fs.existsSync).toHaveBeenCalledWith(dataPath);
+			expect(fs.ensureDirSync).toHaveBeenCalledTimes(1);
+			expect(fs.ensureDirSync).toHaveBeenCalledWith(dataPath);
+			expect(downloadUtils.extract).toHaveBeenCalledTimes(1);
+			expect(downloadUtils.extract).toHaveBeenCalledWith(
+				path.dirname(pathToBlockchainGzip),
+				'blockchain.db.tar.gz',
+				dataPath,
+			);
+		});
+	});
+
+	describe('when importing with existing blockchain data', () => {
+		beforeEach(() => {
+			(fs.existsSync as jest.Mock).mockReturnValue(true);
+		});
+
+		describe('when importing without --force flag', () => {
+			it('should log error and return', async () => {
+				await expect(ImportCommand.run([pathToBlockchainGzip])).rejects.toThrow(
+					`There is already a blockchain data file found at ${defaultDataPath}. Use --force to override.`,
+				);
+			});
+		});
+
+		describe('when importing with --force flag', () => {
+			it('should import "blockchain.db" to given data-path', async () => {
+				await ImportCommand.run([pathToBlockchainGzip, '--force']);
+				expect(fs.existsSync).toHaveBeenCalledTimes(1);
+				expect(fs.existsSync).toHaveBeenCalledWith(defaultBlockchainDBPath);
+				expect(fs.ensureDirSync).toHaveBeenCalledTimes(1);
+				expect(fs.ensureDirSync).toHaveBeenCalledWith(defaultBlockchainDBPath);
+				expect(downloadUtils.extract).toHaveBeenCalledTimes(1);
+				expect(downloadUtils.extract).toHaveBeenCalledWith(
 					path.dirname(pathToBlockchainGzip),
 					'blockchain.db.tar.gz',
 					defaultBlockchainDBPath,
 				);
 			});
-	});
-
-	describe('when importing with --data-path flag', () => {
-		const dataPath = getBlockchainDBPath('/my/app/');
-		setupTest()
-			.command(['blockchain:import', pathToBlockchainGzip, '--data-path=/my/app/'])
-			.it('should import "blockchain.db" to given data-path', () => {
-				expect(fsExistsSyncStub).to.have.been.calledOnce;
-				expect(fsExistsSyncStub).to.have.been.calledWithExactly(dataPath);
-				expect(fsEnsureDirSyncStub).to.have.been.calledOnce;
-				expect(fsEnsureDirSyncStub).to.have.been.calledWithExactly(dataPath);
-				expect(extractStub).to.have.been.calledOnce;
-				expect(extractStub).to.have.been.calledWithExactly(
-					path.dirname(pathToBlockchainGzip),
-					'blockchain.db.tar.gz',
-					dataPath,
-				);
-			});
-	});
-
-	describe('when importing with existing blockchain data', () => {
-		beforeEach(() => {
-			fsExistsSyncStub.returns(true);
-		});
-
-		describe('when importing without --force flag', () => {
-			setupTest()
-				.command(['blockchain:import', pathToBlockchainGzip])
-				.catch((error: Error) =>
-					expect(error.message).to.contain(
-						`There is already a blockchain data file found at ${defaultDataPath}. Use --force to override.`,
-					),
-				)
-				.it('should log error and return');
-		});
-
-		describe('when importing with --force flag', () => {
-			setupTest()
-				.command(['blockchain:import', pathToBlockchainGzip, '--force'])
-				.it('should import "blockchain.db" to given data-path', () => {
-					expect(fsEnsureDirSyncStub).to.have.been.calledOnce;
-					expect(fsEnsureDirSyncStub).to.have.been.calledWithExactly(defaultBlockchainDBPath);
-					expect(extractStub).to.have.been.calledOnce;
-					expect(fs.removeSync).to.have.been.calledWithExactly(defaultBlockchainDBPath);
-					expect(extractStub).to.have.been.calledWithExactly(
-						path.dirname(pathToBlockchainGzip),
-						'blockchain.db.tar.gz',
-						defaultBlockchainDBPath,
-					);
-				});
 		});
 	});
 });
