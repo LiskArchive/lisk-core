@@ -13,8 +13,10 @@
  *
  */
 import { cryptography } from 'lisk-sdk';
+import * as Config from '@oclif/config';
 import * as readerUtils from '../../../src/utils/reader';
 import DecryptCommand from '../../../src/commands/passphrase/decrypt';
+import { getConfig } from '../../utils/config';
 
 describe('passphrase:decrypt', () => {
 	const defaultEncryptedPassphrase =
@@ -31,10 +33,12 @@ describe('passphrase:decrypt', () => {
 
 	let stdout: string[];
 	let stderr: string[];
+	let config: Config.IConfig;
 
-	beforeEach(() => {
+	beforeEach(async () => {
 		stdout = [];
 		stderr = [];
+		config = await getConfig();
 		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
 		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
 		jest.spyOn(DecryptCommand.prototype, 'printJSON').mockReturnValue();
@@ -45,13 +49,13 @@ describe('passphrase:decrypt', () => {
 
 	describe('passphrase:decrypt', () => {
 		it('should throw an error', async () => {
-			await expect(DecryptCommand.run([])).rejects.toThrow('Missing 1 required arg');
+			await expect(DecryptCommand.run([], config)).rejects.toThrow('Missing 1 required arg');
 		});
 	});
 
 	describe('passphrase:decrypt encryptedPassphrase', () => {
 		it('should decrypt passphrase with arg', async () => {
-			await DecryptCommand.run([defaultEncryptedPassphrase]);
+			await DecryptCommand.run([defaultEncryptedPassphrase], config);
 			expect(readerUtils.getPassphraseFromPrompt).toHaveBeenCalledWith('password', true);
 			expect(cryptography.parseEncryptedPassphrase).toHaveBeenCalledWith(
 				defaultEncryptedPassphrase,
@@ -66,7 +70,7 @@ describe('passphrase:decrypt', () => {
 
 	describe('passphrase:decrypt --password=LbYpLpV9Wpec6ux8', () => {
 		it('should decrypt passphrase with passphrase flag and password flag', async () => {
-			await DecryptCommand.run([defaultEncryptedPassphrase, '--password=LbYpLpV9Wpec6ux8']);
+			await DecryptCommand.run([defaultEncryptedPassphrase, '--password=LbYpLpV9Wpec6ux8'], config);
 			expect(readerUtils.getPassphraseFromPrompt).not.toHaveBeenCalled();
 			expect(cryptography.parseEncryptedPassphrase).toHaveBeenCalledWith(
 				defaultEncryptedPassphrase,

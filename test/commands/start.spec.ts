@@ -21,6 +21,7 @@ import { Application } from 'lisk-sdk';
 import * as application from '../../src/application';
 import * as devnetGenesisBlock from '../../config/devnet/genesis_block.json';
 import StartCommand from '../../src/commands/start';
+import { getConfig } from '../utils/config';
 
 import pJSON = require('../../package.json');
 
@@ -32,6 +33,7 @@ describe('start', () => {
 	beforeEach(async () => {
 		stdout = [];
 		stderr = [];
+		config = await getConfig();
 		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
 		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
 		jest.spyOn(application, 'getApplication').mockReturnValue({
@@ -68,8 +70,6 @@ describe('start', () => {
 		jest.spyOn(fs, 'copyFileSync').mockReturnValue();
 		jest.spyOn(fs, 'statSync').mockReturnValue({ isDirectory: () => true } as never);
 		jest.spyOn(os, 'homedir').mockReturnValue('~');
-		config = await Config.load();
-		config.pjson.version = pJSON.version;
 	});
 
 	describe('when starting without flag', () => {
@@ -87,7 +87,7 @@ describe('start', () => {
 
 	describe('when config already exist in the folder', () => {
 		it('should fail with already existing config', async () => {
-			await expect(StartCommand.run(['-n', 'devnet'])).rejects.toThrow(
+			await expect(StartCommand.run(['-n', 'devnet'], config)).rejects.toThrow(
 				'Datapath ~/.lisk/lisk-core already contains configs for mainnet.',
 			);
 		});
@@ -95,7 +95,7 @@ describe('start', () => {
 
 	describe('when config already exist in the folder and called with --overwrite-config', () => {
 		it('should delete the mainnet config and save the devnet config', async () => {
-			await StartCommand.run(['-n', 'devnet', '--overwrite-config']);
+			await StartCommand.run(['-n', 'devnet', '--overwrite-config'], config);
 			expect(fs.ensureDirSync).toHaveBeenCalledWith('~/.lisk/lisk-core/config');
 			expect(fs.removeSync).toHaveBeenCalledTimes(1);
 			expect(fs.copyFileSync).toHaveBeenCalledTimes(2);
@@ -104,7 +104,7 @@ describe('start', () => {
 
 	describe('when unknown network is specified', () => {
 		it('should throw an error', async () => {
-			await expect(StartCommand.run(['-n', 'unknown'])).rejects.toThrow(
+			await expect(StartCommand.run(['-n', 'unknown'], config)).rejects.toThrow(
 				'Network must be one of mainnet,devnet but received unknown',
 			);
 		});
@@ -112,7 +112,7 @@ describe('start', () => {
 
 	describe('when --enable-ipc is specified', () => {
 		it('should update the config value', async () => {
-			await StartCommand.run(['--enable-ipc']);
+			await StartCommand.run(['--enable-ipc'], config);
 			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
 			expect(usedConfig.ipc.enabled).toBe(true);
 		});
@@ -120,7 +120,7 @@ describe('start', () => {
 
 	describe('when --enable-http-api-plugin is specified', () => {
 		it('should pass this value to configuration', async () => {
-			await StartCommand.run(['--enable-http-api-plugin']);
+			await StartCommand.run(['--enable-http-api-plugin'], config);
 			const [, , options] = (application.getApplication as jest.Mock).mock.calls[0];
 			expect(options.enableHTTPAPIPlugin).toBe(true);
 		});
@@ -128,7 +128,10 @@ describe('start', () => {
 
 	describe('when custom port with --http-api-plugin-port is specified along with --enable-http-api-plugin', () => {
 		it('should update the config value', async () => {
-			await StartCommand.run(['--enable-http-api-plugin', '--http-api-plugin-port', '8888']);
+			await StartCommand.run(
+				['--enable-http-api-plugin', '--http-api-plugin-port', '8888'],
+				config,
+			);
 			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
 			expect(usedConfig.plugins.httpApi.port).toBe(8888);
 		});
@@ -136,11 +139,14 @@ describe('start', () => {
 
 	describe('when custom white list with --http-api-plugin-whitelist is specified along with --enable-http-api-plugin', () => {
 		it('should update the config value', async () => {
-			await StartCommand.run([
-				'--enable-http-api-plugin',
-				'--http-api-plugin-whitelist',
-				'192.08.0.1:8888,192.08.0.2:8888',
-			]);
+			await StartCommand.run(
+				[
+					'--enable-http-api-plugin',
+					'--http-api-plugin-whitelist',
+					'192.08.0.1:8888,192.08.0.2:8888',
+				],
+				config,
+			);
 			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
 			expect(usedConfig.plugins.httpApi.whiteList).toEqual(['192.08.0.1:8888', '192.08.0.2:8888']);
 		});
@@ -148,7 +154,7 @@ describe('start', () => {
 
 	describe('when --enable-forger-plugin is specified', () => {
 		it('should pass this value to configuration', async () => {
-			await StartCommand.run(['--enable-forger-plugin']);
+			await StartCommand.run(['--enable-forger-plugin'], config);
 			const [, , options] = (application.getApplication as jest.Mock).mock.calls[0];
 			expect(options.enableForgerPlugin).toBe(true);
 		});
@@ -156,7 +162,7 @@ describe('start', () => {
 
 	describe('when custom port with --forger-plugin-port is specified along with --enable-forger-plugin', () => {
 		it('should update the config value', async () => {
-			await StartCommand.run(['--enable-forger-plugin', '--forger-plugin-port', '8888']);
+			await StartCommand.run(['--enable-forger-plugin', '--forger-plugin-port', '8888'], config);
 			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
 			expect(usedConfig.plugins.forger.port).toBe(8888);
 		});
@@ -164,11 +170,10 @@ describe('start', () => {
 
 	describe('when custom white list with --forger-plugin-whitelist is specified along with --enable-forger-plugin', () => {
 		it('should update the config value', async () => {
-			await StartCommand.run([
-				'--enable-forger-plugin',
-				'--forger-plugin-whitelist',
-				'192.08.0.1:8888,192.08.0.2:8888',
-			]);
+			await StartCommand.run(
+				['--enable-forger-plugin', '--forger-plugin-whitelist', '192.08.0.1:8888,192.08.0.2:8888'],
+				config,
+			);
 			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
 			expect(usedConfig.plugins.forger.whiteList).toEqual(['192.08.0.1:8888', '192.08.0.2:8888']);
 		});
@@ -176,7 +181,7 @@ describe('start', () => {
 
 	describe('when config is specified', () => {
 		it('should update the config value', async () => {
-			await StartCommand.run(['--config=./config.json']);
+			await StartCommand.run(['--config=./config.json'], config);
 			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
 			expect(fs.readJSON).toHaveBeenCalledWith('./config.json');
 			expect(usedConfig.logger.consoleLogLevel).toBe('error');
@@ -185,14 +190,14 @@ describe('start', () => {
 
 	describe('when log is specified', () => {
 		it('should update the config value', async () => {
-			await StartCommand.run(['--console-log=trace']);
+			await StartCommand.run(['--console-log=trace'], config);
 			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
 			expect(usedConfig.logger.consoleLogLevel).toBe('trace');
 		});
 
 		it('should update the config value from env', async () => {
 			process.env.LISK_CONSOLE_LOG_LEVEL = 'error';
-			await StartCommand.run([]);
+			await StartCommand.run([], config);
 			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
 			expect(usedConfig.logger.consoleLogLevel).toBe('error');
 			process.env.LISK_CONSOLE_LOG_LEVEL = '';
@@ -201,14 +206,14 @@ describe('start', () => {
 
 	describe('when file log is specified', () => {
 		it('should update the config value', async () => {
-			await StartCommand.run(['--log=trace']);
+			await StartCommand.run(['--log=trace'], config);
 			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
 			expect(usedConfig.logger.fileLogLevel).toBe('trace');
 		});
 
 		it('should update the config value fro menv', async () => {
 			process.env.LISK_FILE_LOG_LEVEL = 'trace';
-			await StartCommand.run([]);
+			await StartCommand.run([], config);
 			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
 			expect(usedConfig.logger.fileLogLevel).toBe('trace');
 			process.env.LISK_FILE_LOG_LEVEL = '';
@@ -217,14 +222,14 @@ describe('start', () => {
 
 	describe('when port is specified', () => {
 		it('should update the config value', async () => {
-			await StartCommand.run(['--port=1111']);
+			await StartCommand.run(['--port=1111'], config);
 			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
 			expect(usedConfig.network.port).toBe(1111);
 		});
 
 		it('should update the config value fro menv', async () => {
 			process.env.LISK_PORT = '1234';
-			await StartCommand.run([]);
+			await StartCommand.run([], config);
 			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
 			expect(usedConfig.network.port).toBe(1234);
 			process.env.LISK_PORT = '';
@@ -233,14 +238,14 @@ describe('start', () => {
 
 	describe('when seed peer is specified', () => {
 		it('should update the config value', async () => {
-			await StartCommand.run(['--seed-peers=localhost:12234']);
+			await StartCommand.run(['--seed-peers=localhost:12234'], config);
 			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
 			expect(usedConfig.network.seedPeers).toEqual([{ ip: 'localhost', port: 12234 }]);
 		});
 
 		it('should update the config value using env variable', async () => {
 			process.env.LISK_SEED_PEERS = 'localhost:12234,74.49.3.35:2238';
-			await StartCommand.run([]);
+			await StartCommand.run([], config);
 			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
 			expect(usedConfig.network.seedPeers).toEqual([
 				{ ip: 'localhost', port: 12234 },

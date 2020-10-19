@@ -16,6 +16,7 @@
 import { cryptography, passphrase } from 'lisk-sdk';
 import * as Config from '@oclif/config';
 import CreateCommand from '../../../src/commands/account/create';
+import { getConfig } from '../../utils/config';
 
 describe('account:create', () => {
 	const defaultMnemonic =
@@ -32,8 +33,7 @@ describe('account:create', () => {
 			.mockReturnValueOnce(defaultMnemonic)
 			.mockReturnValueOnce(secondDefaultMnemonic);
 		jest.spyOn(process.stdout, 'write').mockImplementation(val => results.push(val));
-		config = await Config.load();
-		config.pjson.lisk = { addressPrefix: 'lsk' };
+		config = await getConfig();
 	});
 
 	describe('account:create', () => {

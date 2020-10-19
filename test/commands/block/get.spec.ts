@@ -15,9 +15,11 @@
 import { when } from 'jest-when';
 import * as fs from 'fs-extra';
 import { IPCChannel } from 'lisk-sdk';
+import * as Config from '@oclif/config';
 import baseIPC from '../../../src/base_ipc';
 import * as appUtils from '../../../src/utils/application';
 import GetCommand from '../../../src/commands/block/get';
+import { getConfig } from '../../utils/config';
 
 describe('block:get command', () => {
 	const blockSchema = {
@@ -81,10 +83,12 @@ describe('block:get command', () => {
 
 	let stdout: string[];
 	let stderr: string[];
+	let config: Config.IConfig;
 
-	beforeEach(() => {
+	beforeEach(async () => {
 		stdout = [];
 		stderr = [];
+		config = await getConfig();
 		jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(true);
 		jest.spyOn(fs, 'existsSync').mockReturnValue(true);
 		jest.spyOn(IPCChannel.prototype, 'startAndListen').mockResolvedValue();
@@ -107,13 +111,13 @@ describe('block:get command', () => {
 
 	describe('block:get', () => {
 		it('should throw an error when no arguments are provided.', async () => {
-			await expect(GetCommand.run([])).rejects.toThrow('Missing 1 required arg:');
+			await expect(GetCommand.run([], config)).rejects.toThrow('Missing 1 required arg:');
 		});
 	});
 
 	describe('block:get by height', () => {
 		it('should get block info at height 2 and display as an object', async () => {
-			await GetCommand.run(['2']);
+			await GetCommand.run(['2'], config);
 			expect(IPCChannel.prototype.invoke).toHaveBeenCalledTimes(2);
 			expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:getSchema');
 			expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:getBlockByHeight', {
@@ -126,7 +130,10 @@ describe('block:get command', () => {
 
 	describe('block:get by id', () => {
 		it('should get block info for the given id and display as an object', async () => {
-			await GetCommand.run(['4f7e41f5744c0c2a434f13afb186b77fb4b176a5298f91ed866680ff5ef13a6d']);
+			await GetCommand.run(
+				['4f7e41f5744c0c2a434f13afb186b77fb4b176a5298f91ed866680ff5ef13a6d'],
+				config,
+			);
 			expect(IPCChannel.prototype.invoke).toHaveBeenCalledTimes(2);
 			expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:getSchema');
 			expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:getBlockByID', { id: blockId });

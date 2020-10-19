@@ -15,6 +15,8 @@
 import { when } from 'jest-when';
 import * as fs from 'fs-extra';
 import { IPCChannel } from 'lisk-sdk';
+import * as Config from '@oclif/config';
+import { getConfig } from '../../utils/config';
 import baseIPC from '../../../src/base_ipc';
 import * as appUtils from '../../../src/utils/application';
 import GetCommand from '../../../src/commands/account/get';
@@ -26,10 +28,12 @@ describe('account:get command', () => {
 	const address = 'c3ab2ac23512d9bf62b02775e22cf80df814eb1b';
 	let stdout: string[];
 	let stderr: string[];
+	let config: Config.IConfig;
 
-	beforeEach(() => {
+	beforeEach(async () => {
 		stdout = [];
 		stderr = [];
+		config = await getConfig();
 		jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(true);
 		jest.spyOn(fs, 'existsSync').mockReturnValue(true);
 		jest.spyOn(IPCChannel.prototype, 'startAndListen').mockResolvedValue();
@@ -54,13 +58,13 @@ describe('account:get command', () => {
 
 	describe('account:get', () => {
 		it('should throw an error when arg is not provided', async () => {
-			await expect(GetCommand.run([])).rejects.toThrow('Missing 1 required arg');
+			await expect(GetCommand.run([], config)).rejects.toThrow('Missing 1 required arg');
 		});
 	});
 
 	describe('account:get address', () => {
 		it('should get an account info and display as an object', async () => {
-			await GetCommand.run([address]);
+			await GetCommand.run([address], config);
 			expect(IPCChannel.prototype.invoke).toHaveBeenCalledTimes(2);
 			expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:getSchema');
 			expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:getAccount', {
@@ -76,7 +80,7 @@ describe('account:get command', () => {
 				.calledWith('app:getAccount', { address: 'unknown_address' })
 				.mockRejectedValue(new Error('unknown address'));
 
-			await expect(GetCommand.run(['unknown_address'])).rejects.toThrow('unknown address');
+			await expect(GetCommand.run(['unknown_address'], config)).rejects.toThrow('unknown address');
 		});
 	});
 });

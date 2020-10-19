@@ -16,17 +16,21 @@
 import * as tar from 'tar';
 import { homedir } from 'os';
 import { join } from 'path';
+import * as Config from '@oclif/config';
 import ExportCommand from '../../../src/commands/forger-info/export';
+import { getConfig } from '../../utils/config';
 
 describe('forger-info:export', () => {
 	const defaultDataPath = join(homedir(), '.lisk', 'lisk-core');
 
 	let stdout: string[];
 	let stderr: string[];
+	let config: Config.IConfig;
 
-	beforeEach(() => {
+	beforeEach(async () => {
 		stdout = [];
 		stderr = [];
+		config = await getConfig();
 		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
 		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
 		jest.spyOn(tar, 'create').mockResolvedValue(true as never);
@@ -34,7 +38,7 @@ describe('forger-info:export', () => {
 
 	describe('when starting without flag', () => {
 		it('should compress "forger.db" for default data path', async () => {
-			await ExportCommand.run([]);
+			await ExportCommand.run([], config);
 			expect(tar.create).toHaveBeenCalledTimes(1);
 			expect(tar.create).toHaveBeenCalledWith(
 				{
@@ -49,7 +53,7 @@ describe('forger-info:export', () => {
 
 	describe('when starting with particular data-path', () => {
 		it('should compress "forger.db" for given data path', async () => {
-			await ExportCommand.run(['--data-path=/my/app/']);
+			await ExportCommand.run(['--data-path=/my/app/'], config);
 			expect(tar.create).toHaveBeenCalledTimes(1);
 			expect(tar.create).toHaveBeenCalledWith(
 				{
@@ -64,7 +68,7 @@ describe('forger-info:export', () => {
 
 	describe('when starting with particular export path', () => {
 		it('should compress "forger.db" for given data path', async () => {
-			await ExportCommand.run(['--output=/my/dir/']);
+			await ExportCommand.run(['--output=/my/dir/'], config);
 			expect(tar.create).toHaveBeenCalledTimes(1);
 			expect(tar.create).toHaveBeenCalledWith(
 				{

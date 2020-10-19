@@ -14,16 +14,20 @@
  */
 import * as fs from 'fs-extra';
 import * as os from 'os';
+import * as Config from '@oclif/config';
 import { when } from 'jest-when';
 import ShowCommand from '../../../src/commands/config/show';
+import { getConfig } from '../../utils/config';
 
 describe('config:show command', () => {
 	let stdout: string[];
 	let stderr: string[];
+	let config: Config.IConfig;
 
-	beforeEach(() => {
+	beforeEach(async () => {
 		stdout = [];
 		stderr = [];
+		config = await getConfig();
 		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
 		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
 		jest.spyOn(fs, 'readJSON').mockResolvedValue({
@@ -43,7 +47,7 @@ describe('config:show command', () => {
 
 	describe('config:show', () => {
 		it('should get the config from default path', async () => {
-			await ShowCommand.run([]);
+			await ShowCommand.run([], config);
 			expect(JSON.parse(stdout[0]).network.port).toEqual(3000);
 		});
 	});
@@ -53,7 +57,7 @@ describe('config:show command', () => {
 			when(fs.readdirSync as jest.Mock)
 				.calledWith('new-folder/config')
 				.mockReturnValue([]);
-			await expect(ShowCommand.run(['-d', './new-folder'])).rejects.toThrow(
+			await expect(ShowCommand.run(['-d', './new-folder'], config)).rejects.toThrow(
 				'does not contain valid config',
 			);
 		});
@@ -61,7 +65,7 @@ describe('config:show command', () => {
 
 	describe('config:show -d ./config', () => {
 		it('should get the config from default path', async () => {
-			await ShowCommand.run(['-d', './existing']);
+			await ShowCommand.run(['-d', './existing'], config);
 			expect(fs.readdirSync).toHaveBeenCalledWith('existing/config');
 			expect(fs.readJSON).toHaveBeenCalledWith('existing/config/mainnet/config.json');
 		});
@@ -75,7 +79,7 @@ describe('config:show command', () => {
 			when(fs.readJSON as jest.Mock)
 				.calledWith(configPath)
 				.mockResolvedValue(customConfig);
-			await ShowCommand.run(['-c', configPath]);
+			await ShowCommand.run(['-c', configPath], config);
 			expect(JSON.parse(stdout[0]).network.port).toEqual(9999);
 		});
 	});

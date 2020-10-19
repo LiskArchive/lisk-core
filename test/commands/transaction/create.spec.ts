@@ -16,6 +16,7 @@ import * as fs from 'fs-extra';
 import * as inquirer from 'inquirer';
 import { cryptography, IPCChannel, transactionSchema } from 'lisk-sdk';
 import { when } from 'jest-when';
+import * as Config from '@oclif/config';
 import baseIPC from '../../../src/base_ipc';
 import * as appUtils from '../../../src/utils/application';
 import * as readerUtils from '../../../src/utils/reader';
@@ -25,6 +26,7 @@ import {
 	accountSchema,
 } from '../../utils/transactions';
 import CreateCommand from '../../../src/commands/transaction/create';
+import { getConfig } from '../../utils/config';
 
 describe('transaction:create command', () => {
 	const transactionsAssets = [
@@ -51,10 +53,12 @@ describe('transaction:create command', () => {
 
 	let stdout: string[];
 	let stderr: string[];
+	let config: Config.IConfig;
 
-	beforeEach(() => {
+	beforeEach(async () => {
 		stdout = [];
 		stderr = [];
+		config = await getConfig();
 		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
 		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
 		jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(true);
@@ -87,25 +91,27 @@ describe('transaction:create command', () => {
 
 	describe('transaction:create', () => {
 		it('should throw an error when no arguments are provided.', async () => {
-			await expect(CreateCommand.run([])).rejects.toThrow('Missing 3 required args:');
+			await expect(CreateCommand.run([], config)).rejects.toThrow('Missing 3 required args:');
 		});
 	});
 
 	describe('transaction:create 2', () => {
 		it('should throw an error when fee, nonce and transaction type are provided.', async () => {
-			await expect(CreateCommand.run(['2'])).rejects.toThrow('Missing 2 required args:');
+			await expect(CreateCommand.run(['2'], config)).rejects.toThrow('Missing 2 required args:');
 		});
 	});
 
 	describe('transaction:create 2 0', () => {
 		it('should throw an error when nonce and transaction type are provided.', async () => {
-			await expect(CreateCommand.run(['2', '0'])).rejects.toThrow('Missing 1 required arg:');
+			await expect(CreateCommand.run(['2', '0'], config)).rejects.toThrow(
+				'Missing 1 required arg:',
+			);
 		});
 	});
 
 	describe('transaction:create 99999 0 100000000', () => {
 		it('should throw an error when moduleID is not registered.', async () => {
-			await expect(CreateCommand.run(['99999', '0', '100000000'])).rejects.toThrow(
+			await expect(CreateCommand.run(['99999', '0', '100000000'], config)).rejects.toThrow(
 				'Transaction moduleID:99999 with assetID:0 is not registered in the application',
 			);
 		});
@@ -116,16 +122,19 @@ describe('transaction:create command', () => {
 			describe(`transaction:create 2 0 100000000 --asset='{"amount": "abc"}' --passphrase=${passphrase} --offline`, () => {
 				it('should throw error for data path flag.', async () => {
 					await expect(
-						CreateCommand.run([
-							'2',
-							'0',
-							'100000000',
-							'--asset={"amount": "abc"}',
-							`--passphrase=${passphrase}`,
-							'--offline',
-							'--data-path=/tmp',
-							'--network=devnet',
-						]),
+						CreateCommand.run(
+							[
+								'2',
+								'0',
+								'100000000',
+								'--asset={"amount": "abc"}',
+								`--passphrase=${passphrase}`,
+								'--offline',
+								'--data-path=/tmp',
+								'--network=devnet',
+							],
+							config,
+						),
 					).rejects.toThrow(
 						'Flag: --data-path should not be specified while creating transaction offline',
 					);
@@ -135,15 +144,18 @@ describe('transaction:create command', () => {
 			describe(`transaction:create 2 0 100000000 --asset='{"amount": "abc"}' --passphrase=${passphrase} --offline`, () => {
 				it('should throw error for missing network identifier flag.', async () => {
 					await expect(
-						CreateCommand.run([
-							'2',
-							'0',
-							'100000000',
-							'--asset={"amount": "abc"}',
-							`--passphrase=${passphrase}`,
-							'--offline',
-							'--network=devnet',
-						]),
+						CreateCommand.run(
+							[
+								'2',
+								'0',
+								'100000000',
+								'--asset={"amount": "abc"}',
+								`--passphrase=${passphrase}`,
+								'--offline',
+								'--network=devnet',
+							],
+							config,
+						),
 					).rejects.toThrow(
 						'Flag: --network-identifier must be specified while creating transaction offline',
 					);
@@ -153,16 +165,19 @@ describe('transaction:create command', () => {
 			describe(`transaction:create 2 0 100000000 --asset='{"amount": "abc"}' --passphrase=${passphrase} --offline`, () => {
 				it('should throw error for missing nonce flag.', async () => {
 					await expect(
-						CreateCommand.run([
-							'2',
-							'0',
-							'100000000',
-							'--asset={"amount": "abc"}',
-							`--passphrase=${passphrase}`,
-							'--offline',
-							'--network=devnet',
-							'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
-						]),
+						CreateCommand.run(
+							[
+								'2',
+								'0',
+								'100000000',
+								'--asset={"amount": "abc"}',
+								`--passphrase=${passphrase}`,
+								'--offline',
+								'--network=devnet',
+								'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
+							],
+							config,
+						),
 					).rejects.toThrow('Flag: --nonce must be specified while creating transaction offline');
 				});
 			});
@@ -170,34 +185,40 @@ describe('transaction:create command', () => {
 			describe(`transaction:create 2 0 100000000 --asset=${transferAsset} --no-signature`, () => {
 				it('should throw error when sender publickey not specified when no-signature flag is used.', async () => {
 					await expect(
-						CreateCommand.run([
-							'2',
-							'0',
-							'100000000',
-							`--asset=${transferAsset}`,
-							'--no-signature',
-							'--offline',
-							'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
-							'--nonce=1',
-							'--network=devnet',
-						]),
+						CreateCommand.run(
+							[
+								'2',
+								'0',
+								'100000000',
+								`--asset=${transferAsset}`,
+								'--no-signature',
+								'--offline',
+								'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
+								'--nonce=1',
+								'--network=devnet',
+							],
+							config,
+						),
 					).rejects.toThrow('Sender publickey must be specified when no-signature flags is used');
 				});
 			});
 
 			describe(`transaction:create 2 0 100000000 --asset=${transferAsset} --passphrase=${passphrase}`, () => {
 				it('should return encoded transaction string in hex format with signature', async () => {
-					await CreateCommand.run([
-						'2',
-						'0',
-						'100000000',
-						'--offline',
-						`--asset=${transferAsset}`,
-						`--passphrase=${passphrase}`,
-						'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
-						'--nonce=1',
-						'--network=devnet',
-					]);
+					await CreateCommand.run(
+						[
+							'2',
+							'0',
+							'100000000',
+							'--offline',
+							`--asset=${transferAsset}`,
+							`--passphrase=${passphrase}`,
+							'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
+							'--nonce=1',
+							'--network=devnet',
+						],
+						config,
+					);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 						transaction:
@@ -208,18 +229,21 @@ describe('transaction:create command', () => {
 
 			describe(`transaction:create 2 0 100000000 --asset=${transferAsset} --no-signature --sender-publickey=${senderPublickey}`, () => {
 				it('should return encoded transaction string in hex format without signature', async () => {
-					await CreateCommand.run([
-						'2',
-						'0',
-						'100000000',
-						'--offline',
-						`--asset=${transferAsset}`,
-						'--no-signature',
-						`--sender-publickey=${senderPublickey}`,
-						'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
-						'--nonce=1',
-						'--network=devnet',
-					]);
+					await CreateCommand.run(
+						[
+							'2',
+							'0',
+							'100000000',
+							'--offline',
+							`--asset=${transferAsset}`,
+							'--no-signature',
+							`--sender-publickey=${senderPublickey}`,
+							'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
+							'--nonce=1',
+							'--network=devnet',
+						],
+						config,
+					);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 						transaction:
@@ -230,17 +254,20 @@ describe('transaction:create command', () => {
 
 			describe(`transaction:create 5 1 100000000 --asset=${voteAsset} --passphrase=${passphrase}`, () => {
 				it('should return encoded transaction string in hex format with signature', async () => {
-					await CreateCommand.run([
-						'5',
-						'1',
-						'100000000',
-						'--offline',
-						`--asset=${voteAsset}`,
-						`--passphrase=${passphrase}`,
-						'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
-						'--nonce=1',
-						'--network=devnet',
-					]);
+					await CreateCommand.run(
+						[
+							'5',
+							'1',
+							'100000000',
+							'--offline',
+							`--asset=${voteAsset}`,
+							`--passphrase=${passphrase}`,
+							'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
+							'--nonce=1',
+							'--network=devnet',
+						],
+						config,
+					);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 						transaction:
@@ -251,17 +278,20 @@ describe('transaction:create command', () => {
 
 			describe(`transaction:create 5 1 100000000 --asset=${unVoteAsset} --passphrase=${passphrase}`, () => {
 				it('should return encoded transaction string in hex format with signature', async () => {
-					await CreateCommand.run([
-						'5',
-						'1',
-						'100000000',
-						'--offline',
-						`--asset=${unVoteAsset}`,
-						`--passphrase=${passphrase}`,
-						'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
-						'--nonce=1',
-						'--network=devnet',
-					]);
+					await CreateCommand.run(
+						[
+							'5',
+							'1',
+							'100000000',
+							'--offline',
+							`--asset=${unVoteAsset}`,
+							`--passphrase=${passphrase}`,
+							'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
+							'--nonce=1',
+							'--network=devnet',
+						],
+						config,
+					);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 						transaction:
@@ -274,16 +304,19 @@ describe('transaction:create command', () => {
 		describe('with prompts and flags', () => {
 			describe(`transaction:create 2 0 100000000 --passphrase=${passphrase}`, () => {
 				it('should prompt user for asset.', async () => {
-					await CreateCommand.run([
-						'2',
-						'0',
-						'100000000',
-						`--passphrase=${passphrase}`,
-						'--offline',
-						'--network=devnet',
-						'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
-						'--nonce=1',
-					]);
+					await CreateCommand.run(
+						[
+							'2',
+							'0',
+							'100000000',
+							`--passphrase=${passphrase}`,
+							'--offline',
+							'--network=devnet',
+							'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
+							'--nonce=1',
+						],
+						config,
+					);
 					expect(inquirer.prompt).toHaveBeenCalledTimes(1);
 					expect(inquirer.prompt).toHaveBeenCalledWith([
 						{ message: 'Please enter: amount: ', name: 'amount', type: 'input' },
@@ -304,15 +337,18 @@ describe('transaction:create command', () => {
 
 			describe('transaction:create 2 0 100000000', () => {
 				it('should prompt user for asset and passphrase.', async () => {
-					await CreateCommand.run([
-						'2',
-						'0',
-						'100000000',
-						'--offline',
-						'--network=devnet',
-						'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
-						'--nonce=1',
-					]);
+					await CreateCommand.run(
+						[
+							'2',
+							'0',
+							'100000000',
+							'--offline',
+							'--network=devnet',
+							'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
+							'--nonce=1',
+						],
+						config,
+					);
 					expect(inquirer.prompt).toHaveBeenCalledTimes(1);
 					expect(inquirer.prompt).toHaveBeenCalledWith([
 						{ message: 'Please enter: amount: ', name: 'amount', type: 'input' },
@@ -334,19 +370,22 @@ describe('transaction:create command', () => {
 
 			describe(`transaction:create 2 0 100000000 --asset=${transferAsset} --no-signature --json`, () => {
 				it('should return unsigned transaction in json format when no passphrase specified', async () => {
-					await CreateCommand.run([
-						'2',
-						'0',
-						'100000000',
-						`--asset=${transferAsset}`,
-						'--no-signature',
-						`--sender-publickey=${senderPublickey}`,
-						'--json',
-						'--offline',
-						'--network=devnet',
-						'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
-						'--nonce=1',
-					]);
+					await CreateCommand.run(
+						[
+							'2',
+							'0',
+							'100000000',
+							`--asset=${transferAsset}`,
+							'--no-signature',
+							`--sender-publickey=${senderPublickey}`,
+							'--json',
+							'--offline',
+							'--network=devnet',
+							'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
+							'--nonce=1',
+						],
+						config,
+					);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 						moduleID: 2,
@@ -366,18 +405,21 @@ describe('transaction:create command', () => {
 
 			describe(`transaction:create 2 0 100000000 --asset=${transferAsset} --passphrase=${passphrase} --json`, () => {
 				it('should return signed transaction in json format when passphrase specified', async () => {
-					await CreateCommand.run([
-						'2',
-						'0',
-						'100000000',
-						`--asset=${transferAsset}`,
-						`--passphrase=${passphrase}`,
-						'--json',
-						'--offline',
-						'--network=devnet',
-						'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
-						'--nonce=1',
-					]);
+					await CreateCommand.run(
+						[
+							'2',
+							'0',
+							'100000000',
+							`--asset=${transferAsset}`,
+							`--passphrase=${passphrase}`,
+							'--json',
+							'--offline',
+							'--network=devnet',
+							'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
+							'--nonce=1',
+						],
+						config,
+					);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 						moduleID: 2,
@@ -404,13 +446,10 @@ describe('transaction:create command', () => {
 			describe(`transaction:create 2 0 100000000 --asset='{"amount": "abc"}' --passphrase=${passphrase}`, () => {
 				it('should throw error for invalid asset.', async () => {
 					await expect(
-						CreateCommand.run([
-							'2',
-							'0',
-							'100000000',
-							'--asset={"amount": "abc"}',
-							`--passphrase=${passphrase}`,
-						]),
+						CreateCommand.run(
+							['2', '0', '100000000', '--asset={"amount": "abc"}', `--passphrase=${passphrase}`],
+							config,
+						),
 					).rejects.toThrow('Cannot convert abc to a BigInt');
 				});
 			});
@@ -418,26 +457,20 @@ describe('transaction:create command', () => {
 			describe(`transaction:create 2 0 100000000 --asset=${transferAsset} --no-signature`, () => {
 				it('should throw error when sender publickey not specified when no-signature flag is used.', async () => {
 					await expect(
-						CreateCommand.run([
-							'2',
-							'0',
-							'100000000',
-							`--asset=${transferAsset}`,
-							'--no-signature',
-						]),
+						CreateCommand.run(
+							['2', '0', '100000000', `--asset=${transferAsset}`, '--no-signature'],
+							config,
+						),
 					).rejects.toThrow('Sender publickey must be specified when no-signature flags is used');
 				});
 			});
 
 			describe(`transaction:create 2 0 100000000 --asset=${transferAsset} --passphrase=${passphrase}`, () => {
 				it('should return encoded transaction string in hex format with signature', async () => {
-					await CreateCommand.run([
-						'2',
-						'0',
-						'100000000',
-						`--asset=${transferAsset}`,
-						`--passphrase=${passphrase}`,
-					]);
+					await CreateCommand.run(
+						['2', '0', '100000000', `--asset=${transferAsset}`, `--passphrase=${passphrase}`],
+						config,
+					);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 						transaction:
@@ -448,14 +481,17 @@ describe('transaction:create command', () => {
 
 			describe(`transaction:create 2 0 100000000 --asset=${transferAsset} --no-signature --sender-publickey=${senderPublickey}`, () => {
 				it('should return encoded transaction string in hex format without signature', async () => {
-					await CreateCommand.run([
-						'2',
-						'0',
-						'100000000',
-						`--asset=${transferAsset}`,
-						'--no-signature',
-						`--sender-publickey=${senderPublickey}`,
-					]);
+					await CreateCommand.run(
+						[
+							'2',
+							'0',
+							'100000000',
+							`--asset=${transferAsset}`,
+							'--no-signature',
+							`--sender-publickey=${senderPublickey}`,
+						],
+						config,
+					);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 						transaction:
@@ -466,13 +502,10 @@ describe('transaction:create command', () => {
 
 			describe(`transaction:create 5 1 100000000 --asset=${voteAsset} --passphrase=${passphrase}`, () => {
 				it('should return encoded transaction string in hex format with signature', async () => {
-					await CreateCommand.run([
-						'5',
-						'1',
-						'100000000',
-						`--asset=${voteAsset}`,
-						`--passphrase=${passphrase}`,
-					]);
+					await CreateCommand.run(
+						['5', '1', '100000000', `--asset=${voteAsset}`, `--passphrase=${passphrase}`],
+						config,
+					);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 						transaction:
@@ -483,13 +516,10 @@ describe('transaction:create command', () => {
 
 			describe(`transaction:create 5 1 100000000 --asset=${unVoteAsset} --passphrase=${passphrase}`, () => {
 				it('should return encoded transaction string in hex format with signature', async () => {
-					await CreateCommand.run([
-						'5',
-						'1',
-						'100000000',
-						`--asset=${unVoteAsset}`,
-						`--passphrase=${passphrase}`,
-					]);
+					await CreateCommand.run(
+						['5', '1', '100000000', `--asset=${unVoteAsset}`, `--passphrase=${passphrase}`],
+						config,
+					);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 						transaction:
@@ -502,7 +532,7 @@ describe('transaction:create command', () => {
 		describe('with prompts and flags', () => {
 			describe(`transaction:create 2 0 100000000 --passphrase=${passphrase}`, () => {
 				it('should prompt user for asset.', async () => {
-					await CreateCommand.run(['2', '0', '100000000', `--passphrase=${passphrase}`]);
+					await CreateCommand.run(['2', '0', '100000000', `--passphrase=${passphrase}`], config);
 					expect(inquirer.prompt).toHaveBeenCalledTimes(1);
 					expect(inquirer.prompt).toHaveBeenCalledWith([
 						{ message: 'Please enter: amount: ', name: 'amount', type: 'input' },
@@ -523,7 +553,7 @@ describe('transaction:create command', () => {
 
 			describe('transaction:create 2 0 100000000 --nonce=999', () => {
 				it('should prompt user for asset and passphrase.', async () => {
-					await CreateCommand.run(['2', '0', '100000000', '--nonce=999']);
+					await CreateCommand.run(['2', '0', '100000000', '--nonce=999'], config);
 					expect(inquirer.prompt).toHaveBeenCalledTimes(1);
 					expect(inquirer.prompt).toHaveBeenCalledWith([
 						{ message: 'Please enter: amount: ', name: 'amount', type: 'input' },
@@ -545,7 +575,7 @@ describe('transaction:create command', () => {
 
 			describe('transaction:create 2 0 100000000', () => {
 				it('should prompt user for asset and passphrase.', async () => {
-					await CreateCommand.run(['2', '0', '100000000']);
+					await CreateCommand.run(['2', '0', '100000000'], config);
 					expect(inquirer.prompt).toHaveBeenCalledTimes(1);
 					expect(inquirer.prompt).toHaveBeenCalledWith([
 						{ message: 'Please enter: amount: ', name: 'amount', type: 'input' },
@@ -567,15 +597,18 @@ describe('transaction:create command', () => {
 
 			describe(`transaction:create 2 0 100000000 --asset=${transferAsset} --no-signature --json`, () => {
 				it('should return unsigned transaction in json format when no passphrase specified', async () => {
-					await CreateCommand.run([
-						'2',
-						'0',
-						'100000000',
-						`--asset=${transferAsset}`,
-						'--no-signature',
-						`--sender-publickey=${senderPublickey}`,
-						'--json',
-					]);
+					await CreateCommand.run(
+						[
+							'2',
+							'0',
+							'100000000',
+							`--asset=${transferAsset}`,
+							'--no-signature',
+							`--sender-publickey=${senderPublickey}`,
+							'--json',
+						],
+						config,
+					);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 						moduleID: 2,
@@ -595,14 +628,17 @@ describe('transaction:create command', () => {
 
 			describe(`transaction:create 2 0 100000000 --asset=${transferAsset} --passphrase=${passphrase} --json`, () => {
 				it('should return signed transaction in json format when passphrase specified', async () => {
-					await CreateCommand.run([
-						'2',
-						'0',
-						'100000000',
-						`--asset=${transferAsset}`,
-						`--passphrase=${passphrase}`,
-						'--json',
-					]);
+					await CreateCommand.run(
+						[
+							'2',
+							'0',
+							'100000000',
+							`--asset=${transferAsset}`,
+							`--passphrase=${passphrase}`,
+							'--json',
+						],
+						config,
+					);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 						moduleID: 2,

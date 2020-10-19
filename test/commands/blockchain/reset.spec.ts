@@ -16,9 +16,11 @@
 import * as inquirer from 'inquirer';
 import { homedir } from 'os';
 import { join } from 'path';
+import * as Config from '@oclif/config';
 import * as appUtils from '../../../src/utils/application';
 import * as dbUtils from '../../../src/utils/db';
 import ResetCommand from '../../../src/commands/blockchain/reset';
+import { getConfig } from '../../utils/config';
 
 const defaultDataPath = join(homedir(), '.lisk', 'lisk-core');
 
@@ -27,14 +29,16 @@ describe('blockchain:reset', () => {
 
 	let stdout: string[];
 	let stderr: string[];
+	let config: Config.IConfig;
 	let kvStoreStubInstance;
 
-	beforeEach(() => {
+	beforeEach(async () => {
 		stdout = [];
 		stderr = [];
 		kvStoreStubInstance = {
 			clear: jest.fn(),
 		};
+		config = await getConfig();
 		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
 		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
 		jest.spyOn(dbUtils, 'getBlockchainDB').mockReturnValue(kvStoreStubInstance);
@@ -49,7 +53,7 @@ describe('blockchain:reset', () => {
 
 		describe('when reset without flags', () => {
 			it('should log error and return', async () => {
-				await expect(ResetCommand.run([])).rejects.toThrow(
+				await expect(ResetCommand.run([], config)).rejects.toThrow(
 					`Can't reset db while running application. Application at data path ${defaultDataPath} is running with pid ${pid}.`,
 				);
 			});
@@ -57,7 +61,7 @@ describe('blockchain:reset', () => {
 
 		describe('when reset with data-path', () => {
 			it('should log error and return', async () => {
-				await expect(ResetCommand.run(['--data-path=/my/app/'])).rejects.toThrow(
+				await expect(ResetCommand.run(['--data-path=/my/app/'], config)).rejects.toThrow(
 					`Can't reset db while running application. Application at data path /my/app/ is running with pid ${pid}.`,
 				);
 			});
@@ -65,7 +69,7 @@ describe('blockchain:reset', () => {
 
 		describe('when starting with skip confirmation', () => {
 			it('should log error and return', async () => {
-				await expect(ResetCommand.run(['--yes'])).rejects.toThrow(
+				await expect(ResetCommand.run(['--yes'], config)).rejects.toThrow(
 					`Can't reset db while running application. Application at data path ${defaultDataPath} is running with pid ${pid}.`,
 				);
 			});
@@ -79,13 +83,13 @@ describe('blockchain:reset', () => {
 
 		describe('when reset without flag', () => {
 			it('should create db object for "blockchain.db" for default data path', async () => {
-				await ResetCommand.run([]);
+				await ResetCommand.run([], config);
 				expect(dbUtils.getBlockchainDB).toHaveBeenCalledTimes(1);
 				expect(dbUtils.getBlockchainDB).toHaveBeenCalledWith(defaultDataPath);
 			});
 
 			it('should prompt user for confirmation', async () => {
-				await ResetCommand.run([]);
+				await ResetCommand.run([], config);
 				expect(inquirer.prompt).toHaveBeenCalledTimes(1);
 				expect(inquirer.prompt).toHaveBeenCalledWith([
 					{
@@ -98,7 +102,7 @@ describe('blockchain:reset', () => {
 			});
 
 			it('should reset the blockchain db', async () => {
-				await ResetCommand.run([]);
+				await ResetCommand.run([], config);
 				expect(kvStoreStubInstance.clear).toHaveBeenCalledTimes(1);
 			});
 		});
@@ -109,13 +113,13 @@ describe('blockchain:reset', () => {
 			});
 
 			it('should create db object for "blockchain.db" for given data path', async () => {
-				await ResetCommand.run(['--data-path=/my/app/']);
+				await ResetCommand.run(['--data-path=/my/app/'], config);
 				expect(dbUtils.getBlockchainDB).toHaveBeenCalledTimes(1);
 				expect(dbUtils.getBlockchainDB).toHaveBeenCalledWith('/my/app/');
 			});
 
 			it('should prompt user for confirmation', async () => {
-				await ResetCommand.run(['--data-path=/my/app/']);
+				await ResetCommand.run(['--data-path=/my/app/'], config);
 				expect(inquirer.prompt).toHaveBeenCalledTimes(1);
 				expect(inquirer.prompt).toHaveBeenCalledWith([
 					{
@@ -128,7 +132,7 @@ describe('blockchain:reset', () => {
 			});
 
 			it('should reset the blockchain db', async () => {
-				await ResetCommand.run(['--data-path=/my/app/']);
+				await ResetCommand.run(['--data-path=/my/app/'], config);
 				expect(kvStoreStubInstance.clear).toHaveBeenCalledTimes(1);
 			});
 		});
@@ -139,12 +143,12 @@ describe('blockchain:reset', () => {
 			});
 
 			it('should create db object for "blockchain.db"', async () => {
-				await ResetCommand.run(['--yes']);
+				await ResetCommand.run(['--yes'], config);
 				expect(dbUtils.getBlockchainDB).toHaveBeenCalledTimes(1);
 			});
 
 			it('should reset the blockchain db', async () => {
-				await ResetCommand.run(['--yes']);
+				await ResetCommand.run(['--yes'], config);
 				expect(kvStoreStubInstance.clear).toHaveBeenCalledTimes(1);
 			});
 		});

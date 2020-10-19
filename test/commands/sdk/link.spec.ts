@@ -15,15 +15,19 @@
 import * as fs from 'fs-extra';
 import { join } from 'path';
 import { when } from 'jest-when';
+import * as Config from '@oclif/config';
 import LinkCommand from '../../../src/commands/sdk/link';
+import { getConfig } from '../../utils/config';
 
 describe('sdk:link command', () => {
 	let stdout: string[];
 	let stderr: string[];
+	let config: Config.IConfig;
 
-	beforeEach(() => {
+	beforeEach(async () => {
 		stdout = [];
 		stderr = [];
+		config = await getConfig();
 		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
 		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
 		jest.spyOn(fs, 'removeSync').mockReturnValue();
@@ -32,7 +36,7 @@ describe('sdk:link command', () => {
 
 	describe('sdk:link', () => {
 		it('should throw an error when target folder is missing', async () => {
-			await expect(LinkCommand.run([])).rejects.toThrow(
+			await expect(LinkCommand.run([], config)).rejects.toThrow(
 				'Missing 1 required arg:\ntargetSDKFolder  The path to the lisk SDK folder\nSee more help with --help',
 			);
 		});
@@ -44,7 +48,7 @@ describe('sdk:link command', () => {
 			when(fs.pathExistsSync as jest.Mock)
 				.calledWith('/path/does/not/exist')
 				.mockReturnValue(false);
-			await expect(LinkCommand.run(['/path/does/not/exist'])).rejects.toThrow(
+			await expect(LinkCommand.run(['/path/does/not/exist'], config)).rejects.toThrow(
 				"Path '/path/does/not/exist' does not exist or no access allowed",
 			);
 		});
@@ -59,7 +63,7 @@ describe('sdk:link command', () => {
 			when(fs.pathExistsSync as jest.Mock)
 				.calledWith(fakeSDKPath)
 				.mockReturnValue(true);
-			await LinkCommand.run([fakeSDKPath]);
+			await LinkCommand.run([fakeSDKPath], config);
 			expect(fs.pathExistsSync).toHaveBeenCalledWith(fakeSDKPath);
 			expect(fs.removeSync).toHaveBeenCalledWith(targetSDKPath);
 			expect(fs.symlinkSync).toHaveBeenCalledWith(fakeSDKPath, targetSDKPath);

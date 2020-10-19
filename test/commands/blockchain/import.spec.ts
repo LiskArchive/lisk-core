@@ -16,9 +16,11 @@
 import * as fs from 'fs-extra';
 import { homedir } from 'os';
 import * as path from 'path';
+import * as Config from '@oclif/config';
 import { getBlockchainDBPath } from '../../../src/utils/path';
 import * as downloadUtils from '../../../src/utils/download';
 import ImportCommand from '../../../src/commands/blockchain/import';
+import { getConfig } from '../../utils/config';
 
 describe('blockchain:import', () => {
 	const defaultDataPath = path.join(homedir(), '.lisk', 'lisk-core');
@@ -26,10 +28,12 @@ describe('blockchain:import', () => {
 	const pathToBlockchainGzip = '/path/to/blockchain.db.tar.gz';
 	let stdout: string[];
 	let stderr: string[];
+	let config: Config.IConfig;
 
-	beforeEach(() => {
+	beforeEach(async () => {
 		stdout = [];
 		stderr = [];
+		config = await getConfig();
 		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
 		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
 		jest.spyOn(fs, 'existsSync').mockReturnValue(false);
@@ -41,13 +45,13 @@ describe('blockchain:import', () => {
 
 	describe('when importing with no path argument', () => {
 		it('should log error and return', async () => {
-			await expect(ImportCommand.run([])).rejects.toThrow('Missing 1 required arg:');
+			await expect(ImportCommand.run([], config)).rejects.toThrow('Missing 1 required arg:');
 		});
 	});
 
 	describe('when importing with no existing blockchain data', () => {
 		it('should import "blockchain.db" from given path', async () => {
-			await ImportCommand.run([pathToBlockchainGzip]);
+			await ImportCommand.run([pathToBlockchainGzip], config);
 			expect(fs.existsSync).toHaveBeenCalledTimes(1);
 			expect(fs.existsSync).toHaveBeenCalledWith(defaultBlockchainDBPath);
 			expect(fs.ensureDirSync).toHaveBeenCalledTimes(1);
@@ -64,7 +68,7 @@ describe('blockchain:import', () => {
 	describe('when importing with --data-path flag', () => {
 		const dataPath = getBlockchainDBPath('/my/app/');
 		it('should import "blockchain.db" from given path', async () => {
-			await ImportCommand.run([pathToBlockchainGzip, '--data-path=/my/app/']);
+			await ImportCommand.run([pathToBlockchainGzip, '--data-path=/my/app/'], config);
 			expect(fs.existsSync).toHaveBeenCalledTimes(1);
 			expect(fs.existsSync).toHaveBeenCalledWith(dataPath);
 			expect(fs.ensureDirSync).toHaveBeenCalledTimes(1);
@@ -85,7 +89,7 @@ describe('blockchain:import', () => {
 
 		describe('when importing without --force flag', () => {
 			it('should log error and return', async () => {
-				await expect(ImportCommand.run([pathToBlockchainGzip])).rejects.toThrow(
+				await expect(ImportCommand.run([pathToBlockchainGzip], config)).rejects.toThrow(
 					`There is already a blockchain data file found at ${defaultDataPath}. Use --force to override.`,
 				);
 			});
@@ -93,7 +97,7 @@ describe('blockchain:import', () => {
 
 		describe('when importing with --force flag', () => {
 			it('should import "blockchain.db" to given data-path', async () => {
-				await ImportCommand.run([pathToBlockchainGzip, '--force']);
+				await ImportCommand.run([pathToBlockchainGzip, '--force'], config);
 				expect(fs.existsSync).toHaveBeenCalledTimes(1);
 				expect(fs.existsSync).toHaveBeenCalledWith(defaultBlockchainDBPath);
 				expect(fs.ensureDirSync).toHaveBeenCalledTimes(1);

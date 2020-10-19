@@ -16,10 +16,12 @@
 import * as inquirer from 'inquirer';
 import { IPCChannel } from 'lisk-sdk';
 import { when } from 'jest-when';
+import * as Config from '@oclif/config';
 import { BaseForgingCommand } from '../../src/base_forging';
 import * as appUtils from '../../src/utils/application';
 import EnableCommand from '../../src/commands/forging/enable';
 import DisableCommand from '../../src/commands/forging/disable';
+import { getConfig } from '../utils/config';
 
 describe('forging', () => {
 	const actionResult = {
@@ -28,10 +30,12 @@ describe('forging', () => {
 	};
 	let stdout: string[];
 	let stderr: string[];
+	let config: Config.IConfig;
 
-	beforeEach(() => {
+	beforeEach(async () => {
 		stdout = [];
 		stderr = [];
+		config = await getConfig();
 		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
 		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
 		jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(true);
@@ -43,12 +47,12 @@ describe('forging', () => {
 
 	describe('forging:enable', () => {
 		it('should throw an error when arg is not provided', async () => {
-			await expect(EnableCommand.run([])).rejects.toThrow('Missing 1 required arg');
+			await expect(EnableCommand.run([], config)).rejects.toThrow('Missing 1 required arg');
 		});
 
 		describe('when invoked with password', () => {
 			it('should invoke action with given address and password', async () => {
-				await EnableCommand.run(['myAddress', '--password=my-password']);
+				await EnableCommand.run(['myAddress', '--password=my-password'], config);
 				expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:updateForgingStatus', {
 					address: 'myAddress',
 					forging: true,
@@ -59,7 +63,7 @@ describe('forging', () => {
 
 		describe('when invoked without password', () => {
 			it('should prompt user for password', async () => {
-				await EnableCommand.run(['myAddress']);
+				await EnableCommand.run(['myAddress'], config);
 				expect(inquirer.prompt).toHaveBeenCalledTimes(1);
 				expect(inquirer.prompt).toHaveBeenCalledWith([
 					{
@@ -72,7 +76,7 @@ describe('forging', () => {
 			});
 
 			it('should invoke action with given address and password', async () => {
-				await EnableCommand.run(['myAddress']);
+				await EnableCommand.run(['myAddress'], config);
 				expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:updateForgingStatus', {
 					address: 'myAddress',
 					forging: true,
@@ -83,7 +87,7 @@ describe('forging', () => {
 
 		describe('when action is successful', () => {
 			it('should invoke action with given address and user provided password', async () => {
-				await EnableCommand.run(['myAddress', '--password=my-password']);
+				await EnableCommand.run(['myAddress', '--password=my-password'], config);
 				expect(BaseForgingCommand.prototype.printJSON).toHaveBeenCalledTimes(1);
 				expect(BaseForgingCommand.prototype.printJSON).toHaveBeenCalledWith(actionResult);
 			});
@@ -99,7 +103,7 @@ describe('forging', () => {
 					})
 					.mockRejectedValue(new Error('Custom Error'));
 				await expect(
-					EnableCommand.run(['myFailedEnabledAddress', '--password=my-password']),
+					EnableCommand.run(['myFailedEnabledAddress', '--password=my-password'], config),
 				).rejects.toThrow('Custom Error');
 			});
 		});
@@ -107,12 +111,12 @@ describe('forging', () => {
 
 	describe('forging:disable', () => {
 		it('should throw an error when arg is not provided', async () => {
-			await expect(DisableCommand.run([])).rejects.toThrow('Missing 1 required arg');
+			await expect(DisableCommand.run([], config)).rejects.toThrow('Missing 1 required arg');
 		});
 
 		describe('when invoked with password', () => {
 			it('should invoke action with given address and password', async () => {
-				await DisableCommand.run(['myAddress', '--password=my-password']);
+				await DisableCommand.run(['myAddress', '--password=my-password'], config);
 				expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:updateForgingStatus', {
 					address: 'myAddress',
 					forging: false,
@@ -123,7 +127,7 @@ describe('forging', () => {
 
 		describe('when invoked without password', () => {
 			it('should prompt user for password', async () => {
-				await DisableCommand.run(['myAddress']);
+				await DisableCommand.run(['myAddress'], config);
 				expect(inquirer.prompt).toHaveBeenCalledTimes(1);
 				expect(inquirer.prompt).toHaveBeenCalledWith([
 					{
@@ -136,7 +140,7 @@ describe('forging', () => {
 			});
 
 			it('should invoke action with given address and password', async () => {
-				await DisableCommand.run(['myAddress']);
+				await DisableCommand.run(['myAddress'], config);
 				expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:updateForgingStatus', {
 					address: 'myAddress',
 					forging: false,
@@ -147,7 +151,7 @@ describe('forging', () => {
 
 		describe('when action is successful', () => {
 			it('should invoke action with given address and user provided password', async () => {
-				await DisableCommand.run(['myAddress', '--password=my-password']);
+				await DisableCommand.run(['myAddress', '--password=my-password'], config);
 				expect(BaseForgingCommand.prototype.printJSON).toHaveBeenCalledTimes(1);
 				expect(BaseForgingCommand.prototype.printJSON).toHaveBeenCalledWith(actionResult);
 			});
@@ -163,7 +167,7 @@ describe('forging', () => {
 					})
 					.mockRejectedValue(new Error('Custom Error'));
 				await expect(
-					DisableCommand.run(['myFailedDisabledAddress', '--password=my-password']),
+					DisableCommand.run(['myFailedDisabledAddress', '--password=my-password'], config),
 				).rejects.toThrow('Custom Error');
 			});
 		});

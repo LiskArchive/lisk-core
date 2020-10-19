@@ -13,9 +13,11 @@
  *
  */
 import { Application } from 'lisk-sdk';
+import * as Config from '@oclif/config';
 import * as application from '../../../src/application';
 import * as downloadUtils from '../../../src/utils/download';
 import DownloadCommand from '../../../src/commands/blockchain/download';
+import { getConfig } from '../../utils/config';
 
 describe('blockchain:download', () => {
 	const SNAPSHOT_URL = 'https://downloads.lisk.io/lisk/mainnet/blockchain.db.gz';
@@ -23,10 +25,12 @@ describe('blockchain:download', () => {
 
 	let stdout: string[];
 	let stderr: string[];
+	let config: Config.IConfig;
 
-	beforeEach(() => {
+	beforeEach(async () => {
 		stdout = [];
 		stderr = [];
+		config = await getConfig();
 		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
 		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
 		jest.spyOn(application, 'getApplication').mockReturnValue({
@@ -38,14 +42,14 @@ describe('blockchain:download', () => {
 
 	describe('when downloading without flags', () => {
 		it('should call downloadAndValidate', async () => {
-			await DownloadCommand.run([]);
+			await DownloadCommand.run([], config);
 			expect(downloadUtils.downloadAndValidate).toHaveBeenCalledWith(SNAPSHOT_URL, dataPath);
 		});
 	});
 
 	describe('when downloading with network flag', () => {
 		it('should call downloadAndValidate', async () => {
-			await DownloadCommand.run(['--network=betanet']);
+			await DownloadCommand.run(['--network=betanet'], config);
 			expect(downloadUtils.downloadAndValidate).toHaveBeenCalledWith(
 				SNAPSHOT_URL.replace('mainnet', 'betanet'),
 				dataPath,
@@ -55,14 +59,14 @@ describe('blockchain:download', () => {
 
 	describe('when downloading with output flag', () => {
 		it('should call downloadAndValidate', async () => {
-			await DownloadCommand.run(['--output=yourpath']);
+			await DownloadCommand.run(['--output=yourpath'], config);
 			expect(downloadUtils.downloadAndValidate).toHaveBeenCalledWith(SNAPSHOT_URL, 'yourpath');
 		});
 	});
 
 	describe('when downloading with url flag', () => {
 		it('should call downloadAndValidate', async () => {
-			await DownloadCommand.run(['--url=yoururl']);
+			await DownloadCommand.run(['--url=yoururl'], config);
 			expect(downloadUtils.downloadAndValidate).toHaveBeenCalledWith('yoururl', dataPath);
 		});
 	});

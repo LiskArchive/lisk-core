@@ -16,6 +16,7 @@
 import * as fs from 'fs-extra';
 import { join } from 'path';
 import { IPCChannel, transactionSchema } from 'lisk-sdk';
+import * as Config from '@oclif/config';
 import { when } from 'jest-when';
 import * as appUtils from '../../../src/utils/application';
 import {
@@ -24,6 +25,7 @@ import {
 	tokenTransferAssetSchema,
 } from '../../utils/transactions';
 import SendCommand from '../../../src/commands/transaction/send';
+import { getConfig } from '../../utils/config';
 
 describe('transaction:send command', () => {
 	const transactionsAssetSchemas = [
@@ -48,10 +50,12 @@ describe('transaction:send command', () => {
 
 	let stdout: string[];
 	let stderr: string[];
+	let config: Config.IConfig;
 
-	beforeEach(() => {
+	beforeEach(async () => {
 		stdout = [];
 		stderr = [];
+		config = await getConfig();
 		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
 		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
 		jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(true);
@@ -68,7 +72,7 @@ describe('transaction:send command', () => {
 
 	describe('transaction:send', () => {
 		it('should throw an error when transaction argument is not provided.', async () => {
-			await expect(SendCommand.run([])).rejects.toThrow('Missing 1 required arg:');
+			await expect(SendCommand.run([], config)).rejects.toThrow('Missing 1 required arg:');
 		});
 	});
 
@@ -76,16 +80,16 @@ describe('transaction:send command', () => {
 		it('should throw an error when the application for the provided path is not running.', async () => {
 			jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(false);
 			await expect(
-				SendCommand.run([encodedTransaction, `--data-path=${pathToAppPIDFiles}`]),
+				SendCommand.run([encodedTransaction, `--data-path=${pathToAppPIDFiles}`], config),
 			).rejects.toThrow(`Application at data path ${pathToAppPIDFiles} is not running.`);
 		});
 	});
 
 	describe('transaction:send <invalid hex string> --data-path=<path to a not running app>', () => {
 		it('should throw error.', async () => {
-			await expect(SendCommand.run(['%%%%%%', `--data-path=${pathToAppPIDFiles}`])).rejects.toThrow(
-				'The transaction must be provided as a hex encoded string',
-			);
+			await expect(
+				SendCommand.run(['%%%%%%', `--data-path=${pathToAppPIDFiles}`], config),
+			).rejects.toThrow('The transaction must be provided as a hex encoded string');
 		});
 	});
 
@@ -94,7 +98,7 @@ describe('transaction:send command', () => {
 			when(IPCChannel.prototype.invoke as jest.Mock)
 				.calledWith('app:postTransaction', { transaction: encodedTransaction })
 				.mockResolvedValue({ transactionId });
-			await SendCommand.run([encodedTransaction, `--data-path=${pathToAppPIDFiles}`]);
+			await SendCommand.run([encodedTransaction, `--data-path=${pathToAppPIDFiles}`], config);
 			expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:postTransaction', {
 				transaction: encodedTransaction,
 			});
@@ -117,10 +121,10 @@ describe('transaction:send command', () => {
 				);
 
 			await expect(
-				SendCommand.run([
-					'ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815',
-					`--data-path=${pathToAppPIDFiles}`,
-				]),
+				SendCommand.run(
+					['ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815', `--data-path=${pathToAppPIDFiles}`],
+					config,
+				),
 			).rejects.toThrow(
 				'Error: Lisk validator found 1 error[s]:\nIncompatible transaction nonce for account: d04699e57c4a3846c988f3c15306796f8eae5c1c, Tx Nonce: 0, Account Nonce: 1',
 			);

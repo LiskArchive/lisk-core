@@ -17,6 +17,7 @@ import { cryptography } from 'lisk-sdk';
 import * as Config from '@oclif/config';
 import * as readerUtils from '../../../src/utils/reader';
 import ShowCommand from '../../../src/commands/account/show';
+import { getConfig } from '../../utils/config';
 
 describe('account:show', () => {
 	const passphraseInput =
@@ -34,8 +35,7 @@ describe('account:show', () => {
 		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
 		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
 		jest.spyOn(readerUtils, 'getPassphraseFromPrompt').mockResolvedValue(passphraseInput);
-		config = await Config.load();
-		config.pjson.lisk = { addressPrefix: 'lsk' };
+		config = await getConfig();
 	});
 
 	describe('account:show', () => {

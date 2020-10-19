@@ -13,8 +13,10 @@
  *
  */
 import { cryptography } from 'lisk-sdk';
+import * as Config from '@oclif/config';
 import * as readerUtils from '../../../src/utils/reader';
 import EncryptCommand from '../../../src/commands/passphrase/encrypt';
+import { getConfig } from '../../utils/config';
 
 describe('passphrase:encrypt', () => {
 	const encryptedPassphraseString =
@@ -39,10 +41,12 @@ describe('passphrase:encrypt', () => {
 
 	let stdout: string[];
 	let stderr: string[];
+	let config: Config.IConfig;
 
-	beforeEach(() => {
+	beforeEach(async () => {
 		stdout = [];
 		stderr = [];
+		config = await getConfig();
 		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
 		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
 		jest.spyOn(EncryptCommand.prototype, 'printJSON').mockReturnValue();
@@ -69,7 +73,7 @@ describe('passphrase:encrypt', () => {
 
 	describe('passphrase:encrypt', () => {
 		it('should encrypt passphrase', async () => {
-			await EncryptCommand.run([]);
+			await EncryptCommand.run([], config);
 			expect(cryptography.encryptPassphraseWithPassword).toHaveBeenCalledWith(
 				defaultInputs.passphrase,
 				defaultInputs.password,
@@ -88,7 +92,7 @@ describe('passphrase:encrypt', () => {
 
 	describe('passphrase:encrypt --outputPublicKey', () => {
 		it('should encrypt passphrase and output public key', async () => {
-			await EncryptCommand.run(['--outputPublicKey']);
+			await EncryptCommand.run(['--outputPublicKey'], config);
 			expect(cryptography.encryptPassphraseWithPassword).toHaveBeenCalledWith(
 				defaultInputs.passphrase,
 				defaultInputs.password,
@@ -107,9 +111,10 @@ describe('passphrase:encrypt', () => {
 
 	describe('passphrase:encrypt --passphrase="enemy pill squeeze gold spoil aisle awake thumb congress false box wagon"', () => {
 		it('should encrypt passphrase from passphrase flag and stdout password', async () => {
-			await EncryptCommand.run([
-				'--passphrase=enemy pill squeeze gold spoil aisle awake thumb congress false box wagon',
-			]);
+			await EncryptCommand.run(
+				['--passphrase=enemy pill squeeze gold spoil aisle awake thumb congress false box wagon'],
+				config,
+			);
 			expect(cryptography.encryptPassphraseWithPassword).toHaveBeenCalledWith(
 				defaultInputs.passphrase,
 				defaultInputs.password,
@@ -127,10 +132,13 @@ describe('passphrase:encrypt', () => {
 
 	describe('passphrase:encrypt --passphrase="enemy pill squeeze gold spoil aisle awake thumb congress false box wagon" --password=LbYpLpV9Wpec6ux8', () => {
 		it('should encrypt passphrase from passphrase and password flags', async () => {
-			await EncryptCommand.run([
-				'--passphrase=enemy pill squeeze gold spoil aisle awake thumb congress false box wagon',
-				'--password=LbYpLpV9Wpec6ux8',
-			]);
+			await EncryptCommand.run(
+				[
+					'--passphrase=enemy pill squeeze gold spoil aisle awake thumb congress false box wagon',
+					'--password=LbYpLpV9Wpec6ux8',
+				],
+				config,
+			);
 			expect(cryptography.encryptPassphraseWithPassword).toHaveBeenCalledWith(
 				defaultInputs.passphrase,
 				defaultInputs.password,

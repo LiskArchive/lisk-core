@@ -15,6 +15,8 @@
 import { when } from 'jest-when';
 import * as fs from 'fs-extra';
 import { IPCChannel } from 'lisk-sdk';
+import * as Config from '@oclif/config';
+import { getConfig } from '../../utils/config';
 import baseIPC from '../../../src/base_ipc';
 import * as appUtils from '../../../src/utils/application';
 import InfoCommand from '../../../src/commands/node/info';
@@ -47,10 +49,12 @@ describe('node:info command', () => {
 
 	let stdout: string[];
 	let stderr: string[];
+	let config: Config.IConfig;
 
-	beforeEach(() => {
+	beforeEach(async () => {
 		stdout = [];
 		stderr = [];
+		config = await getConfig();
 		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
 		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
 		jest.spyOn(fs, 'existsSync').mockReturnValue(true);
@@ -65,7 +69,7 @@ describe('node:info command', () => {
 
 	describe('node:info', () => {
 		it('should get node info and display as an object', async () => {
-			await InfoCommand.run([]);
+			await InfoCommand.run([], config);
 			expect(IPCChannel.prototype.invoke).toHaveBeenCalledTimes(2);
 			expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:getNodeInfo');
 			expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);

@@ -15,6 +15,7 @@
  */
 import * as Config from '@oclif/config';
 import ValidateCommand from '../../../src/commands/account/validate';
+import { getConfig } from '../../utils/config';
 
 describe('account:validate', () => {
 	const validAddress = 'lskso9zqyapuhu8kv7txfbohwrhjfbd4gkxewcuxz';
@@ -29,8 +30,7 @@ describe('account:validate', () => {
 		stderr = [];
 		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
 		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
-		config = await Config.load();
-		config.pjson.lisk = { addressPrefix: 'lsk' };
+		config = await getConfig();
 	});
 
 	describe('account:validate', () => {

@@ -15,6 +15,7 @@
 
 import * as fs from 'fs-extra';
 import { IPCChannel, transactionSchema } from 'lisk-sdk';
+import * as Config from '@oclif/config';
 import { when } from 'jest-when';
 import {
 	tokenTransferAssetSchema,
@@ -27,6 +28,7 @@ import * as appUtils from '../../../src/utils/application';
 import baseIPC from '../../../src/base_ipc';
 import * as readerUtils from '../../../src/utils/reader';
 import SignCommand from '../../../src/commands/transaction/sign';
+import { getConfig } from '../../utils/config';
 
 describe('transaction:sign command', () => {
 	const transactionsAssets = [
@@ -106,10 +108,12 @@ describe('transaction:sign command', () => {
 
 	let stdout: string[];
 	let stderr: string[];
+	let config: Config.IConfig;
 
-	beforeEach(() => {
+	beforeEach(async () => {
 		stdout = [];
 		stderr = [];
+		config = await getConfig();
 		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
 		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
 		jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(true);
@@ -137,7 +141,7 @@ describe('transaction:sign command', () => {
 
 	describe('Missing arguments', () => {
 		it('should throw an error when missing transaction argument.', async () => {
-			await expect(SignCommand.run([])).rejects.toThrow('Missing 1 required arg:');
+			await expect(SignCommand.run([], config)).rejects.toThrow('Missing 1 required arg:');
 		});
 	});
 
@@ -148,14 +152,17 @@ describe('transaction:sign command', () => {
 		describe('data path flag', () => {
 			it('should throw an error when data path flag specified.', async () => {
 				await expect(
-					SignCommand.run([
-						unsignedTransaction,
-						`--passphrase=${senderPassphrase}`,
-						`--network-identifier=${networkIdentifierStr}`,
-						'--network=devnet',
-						'--offline',
-						'--data-path=/tmp',
-					]),
+					SignCommand.run(
+						[
+							unsignedTransaction,
+							`--passphrase=${senderPassphrase}`,
+							`--network-identifier=${networkIdentifierStr}`,
+							'--network=devnet',
+							'--offline',
+							'--data-path=/tmp',
+						],
+						config,
+					),
 				).rejects.toThrow('Flag: --data-path should not be specified while signing offline.');
 			});
 		});
@@ -163,25 +170,31 @@ describe('transaction:sign command', () => {
 		describe('missing network identifier flag', () => {
 			it('should throw an error when missing network identifier flag.', async () => {
 				await expect(
-					SignCommand.run([
-						unsignedTransaction,
-						`--passphrase=${senderPassphrase}`,
-						'--network=devnet',
-						'--offline',
-					]),
+					SignCommand.run(
+						[
+							unsignedTransaction,
+							`--passphrase=${senderPassphrase}`,
+							'--network=devnet',
+							'--offline',
+						],
+						config,
+					),
 				).rejects.toThrow('Flag: --network-identifier must be specified while signing offline.');
 			});
 		});
 
 		describe('sign transaction from single account', () => {
 			it('should return signed transaction string in hex format', async () => {
-				await SignCommand.run([
-					unsignedTransaction,
-					`--passphrase=${senderPassphrase}`,
-					`--network-identifier=${networkIdentifierStr}`,
-					'--offline',
-					'--network=devnet',
-				]);
+				await SignCommand.run(
+					[
+						unsignedTransaction,
+						`--passphrase=${senderPassphrase}`,
+						`--network-identifier=${networkIdentifierStr}`,
+						'--offline',
+						'--network=devnet',
+					],
+					config,
+				);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 					transaction:
@@ -190,14 +203,17 @@ describe('transaction:sign command', () => {
 			});
 
 			it('should return signed transaction in json format', async () => {
-				await SignCommand.run([
-					unsignedTransaction,
-					`--passphrase=${senderPassphrase}`,
-					`--network-identifier=${networkIdentifierStr}`,
-					'--json',
-					'--offline',
-					'--network=devnet',
-				]);
+				await SignCommand.run(
+					[
+						unsignedTransaction,
+						`--passphrase=${senderPassphrase}`,
+						`--network-identifier=${networkIdentifierStr}`,
+						'--json',
+						'--offline',
+						'--network=devnet',
+					],
+					config,
+				);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 					moduleID: 2,
@@ -234,6 +250,7 @@ describe('transaction:sign command', () => {
 			it('should return signed transaction for sender account', async () => {
 				await SignCommand.run(
 					signMultiSigCmdArgsIncludingSender(unsignedMultiSigTransaction, senderPassphrase),
+					config,
 				);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
@@ -242,7 +259,10 @@ describe('transaction:sign command', () => {
 			});
 
 			it('should return signed transaction for mandatory account 1', async () => {
-				await SignCommand.run(signMultiSigCmdArgsIncludingSender(sign1, mandatoryPassphrases[0]));
+				await SignCommand.run(
+					signMultiSigCmdArgsIncludingSender(sign1, mandatoryPassphrases[0]),
+					config,
+				);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 					transaction: sign2,
@@ -250,7 +270,10 @@ describe('transaction:sign command', () => {
 			});
 
 			it('should return signed transaction for mandatory account 2', async () => {
-				await SignCommand.run(signMultiSigCmdArgsIncludingSender(sign2, mandatoryPassphrases[1]));
+				await SignCommand.run(
+					signMultiSigCmdArgsIncludingSender(sign2, mandatoryPassphrases[1]),
+					config,
+				);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 					transaction: sign3,
@@ -258,7 +281,10 @@ describe('transaction:sign command', () => {
 			});
 
 			it('should return signed transaction for optional account 1', async () => {
-				await SignCommand.run(signMultiSigCmdArgsIncludingSender(sign3, optionalPassphrases[0]));
+				await SignCommand.run(
+					signMultiSigCmdArgsIncludingSender(sign3, optionalPassphrases[0]),
+					config,
+				);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 					transaction: sign4,
@@ -266,7 +292,10 @@ describe('transaction:sign command', () => {
 			});
 
 			it('should return signed transaction for optional account 2', async () => {
-				await SignCommand.run(signMultiSigCmdArgsIncludingSender(sign4, optionalPassphrases[1]));
+				await SignCommand.run(
+					signMultiSigCmdArgsIncludingSender(sign4, optionalPassphrases[1]),
+					config,
+				);
 
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
@@ -277,6 +306,7 @@ describe('transaction:sign command', () => {
 			it('should return fully signed transaction string in hex format', async () => {
 				await SignCommand.run(
 					signMultiSigCmdArgsIncludingSenderJSON(sign4, optionalPassphrases[1]),
+					config,
 				);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
@@ -323,6 +353,7 @@ describe('transaction:sign command', () => {
 				it('should return signed transaction for mandatory account 1', async () => {
 					await SignCommand.run(
 						signMultiSigCmdArgs(unsignedMultiSigTransaction, mandatoryPassphrases[0]),
+						config,
 					);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
@@ -331,7 +362,7 @@ describe('transaction:sign command', () => {
 				});
 
 				it('should return signed transaction for mandatory account 2', async () => {
-					await SignCommand.run(signMultiSigCmdArgs(sign1, mandatoryPassphrases[1]));
+					await SignCommand.run(signMultiSigCmdArgs(sign1, mandatoryPassphrases[1]), config);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 						transaction: sign2,
@@ -341,7 +372,7 @@ describe('transaction:sign command', () => {
 
 			describe('optional keys are specified', () => {
 				it('should return signed transaction for optional account 1', async () => {
-					await SignCommand.run(signMultiSigCmdArgs(sign2, optionalPassphrases[0]));
+					await SignCommand.run(signMultiSigCmdArgs(sign2, optionalPassphrases[0]), config);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 						transaction: sign3,
@@ -349,7 +380,7 @@ describe('transaction:sign command', () => {
 				});
 
 				it('should return signed transaction for optional account 2', async () => {
-					await SignCommand.run(signMultiSigCmdArgs(sign3, optionalPassphrases[1]));
+					await SignCommand.run(signMultiSigCmdArgs(sign3, optionalPassphrases[1]), config);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 						transaction: signedTransaction,
@@ -357,7 +388,7 @@ describe('transaction:sign command', () => {
 				});
 
 				it('should return fully signed transaction string in hex format', async () => {
-					await SignCommand.run(signMultiSigCmdArgsJSON(sign3, optionalPassphrases[1]));
+					await SignCommand.run(signMultiSigCmdArgsJSON(sign3, optionalPassphrases[1]), config);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 						asset: {
@@ -387,7 +418,7 @@ describe('transaction:sign command', () => {
 			const unsignedTransaction =
 				'0802100018022080c2d72f2a200b211fce4b615083701cb8a8c99407e464b2f9aa4f367095322de1b77e5fcfbe322408641214ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e';
 			it('should return signed transaction string in hex format', async () => {
-				await SignCommand.run([unsignedTransaction, `--passphrase=${senderPassphrase}`]);
+				await SignCommand.run([unsignedTransaction, `--passphrase=${senderPassphrase}`], config);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 					transaction:
@@ -396,7 +427,10 @@ describe('transaction:sign command', () => {
 			});
 
 			it('should return signed transaction in json format', async () => {
-				await SignCommand.run([unsignedTransaction, `--passphrase=${senderPassphrase}`, '--json']);
+				await SignCommand.run(
+					[unsignedTransaction, `--passphrase=${senderPassphrase}`, '--json'],
+					config,
+				);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 					moduleID: 2,
@@ -433,6 +467,7 @@ describe('transaction:sign command', () => {
 			it('should return signed transaction for sender account', async () => {
 				await SignCommand.run(
 					signMultiSigCmdArgsIncludingSender(unsignedTransaction, senderPassphrase),
+					config,
 				);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
@@ -441,7 +476,10 @@ describe('transaction:sign command', () => {
 			});
 
 			it('should return signed transaction for mandatory account 1', async () => {
-				await SignCommand.run(signMultiSigCmdArgsIncludingSender(sign1, mandatoryPassphrases[0]));
+				await SignCommand.run(
+					signMultiSigCmdArgsIncludingSender(sign1, mandatoryPassphrases[0]),
+					config,
+				);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 					transaction: sign2,
@@ -449,7 +487,10 @@ describe('transaction:sign command', () => {
 			});
 
 			it('should return signed transaction for mandatory account 2', async () => {
-				await SignCommand.run(signMultiSigCmdArgsIncludingSender(sign2, mandatoryPassphrases[1]));
+				await SignCommand.run(
+					signMultiSigCmdArgsIncludingSender(sign2, mandatoryPassphrases[1]),
+					config,
+				);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 					transaction: sign3,
@@ -457,7 +498,10 @@ describe('transaction:sign command', () => {
 			});
 
 			it('should return signed transaction for optional account 1', async () => {
-				await SignCommand.run(signMultiSigCmdArgsIncludingSender(sign3, optionalPassphrases[0]));
+				await SignCommand.run(
+					signMultiSigCmdArgsIncludingSender(sign3, optionalPassphrases[0]),
+					config,
+				);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 					transaction: sign4,
@@ -465,7 +509,10 @@ describe('transaction:sign command', () => {
 			});
 
 			it('should return signed transaction for optional account 2', async () => {
-				await SignCommand.run(signMultiSigCmdArgsIncludingSender(sign4, optionalPassphrases[1]));
+				await SignCommand.run(
+					signMultiSigCmdArgsIncludingSender(sign4, optionalPassphrases[1]),
+					config,
+				);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 					transaction: signedTransaction,
@@ -475,6 +522,7 @@ describe('transaction:sign command', () => {
 			it('should return fully signed transaction string in hex format', async () => {
 				await SignCommand.run(
 					signMultiSigCmdArgsIncludingSenderJSON(sign4, optionalPassphrases[1]),
+					config,
 				);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
@@ -519,7 +567,10 @@ describe('transaction:sign command', () => {
 
 			describe('mandatory keys are specified', () => {
 				it('should return signed transaction for mandatory account 1', async () => {
-					await SignCommand.run(signMultiSigCmdArgs(unsignedTransaction, mandatoryPassphrases[0]));
+					await SignCommand.run(
+						signMultiSigCmdArgs(unsignedTransaction, mandatoryPassphrases[0]),
+						config,
+					);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 						transaction: sign1,
@@ -527,7 +578,7 @@ describe('transaction:sign command', () => {
 				});
 
 				it('should return signed transaction for mandatory account 2', async () => {
-					await SignCommand.run(signMultiSigCmdArgs(sign1, mandatoryPassphrases[1]));
+					await SignCommand.run(signMultiSigCmdArgs(sign1, mandatoryPassphrases[1]), config);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 						transaction: sign2,
@@ -537,7 +588,7 @@ describe('transaction:sign command', () => {
 
 			describe('optional keys are specified', () => {
 				it('should return signed transaction for optional account 1', async () => {
-					await SignCommand.run(signMultiSigCmdArgs(sign2, optionalPassphrases[0]));
+					await SignCommand.run(signMultiSigCmdArgs(sign2, optionalPassphrases[0]), config);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 						transaction: sign3,
@@ -545,7 +596,7 @@ describe('transaction:sign command', () => {
 				});
 
 				it('should return signed transaction for optional account 2', async () => {
-					await SignCommand.run(signMultiSigCmdArgs(sign3, optionalPassphrases[1]));
+					await SignCommand.run(signMultiSigCmdArgs(sign3, optionalPassphrases[1]), config);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 						transaction: signedTransaction,
@@ -553,7 +604,7 @@ describe('transaction:sign command', () => {
 				});
 
 				it('should return fully signed transaction string in hex format', async () => {
-					await SignCommand.run(signMultiSigCmdArgsJSON(sign3, optionalPassphrases[1]));
+					await SignCommand.run(signMultiSigCmdArgsJSON(sign3, optionalPassphrases[1]), config);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 						asset: {
