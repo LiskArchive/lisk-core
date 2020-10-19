@@ -21,9 +21,16 @@ import BaseIPCCommand from './base_ipc';
 
 interface Args {
 	readonly address: string;
+	readonly height?: number;
 	readonly maxHeightPreviouslyForged?: number;
-	readonly force?: boolean;
+	readonly maxHeightPrevoted?: number;
+	readonly overwrite?: boolean;
 }
+
+const isValidInput = (input: Partial<Args>): number | boolean | undefined =>
+	(input.height && input.height < 0) ||
+	(input.maxHeightPreviouslyForged && input.maxHeightPreviouslyForged < 0) ||
+	(input.maxHeightPrevoted && input.maxHeightPrevoted < 0);
 
 export class BaseForgingCommand extends BaseIPCCommand {
 	static args = [
@@ -43,11 +50,19 @@ export class BaseForgingCommand extends BaseIPCCommand {
 
 	async run(): Promise<void> {
 		const { args, flags } = this.parse(this.constructor as typeof BaseForgingCommand);
-		const { address, maxHeightPreviouslyForged, force } = args as Args;
+		const {
+			address,
+			height,
+			maxHeightPreviouslyForged,
+			maxHeightPrevoted,
+			overwrite,
+		} = args as Args;
 		let password;
 
-		if (this.forging && maxHeightPreviouslyForged && maxHeightPreviouslyForged < 0) {
-			throw new Error('The maxHeightPreviouslyForged parameter must be greater than or equal to 0');
+		if (this.forging && isValidInput({ height, maxHeightPreviouslyForged, maxHeightPrevoted })) {
+			throw new Error(
+				'The maxHeightPreviouslyForged and maxHeightPrevoted parameter value must be greater than or equal to 0',
+			);
 		}
 
 		if (flags.password) {
@@ -71,8 +86,10 @@ export class BaseForgingCommand extends BaseIPCCommand {
 					address,
 					password,
 					forging: this.forging,
+					height: height ?? 0,
 					maxHeightPreviouslyForged: maxHeightPreviouslyForged ?? 0,
-					force: force ?? false,
+					maxHeightPrevoted: maxHeightPrevoted ?? 0,
+					overwrite: overwrite ?? false,
 				},
 			);
 			this.log('Forging status:');

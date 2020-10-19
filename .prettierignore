@@ -31,6 +31,7 @@ dist/
 docker/.env*
 qa/
 bin
+tmp/
 
 *.pid
 *.gz
