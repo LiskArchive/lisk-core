@@ -12,143 +12,145 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-
-import * as sandbox from 'sinon';
-import { expect, test } from '@oclif/test';
 import { cryptography } from 'lisk-sdk';
+import * as Config from '@oclif/config';
 import * as readerUtils from '../../../src/utils/reader';
 import EncryptCommand from '../../../src/commands/passphrase/encrypt';
+import { getConfig } from '../../utils/config';
 
 describe('passphrase:encrypt', () => {
 	const encryptedPassphraseString =
 		'salt=683425ca06c9ff88a5ab292bb5066dc5&cipherText=4ce151&iv=bfaeef79a466e370e210f3c6&tag=e84bf097b1ec5ae428dd7ed3b4cce522&version=1';
 	const defaultKeys = {
-		publicKey: '337600533a1f734c84b738d5f634c284a80ecc8b92bae4f30c1f22f8fd001e6a',
+		publicKey: Buffer.from(
+			'337600533a1f734c84b738d5f634c284a80ecc8b92bae4f30c1f22f8fd001e6a',
+			'hex',
+		),
 	};
 	const encryptedPassphraseObject = {
 		salt: 'salt',
 		cipherText: 'cipherText',
 		iv: 'iv',
 		tag: 'tag',
-		version: 1,
+		version: '1',
 	};
 	const defaultInputs = {
 		passphrase: 'enemy pill squeeze gold spoil aisle awake thumb congress false box wagon',
 		password: 'LbYpLpV9Wpec6ux8',
 	};
 
-	const printMethodStub = sandbox.stub();
-	const setupTest = () =>
-		test
-			.stub(EncryptCommand.prototype, 'printJSON', printMethodStub)
-			.stub(cryptography, 'getKey', sandbox.stub().returns(defaultKeys))
-			.stub(
-				cryptography,
-				'encryptPassphraseWithPassword',
-				sandbox.stub().returns(encryptedPassphraseObject),
-			)
-			.stub(
-				cryptography,
-				'stringifyEncryptedPassphrase',
-				sandbox.stub().returns(encryptedPassphraseString),
-			)
-			.stub(
-				readerUtils,
-				'getPassphraseFromPrompt',
-				sandbox.stub().callsFake(name => {
-					if (name === 'passphrase') {
-						return defaultInputs.passphrase;
-					}
-					if (name === 'password') {
-						return defaultInputs.password;
-					}
-					return undefined;
-				}),
-			)
-			.stdout();
+	let stdout: string[];
+	let stderr: string[];
+	let config: Config.IConfig;
+
+	beforeEach(async () => {
+		stdout = [];
+		stderr = [];
+		config = await getConfig();
+		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
+		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
+		jest.spyOn(EncryptCommand.prototype, 'printJSON').mockReturnValue();
+		jest.spyOn(cryptography, 'getKeys').mockReturnValue(defaultKeys as never);
+		jest
+			.spyOn(cryptography, 'encryptPassphraseWithPassword')
+			.mockReturnValue(encryptedPassphraseObject);
+		jest
+			.spyOn(cryptography, 'stringifyEncryptedPassphrase')
+			.mockReturnValue(encryptedPassphraseString);
+		jest
+			.spyOn(readerUtils, 'getPassphraseFromPrompt')
+			// eslint-disable-next-line @typescript-eslint/require-await
+			.mockImplementation(async (name?: string) => {
+				if (name === 'passphrase') {
+					return defaultInputs.passphrase;
+				}
+				if (name === 'password') {
+					return defaultInputs.password;
+				}
+				return '';
+			});
+	});
 
 	describe('passphrase:encrypt', () => {
-		setupTest()
-			.command(['passphrase:encrypt'])
-			.it('should encrypt passphrase', () => {
-				expect(cryptography.encryptPassphraseWithPassword).to.be.calledWithExactly(
-					defaultInputs.passphrase,
-					defaultInputs.password,
-				);
-				expect(cryptography.stringifyEncryptedPassphrase).to.be.calledWithExactly(
-					encryptedPassphraseObject,
-				);
-				expect(readerUtils.getPassphraseFromPrompt).to.be.calledWithExactly('passphrase', true);
-				expect(readerUtils.getPassphraseFromPrompt).to.be.calledWithExactly('password', true);
+		it('should encrypt passphrase', async () => {
+			await EncryptCommand.run([], config);
+			expect(cryptography.encryptPassphraseWithPassword).toHaveBeenCalledWith(
+				defaultInputs.passphrase,
+				defaultInputs.password,
+			);
+			expect(cryptography.stringifyEncryptedPassphrase).toHaveBeenCalledWith(
+				encryptedPassphraseObject,
+			);
+			expect(readerUtils.getPassphraseFromPrompt).toHaveBeenCalledWith('passphrase', true);
+			expect(readerUtils.getPassphraseFromPrompt).toHaveBeenCalledWith('password', true);
 
-				return expect(printMethodStub).to.be.calledWithExactly({
-					encryptedPassphrase: encryptedPassphraseString,
-				});
+			expect(EncryptCommand.prototype.printJSON).toHaveBeenCalledWith({
+				encryptedPassphrase: encryptedPassphraseString,
 			});
+		});
 	});
 
 	describe('passphrase:encrypt --outputPublicKey', () => {
-		setupTest()
-			.command(['passphrase:encrypt', '--outputPublicKey'])
-			.it('should encrypt passphrase and output public key', () => {
-				expect(cryptography.encryptPassphraseWithPassword).to.be.calledWithExactly(
-					defaultInputs.passphrase,
-					defaultInputs.password,
-				);
-				expect(cryptography.stringifyEncryptedPassphrase).to.be.calledWithExactly(
-					encryptedPassphraseObject,
-				);
-				expect(readerUtils.getPassphraseFromPrompt).to.be.calledWithExactly('passphrase', true);
-				expect(readerUtils.getPassphraseFromPrompt).to.be.calledWithExactly('password', true);
-				return expect(printMethodStub).to.be.calledWithExactly({
-					encryptedPassphrase: encryptedPassphraseString,
-					...defaultKeys,
-				});
+		it('should encrypt passphrase and output public key', async () => {
+			await EncryptCommand.run(['--outputPublicKey'], config);
+			expect(cryptography.encryptPassphraseWithPassword).toHaveBeenCalledWith(
+				defaultInputs.passphrase,
+				defaultInputs.password,
+			);
+			expect(cryptography.stringifyEncryptedPassphrase).toHaveBeenCalledWith(
+				encryptedPassphraseObject,
+			);
+			expect(readerUtils.getPassphraseFromPrompt).toHaveBeenCalledWith('passphrase', true);
+			expect(readerUtils.getPassphraseFromPrompt).toHaveBeenCalledWith('password', true);
+			expect(EncryptCommand.prototype.printJSON).toHaveBeenCalledWith({
+				encryptedPassphrase: encryptedPassphraseString,
+				publicKey: defaultKeys.publicKey.toString('hex'),
 			});
+		});
 	});
 
 	describe('passphrase:encrypt --passphrase="enemy pill squeeze gold spoil aisle awake thumb congress false box wagon"', () => {
-		setupTest()
-			.command([
-				'passphrase:encrypt',
-				'--passphrase=enemy pill squeeze gold spoil aisle awake thumb congress false box wagon',
-			])
-			.it('should encrypt passphrase from passphrase flag and stdout password', () => {
-				expect(cryptography.encryptPassphraseWithPassword).to.be.calledWithExactly(
-					defaultInputs.passphrase,
-					defaultInputs.password,
-				);
-				expect(cryptography.stringifyEncryptedPassphrase).to.be.calledWithExactly(
-					encryptedPassphraseObject,
-				);
-				expect(readerUtils.getPassphraseFromPrompt).not.to.be.calledWith('passphrase', true);
-				expect(readerUtils.getPassphraseFromPrompt).to.be.calledWithExactly('password', true);
-				return expect(printMethodStub).to.be.calledWithExactly({
-					encryptedPassphrase: encryptedPassphraseString,
-				});
+		it('should encrypt passphrase from passphrase flag and stdout password', async () => {
+			await EncryptCommand.run(
+				['--passphrase=enemy pill squeeze gold spoil aisle awake thumb congress false box wagon'],
+				config,
+			);
+			expect(cryptography.encryptPassphraseWithPassword).toHaveBeenCalledWith(
+				defaultInputs.passphrase,
+				defaultInputs.password,
+			);
+			expect(cryptography.stringifyEncryptedPassphrase).toHaveBeenCalledWith(
+				encryptedPassphraseObject,
+			);
+			expect(readerUtils.getPassphraseFromPrompt).not.toHaveBeenCalledWith('passphrase', true);
+			expect(readerUtils.getPassphraseFromPrompt).toHaveBeenCalledWith('password', true);
+			expect(EncryptCommand.prototype.printJSON).toHaveBeenCalledWith({
+				encryptedPassphrase: encryptedPassphraseString,
 			});
+		});
 	});
 
 	describe('passphrase:encrypt --passphrase="enemy pill squeeze gold spoil aisle awake thumb congress false box wagon" --password=LbYpLpV9Wpec6ux8', () => {
-		setupTest()
-			.command([
-				'passphrase:encrypt',
-				'--passphrase=enemy pill squeeze gold spoil aisle awake thumb congress false box wagon',
-				'--password=LbYpLpV9Wpec6ux8',
-			])
-			.it('should encrypt passphrase from passphrase and password flags', () => {
-				expect(cryptography.encryptPassphraseWithPassword).to.be.calledWithExactly(
-					defaultInputs.passphrase,
-					defaultInputs.password,
-				);
-				expect(cryptography.stringifyEncryptedPassphrase).to.be.calledWithExactly(
-					encryptedPassphraseObject,
-				);
-				expect(readerUtils.getPassphraseFromPrompt).not.to.be.calledWith('passphrase', true);
-				expect(readerUtils.getPassphraseFromPrompt).not.to.be.calledWith('password', true);
-				return expect(printMethodStub).to.be.calledWithExactly({
-					encryptedPassphrase: encryptedPassphraseString,
-				});
+		it('should encrypt passphrase from passphrase and password flags', async () => {
+			await EncryptCommand.run(
+				[
+					'--passphrase=enemy pill squeeze gold spoil aisle awake thumb congress false box wagon',
+					'--password=LbYpLpV9Wpec6ux8',
+				],
+				config,
+			);
+			expect(cryptography.encryptPassphraseWithPassword).toHaveBeenCalledWith(
+				defaultInputs.passphrase,
+				defaultInputs.password,
+			);
+			expect(cryptography.stringifyEncryptedPassphrase).toHaveBeenCalledWith(
+				encryptedPassphraseObject,
+			);
+			expect(readerUtils.getPassphraseFromPrompt).not.toHaveBeenCalledWith('passphrase', true);
+			expect(readerUtils.getPassphraseFromPrompt).not.toHaveBeenCalledWith('password', true);
+			expect(EncryptCommand.prototype.printJSON).toHaveBeenCalledWith({
+				encryptedPassphrase: encryptedPassphraseString,
 			});
+		});
 	});
 });

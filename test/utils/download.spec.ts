@@ -12,11 +12,8 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-import * as sandbox from 'sinon';
-import { expect } from 'chai';
 import * as fs from 'fs-extra';
 import * as axios from 'axios';
-import { SinonStub } from 'sinon';
 import { EventEmitter } from 'events';
 import * as downloadUtil from '../../src/utils/download';
 
@@ -25,66 +22,65 @@ describe('download utils', () => {
 	const outDir = './tmp/cache/lisk-core';
 
 	describe('#download', () => {
-		let existsSyncStub: SinonStub;
-		let statSyncStub: SinonStub;
-
 		beforeEach(() => {
-			sandbox.stub(axios, 'default').resolves({ data: { pipe: sandbox.stub() } } as any);
-			existsSyncStub = sandbox.stub(fs, 'existsSync');
-			statSyncStub = sandbox.stub(fs, 'statSync');
-			sandbox.stub(fs, 'unlinkSync').returns();
+			jest.spyOn(axios, 'default').mockResolvedValue({ data: { pipe: jest.fn() } } as any);
+			jest.spyOn(fs, 'statSync');
+			jest.spyOn(fs, 'createWriteStream');
+			jest.spyOn(fs, 'existsSync');
+			jest.spyOn(fs, 'unlinkSync').mockReturnValue();
 		});
 
 		it('should resolve if downloaded file', async () => {
-			existsSyncStub.returns(true);
-			statSyncStub.returns({ birthtime: new Date() });
+			(fs.existsSync as jest.Mock).mockReturnValue(true);
+			(fs.statSync as jest.Mock).mockReturnValue({ birthtime: new Date() });
 			const stream = new EventEmitter();
-			sandbox.stub(fs, 'createWriteStream').returns(stream as any);
+			(fs.createWriteStream as jest.Mock).mockReturnValue(stream);
 
 			setTimeout(() => stream.emit('finish'), 10);
 			const res = await downloadUtil.download(url, outDir);
-			return expect(res).to.be.undefined;
+			return expect(res).toBeUndefined();
 		});
 	});
 
 	describe('#downloadLiskAndValidate', () => {
-		let readFileSyncStub: SinonStub;
-		let verifyChecksumStub: SinonStub;
-		let getChecksumStub: SinonStub;
-
 		beforeEach(() => {
-			sandbox.stub(downloadUtil, 'download');
-			verifyChecksumStub = sandbox.stub(downloadUtil, 'verifyChecksum');
-			getChecksumStub = sandbox.stub(downloadUtil, 'getChecksum');
-			sandbox
-				.stub(downloadUtil, 'getDownloadedFileInfo')
-				.returns({ fileDir: '', fileName: '', filePath: '' });
-			readFileSyncStub = sandbox.stub(fs, 'readFileSync');
+			jest.spyOn(axios, 'default').mockResolvedValue({ data: { pipe: jest.fn() } } as any);
+			jest.spyOn(fs, 'createWriteStream');
+			const stream = new EventEmitter();
+			jest.spyOn(fs, 'createReadStream').mockReturnValue(stream as any);
+			setTimeout(() => stream.emit('end'), 10);
+			jest.spyOn(fs, 'readFileSync');
+			jest.spyOn(downloadUtil, 'download').mockResolvedValue();
+			jest.spyOn(downloadUtil, 'verifyChecksum');
+			jest.spyOn(downloadUtil, 'getChecksum');
+			jest
+				.spyOn(downloadUtil, 'getDownloadedFileInfo')
+				.mockReturnValue({ fileDir: '', fileName: '', filePath: '' });
 		});
 
 		it('should download lisk and validate release', async () => {
-			readFileSyncStub
-				.onCall(0)
-				.returns(
-					'7607d6792843d6003c12495b54e34517a508d2a8622526aff1884422c5478971 tar filename here',
-				);
-			getChecksumStub.returns('valid checksum');
+			(fs.readFileSync as jest.Mock).mockReturnValueOnce(
+				'7607d6792843d6003c12495b54e34517a508d2a8622526aff1884422c5478971 tar filename here',
+			);
+			(downloadUtil.getChecksum as jest.Mock).mockReturnValue(
+				'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+			);
 
 			await downloadUtil.downloadAndValidate(url, outDir);
-			expect(downloadUtil.download).to.be.calledTwice;
-			expect(downloadUtil.getChecksum).to.be.calledOnce;
-			return expect(downloadUtil.getDownloadedFileInfo).to.be.calledOnce;
+			expect(downloadUtil.download).toHaveBeenCalledTimes(2);
+			expect(downloadUtil.getChecksum).toHaveBeenCalledTimes(1);
+			return expect(downloadUtil.getDownloadedFileInfo).toHaveBeenCalledTimes(1);
 		});
 
 		it('should throw error when validation fails', async () => {
-			readFileSyncStub
-				.onCall(0)
-				.returns(
-					'9897d6792843d6003c12495b54e34517a508d2a8622526aff1884422c5478971 tar filename here',
-				);
-			verifyChecksumStub.rejects(new Error('Checksum did not match'));
+			(fs.readFileSync as jest.Mock).mockReturnValueOnce(
+				'9897d6792843d6003c12495b54e34517a508d2a8622526aff1884422c5478971 tar filename here',
+			);
+			(downloadUtil.verifyChecksum as jest.Mock).mockImplementation(() => {
+				throw new Error('Checksum did not match');
+			});
 
-			return expect(downloadUtil.downloadAndValidate(url, outDir)).to.rejectedWith(
+			await expect(downloadUtil.downloadAndValidate(url, outDir)).rejects.toThrow(
 				'Checksum did not match',
 			);
 		});

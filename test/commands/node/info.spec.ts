@@ -12,13 +12,14 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-
-import { expect, test } from '@oclif/test';
-import * as sandbox from 'sinon';
+import { when } from 'jest-when';
 import * as fs from 'fs-extra';
 import { IPCChannel } from 'lisk-sdk';
+import * as Config from '@oclif/config';
+import { getConfig } from '../../utils/config';
 import baseIPC from '../../../src/base_ipc';
 import * as appUtils from '../../../src/utils/application';
+import InfoCommand from '../../../src/commands/node/info';
 
 describe('node:info command', () => {
 	const queryResult = {
@@ -45,28 +46,34 @@ describe('node:info command', () => {
 			delegateListRoundOffset: 2,
 		},
 	};
-	const printJSONStub = sandbox.stub().returns(queryResult);
-	const fsStub = sandbox.stub().returns(true);
-	const ipcInvokeStub = sandbox.stub();
-	const ipcStartAndListenStub = sandbox.stub();
-	ipcInvokeStub.withArgs('app:getNodeInfo').resolves(queryResult);
 
-	const setupTest = () =>
-		test
-			.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(true))
-			.stub(fs, 'existsSync', fsStub)
-			.stub(baseIPC.prototype, 'printJSON', printJSONStub)
-			.stub(IPCChannel.prototype, 'startAndListen', ipcStartAndListenStub)
-			.stub(IPCChannel.prototype, 'invoke', ipcInvokeStub);
+	let stdout: string[];
+	let stderr: string[];
+	let config: Config.IConfig;
+
+	beforeEach(async () => {
+		stdout = [];
+		stderr = [];
+		config = await getConfig();
+		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
+		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
+		jest.spyOn(fs, 'existsSync').mockReturnValue(true);
+		jest.spyOn(baseIPC.prototype, 'printJSON').mockReturnValue(queryResult as never);
+		jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(true);
+		jest.spyOn(IPCChannel.prototype, 'startAndListen').mockResolvedValue();
+		jest.spyOn(IPCChannel.prototype, 'invoke');
+		when(IPCChannel.prototype.invoke as jest.Mock)
+			.calledWith('app:getNodeInfo')
+			.mockResolvedValue(queryResult);
+	});
 
 	describe('node:info', () => {
-		setupTest()
-			.command(['node:info'])
-			.it('should get node info and display as an object', () => {
-				expect(ipcInvokeStub).to.have.been.calledTwice;
-				expect(ipcInvokeStub).to.have.been.calledWithExactly('app:getNodeInfo');
-				expect(printJSONStub).to.have.been.calledOnce;
-				expect(printJSONStub).to.have.been.calledWithExactly(queryResult);
-			});
+		it('should get node info and display as an object', async () => {
+			await InfoCommand.run([], config);
+			expect(IPCChannel.prototype.invoke).toHaveBeenCalledTimes(2);
+			expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:getNodeInfo');
+			expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
+			expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith(queryResult);
+		});
 	});
 });

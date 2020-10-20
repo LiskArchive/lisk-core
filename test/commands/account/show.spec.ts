@@ -13,10 +13,11 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import * as sandbox from 'sinon';
-import { expect, test } from '@oclif/test';
 import { cryptography } from 'lisk-sdk';
+import * as Config from '@oclif/config';
 import * as readerUtils from '../../../src/utils/reader';
+import ShowCommand from '../../../src/commands/account/show';
+import { getConfig } from '../../utils/config';
 
 describe('account:show', () => {
 	const passphraseInput =
@@ -24,42 +25,46 @@ describe('account:show', () => {
 	const secondDefaultMnemonic =
 		'alone cabin buffalo blast region upper jealous basket brush put answer twice';
 
-	const setupTest = () =>
-		test.stub(readerUtils, 'getPassphraseFromPrompt', sandbox.stub().resolves(passphraseInput));
+	let stdout: string[];
+	let stderr: string[];
+	let config: Config.IConfig;
+
+	beforeEach(async () => {
+		stdout = [];
+		stderr = [];
+		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
+		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
+		jest.spyOn(readerUtils, 'getPassphraseFromPrompt').mockResolvedValue(passphraseInput);
+		config = await getConfig();
+	});
 
 	describe('account:show', () => {
-		setupTest()
-			.stdout()
-			.command(['account:show'])
-			.it('should show account with prompt', (output: any) => {
-				expect(readerUtils.getPassphraseFromPrompt).to.be.calledWithExactly('passphrase', true);
-				return expect(JSON.parse(output.stdout)).to.eql({
-					privateKey: cryptography.getKeys(passphraseInput).privateKey.toString('hex'),
-					publicKey: cryptography.getKeys(passphraseInput).publicKey.toString('hex'),
-					address: cryptography.getBase32AddressFromPublicKey(
-						cryptography.getKeys(passphraseInput).publicKey,
-						'lsk',
-					),
-					binaryAddress: cryptography.getAddressFromPassphrase(passphraseInput).toString('hex'),
-				});
+		it('should show account with prompt', async () => {
+			await ShowCommand.run([], config);
+			expect(readerUtils.getPassphraseFromPrompt).toHaveBeenCalledWith('passphrase', true);
+			expect(JSON.parse(stdout[0])).toEqual({
+				privateKey: cryptography.getKeys(passphraseInput).privateKey.toString('hex'),
+				publicKey: cryptography.getKeys(passphraseInput).publicKey.toString('hex'),
+				address: cryptography.getBase32AddressFromPublicKey(
+					cryptography.getKeys(passphraseInput).publicKey,
+					'lsk',
+				),
+				binaryAddress: cryptography.getAddressFromPassphrase(passphraseInput).toString('hex'),
 			});
+		});
 
-		setupTest()
-			.stdout()
-			.command(['account:show', `--passphrase=${secondDefaultMnemonic}`])
-			.it('should show account with pass', (output: any) => {
-				expect(readerUtils.getPassphraseFromPrompt).not.to.be.called;
-				return expect(JSON.parse(output.stdout)).to.eql({
-					privateKey: cryptography.getKeys(secondDefaultMnemonic).privateKey.toString('hex'),
-					publicKey: cryptography.getKeys(secondDefaultMnemonic).publicKey.toString('hex'),
-					address: cryptography.getBase32AddressFromPublicKey(
-						cryptography.getKeys(secondDefaultMnemonic).publicKey,
-						'lsk',
-					),
-					binaryAddress: cryptography
-						.getAddressFromPassphrase(secondDefaultMnemonic)
-						.toString('hex'),
-				});
+		it('should show account with pass', async () => {
+			await ShowCommand.run(['--passphrase', secondDefaultMnemonic], config);
+			expect(readerUtils.getPassphraseFromPrompt).not.toHaveBeenCalled();
+			expect(JSON.parse(stdout[0])).toEqual({
+				privateKey: cryptography.getKeys(secondDefaultMnemonic).privateKey.toString('hex'),
+				publicKey: cryptography.getKeys(secondDefaultMnemonic).publicKey.toString('hex'),
+				address: cryptography.getBase32AddressFromPublicKey(
+					cryptography.getKeys(secondDefaultMnemonic).publicKey,
+					'lsk',
+				),
+				binaryAddress: cryptography.getAddressFromPassphrase(secondDefaultMnemonic).toString('hex'),
 			});
+		});
 	});
 });

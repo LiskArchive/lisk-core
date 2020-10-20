@@ -12,12 +12,11 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-
-import * as sandbox from 'sinon';
-import { expect, test } from '@oclif/test';
 import { cryptography } from 'lisk-sdk';
+import * as Config from '@oclif/config';
 import * as readerUtils from '../../../src/utils/reader';
 import DecryptCommand from '../../../src/commands/passphrase/decrypt';
+import { getConfig } from '../../utils/config';
 
 describe('passphrase:decrypt', () => {
 	const defaultEncryptedPassphrase =
@@ -28,63 +27,61 @@ describe('passphrase:decrypt', () => {
 		cipherText: 'cipherText',
 		iv: 'iv',
 		tag: 'tag',
-		version: 1,
+		version: '1',
 	};
 	const defaultInputs = 'LbYpLpV9Wpec6ux8';
 
-	const printMethodStub = sandbox.stub();
-	const setupTest = () =>
-		test
-			.stub(DecryptCommand.prototype, 'printJSON', printMethodStub)
-			.stub(
-				cryptography,
-				'parseEncryptedPassphrase',
-				sandbox.stub().returns(encryptedPassphraseObject),
-			)
-			.stub(cryptography, 'decryptPassphraseWithPassword', sandbox.stub().returns(passphrase))
-			.stub(readerUtils, 'getPassphraseFromPrompt', sandbox.stub().resolves(defaultInputs))
-			.stdout();
+	let stdout: string[];
+	let stderr: string[];
+	let config: Config.IConfig;
+
+	beforeEach(async () => {
+		stdout = [];
+		stderr = [];
+		config = await getConfig();
+		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
+		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
+		jest.spyOn(DecryptCommand.prototype, 'printJSON').mockReturnValue();
+		jest.spyOn(cryptography, 'parseEncryptedPassphrase').mockReturnValue(encryptedPassphraseObject);
+		jest.spyOn(cryptography, 'decryptPassphraseWithPassword').mockReturnValue(passphrase);
+		jest.spyOn(readerUtils, 'getPassphraseFromPrompt').mockResolvedValue(defaultInputs);
+	});
 
 	describe('passphrase:decrypt', () => {
-		setupTest()
-			.command(['passphrase:decrypt'])
-			.catch((error: Error) => {
-				return expect(error.message).to.contain('Missing 1 required arg');
-			})
-			.it('should throw an error');
+		it('should throw an error', async () => {
+			await expect(DecryptCommand.run([], config)).rejects.toThrow('Missing 1 required arg');
+		});
 	});
 
 	describe('passphrase:decrypt encryptedPassphrase', () => {
-		setupTest()
-			.command(['passphrase:decrypt', defaultEncryptedPassphrase])
-			.it('should decrypt passphrase with arg', () => {
-				expect(readerUtils.getPassphraseFromPrompt).to.be.calledWithExactly('password', true);
-				expect(cryptography.parseEncryptedPassphrase).to.be.calledWithExactly(
-					defaultEncryptedPassphrase,
-				);
-				expect(cryptography.decryptPassphraseWithPassword).to.be.calledWithExactly(
-					encryptedPassphraseObject,
-					defaultInputs,
-				);
-				return expect(printMethodStub).to.be.calledWithExactly({ passphrase });
-			});
+		it('should decrypt passphrase with arg', async () => {
+			await DecryptCommand.run([defaultEncryptedPassphrase], config);
+			expect(readerUtils.getPassphraseFromPrompt).toHaveBeenCalledWith('password', true);
+			expect(cryptography.parseEncryptedPassphrase).toHaveBeenCalledWith(
+				defaultEncryptedPassphrase,
+			);
+			expect(cryptography.decryptPassphraseWithPassword).toHaveBeenCalledWith(
+				encryptedPassphraseObject,
+				defaultInputs,
+			);
+			expect(DecryptCommand.prototype.printJSON).toHaveBeenCalledWith({ passphrase });
+		});
 	});
 
 	describe('passphrase:decrypt --password=LbYpLpV9Wpec6ux8', () => {
-		setupTest()
-			.command(['passphrase:decrypt', defaultEncryptedPassphrase, '--password=LbYpLpV9Wpec6ux8'])
-			.it('should decrypt passphrase with passphrase flag and password flag', () => {
-				expect(readerUtils.getPassphraseFromPrompt).not.to.be.called;
-				expect(cryptography.parseEncryptedPassphrase).to.be.calledWithExactly(
-					defaultEncryptedPassphrase,
-				);
-				expect(cryptography.decryptPassphraseWithPassword).to.be.calledWithExactly(
-					encryptedPassphraseObject,
-					defaultInputs,
-				);
-				return expect(printMethodStub).to.be.calledWithExactly({
-					passphrase,
-				});
+		it('should decrypt passphrase with passphrase flag and password flag', async () => {
+			await DecryptCommand.run([defaultEncryptedPassphrase, '--password=LbYpLpV9Wpec6ux8'], config);
+			expect(readerUtils.getPassphraseFromPrompt).not.toHaveBeenCalled();
+			expect(cryptography.parseEncryptedPassphrase).toHaveBeenCalledWith(
+				defaultEncryptedPassphrase,
+			);
+			expect(cryptography.decryptPassphraseWithPassword).toHaveBeenCalledWith(
+				encryptedPassphraseObject,
+				defaultInputs,
+			);
+			expect(DecryptCommand.prototype.printJSON).toHaveBeenCalledWith({
+				passphrase,
 			});
+		});
 	});
 });

@@ -13,153 +13,144 @@
  *
  */
 
-import { expect, test } from '@oclif/test';
-import * as sandbox from 'sinon';
 import * as inquirer from 'inquirer';
 import { homedir } from 'os';
 import { join } from 'path';
+import * as Config from '@oclif/config';
 import * as appUtils from '../../../src/utils/application';
 import * as dbUtils from '../../../src/utils/db';
+import ResetCommand from '../../../src/commands/blockchain/reset';
+import { getConfig } from '../../utils/config';
 
 const defaultDataPath = join(homedir(), '.lisk', 'lisk-core');
 
 describe('blockchain:reset', () => {
 	const pid = 56869;
-	const KVStoreStubInstance = {
-		clear: sandbox.stub(),
-	};
-	const promptStub = sandbox.stub().returns({ answer: false });
 
-	const setupTest = () =>
-		test
-			.stub(dbUtils, 'getBlockchainDB', sandbox.stub().returns(KVStoreStubInstance))
-			.stub(appUtils, 'getPid', sandbox.stub().returns(pid))
-			.stub(inquirer, 'prompt', promptStub)
-			.stdout()
-			.stderr();
+	let stdout: string[];
+	let stderr: string[];
+	let config: Config.IConfig;
+	let kvStoreStubInstance;
 
-	afterEach(() => {
-		KVStoreStubInstance.clear.resetHistory();
-		promptStub.resetHistory();
+	beforeEach(async () => {
+		stdout = [];
+		stderr = [];
+		kvStoreStubInstance = {
+			clear: jest.fn(),
+		};
+		config = await getConfig();
+		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
+		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
+		jest.spyOn(dbUtils, 'getBlockchainDB').mockReturnValue(kvStoreStubInstance);
+		jest.spyOn(appUtils, 'getPid').mockReturnValue(pid);
+		jest.spyOn(inquirer, 'prompt').mockReturnValue({ answer: false });
 	});
 
 	describe('when application is running', () => {
+		beforeEach(() => {
+			jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(true);
+		});
+
 		describe('when reset without flags', () => {
-			setupTest()
-				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(true))
-				.command(['blockchain:reset'])
-				.catch(error => {
-					expect(error.message).to.equal(
-						`Can't reset db while running application. Application at data path ${defaultDataPath} is running with pid ${pid}.`,
-					);
-				})
-				.it('should log error and return');
+			it('should log error and return', async () => {
+				await expect(ResetCommand.run([], config)).rejects.toThrow(
+					`Can't reset db while running application. Application at data path ${defaultDataPath} is running with pid ${pid}.`,
+				);
+			});
 		});
 
 		describe('when reset with data-path', () => {
-			setupTest()
-				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(true))
-				.command(['blockchain:reset', '--data-path=/my/app/'])
-				.catch(error => {
-					expect(error.message).to.equal(
-						`Can't reset db while running application. Application at data path /my/app/ is running with pid ${pid}.`,
-					);
-				})
-				.it('should log error and return');
+			it('should log error and return', async () => {
+				await expect(ResetCommand.run(['--data-path=/my/app/'], config)).rejects.toThrow(
+					`Can't reset db while running application. Application at data path /my/app/ is running with pid ${pid}.`,
+				);
+			});
 		});
 
 		describe('when starting with skip confirmation', () => {
-			setupTest()
-				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(true))
-				.command(['blockchain:reset', '--yes'])
-				.catch(error => {
-					expect(error.message).to.equal(
-						`Can't reset db while running application. Application at data path ${defaultDataPath} is running with pid ${pid}.`,
-					);
-				})
-				.it('should log error and return');
+			it('should log error and return', async () => {
+				await expect(ResetCommand.run(['--yes'], config)).rejects.toThrow(
+					`Can't reset db while running application. Application at data path ${defaultDataPath} is running with pid ${pid}.`,
+				);
+			});
 		});
 	});
 
 	describe('when application is not running', () => {
+		beforeEach(() => {
+			jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(false);
+		});
+
 		describe('when reset without flag', () => {
-			setupTest()
-				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
-				.command(['blockchain:reset'])
-				.it('should create db object for "blockchain.db" for default data path', () => {
-					expect(dbUtils.getBlockchainDB).to.have.been.calledOnce;
-					expect(dbUtils.getBlockchainDB).to.have.been.calledWithExactly(defaultDataPath);
-				});
+			it('should create db object for "blockchain.db" for default data path', async () => {
+				await ResetCommand.run([], config);
+				expect(dbUtils.getBlockchainDB).toHaveBeenCalledTimes(1);
+				expect(dbUtils.getBlockchainDB).toHaveBeenCalledWith(defaultDataPath);
+			});
 
-			setupTest()
-				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
-				.command(['blockchain:reset'])
-				.it('should prompt user for confirmation', () => {
-					expect(promptStub).to.be.calledOnce;
-					expect(promptStub).to.be.calledWithExactly([
-						{
-							name: 'answer',
-							message: 'Are you sure you want to reset the db?',
-							type: 'list',
-							choices: ['yes', 'no'],
-						},
-					]);
-				});
+			it('should prompt user for confirmation', async () => {
+				await ResetCommand.run([], config);
+				expect(inquirer.prompt).toHaveBeenCalledTimes(1);
+				expect(inquirer.prompt).toHaveBeenCalledWith([
+					{
+						name: 'answer',
+						message: 'Are you sure you want to reset the db?',
+						type: 'list',
+						choices: ['yes', 'no'],
+					},
+				]);
+			});
 
-			setupTest()
-				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
-				.command(['blockchain:reset'])
-				.it('should reset the blockchain db', () => {
-					expect(KVStoreStubInstance.clear).to.have.been.calledOnce;
-				});
+			it('should reset the blockchain db', async () => {
+				await ResetCommand.run([], config);
+				expect(kvStoreStubInstance.clear).toHaveBeenCalledTimes(1);
+			});
 		});
 
 		describe('when reset with data-path', () => {
-			setupTest()
-				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
-				.command(['blockchain:reset', '--data-path=/my/app/'])
-				.it('should create db object for "blockchain.db" for given data path', () => {
-					expect(dbUtils.getBlockchainDB).to.have.been.calledOnce;
-					expect(dbUtils.getBlockchainDB).to.have.been.calledWithExactly('/my/app/');
-				});
+			beforeEach(() => {
+				jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(false);
+			});
 
-			setupTest()
-				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
-				.command(['blockchain:reset'])
-				.it('should prompt user for confirmation', () => {
-					expect(promptStub).to.be.calledOnce;
-					expect(promptStub).to.be.calledWithExactly([
-						{
-							name: 'answer',
-							message: 'Are you sure you want to reset the db?',
-							type: 'list',
-							choices: ['yes', 'no'],
-						},
-					]);
-				});
+			it('should create db object for "blockchain.db" for given data path', async () => {
+				await ResetCommand.run(['--data-path=/my/app/'], config);
+				expect(dbUtils.getBlockchainDB).toHaveBeenCalledTimes(1);
+				expect(dbUtils.getBlockchainDB).toHaveBeenCalledWith('/my/app/');
+			});
 
-			setupTest()
-				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
-				.command(['blockchain:reset', '--data-path=/my/app/'])
-				.it('should reset the blockchain db', () => {
-					expect(KVStoreStubInstance.clear).to.have.been.calledOnce;
-				});
+			it('should prompt user for confirmation', async () => {
+				await ResetCommand.run(['--data-path=/my/app/'], config);
+				expect(inquirer.prompt).toHaveBeenCalledTimes(1);
+				expect(inquirer.prompt).toHaveBeenCalledWith([
+					{
+						name: 'answer',
+						message: 'Are you sure you want to reset the db?',
+						type: 'list',
+						choices: ['yes', 'no'],
+					},
+				]);
+			});
+
+			it('should reset the blockchain db', async () => {
+				await ResetCommand.run(['--data-path=/my/app/'], config);
+				expect(kvStoreStubInstance.clear).toHaveBeenCalledTimes(1);
+			});
 		});
 
 		describe('when skipping confirmation prompt', () => {
-			setupTest()
-				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
-				.command(['blockchain:reset', '--yes'])
-				.it('should create db object for "blockchain.db"', () => {
-					expect(dbUtils.getBlockchainDB).to.have.been.calledOnce;
-				});
+			beforeEach(() => {
+				jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(false);
+			});
 
-			setupTest()
-				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
-				.command(['blockchain:reset', '--yes'])
-				.it('should reset the blockchain db', () => {
-					expect(KVStoreStubInstance.clear).to.have.been.calledOnce;
-				});
+			it('should create db object for "blockchain.db"', async () => {
+				await ResetCommand.run(['--yes'], config);
+				expect(dbUtils.getBlockchainDB).toHaveBeenCalledTimes(1);
+			});
+
+			it('should reset the blockchain db', async () => {
+				await ResetCommand.run(['--yes'], config);
+				expect(kvStoreStubInstance.clear).toHaveBeenCalledTimes(1);
+			});
 		});
 	});
 });

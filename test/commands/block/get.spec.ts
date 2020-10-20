@@ -12,51 +12,51 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-
-import { expect, test } from '@oclif/test';
-import * as sandbox from 'sinon';
+import { when } from 'jest-when';
 import * as fs from 'fs-extra';
 import { IPCChannel } from 'lisk-sdk';
-
+import * as Config from '@oclif/config';
 import baseIPC from '../../../src/base_ipc';
 import * as appUtils from '../../../src/utils/application';
-
-const blockSchema = {
-	$id: 'blockSchema',
-	type: 'object',
-	properties: {
-		header: { dataType: 'bytes', fieldNumber: 1 },
-		payload: { type: 'array', items: { dataType: 'bytes' }, fieldNumber: 2 },
-	},
-};
-const blockHeaderSchema = {
-	$id: 'blockHeaderSchema',
-	type: 'object',
-	properties: {
-		version: { dataType: 'uint32', fieldNumber: 1 },
-		timestamp: { dataType: 'uint32', fieldNumber: 2 },
-		height: { dataType: 'uint32', fieldNumber: 3 },
-		previousBlockID: { dataType: 'bytes', fieldNumber: 4 },
-		transactionRoot: { dataType: 'bytes', fieldNumber: 5 },
-		generatorPublicKey: { dataType: 'bytes', fieldNumber: 6 },
-		reward: { dataType: 'uint64', fieldNumber: 7 },
-		asset: { dataType: 'bytes', fieldNumber: 8 },
-		signature: { dataType: 'bytes', fieldNumber: 9 },
-	},
-};
-const blockHeadersAssets = {
-	2: {
-		$id: '/block-header/asset/v2',
-		type: 'object',
-		properties: {
-			maxHeightPreviouslyForged: { dataType: 'uint32', fieldNumber: 1 },
-			maxHeightPrevoted: { dataType: 'uint32', fieldNumber: 2 },
-			seedReveal: { dataType: 'bytes', fieldNumber: 3 },
-		},
-	},
-};
+import GetCommand from '../../../src/commands/block/get';
+import { getConfig } from '../../utils/config';
 
 describe('block:get command', () => {
+	const blockSchema = {
+		$id: 'blockSchema',
+		type: 'object',
+		properties: {
+			header: { dataType: 'bytes', fieldNumber: 1 },
+			payload: { type: 'array', items: { dataType: 'bytes' }, fieldNumber: 2 },
+		},
+	};
+	const blockHeaderSchema = {
+		$id: 'blockHeaderSchema',
+		type: 'object',
+		properties: {
+			version: { dataType: 'uint32', fieldNumber: 1 },
+			timestamp: { dataType: 'uint32', fieldNumber: 2 },
+			height: { dataType: 'uint32', fieldNumber: 3 },
+			previousBlockID: { dataType: 'bytes', fieldNumber: 4 },
+			transactionRoot: { dataType: 'bytes', fieldNumber: 5 },
+			generatorPublicKey: { dataType: 'bytes', fieldNumber: 6 },
+			reward: { dataType: 'uint64', fieldNumber: 7 },
+			asset: { dataType: 'bytes', fieldNumber: 8 },
+			signature: { dataType: 'bytes', fieldNumber: 9 },
+		},
+	};
+	const blockHeadersAssets = {
+		2: {
+			$id: '/block-header/asset/v2',
+			type: 'object',
+			properties: {
+				maxHeightPreviouslyForged: { dataType: 'uint32', fieldNumber: 1 },
+				maxHeightPrevoted: { dataType: 'uint32', fieldNumber: 2 },
+				seedReveal: { dataType: 'bytes', fieldNumber: 3 },
+			},
+		},
+	};
+
 	const blockId = '4f7e41f5744c0c2a434f13afb186b77fb4b176a5298f91ed866680ff5ef13a6d';
 	const blockDataAtHeightTwo = {
 		header: {
@@ -80,62 +80,65 @@ describe('block:get command', () => {
 	};
 	const encodedBlockData =
 		'0acc010802109bb4c8f705180222204f7e41f5744c0c2a434f13afb186b77fb4b176a5298f91ed866680ff5ef13a6d2a20e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8553220a9a3c363a71a3089566352127cf0e6f79d3834e1d67b4132b98d35afd3b8537538004216080010001a108903ea6e67ccd67bafa1c9c04184a3874a405aa36d00cbcd135b55484c17ba89da8ecbac4df2ccc2c0c12b9db0cf4e48c74122c6c8d5100cf83fa83f79d5684eccf2ef9e6c55408bac9dea45c2b5aa590a0c';
-	const fsStub = sandbox.stub().returns(true);
-	const printJSONStub = sandbox.stub();
-	const ipcInvokeStub = sandbox.stub();
-	const ipcStartAndListenStub = sandbox.stub();
-	ipcInvokeStub
-		.withArgs('app:getSchema')
-		.resolves({
-			block: blockSchema,
-			blockHeader: blockHeaderSchema,
-			blockHeadersAssets,
-		})
-		.withArgs('app:getBlockByID', { id: blockId })
-		.resolves(encodedBlockData)
-		.withArgs('app:getBlockByHeight', { height: 2 })
-		.resolves(encodedBlockData);
 
-	afterEach(() => {
-		ipcInvokeStub.resetHistory();
-		printJSONStub.resetHistory();
+	let stdout: string[];
+	let stderr: string[];
+	let config: Config.IConfig;
+
+	beforeEach(async () => {
+		stdout = [];
+		stderr = [];
+		config = await getConfig();
+		jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(true);
+		jest.spyOn(fs, 'existsSync').mockReturnValue(true);
+		jest.spyOn(IPCChannel.prototype, 'startAndListen').mockResolvedValue();
+		jest.spyOn(IPCChannel.prototype, 'invoke');
+		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
+		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
+		when(IPCChannel.prototype.invoke as jest.Mock)
+			.calledWith('app:getSchema')
+			.mockResolvedValue({
+				block: blockSchema,
+				blockHeader: blockHeaderSchema,
+				blockHeadersAssets,
+			})
+			.calledWith('app:getBlockByID', { id: blockId })
+			.mockResolvedValue(encodedBlockData)
+			.calledWith('app:getBlockByHeight', { height: 2 })
+			.mockResolvedValue(encodedBlockData);
+		jest.spyOn(baseIPC.prototype, 'printJSON');
 	});
-	const setupTest = () =>
-		test
-			.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(true))
-			.stub(fs, 'existsSync', fsStub)
-			.stub(baseIPC.prototype, 'printJSON', printJSONStub)
-			.stub(IPCChannel.prototype, 'startAndListen', ipcStartAndListenStub)
-			.stub(IPCChannel.prototype, 'invoke', ipcInvokeStub);
 
 	describe('block:get', () => {
-		setupTest()
-			.command(['block:get'])
-			.catch((error: Error) => expect(error.message).to.contain('Missing 1 required arg:'))
-			.it('should throw an error when no arguments are provided.');
+		it('should throw an error when no arguments are provided.', async () => {
+			await expect(GetCommand.run([], config)).rejects.toThrow('Missing 1 required arg:');
+		});
 	});
 
 	describe('block:get by height', () => {
-		setupTest()
-			.command(['block:get', '2'])
-			.it('should get block info at height 2 and display as an object', () => {
-				expect(ipcInvokeStub).to.have.been.calledTwice;
-				expect(ipcInvokeStub).to.have.been.calledWithExactly('app:getSchema');
-				expect(ipcInvokeStub).to.have.been.calledWithExactly('app:getBlockByHeight', { height: 2 });
-				expect(printJSONStub).to.have.been.calledOnce;
-				expect(printJSONStub).to.have.been.calledWithExactly(blockDataAtHeightTwo);
+		it('should get block info at height 2 and display as an object', async () => {
+			await GetCommand.run(['2'], config);
+			expect(IPCChannel.prototype.invoke).toHaveBeenCalledTimes(2);
+			expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:getSchema');
+			expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:getBlockByHeight', {
+				height: 2,
 			});
+			expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
+			expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith(blockDataAtHeightTwo);
+		});
 	});
 
 	describe('block:get by id', () => {
-		setupTest()
-			.command(['block:get', '4f7e41f5744c0c2a434f13afb186b77fb4b176a5298f91ed866680ff5ef13a6d'])
-			.it('should get block info for the given id and display as an object', () => {
-				expect(ipcInvokeStub).to.have.been.calledTwice;
-				expect(ipcInvokeStub).to.have.been.calledWithExactly('app:getSchema');
-				expect(ipcInvokeStub).to.have.been.calledWithExactly('app:getBlockByID', { id: blockId });
-				expect(printJSONStub).to.have.been.calledOnce;
-				expect(printJSONStub).to.have.been.calledWithExactly(blockDataAtHeightTwo);
-			});
+		it('should get block info for the given id and display as an object', async () => {
+			await GetCommand.run(
+				['4f7e41f5744c0c2a434f13afb186b77fb4b176a5298f91ed866680ff5ef13a6d'],
+				config,
+			);
+			expect(IPCChannel.prototype.invoke).toHaveBeenCalledTimes(2);
+			expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:getSchema');
+			expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:getBlockByID', { id: blockId });
+			expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
+			expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith(blockDataAtHeightTwo);
+		});
 	});
 });

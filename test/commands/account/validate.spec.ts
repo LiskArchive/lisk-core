@@ -13,26 +13,36 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import { expect, test } from '@oclif/test';
+import * as Config from '@oclif/config';
+import ValidateCommand from '../../../src/commands/account/validate';
+import { getConfig } from '../../utils/config';
 
 describe('account:validate', () => {
 	const validAddress = 'lskso9zqyapuhu8kv7txfbohwrhjfbd4gkxewcuxz';
 	const invalidAddress = validAddress.replace('wr', 'om');
 
-	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-	const setupTest = () => test.stdout();
+	let stdout: string[];
+	let stderr: string[];
+	let config: Config.IConfig;
+
+	beforeEach(async () => {
+		stdout = [];
+		stderr = [];
+		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
+		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
+		config = await getConfig();
+	});
 
 	describe('account:validate', () => {
-		setupTest()
-			.command(['account:validate', validAddress])
-			.it('should show address is valid', (output: any) => {
-				expect(output.stdout).to.contain('is a valid address');
-			});
+		it('should show address is valid', async () => {
+			await ValidateCommand.run([validAddress], config);
+			expect(stdout[0]).toContain('is a valid address');
+		});
 
-		setupTest()
-			.stdout()
-			.command(['account:validate', invalidAddress])
-			.catch(err => expect(err.message).to.contain('Invalid checksum for address'))
-			.it('should show address is invalid');
+		it('should show address is invalid', async () => {
+			await expect(ValidateCommand.run([invalidAddress], config)).rejects.toThrow(
+				'Invalid checksum for address',
+			);
+		});
 	});
 });
