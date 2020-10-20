@@ -140,6 +140,24 @@ describe('forging', () => {
 				).rejects.toThrow('Custom Error');
 			});
 		});
+
+		describe('when invoked with overwrite', () => {
+			it('should invoke action with given args and overwrite and password flags', async () => {
+				await EnableCommand.run(
+					['myAddress', '10', '10', '1', '--overwrite', '--password=my-password'],
+					config,
+				);
+				expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:updateForgingStatus', {
+					address: 'myAddress',
+					forging: true,
+					password: 'my-password',
+					height: 10,
+					maxHeightPreviouslyForged: 10,
+					maxHeightPrevoted: 1,
+					overwrite: true,
+				});
+			});
+		});
 	});
 
 	describe('forging:disable', () => {

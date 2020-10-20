@@ -24,7 +24,6 @@ interface Args {
 	readonly height?: number;
 	readonly maxHeightPreviouslyForged?: number;
 	readonly maxHeightPrevoted?: number;
-	readonly overwrite?: boolean;
 }
 
 const isLessThanZero = (value: number | undefined | null): boolean =>
@@ -42,19 +41,17 @@ export class BaseForgingCommand extends BaseIPCCommand {
 	static flags = {
 		...BaseIPCCommand.flags,
 		password: flagParser.string(commonFlags.password),
+		overwrite: flagParser.boolean({
+			description: 'Overwrites the forger info',
+			default: false,
+		}),
 	};
 
 	protected forging!: boolean;
 
 	async run(): Promise<void> {
 		const { args, flags } = this.parse(this.constructor as typeof BaseForgingCommand);
-		const {
-			address,
-			height,
-			maxHeightPreviouslyForged,
-			maxHeightPrevoted,
-			overwrite,
-		} = args as Args;
+		const { address, height, maxHeightPreviouslyForged, maxHeightPrevoted } = args as Args;
 		let password;
 
 		if (
@@ -92,7 +89,7 @@ export class BaseForgingCommand extends BaseIPCCommand {
 					height: Number(height ?? 0),
 					maxHeightPreviouslyForged: Number(maxHeightPreviouslyForged ?? 0),
 					maxHeightPrevoted: Number(maxHeightPrevoted ?? 0),
-					overwrite: overwrite ?? false,
+					overwrite: flags.overwrite,
 				},
 			);
 			this.log('Forging status:');

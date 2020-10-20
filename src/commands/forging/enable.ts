@@ -20,9 +20,9 @@ export default class EnableForgingCommand extends BaseForgingCommand {
 
 	static examples = [
 		'forging:enable ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815 100 100 10',
-		'forging:enable ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815 100 100 10 true',
-		'forging:enable ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815 --data-path ./data',
-		'forging:enable ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815 --data-path ./data --password your_password',
+		'forging:enable ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815 100 100 10 --overwrite',
+		'forging:enable ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815 100 100 10 --data-path ./data',
+		'forging:enable ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815 100 100 10 --data-path ./data --password your_password',
 	];
 
 	static flags = {
@@ -45,11 +45,6 @@ export default class EnableForgingCommand extends BaseForgingCommand {
 			name: 'maxHeightPrevoted',
 			required: true,
 			description: 'Delegates largest prevoted height for a block.',
-		},
-		{
-			name: 'overwrite',
-			required: false,
-			description: 'Height in number or block id in hex format.',
 		},
 	];
 
