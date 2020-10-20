@@ -50,15 +50,15 @@ describe('forging', () => {
 			await expect(EnableCommand.run([], config)).rejects.toThrow('Missing 4 required arg');
 		});
 
-		it('should throw an error when arg is not provided', async () => {
+		it('should throw an error when height, maxHeightPreviouslyForged and maxHeightPrevoted arg is not provided', async () => {
 			await expect(EnableCommand.run(['myAddress', '--password=my-password'], config)).rejects.toThrow('Missing 3 required arg');
 		});
 
-		it('should throw an error when arg is not provided', async () => {
+		it('should throw an error when arg maxHeightPreviouslyForged and maxHeightPrevoted  is not provided', async () => {
 			await expect(EnableCommand.run(['myAddress', '10', '--password=my-password'], config)).rejects.toThrow('Missing 2 required arg');
 		});
 
-		it('should throw an error when arg is not provided', async () => {
+		it('should throw an error when arg maxHeightPrevoted is not provided', async () => {
 			await expect(EnableCommand.run(['myAddress', '100', '100', '--password=my-password'], config)).rejects.toThrow('Missing 1 required arg');
 		});
 
