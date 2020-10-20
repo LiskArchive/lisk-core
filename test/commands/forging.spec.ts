@@ -47,23 +47,45 @@ describe('forging', () => {
 
 	describe('forging:enable', () => {
 		it('should throw an error when arg is not provided', async () => {
-			await expect(EnableCommand.run([], config)).rejects.toThrow('Missing 1 required arg');
+			await expect(EnableCommand.run([], config)).rejects.toThrow('Missing 4 required arg');
+		});
+
+		it('should throw an error when height, maxHeightPreviouslyForged and maxHeightPrevoted arg is not provided', async () => {
+			await expect(
+				EnableCommand.run(['myAddress', '--password=my-password'], config),
+			).rejects.toThrow('Missing 3 required arg');
+		});
+
+		it('should throw an error when arg maxHeightPreviouslyForged and maxHeightPrevoted  is not provided', async () => {
+			await expect(
+				EnableCommand.run(['myAddress', '10', '--password=my-password'], config),
+			).rejects.toThrow('Missing 2 required arg');
+		});
+
+		it('should throw an error when arg maxHeightPrevoted is not provided', async () => {
+			await expect(
+				EnableCommand.run(['myAddress', '100', '100', '--password=my-password'], config),
+			).rejects.toThrow('Missing 1 required arg');
 		});
 
 		describe('when invoked with password', () => {
 			it('should invoke action with given address and password', async () => {
-				await EnableCommand.run(['myAddress', '--password=my-password'], config);
+				await EnableCommand.run(['myAddress', '10', '10', '1', '--password=my-password'], config);
 				expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:updateForgingStatus', {
 					address: 'myAddress',
 					forging: true,
 					password: 'my-password',
+					height: 10,
+					maxHeightPreviouslyForged: 10,
+					maxHeightPrevoted: 1,
+					overwrite: false,
 				});
 			});
 		});
 
 		describe('when invoked without password', () => {
 			it('should prompt user for password', async () => {
-				await EnableCommand.run(['myAddress'], config);
+				await EnableCommand.run(['myAddress', '10', '10', '1'], config);
 				expect(inquirer.prompt).toHaveBeenCalledTimes(1);
 				expect(inquirer.prompt).toHaveBeenCalledWith([
 					{
@@ -76,18 +98,22 @@ describe('forging', () => {
 			});
 
 			it('should invoke action with given address and password', async () => {
-				await EnableCommand.run(['myAddress'], config);
+				await EnableCommand.run(['myAddress', '10', '10', '1'], config);
 				expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:updateForgingStatus', {
 					address: 'myAddress',
 					forging: true,
 					password: 'promptPassword',
+					height: 10,
+					maxHeightPreviouslyForged: 10,
+					maxHeightPrevoted: 1,
+					overwrite: false,
 				});
 			});
 		});
 
 		describe('when action is successful', () => {
 			it('should invoke action with given address and user provided password', async () => {
-				await EnableCommand.run(['myAddress', '--password=my-password'], config);
+				await EnableCommand.run(['myAddress', '10', '10', '1', '--password=my-password'], config);
 				expect(BaseForgingCommand.prototype.printJSON).toHaveBeenCalledTimes(1);
 				expect(BaseForgingCommand.prototype.printJSON).toHaveBeenCalledWith(actionResult);
 			});
@@ -100,11 +126,36 @@ describe('forging', () => {
 						address: 'myFailedEnabledAddress',
 						forging: true,
 						password: 'my-password',
+						height: 10,
+						maxHeightPreviouslyForged: 10,
+						maxHeightPrevoted: 1,
+						overwrite: false,
 					})
 					.mockRejectedValue(new Error('Custom Error'));
 				await expect(
-					EnableCommand.run(['myFailedEnabledAddress', '--password=my-password'], config),
+					EnableCommand.run(
+						['myFailedEnabledAddress', '10', '10', '1', '--password=my-password'],
+						config,
+					),
 				).rejects.toThrow('Custom Error');
+			});
+		});
+
+		describe('when invoked with overwrite', () => {
+			it('should invoke action with given args and overwrite and password flags', async () => {
+				await EnableCommand.run(
+					['myAddress', '10', '10', '1', '--overwrite', '--password=my-password'],
+					config,
+				);
+				expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:updateForgingStatus', {
+					address: 'myAddress',
+					forging: true,
+					password: 'my-password',
+					height: 10,
+					maxHeightPreviouslyForged: 10,
+					maxHeightPrevoted: 1,
+					overwrite: true,
+				});
 			});
 		});
 	});
@@ -121,6 +172,10 @@ describe('forging', () => {
 					address: 'myAddress',
 					forging: false,
 					password: 'my-password',
+					height: 0,
+					maxHeightPreviouslyForged: 0,
+					maxHeightPrevoted: 0,
+					overwrite: false,
 				});
 			});
 		});
@@ -145,6 +200,10 @@ describe('forging', () => {
 					address: 'myAddress',
 					forging: false,
 					password: 'promptPassword',
+					height: 0,
+					maxHeightPreviouslyForged: 0,
+					maxHeightPrevoted: 0,
+					overwrite: false,
 				});
 			});
 		});
@@ -164,6 +223,10 @@ describe('forging', () => {
 						address: 'myFailedDisabledAddress',
 						forging: false,
 						password: 'my-password',
+						height: 0,
+						maxHeightPreviouslyForged: 0,
+						maxHeightPrevoted: 0,
+						overwrite: false,
 					})
 					.mockRejectedValue(new Error('Custom Error'));
 				await expect(
