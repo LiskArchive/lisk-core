@@ -20,7 +20,7 @@ import { IPCChannel } from 'lisk-sdk';
 import { BaseForgingCommand } from '../../src/base_forging';
 import * as appUtils from '../../src/utils/application';
 
-describe('forging', () => {
+describe.only('forging', () => {
 	const actionResult = {
 		address: 'actionAddress',
 		forging: true,
@@ -84,9 +84,9 @@ describe('forging', () => {
 						address: 'myAddress',
 						forging: true,
 						password: 'my-password',
-						height: '10',
-						maxHeightPreviouslyForged: '10',
-						maxHeightPrevoted: '1',
+						height: 10,
+						maxHeightPreviouslyForged: 10,
+						maxHeightPrevoted: 1,
 						overwrite: false,
 					});
 				});
@@ -98,9 +98,9 @@ describe('forging', () => {
 						address: 'myAddress',
 						forging: true,
 						password: 'my-password',
-						height: '10',
-						maxHeightPreviouslyForged: '10',
-						maxHeightPrevoted: '1',
+						height: 10,
+						maxHeightPreviouslyForged: 10,
+						maxHeightPrevoted: 1,
 						overwrite: 'true',
 					});
 				});
@@ -128,9 +128,9 @@ describe('forging', () => {
 						address: 'myAddress',
 						forging: true,
 						password: 'promptPassword',
-						height: '10',
-						maxHeightPreviouslyForged: '10',
-						maxHeightPrevoted: '1',
+						height: 10,
+						maxHeightPreviouslyForged: 10,
+						maxHeightPrevoted: 1,
 						overwrite: false,
 					});
 				});
@@ -165,9 +165,9 @@ describe('forging', () => {
 					address: 'myFailedEnabledAddress',
 					forging: true,
 					password: 'my-password',
-					height: '10',
-					maxHeightPreviouslyForged: '10',
-					maxHeightPrevoted: '1',
+					height: 10,
+					maxHeightPreviouslyForged: 10,
+					maxHeightPrevoted: 1,
 					overwrite: false,
 				})
 				.rejects(new Error('Custom Error'));

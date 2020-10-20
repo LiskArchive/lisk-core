@@ -21,16 +21,13 @@ import BaseIPCCommand from './base_ipc';
 
 interface Args {
 	readonly address: string;
-	readonly height?: number;
-	readonly maxHeightPreviouslyForged?: number;
-	readonly maxHeightPrevoted?: number;
-	readonly overwrite?: boolean;
+	readonly height: number;
+	readonly maxHeightPreviouslyForged: number;
+	readonly maxHeightPrevoted: number;
+	readonly overwrite: boolean;
 }
 
-const isValidInput = (input: Partial<Args>): number | boolean | undefined =>
-	(input.height && input.height < 0) ||
-	(input.maxHeightPreviouslyForged && input.maxHeightPreviouslyForged < 0) ||
-	(input.maxHeightPrevoted && input.maxHeightPrevoted < 0);
+const isLessThanZero = (value: number | undefined | null): boolean => value === null || value === undefined || value < 0;
 
 export class BaseForgingCommand extends BaseIPCCommand {
 	static args = [
@@ -59,7 +56,7 @@ export class BaseForgingCommand extends BaseIPCCommand {
 		} = args as Args;
 		let password;
 
-		if (this.forging && isValidInput({ height, maxHeightPreviouslyForged, maxHeightPrevoted })) {
+		if (this.forging && (isLessThanZero(height) || isLessThanZero(maxHeightPreviouslyForged) || isLessThanZero(maxHeightPrevoted))) {
 			throw new Error(
 				'The maxHeightPreviouslyForged and maxHeightPrevoted parameter value must be greater than or equal to 0',
 			);
@@ -86,9 +83,9 @@ export class BaseForgingCommand extends BaseIPCCommand {
 					address,
 					password,
 					forging: this.forging,
-					height: height ?? 0,
-					maxHeightPreviouslyForged: maxHeightPreviouslyForged ?? 0,
-					maxHeightPrevoted: maxHeightPrevoted ?? 0,
+					height: Number(height ?? 0),
+					maxHeightPreviouslyForged: Number(maxHeightPreviouslyForged ?? 0),
+					maxHeightPrevoted: Number(maxHeightPrevoted ?? 0),
 					overwrite: overwrite ?? false,
 				},
 			);
