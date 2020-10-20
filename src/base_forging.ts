@@ -27,7 +27,8 @@ interface Args {
 	readonly overwrite?: boolean;
 }
 
-const isLessThanZero = (value: number | undefined | null): boolean => value === null || value === undefined || value < 0;
+const isLessThanZero = (value: number | undefined | null): boolean =>
+	value === null || value === undefined || value < 0;
 
 export class BaseForgingCommand extends BaseIPCCommand {
 	static args = [
@@ -56,7 +57,12 @@ export class BaseForgingCommand extends BaseIPCCommand {
 		} = args as Args;
 		let password;
 
-		if (this.forging && (isLessThanZero(height) || isLessThanZero(maxHeightPreviouslyForged) || isLessThanZero(maxHeightPrevoted))) {
+		if (
+			this.forging &&
+			(isLessThanZero(height) ||
+				isLessThanZero(maxHeightPreviouslyForged) ||
+				isLessThanZero(maxHeightPrevoted))
+		) {
 			throw new Error(
 				'The maxHeightPreviouslyForged and maxHeightPrevoted parameter value must be greater than or equal to 0',
 			);

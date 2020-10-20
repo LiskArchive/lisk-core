@@ -51,15 +51,21 @@ describe('forging', () => {
 		});
 
 		it('should throw an error when height, maxHeightPreviouslyForged and maxHeightPrevoted arg is not provided', async () => {
-			await expect(EnableCommand.run(['myAddress', '--password=my-password'], config)).rejects.toThrow('Missing 3 required arg');
+			await expect(
+				EnableCommand.run(['myAddress', '--password=my-password'], config),
+			).rejects.toThrow('Missing 3 required arg');
 		});
 
 		it('should throw an error when arg maxHeightPreviouslyForged and maxHeightPrevoted  is not provided', async () => {
-			await expect(EnableCommand.run(['myAddress', '10', '--password=my-password'], config)).rejects.toThrow('Missing 2 required arg');
+			await expect(
+				EnableCommand.run(['myAddress', '10', '--password=my-password'], config),
+			).rejects.toThrow('Missing 2 required arg');
 		});
 
 		it('should throw an error when arg maxHeightPrevoted is not provided', async () => {
-			await expect(EnableCommand.run(['myAddress', '100', '100', '--password=my-password'], config)).rejects.toThrow('Missing 1 required arg');
+			await expect(
+				EnableCommand.run(['myAddress', '100', '100', '--password=my-password'], config),
+			).rejects.toThrow('Missing 1 required arg');
 		});
 
 		describe('when invoked with password', () => {
@@ -127,7 +133,10 @@ describe('forging', () => {
 					})
 					.mockRejectedValue(new Error('Custom Error'));
 				await expect(
-					EnableCommand.run(['myFailedEnabledAddress', '10', '10', '1', '--password=my-password'], config),
+					EnableCommand.run(
+						['myFailedEnabledAddress', '10', '10', '1', '--password=my-password'],
+						config,
+					),
 				).rejects.toThrow('Custom Error');
 			});
 		});
