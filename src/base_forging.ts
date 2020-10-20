@@ -21,10 +21,10 @@ import BaseIPCCommand from './base_ipc';
 
 interface Args {
 	readonly address: string;
-	readonly height: number;
-	readonly maxHeightPreviouslyForged: number;
-	readonly maxHeightPrevoted: number;
-	readonly overwrite: boolean;
+	readonly height?: number;
+	readonly maxHeightPreviouslyForged?: number;
+	readonly maxHeightPrevoted?: number;
+	readonly overwrite?: boolean;
 }
 
 const isLessThanZero = (value: number | undefined | null): boolean => value === null || value === undefined || value < 0;
