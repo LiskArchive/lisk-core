@@ -11,12 +11,21 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { Application, ApplicationConfig, HTTPAPIPlugin, ForgerPlugin } from 'lisk-sdk';
+import {
+	Application,
+	ApplicationConfig,
+	HTTPAPIPlugin,
+	ForgerPlugin,
+	MonitorPlugin,
+	ReportMisbehaviorPlugin,
+} from 'lisk-sdk';
 import { LegacyAccountModule } from './modules';
 
 export interface Options {
 	enableHTTPAPIPlugin: boolean;
 	enableForgerPlugin: boolean;
+	enableMonitorPlugin: boolean;
+	enableReportMisbehaviorPlugin: boolean;
 }
 
 // Temporally disable eslint
@@ -34,6 +43,12 @@ export const getApplication = (
 	}
 	if (options.enableForgerPlugin) {
 		app.registerPlugin(ForgerPlugin, { loadAsChildProcess: true });
+	}
+	if (options.enableMonitorPlugin) {
+		app.registerPlugin(MonitorPlugin, { loadAsChildProcess: true });
+	}
+	if (options.enableReportMisbehaviorPlugin) {
+		app.registerPlugin(ReportMisbehaviorPlugin, { loadAsChildProcess: true });
 	}
 
 	return app;
