@@ -76,13 +76,17 @@ const setPluginConfig = (config: any, flags: any): void => {
 	}
 	if (flags['report-misbehavior-plugin-port'] !== undefined) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		config.plugins[ReportMisbehaviorPlugin.alias] = config.plugins[ReportMisbehaviorPlugin.alias] ?? {};
+		config.plugins[ReportMisbehaviorPlugin.alias] =
+			config.plugins[ReportMisbehaviorPlugin.alias] ?? {};
 		config.plugins[ReportMisbehaviorPlugin.alias].port = flags['report-misbehavior-plugin-port'];
 	}
 	if (flags['report-misbehavior-plugin-whitelist'] !== undefined) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		config.plugins[ReportMisbehaviorPlugin.alias] = config.plugins[ReportMisbehaviorPlugin.alias] ?? {};
-		config.plugins[ReportMisbehaviorPlugin.alias].whiteList = flags['report-misbehavior-plugin-whitelist'].split(',');
+		config.plugins[ReportMisbehaviorPlugin.alias] =
+			config.plugins[ReportMisbehaviorPlugin.alias] ?? {};
+		config.plugins[ReportMisbehaviorPlugin.alias].whiteList = flags[
+			'report-misbehavior-plugin-whitelist'
+		].split(',');
 	}
 };
 
