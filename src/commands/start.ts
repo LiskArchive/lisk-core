@@ -40,16 +40,22 @@ import { flags as commonFlags } from '../utils/flags';
 import { getApplication } from '../application';
 import { DEFAULT_NETWORK } from '../constants';
 
+interface Flags {
+	[key: string]: string | number | boolean | undefined;
+}
+
 const LOG_OPTIONS = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const setPluginConfig = (config: any, flags: any): void => {
+const setPluginConfig = (config: ApplicationConfig, flags: Flags): void => {
 	if (flags['http-api-plugin-port'] !== undefined) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		config.plugins[HTTPAPIPlugin.alias] = config.plugins[HTTPAPIPlugin.alias] ?? {};
 		config.plugins[HTTPAPIPlugin.alias].port = flags['http-api-plugin-port'];
 	}
-	if (flags['http-api-plugin-whitelist'] !== undefined) {
+	if (
+		flags['http-api-plugin-whitelist'] !== undefined &&
+		typeof flags['http-api-plugin-whitelist'] === 'string'
+	) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		config.plugins[HTTPAPIPlugin.alias] = config.plugins[HTTPAPIPlugin.alias] ?? {};
 		config.plugins[HTTPAPIPlugin.alias].whiteList = flags['http-api-plugin-whitelist'].split(',');
@@ -59,7 +65,10 @@ const setPluginConfig = (config: any, flags: any): void => {
 		config.plugins[ForgerPlugin.alias] = config.plugins[ForgerPlugin.alias] ?? {};
 		config.plugins[ForgerPlugin.alias].port = flags['forger-plugin-port'];
 	}
-	if (flags['forger-plugin-whitelist'] !== undefined) {
+	if (
+		flags['forger-plugin-whitelist'] !== undefined &&
+		typeof flags['forger-plugin-whitelist'] === 'string'
+	) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		config.plugins[ForgerPlugin.alias] = config.plugins[ForgerPlugin.alias] ?? {};
 		config.plugins[ForgerPlugin.alias].whiteList = flags['forger-plugin-whitelist'].split(',');
@@ -69,7 +78,10 @@ const setPluginConfig = (config: any, flags: any): void => {
 		config.plugins[MonitorPlugin.alias] = config.plugins[MonitorPlugin.alias] ?? {};
 		config.plugins[MonitorPlugin.alias].port = flags['monitor-plugin-port'];
 	}
-	if (flags['monitor-plugin-whitelist'] !== undefined) {
+	if (
+		flags['monitor-plugin-whitelist'] !== undefined &&
+		typeof flags['monitor-plugin-whitelist'] === 'string'
+	) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		config.plugins[MonitorPlugin.alias] = config.plugins[MonitorPlugin.alias] ?? {};
 		config.plugins[MonitorPlugin.alias].whiteList = flags['monitor-plugin-whitelist'].split(',');
@@ -80,7 +92,10 @@ const setPluginConfig = (config: any, flags: any): void => {
 			config.plugins[ReportMisbehaviorPlugin.alias] ?? {};
 		config.plugins[ReportMisbehaviorPlugin.alias].port = flags['report-misbehavior-plugin-port'];
 	}
-	if (flags['report-misbehavior-plugin-whitelist'] !== undefined) {
+	if (
+		flags['report-misbehavior-plugin-whitelist'] !== undefined &&
+		typeof flags['report-misbehavior-plugin-whitelist'] === 'string'
+	) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		config.plugins[ReportMisbehaviorPlugin.alias] =
 			config.plugins[ReportMisbehaviorPlugin.alias] ?? {};
