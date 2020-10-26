@@ -110,6 +110,8 @@ export default abstract class BaseIPCCommand extends Command {
 			const app = getApplication(genesisBlock, config, {
 				enableHTTPAPIPlugin: false,
 				enableForgerPlugin: false,
+				enableMonitorPlugin: false,
+				enableReportMisbehaviorPlugin: false,
 			});
 			this._schema = app.getSchema();
 		} else {
