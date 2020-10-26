@@ -19,11 +19,11 @@ import { Command, flags as flagParser } from '@oclif/command';
 import * as fs from 'fs-extra';
 import {
 	ApplicationConfig,
-	utils,
-	HTTPAPIPlugin,
 	ForgerPlugin,
+	HTTPAPIPlugin,
 	MonitorPlugin,
 	ReportMisbehaviorPlugin,
+	utils,
 } from 'lisk-sdk';
 import {
 	getDefaultPath,

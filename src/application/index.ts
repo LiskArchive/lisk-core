@@ -13,10 +13,10 @@
  */
 import {
 	Application,
-	ApplicationConfig,
 	HTTPAPIPlugin,
 	ForgerPlugin,
 	MonitorPlugin,
+	PartialApplicationConfig,
 	ReportMisbehaviorPlugin,
 } from 'lisk-sdk';
 import { LegacyAccountModule } from './modules';
@@ -32,7 +32,7 @@ export interface Options {
 /* eslint-disable */
 export const getApplication = (
 	genesisBlock: Record<string, unknown>,
-	config: ApplicationConfig,
+	config: PartialApplicationConfig,
 	options: Options,
 ): Application => {
 	const app = Application.defaultApplication(genesisBlock, config);

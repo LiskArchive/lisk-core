@@ -16,7 +16,7 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as os from 'os';
-import { systemDirs, ApplicationConfig } from 'lisk-sdk';
+import { PartialApplicationConfig, systemDirs } from 'lisk-sdk';
 
 const defaultDir = '.lisk';
 const defaultFolder = 'lisk-core';
@@ -73,7 +73,7 @@ export const getGenesisBlockAndConfig = async (network: string) => {
 
 	// Get config from network config or config specified
 	const genesisBlock: Record<string, unknown> = await fs.readJSON(defaultGenesisBlockFilePath);
-	const config: ApplicationConfig = await fs.readJSON(defaultConfigFilepath);
+	const config: PartialApplicationConfig = await fs.readJSON(defaultConfigFilepath);
 
 	return { genesisBlock, config };
 };
