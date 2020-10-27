@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /*
  * Copyright © 2020 Lisk Foundation
  *
@@ -16,7 +17,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Command, flags as flagParser } from '@oclif/command';
 import * as fs from 'fs-extra';
-import { ApplicationConfig, utils, HTTPAPIPlugin, ForgerPlugin } from 'lisk-sdk';
+import {
+	ApplicationConfig,
+	ForgerPlugin,
+	HTTPAPIPlugin,
+	MonitorPlugin,
+	ReportMisbehaviorPlugin,
+	utils,
+} from 'lisk-sdk';
 import {
 	getDefaultPath,
 	splitPath,
@@ -32,7 +40,70 @@ import { flags as commonFlags } from '../utils/flags';
 import { getApplication } from '../application';
 import { DEFAULT_NETWORK } from '../constants';
 
+interface Flags {
+	[key: string]: string | number | boolean | undefined;
+}
+
 const LOG_OPTIONS = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
+
+const setPluginConfig = (config: ApplicationConfig, flags: Flags): void => {
+	if (flags['http-api-plugin-port'] !== undefined) {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		config.plugins[HTTPAPIPlugin.alias] = config.plugins[HTTPAPIPlugin.alias] ?? {};
+		config.plugins[HTTPAPIPlugin.alias].port = flags['http-api-plugin-port'];
+	}
+	if (
+		flags['http-api-plugin-whitelist'] !== undefined &&
+		typeof flags['http-api-plugin-whitelist'] === 'string'
+	) {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		config.plugins[HTTPAPIPlugin.alias] = config.plugins[HTTPAPIPlugin.alias] ?? {};
+		config.plugins[HTTPAPIPlugin.alias].whiteList = flags['http-api-plugin-whitelist'].split(',');
+	}
+	if (flags['forger-plugin-port'] !== undefined) {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		config.plugins[ForgerPlugin.alias] = config.plugins[ForgerPlugin.alias] ?? {};
+		config.plugins[ForgerPlugin.alias].port = flags['forger-plugin-port'];
+	}
+	if (
+		flags['forger-plugin-whitelist'] !== undefined &&
+		typeof flags['forger-plugin-whitelist'] === 'string'
+	) {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		config.plugins[ForgerPlugin.alias] = config.plugins[ForgerPlugin.alias] ?? {};
+		config.plugins[ForgerPlugin.alias].whiteList = flags['forger-plugin-whitelist'].split(',');
+	}
+	if (flags['monitor-plugin-port'] !== undefined) {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		config.plugins[MonitorPlugin.alias] = config.plugins[MonitorPlugin.alias] ?? {};
+		config.plugins[MonitorPlugin.alias].port = flags['monitor-plugin-port'];
+	}
+	if (
+		flags['monitor-plugin-whitelist'] !== undefined &&
+		typeof flags['monitor-plugin-whitelist'] === 'string'
+	) {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		config.plugins[MonitorPlugin.alias] = config.plugins[MonitorPlugin.alias] ?? {};
+		config.plugins[MonitorPlugin.alias].whiteList = flags['monitor-plugin-whitelist'].split(',');
+	}
+	if (flags['report-misbehavior-plugin-port'] !== undefined) {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		config.plugins[ReportMisbehaviorPlugin.alias] =
+			config.plugins[ReportMisbehaviorPlugin.alias] ?? {};
+		config.plugins[ReportMisbehaviorPlugin.alias].port = flags['report-misbehavior-plugin-port'];
+	}
+	if (
+		flags['report-misbehavior-plugin-whitelist'] !== undefined &&
+		typeof flags['report-misbehavior-plugin-whitelist'] === 'string'
+	) {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		config.plugins[ReportMisbehaviorPlugin.alias] =
+			config.plugins[ReportMisbehaviorPlugin.alias] ?? {};
+		config.plugins[ReportMisbehaviorPlugin.alias].whiteList = flags[
+			'report-misbehavior-plugin-whitelist'
+		].split(',');
+	}
+};
 
 export default class StartCommand extends Command {
 	static description = 'Start Lisk Core Node.';
@@ -122,6 +193,42 @@ export default class StartCommand extends Command {
 				'List of IPs in comma separated value to allow the connection. Environment variable "LISK_FORGER_PLUGIN_WHITELIST" can also be used.',
 			env: 'LISK_FORGER_PLUGIN_WHITELIST',
 			dependsOn: ['enable-forger-plugin'],
+		}),
+		'enable-monitor-plugin': flagParser.boolean({
+			description:
+				'Enable Monitor Plugin. Environment variable "LISK_ENABLE_MONITOR_PLUGIN" can also be used.',
+			env: 'LISK_ENABLE_MONITOR_PLUGIN',
+			default: false,
+		}),
+		'monitor-plugin-port': flagParser.integer({
+			description:
+				'Port to be used for Monitor Plugin. Environment variable "LISK_MONITOR_PLUGIN_PORT" can also be used.',
+			env: 'LISK_MONITOR_PLUGIN_PORT',
+			dependsOn: ['enable-monitor-plugin'],
+		}),
+		'monitor-plugin-whitelist': flagParser.string({
+			description:
+				'List of IPs in comma separated value to allow the connection. Environment variable "LISK_MONITOR_PLUGIN_WHITELIST" can also be used.',
+			env: 'LISK_MONITOR_PLUGIN_WHITELIST',
+			dependsOn: ['enable-monitor-plugin'],
+		}),
+		'enable-report-misbehavior-plugin': flagParser.boolean({
+			description:
+				'Enable ReportMisbehavior Plugin. Environment variable "LISK_ENABLE_REPORT_MISBEHAVIOR_PLUGIN" can also be used.',
+			env: 'LISK_ENABLE_MONITOR_PLUGIN',
+			default: false,
+		}),
+		'report-misbehavior-plugin-port': flagParser.integer({
+			description:
+				'Port to be used for ReportMisbehavior Plugin. Environment variable "LISK_REPORT_MISBEHAVIOR_PLUGIN_PORT" can also be used.',
+			env: 'LISK_REPORT_MISBEHAVIOR_PLUGIN_PORT',
+			dependsOn: ['enable-report-misbehavior-plugin'],
+		}),
+		'report-misbehavior-plugin-whitelist': flagParser.string({
+			description:
+				'List of IPs in comma separated value to allow the connection. Environment variable "LISK_REPORT_MISBEHAVIOR_PLUGIN_WHITELIST" can also be used.',
+			env: 'LISK_REPORT_MISBEHAVIOR_PLUGIN_WHITELIST',
+			dependsOn: ['enable-report-misbehavior-plugin'],
 		}),
 	};
 
@@ -229,31 +336,15 @@ export default class StartCommand extends Command {
 			}
 		}
 		// Plugin configs
-		if (flags['http-api-plugin-port'] !== undefined) {
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			config.plugins[HTTPAPIPlugin.alias] = config.plugins[HTTPAPIPlugin.alias] ?? {};
-			config.plugins[HTTPAPIPlugin.alias].port = flags['http-api-plugin-port'];
-		}
-		if (flags['http-api-plugin-whitelist'] !== undefined) {
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			config.plugins[HTTPAPIPlugin.alias] = config.plugins[HTTPAPIPlugin.alias] ?? {};
-			config.plugins[HTTPAPIPlugin.alias].whiteList = flags['http-api-plugin-whitelist'].split(',');
-		}
-		if (flags['forger-plugin-port'] !== undefined) {
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			config.plugins[ForgerPlugin.alias] = config.plugins[ForgerPlugin.alias] ?? {};
-			config.plugins[ForgerPlugin.alias].port = flags['forger-plugin-port'];
-		}
-		if (flags['forger-plugin-whitelist'] !== undefined) {
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			config.plugins[ForgerPlugin.alias] = config.plugins[ForgerPlugin.alias] ?? {};
-			config.plugins[ForgerPlugin.alias].whiteList = flags['forger-plugin-whitelist'].split(',');
-		}
+		setPluginConfig(config, flags);
+
 		// Get application and start
 		try {
 			const app = getApplication(genesisBlock, config, {
 				enableHTTPAPIPlugin: flags['enable-http-api-plugin'],
 				enableForgerPlugin: flags['enable-forger-plugin'],
+				enableMonitorPlugin: flags['enable-monitor-plugin'],
+				enableReportMisbehaviorPlugin: flags['enable-report-misbehavior-plugin'],
 			});
 			await app.run();
 		} catch (errors) {
