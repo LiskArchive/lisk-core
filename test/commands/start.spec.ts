@@ -118,6 +118,26 @@ describe('start', () => {
 		});
 	});
 
+	describe('when --api-ws is specified', () => {
+		it('should update the config value', async () => {
+			await StartCommand.run(['--api-ws'], config);
+			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
+			expect(usedConfig.rpc.enabled).toBe(true);
+			expect(usedConfig.rpc.mode).toBe('ws');
+		});
+	});
+
+	describe('when custom port with --api-ws-port is specified along with --api-ws', () => {
+		it('should update the config value', async () => {
+			await StartCommand.run(
+				['--api-ws', '--api-ws-port', '8888'],
+				config,
+			);
+			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
+			expect(usedConfig.rpc.port).toBe(8888);
+		});
+	});
+
 	describe('when --enable-http-api-plugin is specified', () => {
 		it('should pass this value to configuration', async () => {
 			await StartCommand.run(['--enable-http-api-plugin'], config);
