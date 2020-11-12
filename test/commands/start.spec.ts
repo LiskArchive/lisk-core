@@ -129,10 +129,7 @@ describe('start', () => {
 
 	describe('when custom port with --api-ws-port is specified along with --api-ws', () => {
 		it('should update the config value', async () => {
-			await StartCommand.run(
-				['--api-ws', '--api-ws-port', '8888'],
-				config,
-			);
+			await StartCommand.run(['--api-ws', '--api-ws-port', '8888'], config);
 			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
 			expect(usedConfig.rpc.port).toBe(8888);
 		});

@@ -143,14 +143,12 @@ export default class StartCommand extends Command {
 			exclusive: ['api-ws'],
 		}),
 		'api-ws': flagParser.boolean({
-			description:
-				'Enable websocket communication for api-client.',
+			description: 'Enable websocket communication for api-client.',
 			default: false,
 			exclusive: ['enable-ipc'],
 		}),
 		'api-ws-port': flagParser.integer({
-			description:
-				'Port to be used for api-client websocket.',
+			description: 'Port to be used for api-client websocket.',
 			dependsOn: ['api-ws'],
 		}),
 		'console-log': flagParser.string({
