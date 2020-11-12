@@ -140,12 +140,13 @@ export default class StartCommand extends Command {
 			description:
 				'Enable IPC communication. This will also load up plugins in child process and communicate over IPC.',
 			default: false,
+			exclusive: ['api-ws'],
 		}),
 		'api-ws': flagParser.boolean({
 			description:
 				'Enable websocket communication for api-client.',
 			default: false,
-			exclusive: ['api-ipc'],
+			exclusive: ['enable-ipc'],
 		}),
 		'api-ws-port': flagParser.integer({
 			description:
