@@ -15,7 +15,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Command } from '@oclif/command';
-import { symlinkSync, pathExistsSync, removeSync } from 'fs-extra';
+import { symlink, pathExistsSync, removeSync } from 'fs-extra';
 import { join } from 'path';
 
 export default class LinkCommand extends Command {
@@ -39,8 +39,9 @@ export default class LinkCommand extends Command {
 
 		const sdkLocalPath = join(__dirname, '../../../', 'node_modules', 'lisk-sdk');
 
+		const targetSDKFolderFromNodeModule = join('../', targetSDKFolder);
 		removeSync(sdkLocalPath);
-		symlinkSync(targetSDKFolder, sdkLocalPath);
+		await symlink(targetSDKFolderFromNodeModule, sdkLocalPath);
 		this.log(`Linked '${targetSDKFolder as string}' to '${sdkLocalPath}'`);
 	}
 }
