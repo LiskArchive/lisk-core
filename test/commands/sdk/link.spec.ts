@@ -31,7 +31,7 @@ describe('sdk:link command', () => {
 		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
 		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
 		jest.spyOn(fs, 'removeSync').mockReturnValue();
-		jest.spyOn(fs, 'symlinkSync').mockReturnValue();
+		jest.spyOn(fs, 'symlink').mockResolvedValue();
 	});
 
 	describe('sdk:link', () => {
@@ -66,7 +66,7 @@ describe('sdk:link command', () => {
 			await LinkCommand.run([fakeSDKPath], config);
 			expect(fs.pathExistsSync).toHaveBeenCalledWith(fakeSDKPath);
 			expect(fs.removeSync).toHaveBeenCalledWith(targetSDKPath);
-			expect(fs.symlinkSync).toHaveBeenCalledWith(fakeSDKPath, targetSDKPath);
+			expect(fs.symlink).toHaveBeenCalledWith(join('../', fakeSDKPath), targetSDKPath);
 			expect(stdout[0]).toContain(`Linked '/path/exists' to '${targetSDKPath}'`);
 		});
 	});
