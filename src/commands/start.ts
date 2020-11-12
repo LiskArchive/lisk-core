@@ -140,6 +140,16 @@ export default class StartCommand extends Command {
 			description:
 				'Enable IPC communication. This will also load up plugins in child process and communicate over IPC.',
 			default: false,
+			exclusive: ['api-ws'],
+		}),
+		'api-ws': flagParser.boolean({
+			description: 'Enable websocket communication for api-client.',
+			default: false,
+			exclusive: ['enable-ipc'],
+		}),
+		'api-ws-port': flagParser.integer({
+			description: 'Port to be used for api-client websocket.',
+			dependsOn: ['api-ws'],
 		}),
 		'console-log': flagParser.string({
 			description:
@@ -305,6 +315,9 @@ export default class StartCommand extends Command {
 		// Inject other properties specified
 		if (flags['enable-ipc']) {
 			config.ipc = { enabled: flags['enable-ipc'] };
+		}
+		if (flags['api-ws']) {
+			config.rpc = { enabled: flags['api-ws'], mode: 'ws', port: flags['api-ws-port'] };
 		}
 		if (flags['console-log']) {
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
