@@ -127,4 +127,66 @@ describe('LegacyAccountModule', () => {
 			).rejects.toThrow('Account not defined');
 		});
 	});
+
+	describe('getUnregisteredAccount', () => {
+		const dataAccessMock = {
+			getChainState: jest.fn(),
+		};
+		const unregisteredAccount = createAccount();
+		unregisteredAccount.address = getLegacyBytes(unregisteredAccount.publicKey);
+
+		const unregisteredAddressWithBalance = {
+			address: unregisteredAccount.address,
+			balance: BigInt(200000000000),
+		};
+
+		const encodedUnregisteredAddresses = codec.encode(unregisteredAddressesSchema, {
+			unregisteredAddresses: [unregisteredAddressWithBalance],
+		});
+
+		beforeEach(() => {
+			(legacyAccountModule as any)['_dataAccess'] = dataAccessMock;
+			dataAccessMock.getChainState.mockResolvedValue(encodedUnregisteredAddresses);
+		});
+
+		it('should return the unregistered address', async () => {
+			// Act
+			const legacyAccount = await legacyAccountModule.actions.getUnregisteredAccount({
+				publicKey: unregisteredAccount.publicKey.toString('hex'),
+			});
+
+			// Assert
+			expect(legacyAccount).toEqual({
+				address: unregisteredAddressWithBalance.address.toString('hex'),
+				balance: unregisteredAddressWithBalance.balance.toString(),
+			});
+		});
+
+		it('should return undefined when not found in unregisteredAddresses list', async () => {
+			// Arrange
+			const randomAccount = createAccount();
+
+			// Act
+			const legacyAccount = (await legacyAccountModule.actions.getUnregisteredAccount({
+				publicKey: randomAccount.publicKey.toString('hex'),
+			})) as { address: string; balance: string };
+
+			// Assert
+			return expect(legacyAccount).toBeUndefined();
+		});
+
+		it('should throw an error when publicKey is not provided', async () => {
+			// Assert
+			await expect(legacyAccountModule.actions.getUnregisteredAccount({})).rejects.toThrow(
+				'Public key is either not provided or not a string',
+			);
+		});
+
+		it('should throw an error when publicKey is not a string', async () => {
+			// Assert
+			await expect(
+				legacyAccountModule.actions.getUnregisteredAccount({ publicKey: Buffer.from('') }),
+			).rejects.toThrow('Public key is either not provided or not a string');
+		});
+	});
 });

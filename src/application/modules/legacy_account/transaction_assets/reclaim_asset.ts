@@ -15,18 +15,10 @@
 import { ApplyAssetContext, BaseAsset, codec, cryptography } from 'lisk-sdk';
 import { CHAIN_STATE_UNREGISTERED_ADDRESSES } from '../constants';
 import { reclaimAssetSchema, unregisteredAddressesSchema } from '../schema';
+import { UnregisteredAddresses } from '../types';
 
 interface Asset {
 	readonly amount: bigint;
-}
-
-interface UnregisteredAccount {
-	readonly address: Buffer;
-	readonly balance: bigint;
-}
-
-interface UnregisteredAddresses {
-	readonly unregisteredAddresses: UnregisteredAccount[];
 }
 
 export const getLegacyBytes = (publicKey: string | Buffer): Buffer =>
