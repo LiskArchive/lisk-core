@@ -154,7 +154,10 @@ describe('LegacyAccountModule', () => {
 			const legacyAccount = await legacyAccountModule.actions.getUnregisteredAccount({ publicKey: unregisteredAccount.publicKey.toString('hex') });
 
 			// Assert
-			expect(legacyAccount).toEqual(unregisteredAddressWithBalance);
+			expect(legacyAccount).toEqual({
+				address: unregisteredAddressWithBalance.address.toString('hex'),
+				balance: unregisteredAddressWithBalance.balance.toString(),
+			});
 		});
 
 		it('should return undefined when not found in unregisteredAddresses list', async () => {
@@ -166,6 +169,16 @@ describe('LegacyAccountModule', () => {
 
 			// Assert
 			expect(legacyAccount).toBeUndefined;
+		});
+
+		it('should throw an error when publicKey is not provided', async () => {
+			// Assert
+			await expect(legacyAccountModule.actions.getUnregisteredAccount({})).rejects.toThrow('Public key is either not provided or not a string');
+		});
+
+		it('should throw an error when publicKey is not a string', async () => {
+			// Assert
+			await expect(legacyAccountModule.actions.getUnregisteredAccount({ publicKey: Buffer.from('') })).rejects.toThrow('Public key is either not provided or not a string');
 		});
 	});
 });
