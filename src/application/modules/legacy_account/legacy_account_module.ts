@@ -12,16 +12,38 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-import { AfterGenesisBlockApplyContext, BaseModule, codec } from 'lisk-sdk';
+import { Actions, AfterGenesisBlockApplyContext, BaseModule, codec } from 'lisk-sdk';
 import { CHAIN_STATE_UNREGISTERED_ADDRESSES } from './constants';
 import { unregisteredAddressesSchema } from './schema';
-import { ReclaimAsset } from './transaction_assets/reclaim_asset';
+import { getLegacyBytes, ReclaimAsset } from './transaction_assets/reclaim_asset';
+import { UnregisteredAddresses } from './types';
 
 export class LegacyAccountModule extends BaseModule {
 	public name = 'legacyAccount';
 	public id = 1000;
 	public transactionAssets = [new ReclaimAsset()];
 
+	public actions: Actions = {
+		getUnregisteredAccount: async (params: Record<string, unknown>) => {
+			const encodedUnregisteredAddresses: Buffer | undefined = await this._dataAccess.getChainState(CHAIN_STATE_UNREGISTERED_ADDRESSES);
+
+			if (!encodedUnregisteredAddresses) {
+				throw new Error('Chain state does not contain any unregistered addresses');
+			}
+
+			const { unregisteredAddresses } = codec.decode<UnregisteredAddresses>(
+				unregisteredAddressesSchema,
+				encodedUnregisteredAddresses,
+			);
+
+			const legacyAddress = getLegacyBytes(Buffer.from(params.publicKey as string, 'hex'));
+			const addressWithoutPublickey = unregisteredAddresses.find(a =>
+				a.address.equals(legacyAddress),
+			);
+
+			return addressWithoutPublickey;
+		}
+	}
 	// eslint-disable-next-line class-methods-use-this
 	public async afterGenesisBlockApply({
 		genesisBlock,
