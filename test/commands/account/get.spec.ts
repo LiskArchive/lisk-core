@@ -14,7 +14,7 @@
  */
 import { when } from 'jest-when';
 import * as fs from 'fs-extra';
-import { IPCChannel } from 'lisk-sdk';
+import { apiClient } from 'lisk-sdk';
 import * as Config from '@oclif/config';
 import { getConfig } from '../../utils/config';
 import baseIPC from '../../../src/base_ipc';
@@ -29,6 +29,7 @@ describe('account:get command', () => {
 	let stdout: string[];
 	let stderr: string[];
 	let config: Config.IConfig;
+	let getMock: jest.Mock;
 
 	beforeEach(async () => {
 		stdout = [];
@@ -36,23 +37,29 @@ describe('account:get command', () => {
 		config = await getConfig();
 		jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(true);
 		jest.spyOn(fs, 'existsSync').mockReturnValue(true);
-		jest.spyOn(IPCChannel.prototype, 'startAndListen').mockResolvedValue();
-		jest.spyOn(IPCChannel.prototype, 'invoke');
 		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
 		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
-		when(IPCChannel.prototype.invoke as jest.Mock)
-			.calledWith('app:getSchema')
-			.mockResolvedValue({
+		getMock = jest.fn();
+		when(getMock)
+			.mockResolvedValue(
+				'0a14c3ab2ac23512d9bf62b02775e22cf80df814eb1b10001800220208002a3a0a190a0a67656e657369735f38361800200028003080a094a58d1d121d0a14c3ab2ac23512d9bf62b02775e22cf80df814eb1b1080a094a58d1d',
+			)
+			.calledWith(Buffer.from('1234', 'hex'))
+			.mockRejectedValue(new Error('unknown address'));
+		jest.spyOn(apiClient, 'createIPCClient').mockResolvedValue({
+			disconnect: jest.fn(),
+			schemas: {
 				account: {
 					$id: 'dummy',
 					type: 'object',
 					properties: { address: { dataType: 'bytes' } },
 				},
-			})
-			.calledWith('app:getAccount', { address })
-			.mockResolvedValue(
-				'0a14c3ab2ac23512d9bf62b02775e22cf80df814eb1b10001800220208002a3a0a190a0a67656e657369735f38361800200028003080a094a58d1d121d0a14c3ab2ac23512d9bf62b02775e22cf80df814eb1b1080a094a58d1d',
-			);
+			},
+			account: {
+				get: getMock,
+				toJSON: jest.fn().mockReturnValue(queryResult),
+			},
+		} as never);
 		jest.spyOn(baseIPC.prototype, 'printJSON');
 	});
 
@@ -65,22 +72,15 @@ describe('account:get command', () => {
 	describe('account:get address', () => {
 		it('should get an account info and display as an object', async () => {
 			await GetCommand.run([address], config);
-			expect(IPCChannel.prototype.invoke).toHaveBeenCalledTimes(2);
-			expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:getSchema');
-			expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:getAccount', {
-				address,
-			});
+			expect(getMock).toHaveBeenCalledTimes(1);
+			expect(getMock).toHaveBeenCalledWith(Buffer.from(address, 'hex'));
 			expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith(queryResult);
 		});
 	});
 
 	describe('account:get unknown_address', () => {
 		it('should throw an error when unknown address is specified', async () => {
-			when(IPCChannel.prototype.invoke as jest.Mock)
-				.calledWith('app:getAccount', { address: 'unknown_address' })
-				.mockRejectedValue(new Error('unknown address'));
-
-			await expect(GetCommand.run(['unknown_address'], config)).rejects.toThrow('unknown address');
+			await expect(GetCommand.run(['1234'], config)).rejects.toThrow('unknown address');
 		});
 	});
 });

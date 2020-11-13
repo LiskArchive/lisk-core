@@ -14,8 +14,7 @@
  */
 import * as fs from 'fs-extra';
 import * as inquirer from 'inquirer';
-import { cryptography, IPCChannel, transactionSchema } from 'lisk-sdk';
-import { when } from 'jest-when';
+import { cryptography, transactionSchema, apiClient, transactions } from 'lisk-sdk';
 import * as Config from '@oclif/config';
 import baseIPC from '../../../src/base_ipc';
 import * as appUtils from '../../../src/utils/application';
@@ -27,6 +26,7 @@ import {
 } from '../../utils/transactions';
 import CreateCommand from '../../../src/commands/transaction/create';
 import { getConfig } from '../../utils/config';
+import { PromiseResolvedType } from '../../../src/types';
 
 describe('transaction:create command', () => {
 	const transactionsAssets = [
@@ -50,10 +50,27 @@ describe('transaction:create command', () => {
 		'{"votes":[{"delegateAddress":"ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815","amount":-50}]}';
 	const { publicKey } = cryptography.getAddressAndPublicKeyFromPassphrase(passphrase);
 	const senderPublickey = publicKey.toString('hex');
+	const mockEncodedTransaction = Buffer.from('encoded transaction');
+	const mockJSONTransaction = {
+		asset: {
+			amount: '100',
+			data: 'send token',
+			recipientAddress: 'ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815',
+		},
+		assetID: 0,
+		fee: '100000000',
+		moduleID: 2,
+		nonce: '0',
+		senderPublicKey: '0fe9a3f1a21b5530f27f87a414b549e79a940bf24fdf2b2f05e7f22aeeecc86a',
+		signatures: [
+			'3cc8c8c81097fe59d9df356b3c3f1dd10f619bfabb54f5d187866092c67e0102c64dbe24f357df493cc7ebacdd2e55995db8912245b718d88ebf7f4f4ac01f04',
+		],
+	};
 
 	let stdout: string[];
 	let stderr: string[];
 	let config: Config.IConfig;
+	let clientMock: PromiseResolvedType<ReturnType<typeof apiClient.createIPCClient>>;
 
 	beforeEach(async () => {
 		stdout = [];
@@ -64,23 +81,40 @@ describe('transaction:create command', () => {
 		jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(true);
 		jest.spyOn(fs, 'existsSync').mockReturnValue(true);
 		jest.spyOn(baseIPC.prototype, 'printJSON').mockReturnValue();
-		jest.spyOn(IPCChannel.prototype, 'startAndListen').mockResolvedValue();
-		jest.spyOn(IPCChannel.prototype, 'invoke');
-		when(IPCChannel.prototype.invoke as jest.Mock)
-			.calledWith('app:getSchema')
-			.mockResolvedValue({
+		clientMock = {
+			disconnect: jest.fn(),
+			schemas: {
 				transaction: transactionSchema,
 				transactionsAssets,
 				account: accountSchema,
-			})
-			.calledWith('app:getNodeInfo')
-			.mockResolvedValue({
-				networkIdentifier: '873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3',
-			})
-			.calledWith('app:getAccount')
-			.mockResolvedValue(
-				'0a14ab0041a7d3f7b2c290b5b834d46bdc7b7eb8581512050880c2d72f1a020800220208002a3b0a1a0a0a67656e657369735f3834180020850528003080a094a58d1d121d0a14ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151080a094a58d1d',
-			);
+			},
+			node: {
+				getNodeInfo: jest.fn().mockResolvedValue({
+					networkIdentifier: '873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3',
+				}),
+			},
+			transaction: {
+				encode: jest.fn().mockReturnValue(mockEncodedTransaction),
+				toJSON: jest.fn().mockReturnValue(mockJSONTransaction),
+			},
+			account: {
+				get: jest.fn().mockResolvedValue({
+					address: Buffer.from('ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815', 'hex'),
+					token: {
+						balance: BigInt('100000000'),
+					},
+					sequence: {
+						nonce: BigInt(0),
+					},
+					keys: {
+						numberOfSignatures: 0,
+						mandatoryKeys: [],
+						optionalKeys: [],
+					},
+				}),
+			},
+		} as any;
+		jest.spyOn(apiClient, 'createIPCClient').mockResolvedValue(clientMock);
 		jest.spyOn(inquirer, 'prompt').mockResolvedValue({
 			amount: 100,
 			recipientAddress: 'ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815',
@@ -473,8 +507,7 @@ describe('transaction:create command', () => {
 					);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
-						transaction:
-							'0802100018002080c2d72f2a200fe9a3f1a21b5530f27f87a414b549e79a940bf24fdf2b2f05e7f22aeeecc86a322408641214ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e3a403cc8c8c81097fe59d9df356b3c3f1dd10f619bfabb54f5d187866092c67e0102c64dbe24f357df493cc7ebacdd2e55995db8912245b718d88ebf7f4f4ac01f04',
+						transaction: mockEncodedTransaction.toString('hex'),
 					});
 				});
 			});
@@ -494,8 +527,7 @@ describe('transaction:create command', () => {
 					);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
-						transaction:
-							'0802100018002080c2d72f2a200fe9a3f1a21b5530f27f87a414b549e79a940bf24fdf2b2f05e7f22aeeecc86a322408641214ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e',
+						transaction: mockEncodedTransaction.toString('hex'),
 					});
 				});
 			});
@@ -508,8 +540,7 @@ describe('transaction:create command', () => {
 					);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
-						transaction:
-							'0805100118002080c2d72f2a200fe9a3f1a21b5530f27f87a414b549e79a940bf24fdf2b2f05e7f22aeeecc86a32350a190a14ab0041a7d3f7b2c290b5b834d46bdc7b7eb8581510c8010a180a14ab0041a7d3f7b2c290b5b834d46bdc7b7eb8581510633a40d8d475f98d02508e410c735934f6db047bf99e22094f13fe24281b066d4fc725885f696e4e929320700117e01b1baa7251dd8639d194032c9ad9af93d5d6c50f',
+						transaction: mockEncodedTransaction.toString('hex'),
 					});
 				});
 			});
@@ -522,8 +553,7 @@ describe('transaction:create command', () => {
 					);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
-						transaction:
-							'0805100118002080c2d72f2a200fe9a3f1a21b5530f27f87a414b549e79a940bf24fdf2b2f05e7f22aeeecc86a321a0a180a14ab0041a7d3f7b2c290b5b834d46bdc7b7eb8581510633a40cb9d17b605f2711accaba4759a4e99c4b1ece97da0220603af9e8fd9aa88e01cd45dbca9aaad7fee61f6ef622149057b0189a4ab9ab5a9bc3e1a2bdad302d104',
+						transaction: mockEncodedTransaction.toString('hex'),
 					});
 				});
 			});
@@ -545,8 +575,7 @@ describe('transaction:create command', () => {
 					]);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
-						transaction:
-							'0802100018002080c2d72f2a200fe9a3f1a21b5530f27f87a414b549e79a940bf24fdf2b2f05e7f22aeeecc86a322408641214ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e3a403cc8c8c81097fe59d9df356b3c3f1dd10f619bfabb54f5d187866092c67e0102c64dbe24f357df493cc7ebacdd2e55995db8912245b718d88ebf7f4f4ac01f04',
+						transaction: mockEncodedTransaction.toString('hex'),
 					});
 				});
 			});
@@ -567,8 +596,7 @@ describe('transaction:create command', () => {
 					expect(readerUtils.getPassphraseFromPrompt).toHaveBeenCalledWith('passphrase', true);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
-						transaction:
-							'0802100018002080c2d72f2a200fe9a3f1a21b5530f27f87a414b549e79a940bf24fdf2b2f05e7f22aeeecc86a322408641214ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e3a403cc8c8c81097fe59d9df356b3c3f1dd10f619bfabb54f5d187866092c67e0102c64dbe24f357df493cc7ebacdd2e55995db8912245b718d88ebf7f4f4ac01f04',
+						transaction: mockEncodedTransaction.toString('hex'),
 					});
 				});
 			});
@@ -589,14 +617,14 @@ describe('transaction:create command', () => {
 					expect(readerUtils.getPassphraseFromPrompt).toHaveBeenCalledWith('passphrase', true);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
-						transaction:
-							'0802100018002080c2d72f2a200fe9a3f1a21b5530f27f87a414b549e79a940bf24fdf2b2f05e7f22aeeecc86a322408641214ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e3a403cc8c8c81097fe59d9df356b3c3f1dd10f619bfabb54f5d187866092c67e0102c64dbe24f357df493cc7ebacdd2e55995db8912245b718d88ebf7f4f4ac01f04',
+						transaction: mockEncodedTransaction.toString('hex'),
 					});
 				});
 			});
 
 			describe(`transaction:create 2 0 100000000 --asset=${transferAsset} --no-signature --json`, () => {
 				it('should return unsigned transaction in json format when no passphrase specified', async () => {
+					jest.spyOn(transactions, 'signTransaction');
 					await CreateCommand.run(
 						[
 							'2',
@@ -610,19 +638,7 @@ describe('transaction:create command', () => {
 						config,
 					);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
-					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
-						moduleID: 2,
-						assetID: 0,
-						nonce: '0',
-						fee: '100000000',
-						senderPublicKey: '0fe9a3f1a21b5530f27f87a414b549e79a940bf24fdf2b2f05e7f22aeeecc86a',
-						asset: {
-							amount: '100',
-							data: 'send token',
-							recipientAddress: 'ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815',
-						},
-						signatures: [],
-					});
+					expect(transactions.signTransaction).not.toHaveBeenCalled();
 				});
 			});
 

@@ -14,9 +14,8 @@
  */
 
 import * as fs from 'fs-extra';
-import { IPCChannel, transactionSchema } from 'lisk-sdk';
+import { IPCChannel, transactionSchema, apiClient, codec } from 'lisk-sdk';
 import * as Config from '@oclif/config';
-import { when } from 'jest-when';
 import {
 	tokenTransferAssetSchema,
 	keysRegisterAssetSchema,
@@ -48,6 +47,23 @@ describe('transaction:sign command', () => {
 			schema: dposVoteAssetSchema,
 		},
 	];
+
+	const mockEncodedTransaction = Buffer.from('encoded transaction');
+	const mockJSONTransaction = {
+		asset: {
+			amount: '100',
+			data: 'send token',
+			recipientAddress: 'ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815',
+		},
+		assetID: 0,
+		fee: '100000000',
+		moduleID: 2,
+		nonce: '0',
+		senderPublicKey: '0fe9a3f1a21b5530f27f87a414b549e79a940bf24fdf2b2f05e7f22aeeecc86a',
+		signatures: [
+			'3cc8c8c81097fe59d9df356b3c3f1dd10f619bfabb54f5d187866092c67e0102c64dbe24f357df493cc7ebacdd2e55995db8912245b718d88ebf7f4f4ac01f04',
+		],
+	};
 
 	const senderPassphrase =
 		'inherit moon normal relief spring bargain hobby join baby flash fog blood';
@@ -122,21 +138,44 @@ describe('transaction:sign command', () => {
 		jest.spyOn(IPCChannel.prototype, 'startAndListen').mockResolvedValue();
 		jest.spyOn(IPCChannel.prototype, 'invoke');
 		jest.spyOn(readerUtils, 'getPassphraseFromPrompt').mockResolvedValue(senderPassphrase);
-		when(IPCChannel.prototype.invoke as jest.Mock)
-			.calledWith('app:getSchema')
-			.mockResolvedValue({
+		jest.spyOn(apiClient, 'createIPCClient').mockResolvedValue({
+			disconnect: jest.fn(),
+			schemas: {
 				transaction: transactionSchema,
 				transactionsAssets,
 				account: accountSchema,
-			})
-			.calledWith('app:getNodeInfo')
-			.mockResolvedValue({
-				networkIdentifier: networkIdentifierStr,
-			})
-			.calledWith('app:getAccount')
-			.mockResolvedValue(
-				'0a1484f02a5e331d39e76c0e8255006ba796d879476e1206088082a991241a020802224608021220a4d4ee94c683f907ff7637abf5fde436856ad4f69dba11eecd45227d2d68f06c1a20eebd615e51dfdaa9c244c298a79d5266320bd73b2f56e9117ddb4a165d68d8502a0c0a0a0a001800200028003000',
-			);
+			},
+			transaction: {
+				encode: jest.fn().mockReturnValue(mockEncodedTransaction),
+				toJSON: jest.fn().mockReturnValue(mockJSONTransaction),
+				decode: jest.fn().mockImplementation(val => {
+					const root = codec.decode<Record<string, unknown>>(transactionSchema, val);
+					const asset = codec.decode(transactionsAssets[0].schema, root.asset as Buffer);
+					return { ...root, asset };
+				}),
+			},
+			node: {
+				getNodeInfo: jest.fn().mockResolvedValue({
+					networkIdentifier: '873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3',
+				}),
+			},
+			account: {
+				get: jest.fn().mockResolvedValue({
+					address: Buffer.from('ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815', 'hex'),
+					token: {
+						balance: BigInt('100000000'),
+					},
+					sequence: {
+						nonce: BigInt(0),
+					},
+					keys: {
+						numberOfSignatures: 0,
+						mandatoryKeys: [],
+						optionalKeys: [],
+					},
+				}),
+			},
+		} as never);
 	});
 
 	describe('Missing arguments', () => {
@@ -216,6 +255,7 @@ describe('transaction:sign command', () => {
 				);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
+					id: '1234764fcdb6be77c1f8bd72d95c4d77672bf31020fd2ef0387463e1f47a945b',
 					moduleID: 2,
 					assetID: 0,
 					nonce: '2',
@@ -310,6 +350,7 @@ describe('transaction:sign command', () => {
 				);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
+					id: '0f3341daa3cc562a4ca84489387fa1a24ae1419666a30281e7c6da77744e789a',
 					moduleID: 4,
 					assetID: 0,
 					nonce: '2',
@@ -391,6 +432,7 @@ describe('transaction:sign command', () => {
 					await SignCommand.run(signMultiSigCmdArgsJSON(sign3, optionalPassphrases[1]), config);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
+						id: '36b212ff40892bf94afda6162a855bd8f103106780c306b0a8cb97c9ccc57a97',
 						asset: {
 							amount: '100',
 							data: 'send token',
@@ -421,8 +463,7 @@ describe('transaction:sign command', () => {
 				await SignCommand.run([unsignedTransaction, `--passphrase=${senderPassphrase}`], config);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
-					transaction:
-						'0802100018022080c2d72f2a200b211fce4b615083701cb8a8c99407e464b2f9aa4f367095322de1b77e5fcfbe322408641214ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e3a407a1283e24e46ec5a0416d0b13a48fd2ca3bc1f6a4ea3ef83f97d54ebd0b3d45b025bf91c00b60c4cddade00be8a4da9088ab83be702b583e67265323a8391406',
+					transaction: mockEncodedTransaction.toString('hex'),
 				});
 			});
 
@@ -432,21 +473,7 @@ describe('transaction:sign command', () => {
 					config,
 				);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
-				expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
-					moduleID: 2,
-					assetID: 0,
-					nonce: '2',
-					fee: '100000000',
-					senderPublicKey: '0b211fce4b615083701cb8a8c99407e464b2f9aa4f367095322de1b77e5fcfbe',
-					asset: {
-						amount: '100',
-						recipientAddress: 'ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815',
-						data: 'send token',
-					},
-					signatures: [
-						'7a1283e24e46ec5a0416d0b13a48fd2ca3bc1f6a4ea3ef83f97d54ebd0b3d45b025bf91c00b60c4cddade00be8a4da9088ab83be702b583e67265323a8391406',
-					],
-				});
+				expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith(mockJSONTransaction);
 			});
 		});
 
@@ -526,6 +553,7 @@ describe('transaction:sign command', () => {
 				);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 				expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
+					id: '0f3341daa3cc562a4ca84489387fa1a24ae1419666a30281e7c6da77744e789a',
 					moduleID: 4,
 					assetID: 0,
 					nonce: '2',
@@ -607,6 +635,7 @@ describe('transaction:sign command', () => {
 					await SignCommand.run(signMultiSigCmdArgsJSON(sign3, optionalPassphrases[1]), config);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 					expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
+						id: '36b212ff40892bf94afda6162a855bd8f103106780c306b0a8cb97c9ccc57a97',
 						asset: {
 							amount: '100',
 							data: 'send token',

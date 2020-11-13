@@ -27,6 +27,21 @@ interface Args {
 	readonly fee: string;
 }
 
+const isSequenceObject = (
+	input: Record<string, unknown>,
+	key: string,
+): input is { sequence: { nonce: bigint } } => {
+	const value = input[key];
+	if (typeof value !== 'object' || Array.isArray(value) || value === null) {
+		return false;
+	}
+	const sequence = value as Record<string, unknown>;
+	if (typeof sequence.nonce !== 'bigint') {
+		return false;
+	}
+	return true;
+};
+
 export default class CreateCommand extends BaseIPCCommand {
 	static strict = false;
 	static description =
@@ -150,8 +165,11 @@ export default class CreateCommand extends BaseIPCCommand {
 
 		let networkIdentifier = networkIdentifierSource as string;
 		if (!offline) {
-			const nodeInfo = await this._channel.invoke<Record<string, unknown>>('app:getNodeInfo');
-			networkIdentifier = nodeInfo.networkIdentifier as string;
+			if (!this._client) {
+				this.error('APIClient is not initialized.');
+			}
+			const nodeInfo = await this._client.node.getNodeInfo();
+			networkIdentifier = nodeInfo.networkIdentifier;
 		}
 
 		if (!offline && networkIdentifierSource && networkIdentifier !== networkIdentifierSource) {
@@ -160,12 +178,14 @@ export default class CreateCommand extends BaseIPCCommand {
 			);
 		}
 
-		const incompleteTransaction: Record<string, unknown> = {
+		const incompleteTransaction = {
 			moduleID: Number(moduleID),
 			assetID: Number(assetID),
-			nonce: nonceSource,
-			fee,
-			senderPublicKey: senderPublicKeySource,
+			nonce: nonceSource ? BigInt(nonceSource) : undefined,
+			fee: BigInt(fee),
+			senderPublicKey: senderPublicKeySource
+				? Buffer.from(senderPublicKeySource, 'hex')
+				: undefined,
 			asset: assetObject,
 			signatures: [],
 		};
@@ -174,45 +194,45 @@ export default class CreateCommand extends BaseIPCCommand {
 		if (passphraseSource || !noSignature) {
 			passphrase = passphraseSource ?? (await getPassphraseFromPrompt('passphrase', true));
 			const { publicKey } = cryptography.getAddressAndPublicKeyFromPassphrase(passphrase);
-			incompleteTransaction.senderPublicKey = publicKey.toString('hex');
+			incompleteTransaction.senderPublicKey = publicKey;
 		}
 
 		if (!offline) {
+			if (!this._client) {
+				this.error('APIClient is not initialized.');
+			}
 			const address = cryptography.getAddressFromPublicKey(
-				Buffer.from(incompleteTransaction.senderPublicKey as string, 'hex'),
+				incompleteTransaction.senderPublicKey as Buffer,
 			);
-			const account = await this._channel.invoke<string>('app:getAccount', {
-				address: address.toString('hex'),
-			});
-
-			const {
-				sequence: { nonce },
-			} = this._codec.decodeAccount(account) as { sequence: { nonce: string } };
-			incompleteTransaction.nonce = nonce;
+			const account = await this._client.account.get(address);
+			if (!isSequenceObject(account, 'sequence')) {
+				this.error('Account does not have seqence property');
+			}
+			incompleteTransaction.nonce = account.sequence.nonce;
 		}
 
 		if (!offline && nonceSource && BigInt(incompleteTransaction.nonce) > BigInt(nonceSource)) {
 			throw new Error(
-				`Invalid nonce specified, actual: ${nonceSource}, expected: ${
-					incompleteTransaction.nonce as string
-				}`,
+				`Invalid nonce specified, actual: ${nonceSource}, expected: ${(incompleteTransaction.nonce as bigint).toString()}`,
 			);
 		}
 
-		const transactionObject = this._codec.transactionFromJSON(assetSchema.schema, {
-			...incompleteTransaction,
-		});
+		const { asset, ...transactionWithoutAsset } = incompleteTransaction;
 
-		const transactionErrors = validator.validator.validate(
-			this._schema.transaction,
-			transactionObject,
-		);
+		const transactionErrors = validator.validator.validate(this._schema.transaction, {
+			...transactionWithoutAsset,
+			asset: Buffer.alloc(0),
+		});
 		if (transactionErrors.length) {
 			throw new validator.LiskValidationError([...transactionErrors]);
 		}
 
-		transactionObject.asset = assetObject;
-		if (passphrase) {
+		const transactionObject = {
+			...transactionWithoutAsset,
+			asset: assetObject,
+		};
+
+		if (!noSignature) {
 			transactions.signTransaction(
 				assetSchema.schema,
 				transactionObject,
@@ -222,10 +242,10 @@ export default class CreateCommand extends BaseIPCCommand {
 		}
 
 		if (json) {
-			this.printJSON(this._codec.transactionToJSON(assetSchema.schema, transactionObject));
+			this.printJSON(this.transactionToJSON(transactionObject));
 		} else {
 			this.printJSON({
-				transaction: this._codec.encodeTransaction(assetSchema.schema, transactionObject),
+				transaction: this.encodeTransaction(transactionObject).toString('hex'),
 			});
 		}
 	}

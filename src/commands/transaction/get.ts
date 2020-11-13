@@ -42,12 +42,13 @@ export default class GetCommand extends BaseIPCCommand {
 	async run(): Promise<void> {
 		const { args } = this.parse(GetCommand);
 		const { id: transactionId } = args as Args;
+		if (!this._client) {
+			this.error('APIClient is not initialized.');
+		}
 
 		try {
-			const transaction = await this._channel.invoke<string>('app:getTransactionByID', {
-				id: transactionId,
-			});
-			this.printJSON(this._codec.decodeTransaction(transaction));
+			const transaction = await this._client.transaction.get(Buffer.from(transactionId, 'hex'));
+			this.printJSON(this._client.transaction.toJSON(transaction));
 		} catch (errors) {
 			const errorMessage = Array.isArray(errors)
 				? errors.map(err => (err as Error).message).join(',')

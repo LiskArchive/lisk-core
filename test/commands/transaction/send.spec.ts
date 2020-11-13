@@ -15,7 +15,7 @@
 
 import * as fs from 'fs-extra';
 import { join } from 'path';
-import { IPCChannel, transactionSchema } from 'lisk-sdk';
+import { transactionSchema, apiClient } from 'lisk-sdk';
 import * as Config from '@oclif/config';
 import { when } from 'jest-when';
 import * as appUtils from '../../../src/utils/application';
@@ -51,6 +51,7 @@ describe('transaction:send command', () => {
 	let stdout: string[];
 	let stderr: string[];
 	let config: Config.IConfig;
+	let invokeMock: jest.Mock;
 
 	beforeEach(async () => {
 		stdout = [];
@@ -60,14 +61,15 @@ describe('transaction:send command', () => {
 		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
 		jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(true);
 		jest.spyOn(fs, 'existsSync').mockReturnValue(true);
-		jest.spyOn(IPCChannel.prototype, 'startAndListen').mockResolvedValue();
-		jest.spyOn(IPCChannel.prototype, 'invoke');
-		when(IPCChannel.prototype.invoke as jest.Mock)
-			.calledWith('app:getSchema')
-			.mockResolvedValue({
-				transactionSchema,
-				transactionsAssetSchemas,
-			});
+		invokeMock = jest.fn();
+		jest.spyOn(apiClient, 'createIPCClient').mockResolvedValue({
+			disconnect: jest.fn(),
+			invoke: invokeMock,
+			schemas: {
+				transaction: transactionSchema,
+				transactionsAssets: transactionsAssetSchemas,
+			},
+		} as never);
 	});
 
 	describe('transaction:send', () => {
@@ -95,11 +97,11 @@ describe('transaction:send command', () => {
 
 	describe('transaction:send <hex encoded transaction> --data-path=<path to a running app>', () => {
 		it('should return the id of the sent transaction', async () => {
-			when(IPCChannel.prototype.invoke as jest.Mock)
+			when(invokeMock)
 				.calledWith('app:postTransaction', { transaction: encodedTransaction })
 				.mockResolvedValue({ transactionId });
 			await SendCommand.run([encodedTransaction, `--data-path=${pathToAppPIDFiles}`], config);
-			expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:postTransaction', {
+			expect(invokeMock).toHaveBeenCalledWith('app:postTransaction', {
 				transaction: encodedTransaction,
 			});
 			expect(stdout[0]).toContain(
@@ -110,7 +112,7 @@ describe('transaction:send command', () => {
 
 	describe('transaction:send <hex encoded invalid transaction> --data-path=<path to a not running app>', () => {
 		it('should throw error.', async () => {
-			when(IPCChannel.prototype.invoke as jest.Mock)
+			when(invokeMock)
 				.calledWith('app:postTransaction', {
 					transaction: 'ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815',
 				})

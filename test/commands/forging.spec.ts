@@ -14,7 +14,7 @@
  */
 
 import * as inquirer from 'inquirer';
-import { IPCChannel } from 'lisk-sdk';
+import { apiClient } from 'lisk-sdk';
 import { when } from 'jest-when';
 import * as Config from '@oclif/config';
 import { BaseForgingCommand } from '../../src/base_forging';
@@ -31,6 +31,7 @@ describe('forging', () => {
 	let stdout: string[];
 	let stderr: string[];
 	let config: Config.IConfig;
+	let invokeMock: jest.Mock;
 
 	beforeEach(async () => {
 		stdout = [];
@@ -40,8 +41,11 @@ describe('forging', () => {
 		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
 		jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(true);
 		jest.spyOn(BaseForgingCommand.prototype, 'printJSON').mockReturnValue();
-		jest.spyOn(IPCChannel.prototype, 'startAndListen').mockResolvedValue();
-		jest.spyOn(IPCChannel.prototype, 'invoke').mockResolvedValue(actionResult);
+		invokeMock = jest.fn().mockResolvedValue({ address: 'actionAddress', forging: true });
+		jest.spyOn(apiClient, 'createIPCClient').mockResolvedValue({
+			disconnect: jest.fn(),
+			invoke: invokeMock,
+		} as never);
 		jest.spyOn(inquirer, 'prompt').mockResolvedValue({ password: 'promptPassword' });
 	});
 
@@ -71,7 +75,7 @@ describe('forging', () => {
 		describe('when invoked with password', () => {
 			it('should invoke action with given address and password', async () => {
 				await EnableCommand.run(['myAddress', '10', '10', '1', '--password=my-password'], config);
-				expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:updateForgingStatus', {
+				expect(invokeMock).toHaveBeenCalledWith('app:updateForgingStatus', {
 					address: 'myAddress',
 					forging: true,
 					password: 'my-password',
@@ -99,7 +103,7 @@ describe('forging', () => {
 
 			it('should invoke action with given address and password', async () => {
 				await EnableCommand.run(['myAddress', '10', '10', '1'], config);
-				expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:updateForgingStatus', {
+				expect(invokeMock).toHaveBeenCalledWith('app:updateForgingStatus', {
 					address: 'myAddress',
 					forging: true,
 					password: 'promptPassword',
@@ -121,7 +125,7 @@ describe('forging', () => {
 
 		describe('when action fail', () => {
 			it('should log the error returned', async () => {
-				when(IPCChannel.prototype.invoke as jest.Mock)
+				when(invokeMock)
 					.calledWith('app:updateForgingStatus', {
 						address: 'myFailedEnabledAddress',
 						forging: true,
@@ -147,7 +151,7 @@ describe('forging', () => {
 					['myAddress', '10', '10', '1', '--overwrite', '--password=my-password'],
 					config,
 				);
-				expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:updateForgingStatus', {
+				expect(invokeMock).toHaveBeenCalledWith('app:updateForgingStatus', {
 					address: 'myAddress',
 					forging: true,
 					password: 'my-password',
@@ -168,7 +172,7 @@ describe('forging', () => {
 		describe('when invoked with password', () => {
 			it('should invoke action with given address and password', async () => {
 				await DisableCommand.run(['myAddress', '--password=my-password'], config);
-				expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:updateForgingStatus', {
+				expect(invokeMock).toHaveBeenCalledWith('app:updateForgingStatus', {
 					address: 'myAddress',
 					forging: false,
 					password: 'my-password',
@@ -196,7 +200,7 @@ describe('forging', () => {
 
 			it('should invoke action with given address and password', async () => {
 				await DisableCommand.run(['myAddress'], config);
-				expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:updateForgingStatus', {
+				expect(invokeMock).toHaveBeenCalledWith('app:updateForgingStatus', {
 					address: 'myAddress',
 					forging: false,
 					password: 'promptPassword',
@@ -218,7 +222,7 @@ describe('forging', () => {
 
 		describe('when action fail', () => {
 			it('should log the error returned', async () => {
-				when(IPCChannel.prototype.invoke as jest.Mock)
+				when(invokeMock)
 					.calledWith('app:updateForgingStatus', {
 						address: 'myFailedDisabledAddress',
 						forging: false,

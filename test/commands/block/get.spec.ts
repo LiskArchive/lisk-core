@@ -12,9 +12,8 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import { when } from 'jest-when';
 import * as fs from 'fs-extra';
-import { IPCChannel } from 'lisk-sdk';
+import { apiClient } from 'lisk-sdk';
 import * as Config from '@oclif/config';
 import baseIPC from '../../../src/base_ipc';
 import * as appUtils from '../../../src/utils/application';
@@ -84,6 +83,8 @@ describe('block:get command', () => {
 	let stdout: string[];
 	let stderr: string[];
 	let config: Config.IConfig;
+	let getMock: jest.Mock;
+	let getByHeightMock: jest.Mock;
 
 	beforeEach(async () => {
 		stdout = [];
@@ -91,21 +92,23 @@ describe('block:get command', () => {
 		config = await getConfig();
 		jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(true);
 		jest.spyOn(fs, 'existsSync').mockReturnValue(true);
-		jest.spyOn(IPCChannel.prototype, 'startAndListen').mockResolvedValue();
-		jest.spyOn(IPCChannel.prototype, 'invoke');
 		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
 		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
-		when(IPCChannel.prototype.invoke as jest.Mock)
-			.calledWith('app:getSchema')
-			.mockResolvedValue({
+		getMock = jest.fn().mockResolvedValue(encodedBlockData);
+		getByHeightMock = jest.fn().mockResolvedValue(encodedBlockData);
+		jest.spyOn(apiClient, 'createIPCClient').mockResolvedValue({
+			disconnect: jest.fn(),
+			schemas: {
 				block: blockSchema,
 				blockHeader: blockHeaderSchema,
 				blockHeadersAssets,
-			})
-			.calledWith('app:getBlockByID', { id: blockId })
-			.mockResolvedValue(encodedBlockData)
-			.calledWith('app:getBlockByHeight', { height: 2 })
-			.mockResolvedValue(encodedBlockData);
+			},
+			block: {
+				get: getMock,
+				getByHeight: getByHeightMock,
+				toJSON: jest.fn().mockReturnValue(blockDataAtHeightTwo),
+			},
+		} as never);
 		jest.spyOn(baseIPC.prototype, 'printJSON');
 	});
 
@@ -118,11 +121,7 @@ describe('block:get command', () => {
 	describe('block:get by height', () => {
 		it('should get block info at height 2 and display as an object', async () => {
 			await GetCommand.run(['2'], config);
-			expect(IPCChannel.prototype.invoke).toHaveBeenCalledTimes(2);
-			expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:getSchema');
-			expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:getBlockByHeight', {
-				height: 2,
-			});
+			expect(getByHeightMock).toHaveBeenCalledWith(2);
 			expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 			expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith(blockDataAtHeightTwo);
 		});
@@ -130,13 +129,9 @@ describe('block:get command', () => {
 
 	describe('block:get by id', () => {
 		it('should get block info for the given id and display as an object', async () => {
-			await GetCommand.run(
-				['4f7e41f5744c0c2a434f13afb186b77fb4b176a5298f91ed866680ff5ef13a6d'],
-				config,
-			);
-			expect(IPCChannel.prototype.invoke).toHaveBeenCalledTimes(2);
-			expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:getSchema');
-			expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:getBlockByID', { id: blockId });
+			await GetCommand.run([blockId], config);
+			expect(getMock).toHaveBeenCalledTimes(1);
+			expect(getMock).toHaveBeenCalledWith(Buffer.from(blockId, 'hex'));
 			expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 			expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith(blockDataAtHeightTwo);
 		});

@@ -41,11 +41,13 @@ export default class GetCommand extends BaseIPCCommand {
 		const { args } = this.parse(GetCommand);
 		const { address } = args as Args;
 
+		if (!this._client) {
+			this.error('APIClient is not initialized.');
+		}
+
 		try {
-			const account = await this._channel.invoke<string>('app:getAccount', {
-				address,
-			});
-			this.printJSON(this._codec.decodeAccount(account));
+			const account = await this._client.account.get(Buffer.from(address, 'hex'));
+			this.printJSON(this._client.account.toJSON(account));
 		} catch (errors) {
 			const errorMessage = Array.isArray(errors)
 				? errors.map(err => (err as Error).message).join(',')

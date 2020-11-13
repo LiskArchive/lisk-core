@@ -12,9 +12,8 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import { when } from 'jest-when';
 import * as fs from 'fs-extra';
-import { IPCChannel } from 'lisk-sdk';
+import { apiClient } from 'lisk-sdk';
 import * as Config from '@oclif/config';
 import { getConfig } from '../../utils/config';
 import baseIPC from '../../../src/base_ipc';
@@ -50,6 +49,7 @@ describe('node:info command', () => {
 	let stdout: string[];
 	let stderr: string[];
 	let config: Config.IConfig;
+	let getMock: jest.Mock;
 
 	beforeEach(async () => {
 		stdout = [];
@@ -60,18 +60,19 @@ describe('node:info command', () => {
 		jest.spyOn(fs, 'existsSync').mockReturnValue(true);
 		jest.spyOn(baseIPC.prototype, 'printJSON').mockReturnValue(queryResult as never);
 		jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(true);
-		jest.spyOn(IPCChannel.prototype, 'startAndListen').mockResolvedValue();
-		jest.spyOn(IPCChannel.prototype, 'invoke');
-		when(IPCChannel.prototype.invoke as jest.Mock)
-			.calledWith('app:getNodeInfo')
-			.mockResolvedValue(queryResult);
+		getMock = jest.fn().mockResolvedValue(queryResult);
+		jest.spyOn(apiClient, 'createIPCClient').mockResolvedValue({
+			disconnect: jest.fn(),
+			node: {
+				getNodeInfo: getMock,
+			},
+		} as never);
 	});
 
 	describe('node:info', () => {
 		it('should get node info and display as an object', async () => {
 			await InfoCommand.run([], config);
-			expect(IPCChannel.prototype.invoke).toHaveBeenCalledTimes(2);
-			expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:getNodeInfo');
+			expect(getMock).toHaveBeenCalledTimes(1);
 			expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 			expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith(queryResult);
 		});
