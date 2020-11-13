@@ -24,12 +24,16 @@ export class LegacyAccountModule extends BaseModule {
 	public transactionAssets = [new ReclaimAsset()];
 
 	public actions: Actions = {
-		getUnregisteredAccount: async (params: Record<string, unknown>): Promise<{ address: string; balance: string } | undefined> => {
+		getUnregisteredAccount: async (
+			params: Record<string, unknown>,
+		): Promise<{ address: string; balance: string } | undefined> => {
 			if (!params?.publicKey || typeof params?.publicKey !== 'string') {
 				throw new Error('Public key is either not provided or not a string');
 			}
 
-			const encodedUnregisteredAddresses: Buffer | undefined = await this._dataAccess.getChainState(CHAIN_STATE_UNREGISTERED_ADDRESSES);
+			const encodedUnregisteredAddresses: Buffer | undefined = await this._dataAccess.getChainState(
+				CHAIN_STATE_UNREGISTERED_ADDRESSES,
+			);
 
 			if (!encodedUnregisteredAddresses) {
 				throw new Error('Chain state does not contain any unregistered addresses');
@@ -45,10 +49,12 @@ export class LegacyAccountModule extends BaseModule {
 				a.address.equals(legacyAddress),
 			);
 
-			return addressWithoutPublickey ? {
-				address: addressWithoutPublickey.address.toString('hex'),
-				balance: addressWithoutPublickey.balance.toString(),
-			} : undefined;
+			return addressWithoutPublickey
+				? {
+						address: addressWithoutPublickey.address.toString('hex'),
+						balance: addressWithoutPublickey.balance.toString(),
+				  }
+				: undefined;
 		},
 	};
 	// eslint-disable-next-line class-methods-use-this

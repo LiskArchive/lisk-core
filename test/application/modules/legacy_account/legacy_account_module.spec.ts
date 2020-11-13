@@ -151,7 +151,9 @@ describe('LegacyAccountModule', () => {
 
 		it('should return the unregistered address', async () => {
 			// Act
-			const legacyAccount = await legacyAccountModule.actions.getUnregisteredAccount({ publicKey: unregisteredAccount.publicKey.toString('hex') });
+			const legacyAccount = await legacyAccountModule.actions.getUnregisteredAccount({
+				publicKey: unregisteredAccount.publicKey.toString('hex'),
+			});
 
 			// Assert
 			expect(legacyAccount).toEqual({
@@ -165,7 +167,9 @@ describe('LegacyAccountModule', () => {
 			const randomAccount = createAccount();
 
 			// Act
-			const legacyAccount = await legacyAccountModule.actions.getUnregisteredAccount({ publicKey: randomAccount.publicKey.toString('hex') }) as { address: string; balance: string};
+			const legacyAccount = (await legacyAccountModule.actions.getUnregisteredAccount({
+				publicKey: randomAccount.publicKey.toString('hex'),
+			})) as { address: string; balance: string };
 
 			// Assert
 			return expect(legacyAccount).toBeUndefined();
@@ -173,12 +177,16 @@ describe('LegacyAccountModule', () => {
 
 		it('should throw an error when publicKey is not provided', async () => {
 			// Assert
-			await expect(legacyAccountModule.actions.getUnregisteredAccount({})).rejects.toThrow('Public key is either not provided or not a string');
+			await expect(legacyAccountModule.actions.getUnregisteredAccount({})).rejects.toThrow(
+				'Public key is either not provided or not a string',
+			);
 		});
 
 		it('should throw an error when publicKey is not a string', async () => {
 			// Assert
-			await expect(legacyAccountModule.actions.getUnregisteredAccount({ publicKey: Buffer.from('') })).rejects.toThrow('Public key is either not provided or not a string');
+			await expect(
+				legacyAccountModule.actions.getUnregisteredAccount({ publicKey: Buffer.from('') }),
+			).rejects.toThrow('Public key is either not provided or not a string');
 		});
 	});
 });
