@@ -138,7 +138,7 @@ export default abstract class BaseIPCCommand extends Command {
 		);
 		if (!assetSchema) {
 			throw new Error(
-				`Transaction moduleID:${moduleID} with assetID:${assetID} is not registered in the application`,
+				`Transaction moduleID:${moduleID} with assetID:${assetID} is not registered in the application.`,
 			);
 		}
 		return assetSchema;
