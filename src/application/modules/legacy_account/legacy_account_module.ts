@@ -24,7 +24,7 @@ export class LegacyAccountModule extends BaseModule {
 	public transactionAssets = [new ReclaimAsset()];
 
 	public actions: Actions = {
-		getUnregisteredAccount: async (params: Record<string, unknown>): Promise<{ address: string, balance: string } | undefined> => {
+		getUnregisteredAccount: async (params: Record<string, unknown>): Promise<{ address: string; balance: string } | undefined> => {
 			if (!params?.publicKey || typeof params?.publicKey !== 'string') {
 				throw new Error('Public key is either not provided or not a string');
 			}
@@ -40,17 +40,17 @@ export class LegacyAccountModule extends BaseModule {
 				encodedUnregisteredAddresses,
 			);
 
-			const legacyAddress = getLegacyBytes(Buffer.from(params.publicKey as string, 'hex'));
+			const legacyAddress = getLegacyBytes(Buffer.from(params.publicKey, 'hex'));
 			const addressWithoutPublickey = unregisteredAddresses.find(a =>
 				a.address.equals(legacyAddress),
 			);
 
 			return addressWithoutPublickey ? {
-				address: addressWithoutPublickey?.address.toString('hex'),
+				address: addressWithoutPublickey.address.toString('hex'),
 				balance: addressWithoutPublickey.balance.toString(),
-			}: undefined;
-		}
-	}
+			} : undefined;
+		},
+	};
 	// eslint-disable-next-line class-methods-use-this
 	public async afterGenesisBlockApply({
 		genesisBlock,

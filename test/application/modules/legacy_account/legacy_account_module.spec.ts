@@ -165,10 +165,10 @@ describe('LegacyAccountModule', () => {
 			const randomAccount = createAccount();
 
 			// Act
-			const legacyAccount = await legacyAccountModule.actions.getUnregisteredAccount({ publicKey: randomAccount.publicKey.toString('hex') });
+			const legacyAccount = await legacyAccountModule.actions.getUnregisteredAccount({ publicKey: randomAccount.publicKey.toString('hex') }) as { address: string; balance: string};
 
 			// Assert
-			expect(legacyAccount).toBeUndefined;
+			return expect(legacyAccount).toBeUndefined();
 		});
 
 		it('should throw an error when publicKey is not provided', async () => {
