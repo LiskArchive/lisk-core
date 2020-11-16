@@ -13,8 +13,7 @@
  *
  */
 import * as fs from 'fs-extra';
-import { IPCChannel, transactionSchema } from 'lisk-sdk';
-import { when } from 'jest-when';
+import { transactionSchema, apiClient } from 'lisk-sdk';
 import * as Config from '@oclif/config';
 import baseIPC from '../../../src/base_ipc';
 import * as appUtils from '../../../src/utils/application';
@@ -70,6 +69,7 @@ describe('transaction:get command', () => {
 	let stdout: string[];
 	let stderr: string[];
 	let config: Config.IConfig;
+	let getMock: jest.Mock;
 
 	beforeEach(async () => {
 		stdout = [];
@@ -80,16 +80,21 @@ describe('transaction:get command', () => {
 		jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(true);
 		jest.spyOn(fs, 'existsSync').mockReturnValue(true);
 		jest.spyOn(baseIPC.prototype, 'printJSON').mockReturnValue();
-		jest.spyOn(IPCChannel.prototype, 'startAndListen').mockResolvedValue();
-		jest.spyOn(IPCChannel.prototype, 'invoke');
-		when(IPCChannel.prototype.invoke as jest.Mock)
-			.calledWith('app:getSchema')
-			.mockResolvedValue({
+		getMock = jest.fn().mockResolvedValue(encodedTransaction);
+		jest.spyOn(apiClient, 'createIPCClient').mockResolvedValue({
+			disconnect: jest.fn(),
+			schemas: {
 				transaction: transactionSchema,
 				transactionsAssets,
-			})
-			.calledWith('app:getTransactionByID', { id: transactionId })
-			.mockResolvedValue(encodedTransaction);
+			},
+			transaction: {
+				get: getMock,
+				toJSON: jest.fn().mockReturnValue({
+					...transferTransaction,
+					id: transactionId,
+				}),
+			},
+		} as never);
 	});
 
 	describe('transaction:get', () => {
@@ -101,11 +106,7 @@ describe('transaction:get command', () => {
 	describe('transaction:get {transactionId}', () => {
 		it('should get transaction for the given id and display as an object', async () => {
 			await GetCommand.run([transactionId as string], config);
-			expect(IPCChannel.prototype.invoke).toHaveBeenCalledTimes(2);
-			expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:getSchema');
-			expect(IPCChannel.prototype.invoke).toHaveBeenCalledWith('app:getTransactionByID', {
-				id: transactionId,
-			});
+			expect(getMock).toHaveBeenCalledWith(Buffer.from(transactionId as string, 'hex'));
 			expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
 			expect(baseIPC.prototype.printJSON).toHaveBeenCalledWith({
 				...transferTransaction,

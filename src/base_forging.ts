@@ -78,9 +78,11 @@ export class BaseForgingCommand extends BaseIPCCommand {
 			]);
 			password = answers.password;
 		}
-
+		if (!this._client) {
+			this.error('APIClient is not initialized.');
+		}
 		try {
-			const result = await this._channel.invoke<{ address: string; forging: boolean }>(
+			const result = await this._client.invoke<{ address: string; forging: boolean }>(
 				'app:updateForgingStatus',
 				{
 					address,

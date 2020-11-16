@@ -24,8 +24,11 @@ export default class InfoCommand extends BaseIPCCommand {
 	};
 
 	async run(): Promise<void> {
+		if (!this._client) {
+			this.error('APIClient is not initialized.');
+		}
 		try {
-			const nodeInfo = await this._channel.invoke<Record<string, unknown>>('app:getNodeInfo');
+			const nodeInfo = await this._client.node.getNodeInfo();
 			this.printJSON(nodeInfo);
 		} catch (errors) {
 			const errorMessage = Array.isArray(errors)

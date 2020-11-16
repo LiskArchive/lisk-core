@@ -42,16 +42,17 @@ export default class GetCommand extends BaseIPCCommand {
 		const { input } = args as Args;
 
 		let block;
+		if (!this._client) {
+			this.error('APIClient is not initialized.');
+		}
 		try {
 			if (!Number.isNaN(Number(input))) {
-				block = await this._channel.invoke<string>('app:getBlockByHeight', {
-					height: parseInt(input, 10),
-				});
+				block = await this._client.block.getByHeight(parseInt(input, 10));
 			} else {
-				block = await this._channel.invoke<string>('app:getBlockByID', { id: input });
+				block = await this._client.block.get(Buffer.from(input, 'hex'));
 			}
 
-			this.printJSON(this._codec.decodeBlock(block));
+			this.printJSON(this._client.block.toJSON(block));
 		} catch (errors) {
 			const errorMessage = Array.isArray(errors)
 				? errors.map(err => (err as Error).message).join(',')
