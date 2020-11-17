@@ -317,7 +317,7 @@ export default class StartCommand extends Command {
 			config.ipc = { enabled: flags['enable-ipc'] };
 		}
 		if (flags['api-ws']) {
-			config.rpc = { enabled: flags['api-ws'], mode: 'ws', port: flags['api-ws-port'] };
+			config.rpc = { enable: flags['api-ws'], mode: 'ws', port: flags['api-ws-port'] };
 		}
 		if (flags['console-log']) {
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

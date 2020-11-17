@@ -122,7 +122,7 @@ describe('start', () => {
 		it('should update the config value', async () => {
 			await StartCommand.run(['--api-ws'], config);
 			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
-			expect(usedConfig.rpc.enabled).toBe(true);
+			expect(usedConfig.rpc.enable).toBe(true);
 			expect(usedConfig.rpc.mode).toBe('ws');
 		});
 	});
