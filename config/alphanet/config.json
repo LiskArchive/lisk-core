@@ -30,8 +30,7 @@
 	},
 	"rpc": {
 		"enable": false,
-		"mode": "ipc",
-		"port": 8080
+		"mode": "ipc"
 	},
 	"network": {
 		"port": 5000,
