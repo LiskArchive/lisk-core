@@ -110,11 +110,12 @@ describe('start', () => {
 		});
 	});
 
-	describe('when --enable-ipc is specified', () => {
+	describe('when --api-ipc is specified', () => {
 		it('should update the config value', async () => {
-			await StartCommand.run(['--enable-ipc'], config);
+			await StartCommand.run(['--api-ipc'], config);
 			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
-			expect(usedConfig.ipc.enabled).toBe(true);
+			expect(usedConfig.rpc.enable).toBe(true);
+			expect(usedConfig.rpc.mode).toBe('ipc');
 		});
 	});
 

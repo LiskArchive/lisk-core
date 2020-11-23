@@ -1,7 +1,4 @@
 {
-	"ipc": {
-		"enabled": false
-	},
 	"networkVersion": "2.0",
 	"label": "devnet",
 	"genesisConfig": {
@@ -30,6 +27,11 @@
 	"logger": {
 		"fileLogLevel": "debug",
 		"consoleLogLevel": "info"
+	},
+	"rpc": {
+		"enable": false,
+		"mode": "ipc",
+		"port": 8080
 	},
 	"network": {
 		"port": 5000,
