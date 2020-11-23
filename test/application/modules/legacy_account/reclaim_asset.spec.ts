@@ -87,7 +87,7 @@ describe('ReclaimAsset', () => {
 				chain: {},
 			}) as any;
 			await expect(reclaimAsset.apply(reclaimAssetInput)).rejects.toThrow(
-				'Chain state does not contain any unregistered addresses',
+				'Chain state does not contain any unregistered addresses.',
 			);
 		});
 
@@ -104,7 +104,7 @@ describe('ReclaimAsset', () => {
 				chain: chainMockData,
 			}) as any;
 			await expect(reclaimAsset.apply(reclaimAssetInput)).rejects.toThrow(
-				'Legacy address corresponding to sender publickey was not found genesis account state',
+				'Legacy address corresponding to sender publickey was not found in the genesis account state.',
 			);
 		});
 
@@ -121,7 +121,9 @@ describe('ReclaimAsset', () => {
 				chain: chainMockData,
 			}) as any;
 			await expect(reclaimAsset.apply(reclaimAssetInput)).rejects.toThrow(
-				'Invalid amount:100000000000 claimed by the sender',
+				`Invalid amount:100000000000 claimed by the sender: ${getLegacyBytes(
+					defaultAccount.publicKey,
+				).toString('hex')}.`,
 			);
 		});
 
@@ -141,7 +143,7 @@ describe('ReclaimAsset', () => {
 		it('should fail to reclaim twice for same account', async () => {
 			await reclaimAsset.apply(reclaimAssetInput);
 			await expect(reclaimAsset.apply(reclaimAssetInput)).rejects.toThrow(
-				'Legacy address corresponding to sender publickey was not found genesis account state',
+				'Legacy address corresponding to sender publickey was not found in the genesis account state.',
 			);
 			await expect(
 				reclaimAssetInput.stateStore.chain.get(CHAIN_STATE_UNREGISTERED_ADDRESSES),

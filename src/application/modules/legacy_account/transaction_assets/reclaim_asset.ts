@@ -41,7 +41,7 @@ export class ReclaimAsset extends BaseAsset<Asset> {
 		);
 
 		if (!encodedUnregisteredAddresses) {
-			throw new Error('Chain state does not contain any unregistered addresses');
+			throw new Error('Chain state does not contain any unregistered addresses.');
 		}
 		const { unregisteredAddresses } = codec.decode<UnregisteredAddresses>(
 			unregisteredAddressesSchema,
@@ -54,7 +54,7 @@ export class ReclaimAsset extends BaseAsset<Asset> {
 
 		if (!addressWithoutPublickey) {
 			throw new Error(
-				'Legacy address corresponding to sender publickey was not found genesis account state',
+				'Legacy address corresponding to sender publickey was not found in the genesis account state.',
 			);
 		}
 		if (asset.amount !== addressWithoutPublickey.balance) {
@@ -62,7 +62,7 @@ export class ReclaimAsset extends BaseAsset<Asset> {
 				`Invalid amount:${
 					// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
 					asset.amount.toString()
-				} claimed by the sender: ${addressWithoutPublickey.address.toString('hex')}`,
+				} claimed by the sender: ${addressWithoutPublickey.address.toString('hex')}.`,
 			);
 		}
 		const newAddress = cryptography.getAddressFromPublicKey(senderPublicKey);
