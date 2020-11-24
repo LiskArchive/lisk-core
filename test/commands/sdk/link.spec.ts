@@ -66,8 +66,25 @@ describe('sdk:link command', () => {
 			await LinkCommand.run([fakeSDKPath], config);
 			expect(fs.pathExistsSync).toHaveBeenCalledWith(fakeSDKPath);
 			expect(fs.removeSync).toHaveBeenCalledWith(targetSDKPath);
-			expect(fs.symlink).toHaveBeenCalledWith(join('../', fakeSDKPath), targetSDKPath);
+			expect(fs.symlink).toHaveBeenCalledWith(fakeSDKPath, targetSDKPath);
 			expect(stdout[0]).toContain(`Linked '/path/exists' to '${targetSDKPath}'`);
+		});
+	});
+
+	describe('sdk:link ../lisk-sdk/sdk', () => {
+		const fakeSDKPath = '../lisk-sdk/sdk';
+		const targetSDKPath = join(__dirname, '../../../', 'node_modules', 'lisk-sdk');
+
+		it('should call file system functions with correct parameters', async () => {
+			jest.spyOn(fs, 'pathExistsSync');
+			when(fs.pathExistsSync as jest.Mock)
+				.calledWith(fakeSDKPath)
+				.mockReturnValue(true);
+			await LinkCommand.run([fakeSDKPath], config);
+			expect(fs.pathExistsSync).toHaveBeenCalledWith(fakeSDKPath);
+			expect(fs.removeSync).toHaveBeenCalledWith(targetSDKPath);
+			expect(fs.symlink).toHaveBeenCalledWith(join('../', fakeSDKPath), targetSDKPath);
+			expect(stdout[0]).toContain(`Linked '../lisk-sdk/sdk' to '${targetSDKPath}'`);
 		});
 	});
 });
