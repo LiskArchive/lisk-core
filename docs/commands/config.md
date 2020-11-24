@@ -25,4 +25,4 @@ EXAMPLES
   config:show --config ./custom-config.json --data-path ./data
 ```
 
-_See code: [dist/commands/config/show.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/config/show.ts)_
+_See code: [dist/commands/config/show.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.5/dist/commands/config/show.ts)_

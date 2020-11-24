@@ -32,7 +32,7 @@ The following dependencies need to be installed in order to run applications cre
 
 | Dependencies | Version |
 | ------------ | ------- |
-| NodeJS       | 12.18.3 |
+| NodeJS       | 12.19.0 |
 
 You can find further details on installing these dependencies in our [pre-installation setup guide](https://lisk.io/documentation/lisk-core/setup/source#pre-install).
 Clone the Lisk Core repository using Git and initialize the modules.
@@ -57,7 +57,7 @@ $ npm install -g lisk-core
 $ lisk-core COMMAND
 running command...
 $ lisk-core (-v|--version|version)
-lisk-core/3.0.0-beta.2.1 darwin-x64 node-v12.18.3
+lisk-core/3.0.0-beta.2.5 darwin-x64 node-v12.19.0
 $ lisk-core --help [COMMAND]
 USAGE
   $ lisk-core COMMAND
@@ -68,7 +68,7 @@ USAGE
 
 <!-- commands -->
 
-# Command Topics
+## Command Topics
 
 - [`lisk-core account`](docs/commands/account.md) - Commands relating to Lisk Core accounts.
 - [`lisk-core block`](docs/commands/block.md) - Commands relating to Lisk Core blocks.
@@ -174,7 +174,7 @@ npm test
 In order to run a node for a local test, in a root folder of lisk-core, run below command.
 
 ```
-./bin/run start -n devnet --data-path ./devnet-data --port 3333 --enable-ipc --enable-http-api --http-api-port 3334 --enable-forger --forger-port 3335
+./bin/run start -n devnet --data-path ./devnet-data --port 3333 --api-ws --enable-http-api-plugin --http-api-plugin-port 3334 --enable-forger-plugin
 ```
 
 This command will start a lisk-core node using data path `./devent-data` with HTTPAPI and Forger Plugins.

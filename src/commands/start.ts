@@ -17,12 +17,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Command, flags as flagParser } from '@oclif/command';
 import * as fs from 'fs-extra';
-import {
-	ApplicationConfig,
-	HTTPAPIPlugin,
-	MonitorPlugin,
-	utils,
-} from 'lisk-sdk';
+import { ApplicationConfig, HTTPAPIPlugin, MonitorPlugin, utils } from 'lisk-sdk';
 import {
 	getDefaultPath,
 	splitPath,
