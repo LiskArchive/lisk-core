@@ -136,7 +136,7 @@ export default class StartCommand extends Command {
 				'Open port for the peer to peer incoming connections. Environment variable "LISK_PORT" can also be used.',
 			env: 'LISK_PORT',
 		}),
-		'enable-ipc': flagParser.boolean({
+		'api-ipc': flagParser.boolean({
 			description:
 				'Enable IPC communication. This will also load up plugins in child process and communicate over IPC.',
 			default: false,
@@ -145,7 +145,7 @@ export default class StartCommand extends Command {
 		'api-ws': flagParser.boolean({
 			description: 'Enable websocket communication for api-client.',
 			default: false,
-			exclusive: ['enable-ipc'],
+			exclusive: ['api-ipc'],
 		}),
 		'api-ws-port': flagParser.integer({
 			description: 'Port to be used for api-client websocket.',
@@ -313,8 +313,8 @@ export default class StartCommand extends Command {
 		config.label = pathConfig.label;
 		config.version = this.config.pjson.version;
 		// Inject other properties specified
-		if (flags['enable-ipc']) {
-			config.ipc = { enabled: flags['enable-ipc'] };
+		if (flags['api-ipc']) {
+			config.rpc = { enable: flags['api-ipc'], mode: 'ipc' };
 		}
 		if (flags['api-ws']) {
 			config.rpc = { enable: flags['api-ws'], mode: 'ws', port: flags['api-ws-port'] };
