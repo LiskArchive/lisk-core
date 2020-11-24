@@ -40,7 +40,9 @@ export default class LinkCommand extends Command {
 		const sdkLocalPath = join(__dirname, '../../../', 'node_modules', 'lisk-sdk');
 
 		// If targetSDK folder is relative path, it should be relative from the node_module
-		const targetSDKFolderFromNodeModule = isAbsolute(targetSDKFolder) ? targetSDKFolder : join('../', targetSDKFolder);
+		const targetSDKFolderFromNodeModule = isAbsolute(targetSDKFolder)
+			? targetSDKFolder
+			: join('../', targetSDKFolder);
 		removeSync(sdkLocalPath);
 		await symlink(targetSDKFolderFromNodeModule, sdkLocalPath);
 		this.log(`Linked '${targetSDKFolder as string}' to '${sdkLocalPath}'`);
