@@ -185,14 +185,14 @@ export default class StartCommand extends Command {
 	async run(): Promise<void> {
 		const { flags } = this.parse(StartCommand);
 		const dataPath = flags['data-path'] ? flags['data-path'] : getDefaultPath();
-		this.log(`Starting Lisk Core at ${getFullPath(dataPath)}`);
+		this.log(`Starting Lisk Core at ${getFullPath(dataPath)}.`);
 		const pathConfig = splitPath(dataPath);
 
 		const defaultNetworkConfigs = getDefaultConfigDir();
 		const defaultNetworkConfigDir = getConfigDirs(defaultNetworkConfigs);
 		if (!defaultNetworkConfigDir.includes(flags.network)) {
 			this.error(
-				`Network must be one of ${defaultNetworkConfigDir.join(',')} but received ${flags.network}`,
+				`Network must be one of ${defaultNetworkConfigDir.join(',')} but received ${flags.network}.`,
 			);
 		}
 
@@ -204,7 +204,7 @@ export default class StartCommand extends Command {
 				this.error(
 					`Datapath ${dataPath} already contains configs for ${configDir.join(
 						',',
-					)}. Please use --overwrite-config to overwrite the config`,
+					)}. Please use --overwrite-config to overwrite the config.`,
 				);
 			}
 			// Remove other network configs
@@ -282,7 +282,7 @@ export default class StartCommand extends Command {
 			for (const seed of peers) {
 				const [ip, port] = seed.split(':');
 				if (!ip || !port || Number.isNaN(Number(port))) {
-					this.error('Invalid ip or port is specified.');
+					this.error('Invalid seed-peers, ip or port is invalid or not specified.');
 				}
 				config.network.seedPeers.push({ ip, port: Number(port) });
 			}

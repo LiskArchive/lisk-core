@@ -60,7 +60,7 @@ export default class GetCommand extends BaseIPCCommand {
 
 			if (/^Specified key block(.*)does not exist/.test((errors as Error).message)) {
 				if (input) {
-					this.error('Block with given id or height was not found');
+					this.error('Block with given id or height was not found.');
 				}
 			} else {
 				this.error(errorMessage);

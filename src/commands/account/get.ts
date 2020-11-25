@@ -54,7 +54,7 @@ export default class GetCommand extends BaseIPCCommand {
 				: errors;
 
 			if (/^Specified key accounts:address:(.*)does not exist/.test((errors as Error).message)) {
-				this.error(`Account with address '${address}' was not found`);
+				this.error(`Account with address '${address}' was not found.`);
 			} else {
 				this.error(errorMessage);
 			}
