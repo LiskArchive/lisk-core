@@ -15,18 +15,10 @@
 import { ApplyAssetContext, BaseAsset, codec, cryptography } from 'lisk-sdk';
 import { CHAIN_STATE_UNREGISTERED_ADDRESSES } from '../constants';
 import { reclaimAssetSchema, unregisteredAddressesSchema } from '../schema';
+import { UnregisteredAddresses } from '../types';
 
 interface Asset {
 	readonly amount: bigint;
-}
-
-interface UnregisteredAccount {
-	readonly address: Buffer;
-	readonly balance: bigint;
-}
-
-interface UnregisteredAddresses {
-	readonly unregisteredAddresses: UnregisteredAccount[];
 }
 
 export const getLegacyBytes = (publicKey: string | Buffer): Buffer =>
@@ -49,7 +41,7 @@ export class ReclaimAsset extends BaseAsset<Asset> {
 		);
 
 		if (!encodedUnregisteredAddresses) {
-			throw new Error('Chain state does not contain any unregistered addresses');
+			throw new Error('Chain state does not contain any unregistered addresses.');
 		}
 		const { unregisteredAddresses } = codec.decode<UnregisteredAddresses>(
 			unregisteredAddressesSchema,
@@ -62,7 +54,7 @@ export class ReclaimAsset extends BaseAsset<Asset> {
 
 		if (!addressWithoutPublickey) {
 			throw new Error(
-				'Legacy address corresponding to sender publickey was not found genesis account state',
+				'Legacy address corresponding to sender publickey was not found in the genesis account state.',
 			);
 		}
 		if (asset.amount !== addressWithoutPublickey.balance) {
@@ -70,7 +62,7 @@ export class ReclaimAsset extends BaseAsset<Asset> {
 				`Invalid amount:${
 					// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
 					asset.amount.toString()
-				} claimed by the sender: ${addressWithoutPublickey.address.toString('hex')}`,
+				} claimed by the sender: ${addressWithoutPublickey.address.toString('hex')}.`,
 			);
 		}
 		const newAddress = cryptography.getAddressFromPublicKey(senderPublicKey);

@@ -14,12 +14,13 @@
  */
 
 import { Command, flags as flagParser } from '@oclif/command';
-import { codec, cryptography, IPCChannel, RegisteredSchema } from 'lisk-sdk';
-import { getDefaultPath, getSocketsPath, splitPath, getGenesisBlockAndConfig } from './utils/path';
+import { RegisteredSchema, apiClient, codec, Transaction, cryptography } from 'lisk-sdk';
+import { getDefaultPath, getGenesisBlockAndConfig } from './utils/path';
 import { flags as commonFlags } from './utils/flags';
-import { isApplicationRunning } from './utils/application';
 import { getApplication } from './application';
 import { DEFAULT_NETWORK } from './constants';
+import { PromiseResolvedType } from './types';
+import { isApplicationRunning } from './utils/application';
 
 interface BaseIPCFlags {
 	readonly 'data-path'?: string;
@@ -51,9 +52,6 @@ export interface Codec {
 
 const prettyDescription = 'Prints JSON in pretty format rather than condensed.';
 
-const convertStrToBuffer = (data: Buffer | string): Buffer =>
-	Buffer.isBuffer(data) ? data : Buffer.from(data, 'hex');
-
 export default abstract class BaseIPCCommand extends Command {
 	static flags = {
 		pretty: flagParser.boolean({
@@ -77,8 +75,7 @@ export default abstract class BaseIPCCommand extends Command {
 	};
 
 	public baseIPCFlags!: BaseIPCFlags;
-	protected _codec!: Codec;
-	protected _channel!: IPCChannel;
+	protected _client: PromiseResolvedType<ReturnType<typeof apiClient.createIPCClient>> | undefined;
 	protected _schema!: RegisteredSchema;
 
 	// eslint-disable-next-line @typescript-eslint/require-await
@@ -92,8 +89,8 @@ export default abstract class BaseIPCCommand extends Command {
 			}
 			this.error(error instanceof Error ? error.message : error);
 		}
-		if (!this.baseIPCFlags.offline) {
-			this._channel.cleanup();
+		if (this._client) {
+			await this._client.disconnect();
 		}
 	}
 
@@ -110,16 +107,21 @@ export default abstract class BaseIPCCommand extends Command {
 			const app = getApplication(genesisBlock, config, {
 				enableHTTPAPIPlugin: false,
 				enableForgerPlugin: false,
+				enableMonitorPlugin: false,
+				enableReportMisbehaviorPlugin: false,
 			});
 			this._schema = app.getSchema();
-		} else {
-			await this._createIPCChannel(dataPath);
-			this._schema = await this._channel.invoke('app:getSchema');
+			return;
 		}
-		this._setCodec();
+
+		if (!isApplicationRunning(dataPath)) {
+			throw new Error(`Application at data path ${dataPath} is not running.`);
+		}
+		this._client = await apiClient.createIPCClient(dataPath);
+		this._schema = this._client.schemas;
 	}
 
-	printJSON(message?: string | Record<string, unknown>): void {
+	printJSON(message?: unknown): void {
 		if (this.baseIPCFlags.pretty) {
 			this.log(JSON.stringify(message, undefined, '  '));
 		} else {
@@ -127,131 +129,65 @@ export default abstract class BaseIPCCommand extends Command {
 		}
 	}
 
-	private async _createIPCChannel(dataPath: string): Promise<void> {
-		const { rootPath, label } = splitPath(dataPath);
-
-		if (!isApplicationRunning(dataPath)) {
-			throw new Error(`Application at data path ${dataPath} is not running.`);
-		}
-
-		this._channel = new IPCChannel(
-			'CoreCLI',
-			[],
-			{},
-			{
-				socketsPath: getSocketsPath(rootPath, label),
-			},
+	protected getAssetSchema(
+		moduleID: number,
+		assetID: number,
+	): RegisteredSchema['transactionsAssets'][0] {
+		const assetSchema = this._schema.transactionsAssets.find(
+			schema => schema.moduleID === moduleID && schema.assetID === assetID,
 		);
-
-		await this._channel.startAndListen();
+		if (!assetSchema) {
+			throw new Error(
+				`Transaction moduleID:${moduleID} with assetID:${assetID} is not registered in the application.`,
+			);
+		}
+		return assetSchema;
 	}
 
-	private _setCodec(): void {
-		this._codec = {
-			decodeAccount: (data: Buffer | string): Record<string, unknown> =>
-				codec.decodeJSON<Record<string, unknown>>(this._schema.account, convertStrToBuffer(data)),
-			decodeBlock: (data: Buffer | string): Record<string, unknown> => {
-				const blockBuffer: Buffer = Buffer.isBuffer(data) ? data : Buffer.from(data, 'hex');
-				const {
-					header,
-					payload,
-				}: {
-					header: Buffer;
-					payload: ReadonlyArray<Buffer>;
-				} = codec.decode(this._schema.block, blockBuffer);
+	protected decodeTransaction(transactionHexStr: string): Record<string, unknown> {
+		const transactionBytes = Buffer.from(transactionHexStr, 'hex');
+		if (this._client) {
+			return this._client.transaction.decode(transactionBytes);
+		}
+		const id = cryptography.hash(transactionBytes);
+		const transaction = codec.decode<Transaction>(this._schema.transaction, transactionBytes);
+		const assetSchema = this.getAssetSchema(transaction.moduleID, transaction.assetID);
+		const asset = codec.decode<Record<string, unknown>>(assetSchema.schema, transaction.asset);
+		return {
+			...transaction,
+			asset,
+			id,
+		};
+	}
 
-				const baseHeaderJSON: {
-					asset: string;
-					version: string;
-				} = codec.decodeJSON(this._schema.blockHeader, header);
-				const blockAssetJSON = codec.decodeJSON<Record<string, unknown>>(
-					this._schema.blockHeadersAssets[baseHeaderJSON.version],
-					Buffer.from(baseHeaderJSON.asset, 'hex'),
-				);
-				const payloadJSON = payload.map(transactionBuffer =>
-					this._codec.decodeTransaction(transactionBuffer),
-				);
+	protected encodeTransaction(transaction: Record<string, unknown>): Buffer {
+		if (this._client) {
+			return this._client.transaction.encode(transaction);
+		}
+		const assetSchema = this.getAssetSchema(
+			transaction.moduleID as number,
+			transaction.assetID as number,
+		);
+		const assetBytes = codec.encode(assetSchema.schema, transaction.asset as object);
+		const txBytes = codec.encode(this._schema.transaction, { ...transaction, asset: assetBytes });
+		return txBytes;
+	}
 
-				const blockId = cryptography.hash(header).toString('hex');
-
-				return {
-					header: {
-						...baseHeaderJSON,
-						asset: { ...blockAssetJSON },
-						id: blockId,
-					},
-					payload: payloadJSON,
-				};
-			},
-			decodeTransaction: (data: Buffer | string): Record<string, unknown> => {
-				const transactionBuffer = Buffer.isBuffer(data) ? data : Buffer.from(data, 'hex');
-				const baseTransaction: {
-					moduleID: number;
-					assetID: number;
-					asset: string;
-				} = codec.decodeJSON(this._schema.transaction, transactionBuffer);
-				const transactionTypeAssetSchema = this._schema.transactionsAssets.find(
-					as => as.moduleID === baseTransaction.moduleID && as.assetID === baseTransaction.assetID,
-				);
-				if (!transactionTypeAssetSchema) {
-					throw new Error(
-						`Transaction with module ${baseTransaction.moduleID} asset ${baseTransaction.assetID} is not registered`,
-					);
-				}
-				const transactionAsset = codec.decodeJSON<Record<string, unknown>>(
-					transactionTypeAssetSchema.schema,
-					Buffer.from(baseTransaction.asset, 'hex'),
-				);
-
-				return {
-					...baseTransaction,
-					id: cryptography.hash(transactionBuffer).toString('hex'),
-					asset: transactionAsset,
-				};
-			},
-			transactionFromJSON: (
-				assetSchema: Schema,
-				transactionObject: Record<string, unknown>,
-			): Record<string, unknown> => {
-				const assetBuffer = codec.encode(
-					assetSchema,
-					codec.fromJSON(assetSchema, transactionObject.asset as object),
-				);
-
-				return codec.fromJSON(this._schema.transaction, {
-					...transactionObject,
-					asset: assetBuffer,
-				});
-			},
-			transactionToJSON: (
-				assetSchema: Schema,
-				transactionObject: Record<string, unknown>,
-			): Record<string, unknown> => {
-				const assetJSON = codec.toJSON(assetSchema, transactionObject.asset as object);
-
-				const transactionJSON = codec.toJSON(this._schema.transaction, {
-					...transactionObject,
-					asset: Buffer.alloc(0),
-				});
-
-				return {
-					...transactionJSON,
-					asset: assetJSON,
-				};
-			},
-			encodeTransaction: (
-				assetSchema: Schema,
-				transactionObject: Record<string, unknown>,
-			): string => {
-				const assetBuffer = codec.encode(assetSchema, transactionObject.asset as object);
-
-				const transactionBuffer = codec.encode(this._schema.transaction, {
-					...transactionObject,
-					asset: assetBuffer,
-				});
-
-				return transactionBuffer.toString('hex');
-			},
+	protected transactionToJSON(transaction: Record<string, unknown>): Record<string, unknown> {
+		if (this._client) {
+			return this._client.transaction.toJSON(transaction);
+		}
+		const assetSchema = this.getAssetSchema(
+			transaction.moduleID as number,
+			transaction.assetID as number,
+		);
+		const assetJSON = codec.toJSON(assetSchema.schema, transaction.asset as object);
+		const { id, asset, ...txWithoutAsset } = transaction;
+		const txJSON = codec.toJSON(this._schema.transaction, txWithoutAsset);
+		return {
+			...txJSON,
+			asset: assetJSON,
+			id: Buffer.isBuffer(id) ? id.toString('hex') : undefined,
 		};
 	}
 }

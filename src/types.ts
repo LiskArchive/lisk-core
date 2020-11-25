@@ -1,4 +1,5 @@
 /*
+ * LiskHQ/lisk-commander
  * Copyright © 2020 Lisk Foundation
  *
  * See the LICENSE file at the top-level directory of this distribution
@@ -13,5 +14,4 @@
  *
  */
 
-export * as config from './config.json';
-export * as genesisBlock from './genesis_block.json';
+export type PromiseResolvedType<T> = T extends Promise<infer R> ? R : never;

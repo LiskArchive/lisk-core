@@ -14,7 +14,7 @@
  */
 
 import { flags as flagParser } from '@oclif/command';
-import { transactions, codec, TransactionJSON, cryptography } from 'lisk-sdk';
+import { transactions, cryptography } from 'lisk-sdk';
 import BaseIPCCommand from '../../base_ipc';
 import { flags as commonFlags } from '../../utils/flags';
 import { getPassphraseFromPrompt } from '../../utils/reader';
@@ -102,8 +102,11 @@ export default class SignCommand extends BaseIPCCommand {
 
 		let networkIdentifier = networkIdentifierSource as string;
 		if (!offline) {
-			const nodeInfo = await this._channel.invoke<Record<string, unknown>>('app:getNodeInfo');
-			networkIdentifier = nodeInfo.networkIdentifier as string;
+			if (!this._client) {
+				this.error('APIClient is not initialized.');
+			}
+			const nodeInfo = await this._client.node.getNodeInfo();
+			networkIdentifier = nodeInfo.networkIdentifier;
 		}
 
 		if (!offline && networkIdentifierSource && networkIdentifier !== networkIdentifierSource) {
@@ -112,32 +115,13 @@ export default class SignCommand extends BaseIPCCommand {
 			);
 		}
 
-		const transactionJSON = (this._codec.decodeTransaction(
-			transaction,
-		) as unknown) as TransactionJSON;
-		const { asset, assetID, moduleID } = transactionJSON;
-		const assetSchema = this._schema.transactionsAssets.find(
-			as => as.moduleID === moduleID && as.assetID === assetID,
-		);
-
-		if (!assetSchema) {
-			throw new Error(
-				// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-				`Transaction moduleID:${moduleID.toString()} with assetID:${assetID.toString()} is not registered in the application`,
-			);
-		}
-
 		const passphrase = passphraseSource ?? (await getPassphraseFromPrompt('passphrase', true));
 		const networkIdentifierBuffer = Buffer.from(networkIdentifier, 'hex');
-		const { id, ...transactionJSONWithoutID } = (transactionJSON as unknown) as Record<
-			string,
-			unknown
-		>;
-		const transactionObject = this._codec.transactionFromJSON(
-			assetSchema.schema,
-			transactionJSONWithoutID,
+		const transactionObject = this.decodeTransaction(transaction);
+		const assetSchema = this.getAssetSchema(
+			transactionObject.moduleID as number,
+			transactionObject.assetID as number,
 		);
-		transactionObject.asset = codec.fromJSON(assetSchema.schema, asset);
 		let signedTransaction: Record<string, unknown>;
 
 		// sign from multi sig account offline using input keys
@@ -175,19 +159,12 @@ export default class SignCommand extends BaseIPCCommand {
 				);
 			}
 			const address = cryptography.getAddressFromPublicKey(Buffer.from(senderPublicKey, 'hex'));
-			const account = await this._channel.invoke<string>('app:getAccount', {
-				address: address.toString('hex'),
-			});
-
-			const decodeAccount = this._codec.decodeAccount(account) as { keys: KeysAsset };
+			const account = (await this._client?.account.get(address)) as { keys: KeysAsset };
 			let keysAsset: KeysAsset;
-			if (
-				decodeAccount.keys?.mandatoryKeys.length === 0 &&
-				decodeAccount.keys?.optionalKeys.length === 0
-			) {
+			if (account.keys?.mandatoryKeys.length === 0 && account.keys?.optionalKeys.length === 0) {
 				keysAsset = transactionObject.asset as KeysAsset;
 			} else {
-				keysAsset = decodeAccount.keys;
+				keysAsset = account.keys;
 			}
 			const keys = {
 				mandatoryKeys: keysAsset.mandatoryKeys.map(k => Buffer.from(k, 'hex')),
@@ -205,11 +182,10 @@ export default class SignCommand extends BaseIPCCommand {
 		}
 
 		if (json) {
-			const { id: transactionID, ...signedTransactionWithoutID } = signedTransaction;
-			this.printJSON(this._codec.transactionToJSON(assetSchema.schema, signedTransactionWithoutID));
+			this.printJSON(this.transactionToJSON(signedTransaction));
 		} else {
 			this.printJSON({
-				transaction: this._codec.encodeTransaction(assetSchema.schema, signedTransaction),
+				transaction: this.encodeTransaction(signedTransaction).toString('hex'),
 			});
 		}
 	}

@@ -10,13 +10,13 @@
  * LICENSE file.
  *
  * Removal or modification of this copyright notice is prohibited.
- *
  */
 
-import * as sandbox from 'sinon';
+export interface UnregisteredAccount {
+	readonly address: Buffer;
+	readonly balance: bigint;
+}
 
-// eslint-disable-next-line mocha/no-top-level-hooks
-afterEach(() => {
-	sandbox.restore();
-	sandbox.reset();
-});
+export interface UnregisteredAddresses {
+	readonly unregisteredAddresses: UnregisteredAccount[];
+}

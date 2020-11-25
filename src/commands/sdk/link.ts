@@ -15,8 +15,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Command } from '@oclif/command';
-import { symlinkSync, pathExistsSync, removeSync } from 'fs-extra';
-import { join } from 'path';
+import { symlink, pathExistsSync, removeSync } from 'fs-extra';
+import { join, isAbsolute } from 'path';
 
 export default class LinkCommand extends Command {
 	static description = 'Symlink specific SDK folder during development.';
@@ -39,8 +39,12 @@ export default class LinkCommand extends Command {
 
 		const sdkLocalPath = join(__dirname, '../../../', 'node_modules', 'lisk-sdk');
 
+		// If targetSDK folder is relative path, it should be relative from the node_module
+		const targetSDKFolderFromNodeModule = isAbsolute(targetSDKFolder)
+			? targetSDKFolder
+			: join('../', targetSDKFolder);
 		removeSync(sdkLocalPath);
-		symlinkSync(targetSDKFolder, sdkLocalPath);
+		await symlink(targetSDKFolderFromNodeModule, sdkLocalPath);
 		this.log(`Linked '${targetSDKFolder as string}' to '${sdkLocalPath}'`);
 	}
 }

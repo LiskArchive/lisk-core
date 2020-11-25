@@ -15,123 +15,111 @@
 
 import { Readable } from 'stream';
 import * as crypto from 'crypto';
-import { expect, test } from '@oclif/test';
-import * as sandbox from 'sinon';
 import { homedir } from 'os';
 import { join } from 'path';
+import * as Config from '@oclif/config';
 import * as appUtils from '../../../src/utils/application';
 import * as dbUtils from '../../../src/utils/db';
+import HashCommand from '../../../src/commands/blockchain/hash';
+import { getConfig } from '../../utils/config';
 
 const defaultDataPath = join(homedir(), '.lisk', 'lisk-core');
 
 describe('blockchain:hash', () => {
 	const pid = 56869;
 	const hashBuffer = Buffer.from('dasfadsfdsaf787899afffadsfadsf');
-	const KVStoreStubInstance = {
-		createReadStream: sandbox.stub().returns(Readable.from([hashBuffer])),
-	};
-	const hashStub = {
-		update: sandbox.stub(),
-		digest: sandbox.stub().returns(hashBuffer),
-	};
 
-	const setupTest = () =>
-		test
-			.stub(dbUtils, 'getBlockchainDB', sandbox.stub().returns(KVStoreStubInstance))
-			.stub(appUtils, 'getPid', sandbox.stub().returns(pid))
-			.stub(crypto, 'createHash', sandbox.stub().returns(hashStub))
-			.stdout()
-			.stderr();
+	let stdout: string[];
+	let stderr: string[];
+	let config: Config.IConfig;
+	let hashStub;
 
-	afterEach(() => {
-		// To rewind readable stream have to override value every test
-		KVStoreStubInstance.createReadStream = sandbox.stub().returns(Readable.from([hashBuffer]));
-
-		hashStub.update.resetHistory();
-		hashStub.digest.resetHistory();
+	beforeEach(async () => {
+		stdout = [];
+		stderr = [];
+		config = await getConfig();
+		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
+		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
+		hashStub = {
+			update: jest.fn(),
+			digest: jest.fn().mockReturnValue(hashBuffer),
+		};
+		jest.spyOn(crypto, 'createHash').mockReturnValue(hashStub as never);
+		jest.spyOn(dbUtils, 'getBlockchainDB').mockReturnValue({
+			createReadStream: jest.fn().mockReturnValue(Readable.from([hashBuffer])),
+		} as never);
+		jest.spyOn(appUtils, 'getPid').mockReturnValue(pid);
 	});
 
 	describe('when application is running', () => {
 		describe('when starting without flag', () => {
-			setupTest()
-				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(true))
-				.command(['blockchain:hash'])
-				.catch(error => {
-					expect(error.message).to.equal(
-						`Can't generate hash for a running application. Application at data path ${defaultDataPath} is running with pid ${pid}.`,
-					);
-				})
-				.it('should log error and return');
+			it('should log error and return', async () => {
+				jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(true);
+				await expect(HashCommand.run([], config)).rejects.toThrow(
+					`Can't generate hash for a running application. Application at data path ${defaultDataPath} is running with pid ${pid}.`,
+				);
+			});
 		});
 
 		describe('when starting with particular data-path', () => {
-			setupTest()
-				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(true))
-				.command(['blockchain:hash', '--data-path=/my/app/'])
-				.catch(error => {
-					expect(error.message).to.equal(
-						`Can't generate hash for a running application. Application at data path /my/app/ is running with pid ${pid}.`,
-					);
-				})
-				.it('should log error and return');
+			it('should log error and return', async () => {
+				jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(true);
+				await expect(HashCommand.run(['--data-path=/my/app/'], config)).rejects.toThrow(
+					`Can't generate hash for a running application. Application at data path /my/app/ is running with pid ${pid}.`,
+				);
+			});
 		});
 	});
 
 	describe('when application is not running', () => {
 		describe('when starting without flag', () => {
-			setupTest()
-				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
-				.command(['blockchain:hash'])
-				.it('should create db object for "blockchain.db" for default data path', () => {
-					expect(dbUtils.getBlockchainDB).to.have.been.calledOnce;
-					expect(dbUtils.getBlockchainDB).to.have.been.calledWithExactly(defaultDataPath);
-				});
+			it('should create db object for "blockchain.db" for default data path', async () => {
+				jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(false);
+				await HashCommand.run([], config);
+				expect(dbUtils.getBlockchainDB).toHaveBeenCalledTimes(1);
+				expect(dbUtils.getBlockchainDB).toHaveBeenCalledWith(defaultDataPath);
+			});
 
-			setupTest()
-				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
-				.command(['blockchain:hash'])
-				.it('should hash the value read from db stream', () => {
-					expect(crypto.createHash).to.have.been.calledOnce;
-					expect(crypto.createHash).to.have.been.calledWithExactly('sha256');
-					expect(hashStub.update).to.have.been.calledOnce;
-					expect(hashStub.update).to.have.been.calledWithExactly(hashBuffer);
-					expect(hashStub.digest).to.have.been.calledOnce;
-				});
+			it('should hash the value read from db stream', async () => {
+				jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(false);
+				await HashCommand.run([], config);
+				expect(crypto.createHash).toHaveBeenCalledTimes(1);
+				expect(crypto.createHash).toHaveBeenCalledWith('sha256');
+				expect(hashStub.update).toHaveBeenCalledTimes(1);
+				expect(hashStub.update).toHaveBeenCalledWith(hashBuffer);
+				expect(hashStub.digest).toHaveBeenCalledTimes(1);
+			});
 
-			setupTest()
-				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
-				.command(['blockchain:hash'])
-				.it('should output the hash db values', ctx => {
-					expect(ctx.stdout).to.equal(`${hashBuffer.toString('hex')}\n`);
-				});
+			it('should output the hash db values', async () => {
+				jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(false);
+				await HashCommand.run([], config);
+				expect(stdout[0]).toBe(`${hashBuffer.toString('hex')}\n`);
+			});
 		});
 
 		describe('when starting with particular data-path', () => {
-			setupTest()
-				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
-				.command(['blockchain:hash', '--data-path=/my/app/'])
-				.it('should create db object for "blockchain.db" for given data path', () => {
-					expect(dbUtils.getBlockchainDB).to.have.been.calledOnce;
-					expect(dbUtils.getBlockchainDB).to.have.been.calledWithExactly('/my/app/');
-				});
+			it('should create db object for "blockchain.db" for given data path', async () => {
+				jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(false);
+				await HashCommand.run(['--data-path=/my/app/'], config);
+				expect(dbUtils.getBlockchainDB).toHaveBeenCalledTimes(1);
+				expect(dbUtils.getBlockchainDB).toHaveBeenCalledWith('/my/app/');
+			});
 
-			setupTest()
-				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
-				.command(['blockchain:hash'])
-				.it('should hash the value read from db stream', () => {
-					expect(crypto.createHash).to.have.been.calledOnce;
-					expect(crypto.createHash).to.have.been.calledWithExactly('sha256');
-					expect(hashStub.update).to.have.been.calledOnce;
-					expect(hashStub.update).to.have.been.calledWithExactly(hashBuffer);
-					expect(hashStub.digest).to.have.been.calledOnce;
-				});
+			it('should hash the value read from db stream', async () => {
+				jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(false);
+				await HashCommand.run(['--data-path=/my/app/'], config);
+				expect(crypto.createHash).toHaveBeenCalledTimes(1);
+				expect(crypto.createHash).toHaveBeenCalledWith('sha256');
+				expect(hashStub.update).toHaveBeenCalledTimes(1);
+				expect(hashStub.update).toHaveBeenCalledWith(hashBuffer);
+				expect(hashStub.digest).toHaveBeenCalledTimes(1);
+			});
 
-			setupTest()
-				.stub(appUtils, 'isApplicationRunning', sandbox.stub().returns(false))
-				.command(['blockchain:hash', '--data-path=/my/app/'])
-				.it('should output the hash db values', ctx => {
-					expect(ctx.stdout).to.equal(`${hashBuffer.toString('hex')}\n`);
-				});
+			it('should output the hash db values', async () => {
+				jest.spyOn(appUtils, 'isApplicationRunning').mockReturnValue(false);
+				await HashCommand.run(['--data-path=/my/app/'], config);
+				expect(stdout[0]).toBe(`${hashBuffer.toString('hex')}\n`);
+			});
 		});
 	});
 });
