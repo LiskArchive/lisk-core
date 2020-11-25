@@ -178,25 +178,6 @@ describe('start', () => {
 		});
 	});
 
-	describe('when custom port with --forger-plugin-port is specified along with --enable-forger-plugin', () => {
-		it('should update the config value', async () => {
-			await StartCommand.run(['--enable-forger-plugin', '--forger-plugin-port', '8888'], config);
-			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
-			expect(usedConfig.plugins.forger.port).toBe(8888);
-		});
-	});
-
-	describe('when custom white list with --forger-plugin-whitelist is specified along with --enable-forger-plugin', () => {
-		it('should update the config value', async () => {
-			await StartCommand.run(
-				['--enable-forger-plugin', '--forger-plugin-whitelist', '192.08.0.1:8888,192.08.0.2:8888'],
-				config,
-			);
-			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
-			expect(usedConfig.plugins.forger.whiteList).toEqual(['192.08.0.1:8888', '192.08.0.2:8888']);
-		});
-	});
-
 	describe('when --enable-monitor-plugin is specified', () => {
 		it('should pass this value to configuration', async () => {
 			await StartCommand.run(['--enable-monitor-plugin'], config);
@@ -233,35 +214,6 @@ describe('start', () => {
 			await StartCommand.run(['--enable-report-misbehavior-plugin'], config);
 			const [, , options] = (application.getApplication as jest.Mock).mock.calls[0];
 			expect(options.enableReportMisbehaviorPlugin).toBe(true);
-		});
-	});
-
-	describe('when custom port with --report-misbehavior-plugin-port is specified along with --enable-report-misbehavior-plugin', () => {
-		it('should update the config value', async () => {
-			await StartCommand.run(
-				['--enable-report-misbehavior-plugin', '--report-misbehavior-plugin-port', '8888'],
-				config,
-			);
-			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
-			expect(usedConfig.plugins.reportMisbehavior.port).toBe(8888);
-		});
-	});
-
-	describe('when custom white list with --report-misbehavior-plugin-whitelist is specified along with --enable-report-misbehavior-plugin', () => {
-		it('should update the config value', async () => {
-			await StartCommand.run(
-				[
-					'--enable-report-misbehavior-plugin',
-					'--report-misbehavior-plugin-whitelist',
-					'192.08.0.1:8888,192.08.0.2:8888',
-				],
-				config,
-			);
-			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
-			expect(usedConfig.plugins.reportMisbehavior.whiteList).toEqual([
-				'192.08.0.1:8888',
-				'192.08.0.2:8888',
-			]);
 		});
 	});
 

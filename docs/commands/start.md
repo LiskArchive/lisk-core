@@ -28,6 +28,13 @@ OPTIONS
   -p, --port=port                                        Open port for the peer to peer incoming connections.
                                                          Environment variable "LISK_PORT" can also be used.
 
+  --api-ipc                                              Enable IPC communication. This will also load up plugins in
+                                                         child process and communicate over IPC.
+
+  --api-ws                                               Enable websocket communication for api-client.
+
+  --api-ws-port=api-ws-port                              Port to be used for api-client websocket.
+
   --console-log=trace|debug|info|warn|error|fatal        Console log level. Environment variable
                                                          "LISK_CONSOLE_LOG_LEVEL" can also be used.
 
@@ -37,21 +44,24 @@ OPTIONS
   --enable-http-api-plugin                               Enable HTTP API Plugin. Environment variable
                                                          "LISK_ENABLE_HTTP_API_PLUGIN" can also be used.
 
-  --enable-ipc                                           Enable IPC communication. This will also load up plugins in
-                                                         child process and communicate over IPC.
+  --enable-monitor-plugin                                Enable Monitor Plugin. Environment variable
+                                                         "LISK_ENABLE_MONITOR_PLUGIN" can also be used.
 
-  --forger-plugin-port=forger-plugin-port                Port to be used for Forger Plugin. Environment variable
-                                                         "LISK_FORGER_PLUGIN_PORT" can also be used.
-
-  --forger-plugin-whitelist=forger-plugin-whitelist      List of IPs in comma separated value to allow the connection.
-                                                         Environment variable "LISK_FORGER_PLUGIN_WHITELIST" can also be
-                                                         used.
+  --enable-report-misbehavior-plugin                     Enable ReportMisbehavior Plugin. Environment variable
+                                                         "LISK_ENABLE_REPORT_MISBEHAVIOR_PLUGIN" can also be used.
 
   --http-api-plugin-port=http-api-plugin-port            Port to be used for HTTP API Plugin. Environment variable
                                                          "LISK_HTTP_API_PLUGIN_PORT" can also be used.
 
   --http-api-plugin-whitelist=http-api-plugin-whitelist  List of IPs in comma separated value to allow the connection.
                                                          Environment variable "LISK_HTTP_API_PLUGIN_WHITELIST" can also
+                                                         be used.
+
+  --monitor-plugin-port=monitor-plugin-port              Port to be used for Monitor Plugin. Environment variable
+                                                         "LISK_MONITOR_PLUGIN_PORT" can also be used.
+
+  --monitor-plugin-whitelist=monitor-plugin-whitelist    List of IPs in comma separated value to allow the connection.
+                                                         Environment variable "LISK_MONITOR_PLUGIN_WHITELIST" can also
                                                          be used.
 
   --overwrite-config                                     Overwrite network configs if they exist already
@@ -65,4 +75,4 @@ EXAMPLES
   start --network dev --data-path ./data --log debug
 ```
 
-_See code: [dist/commands/start.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.1/dist/commands/start.ts)_
+_See code: [dist/commands/start.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.5/dist/commands/start.ts)_
