@@ -206,7 +206,7 @@ export default class CreateCommand extends BaseIPCCommand {
 			);
 			const account = await this._client.account.get(address);
 			if (!isSequenceObject(account, 'sequence')) {
-				this.error('Account does not have seqence property.');
+				this.error('Account does not have sequence property.');
 			}
 			incompleteTransaction.nonce = account.sequence.nonce;
 		}

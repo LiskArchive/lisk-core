@@ -34,7 +34,7 @@ export default class LinkCommand extends Command {
 		} = this.parse(LinkCommand);
 
 		if (!pathExistsSync(targetSDKFolder)) {
-			throw new Error(`Path '${targetSDKFolder as string}' does not exist or no access allowed`);
+			throw new Error(`Path '${targetSDKFolder as string}' does not exist or access denied.`);
 		}
 
 		const sdkLocalPath = join(__dirname, '../../../', 'node_modules', 'lisk-sdk');
@@ -45,6 +45,6 @@ export default class LinkCommand extends Command {
 			: join('../', targetSDKFolder);
 		removeSync(sdkLocalPath);
 		await symlink(targetSDKFolderFromNodeModule, sdkLocalPath);
-		this.log(`Linked '${targetSDKFolder as string}' to '${sdkLocalPath}'`);
+		this.log(`Linked '${targetSDKFolder as string}' to '${sdkLocalPath}'.`);
 	}
 }

@@ -80,7 +80,7 @@ describe('hash-onion command', () => {
 	describe('hash-onion --count=-1 --distance=200', () => {
 		it('should throw an error', async () => {
 			await expect(HashOnionCommand.run(['--count=-1', '--distance=200'], config)).rejects.toThrow(
-				'Invalid count. Count has to be positive integer',
+				'Count flag must be an integer and greater than 0.',
 			);
 		});
 	});
@@ -88,7 +88,7 @@ describe('hash-onion command', () => {
 	describe('hash-onion --count=1000 --distance=-1', () => {
 		it('should throw an error', async () => {
 			await expect(HashOnionCommand.run(['--count=1000', '--distance=-1'], config)).rejects.toThrow(
-				'Invalid distance. Distance has to be positive integer',
+				'Distance flag must be an integer and greater than 0.',
 			);
 		});
 	});

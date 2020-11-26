@@ -47,11 +47,11 @@ export default class HashOnionCommand extends Command {
 		} = this.parse(HashOnionCommand);
 
 		if (distance <= 0 || !validator.isValidInteger(distance)) {
-			throw new Error('Invalid distance. Distance has to be positive integer');
+			throw new Error('Distance flag must be an integer and greater than 0.');
 		}
 
 		if (count <= 0 || !validator.isValidInteger(count)) {
-			throw new Error('Invalid count. Count has to be positive integer');
+			throw new Error('Count flag must be an integer and greater than 0.');
 		}
 
 		if (output) {

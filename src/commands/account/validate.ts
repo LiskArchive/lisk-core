@@ -37,7 +37,7 @@ export default class ValidateCommand extends Command {
 		try {
 			cryptography.validateBase32Address(address, this.config.pjson.lisk.addressPrefix);
 			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-			this.log(`Address ${address} is a valid address`);
+			this.log(`Address ${address} is a valid address.`);
 		} catch (error) {
 			this.error(error.message);
 		}

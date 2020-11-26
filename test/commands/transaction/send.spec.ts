@@ -91,7 +91,7 @@ describe('transaction:send command', () => {
 		it('should throw error.', async () => {
 			await expect(
 				SendCommand.run(['%%%%%%', `--data-path=${pathToAppPIDFiles}`], config),
-			).rejects.toThrow('The transaction must be provided as a hex encoded string');
+			).rejects.toThrow('The transaction must be provided as a encoded hex string.');
 		});
 	});
 
