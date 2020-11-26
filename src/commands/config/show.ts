@@ -26,7 +26,11 @@ import { flags as commonFlags } from '../../utils/flags';
 export default class ShowCommand extends Command {
 	static description = 'Show application config.';
 
-	static examples = ['config:show', 'config:show --config ./custom-config.json --data-path ./data'];
+	static examples = [
+		'config:show',
+		'config:show --pretty',
+		'config:show --config ./custom-config.json --data-path ./data',
+	];
 
 	static flags = {
 		'data-path': flagParser.string({

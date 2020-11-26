@@ -21,7 +21,10 @@ import * as path from 'path';
 export default class HashOnionCommand extends Command {
 	static description = 'Create hash onions to be used by the forger.';
 
-	static examples = ['hash-onion --count=1000000 --distance=2000'];
+	static examples = [
+		'hash-onion --count=1000000 --distance=2000',
+		'hash-onion --count=1000000 --distance=2000 --output ~/my_onion.json',
+	];
 
 	static flags = {
 		output: flagParser.string({
