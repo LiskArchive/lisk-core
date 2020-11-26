@@ -192,7 +192,9 @@ export default class StartCommand extends Command {
 		const defaultNetworkConfigDir = getConfigDirs(defaultNetworkConfigs);
 		if (!defaultNetworkConfigDir.includes(flags.network)) {
 			this.error(
-				`Network must be one of ${defaultNetworkConfigDir.join(',')} but received ${flags.network}.`,
+				`Network must be one of ${defaultNetworkConfigDir.join(',')} but received ${
+					flags.network
+				}.`,
 			);
 		}
 
