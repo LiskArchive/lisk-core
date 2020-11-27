@@ -71,7 +71,16 @@ const setPluginConfig = (config: ApplicationConfig, flags: Flags): void => {
 export default class StartCommand extends Command {
 	static description = 'Start Lisk Core Node.';
 
-	static examples = ['start', 'start --network dev --data-path ./data --log debug'];
+	static examples = [
+		'start',
+		'start --network devnet --data-path /path/to/data-dir --log debug',
+		'start --network devnet --api-ws',
+		'start --network devnet --api-ws --api-ws-port 8888',
+		'start --network devnet --port 9000',
+		'start --network devnet --port 9002 --seed-peers 127.0.0.1:9001,127.0.0.1:9000',
+		'start --network testnet --overwrite-config',
+		'start --network testnet --config ~/my_custom_config.json',
+	];
 
 	static flags = {
 		'data-path': flagParser.string({

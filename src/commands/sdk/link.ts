@@ -21,7 +21,7 @@ import { join, isAbsolute } from 'path';
 export default class LinkCommand extends Command {
 	static description = 'Symlink specific SDK folder during development.';
 
-	static examples = ['sdk:link /sdk/location/'];
+	static examples = ['sdk:link /path/to/lisk-sdk/sdk'];
 
 	static args = [
 		{ name: 'targetSDKFolder', required: true, description: 'The path to the lisk SDK folder' },
