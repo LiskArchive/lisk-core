@@ -51,7 +51,9 @@ const setPluginConfig = (config: ApplicationConfig, flags: Flags): void => {
 	) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		config.plugins[HTTPAPIPlugin.alias] = config.plugins[HTTPAPIPlugin.alias] ?? {};
-		config.plugins[HTTPAPIPlugin.alias].whiteList = flags['http-api-plugin-whitelist'].split(',');
+		config.plugins[HTTPAPIPlugin.alias].whiteList = flags['http-api-plugin-whitelist']
+			.split(',')
+			.filter(Boolean);
 	}
 	if (flags['monitor-plugin-port'] !== undefined) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -64,7 +66,9 @@ const setPluginConfig = (config: ApplicationConfig, flags: Flags): void => {
 	) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		config.plugins[MonitorPlugin.alias] = config.plugins[MonitorPlugin.alias] ?? {};
-		config.plugins[MonitorPlugin.alias].whiteList = flags['monitor-plugin-whitelist'].split(',');
+		config.plugins[MonitorPlugin.alias].whiteList = flags['monitor-plugin-whitelist']
+			.split(',')
+			.filter(Boolean);
 	}
 };
 
