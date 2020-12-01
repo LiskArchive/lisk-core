@@ -39,19 +39,28 @@ const processInputs = (passphrase: string, password: string, outputPublicKey: bo
 export default class EncryptCommand extends Command {
 	static description = 'Encrypt secret passphrase using password.';
 
-	static examples = ['passphrase:encrypt'];
+	static examples = [
+		'passphrase:encrypt',
+		'passphrase:encrypt --passphrase your-passphrase',
+		'passphrase:encrypt --password your-password',
+		'passphrase:encrypt --output-public-key',
+	];
 
 	static flags = {
 		password: flagParser.string(commonFlags.password),
 		passphrase: flagParser.string(commonFlags.passphrase),
-		outputPublicKey: flagParser.boolean({
+		'output-public-key': flagParser.boolean({
 			description: outputPublicKeyOptionDescription,
 		}),
 	};
 
 	async run(): Promise<void> {
 		const {
-			flags: { passphrase: passphraseSource, password: passwordSource, outputPublicKey },
+			flags: {
+				passphrase: passphraseSource,
+				password: passwordSource,
+				'output-public-key': outputPublicKey,
+			},
 		} = this.parse(EncryptCommand);
 
 		const passphrase = passphraseSource ?? (await getPassphraseFromPrompt('passphrase', true));

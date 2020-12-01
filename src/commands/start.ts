@@ -51,7 +51,9 @@ const setPluginConfig = (config: ApplicationConfig, flags: Flags): void => {
 	) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		config.plugins[HTTPAPIPlugin.alias] = config.plugins[HTTPAPIPlugin.alias] ?? {};
-		config.plugins[HTTPAPIPlugin.alias].whiteList = flags['http-api-plugin-whitelist'].split(',');
+		config.plugins[HTTPAPIPlugin.alias].whiteList = flags['http-api-plugin-whitelist']
+			.split(',')
+			.filter(Boolean);
 	}
 	if (flags['monitor-plugin-port'] !== undefined) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -64,14 +66,25 @@ const setPluginConfig = (config: ApplicationConfig, flags: Flags): void => {
 	) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		config.plugins[MonitorPlugin.alias] = config.plugins[MonitorPlugin.alias] ?? {};
-		config.plugins[MonitorPlugin.alias].whiteList = flags['monitor-plugin-whitelist'].split(',');
+		config.plugins[MonitorPlugin.alias].whiteList = flags['monitor-plugin-whitelist']
+			.split(',')
+			.filter(Boolean);
 	}
 };
 
 export default class StartCommand extends Command {
 	static description = 'Start Lisk Core Node.';
 
-	static examples = ['start', 'start --network dev --data-path ./data --log debug'];
+	static examples = [
+		'start',
+		'start --network devnet --data-path /path/to/data-dir --log debug',
+		'start --network devnet --api-ws',
+		'start --network devnet --api-ws --api-ws-port 8888',
+		'start --network devnet --port 9000',
+		'start --network devnet --port 9002 --seed-peers 127.0.0.1:9001,127.0.0.1:9000',
+		'start --network testnet --overwrite-config',
+		'start --network testnet --config ~/my_custom_config.json',
+	];
 
 	static flags = {
 		'data-path': flagParser.string({
@@ -185,14 +198,16 @@ export default class StartCommand extends Command {
 	async run(): Promise<void> {
 		const { flags } = this.parse(StartCommand);
 		const dataPath = flags['data-path'] ? flags['data-path'] : getDefaultPath();
-		this.log(`Starting Lisk Core at ${getFullPath(dataPath)}`);
+		this.log(`Starting Lisk Core at ${getFullPath(dataPath)}.`);
 		const pathConfig = splitPath(dataPath);
 
 		const defaultNetworkConfigs = getDefaultConfigDir();
 		const defaultNetworkConfigDir = getConfigDirs(defaultNetworkConfigs);
 		if (!defaultNetworkConfigDir.includes(flags.network)) {
 			this.error(
-				`Network must be one of ${defaultNetworkConfigDir.join(',')} but received ${flags.network}`,
+				`Network must be one of ${defaultNetworkConfigDir.join(',')} but received ${
+					flags.network
+				}.`,
 			);
 		}
 
@@ -204,7 +219,7 @@ export default class StartCommand extends Command {
 				this.error(
 					`Datapath ${dataPath} already contains configs for ${configDir.join(
 						',',
-					)}. Please use --overwrite-config to overwrite the config`,
+					)}. Please use --overwrite-config to overwrite the config.`,
 				);
 			}
 			// Remove other network configs
@@ -282,7 +297,7 @@ export default class StartCommand extends Command {
 			for (const seed of peers) {
 				const [ip, port] = seed.split(':');
 				if (!ip || !port || Number.isNaN(Number(port))) {
-					this.error('Invalid ip or port is specified.');
+					this.error('Invalid seed-peers, ip or port is invalid or not specified.');
 				}
 				config.network.seedPeers.push({ ip, port: Number(port) });
 			}

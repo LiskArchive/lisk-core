@@ -49,7 +49,7 @@ describe('sdk:link command', () => {
 				.calledWith('/path/does/not/exist')
 				.mockReturnValue(false);
 			await expect(LinkCommand.run(['/path/does/not/exist'], config)).rejects.toThrow(
-				"Path '/path/does/not/exist' does not exist or no access allowed",
+				"Path '/path/does/not/exist' does not exist or access denied.",
 			);
 		});
 	});

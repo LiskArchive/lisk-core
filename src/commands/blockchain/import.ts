@@ -33,6 +33,7 @@ export default class ImportCommand extends Command {
 	static examples = [
 		'blockchain:import ./path/to/blockchain.db.gz',
 		'blockchain:import ./path/to/blockchain.db.gz --data-path ./lisk/',
+		'blockchain:import ./path/to/blockchain.db.gz --data-path ./lisk/ --force',
 	];
 
 	static flags = {

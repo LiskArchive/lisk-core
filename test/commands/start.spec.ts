@@ -170,6 +170,17 @@ describe('start', () => {
 		});
 	});
 
+	describe('when empty white list with --http-api-plugin-whitelist is specified along with --enable-http-api-plugin', () => {
+		it('should update the config value', async () => {
+			await StartCommand.run(
+				['--enable-http-api-plugin', '--http-api-plugin-whitelist', ''],
+				config,
+			);
+			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
+			expect(usedConfig.plugins.httpApi.whiteList).toEqual([]);
+		});
+	});
+
 	describe('when --enable-forger-plugin is specified', () => {
 		it('should pass this value to configuration', async () => {
 			await StartCommand.run(['--enable-forger-plugin'], config);
@@ -206,6 +217,14 @@ describe('start', () => {
 			);
 			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
 			expect(usedConfig.plugins.monitor.whiteList).toEqual(['192.08.0.1:8888', '192.08.0.2:8888']);
+		});
+	});
+
+	describe('when empty white list with --monitor-plugin-whitelist is specified along with --enable-monitor-plugin', () => {
+		it('should update the config value', async () => {
+			await StartCommand.run(['--enable-monitor-plugin', '--monitor-plugin-whitelist', ''], config);
+			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
+			expect(usedConfig.plugins.monitor.whiteList).toEqual([]);
 		});
 	});
 

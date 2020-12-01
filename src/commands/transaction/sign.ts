@@ -55,10 +55,10 @@ export default class SignCommand extends BaseIPCCommand {
 			char: 'j',
 			description: 'Print the transaction in JSON format.',
 		}),
-		'sender-publickey': flagParser.string({
+		'sender-public-key': flagParser.string({
 			char: 's',
 			description:
-				'Sign the transaction with provided sender publickey, when passphrase is not provided',
+				'Sign the transaction with provided sender public key, when passphrase is not provided',
 		}),
 		offline: flagParser.boolean({
 			...commonFlags.offline,
@@ -73,7 +73,8 @@ export default class SignCommand extends BaseIPCCommand {
 	};
 
 	static examples = [
-		'transaction:sign 873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 0802100018022080c2d72f2a200fe9a3f1a21b5530f27f87a414b549e79a940bf24fdf2b2f05e7f22aeeecc86a32270880c2d72f1214ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e3a406b600b635b0d85c3bff1e59b1620e1083807fde4cd26545a5d18d2a81fcef7a07bf5ec079d090630bb8ba347d5d82bf426cbffaaa8b5404f1190a7676c8bd406',
+		'transaction:sign <hex-encoded-binary-transaction>',
+		'transaction:sign <hex-encoded-binary-transaction> --network testnet',
 	];
 
 	async run(): Promise<void> {
@@ -82,7 +83,7 @@ export default class SignCommand extends BaseIPCCommand {
 			flags: {
 				'data-path': dataPath,
 				'include-sender': includeSender,
-				'sender-publickey': senderPublicKey,
+				'sender-public-key': senderPublicKey,
 				'mandatory-keys': mandatoryKeys,
 				'optional-keys': optionalKeys,
 				json,

@@ -49,7 +49,7 @@ describe('transaction:create command', () => {
 	const unVoteAsset =
 		'{"votes":[{"delegateAddress":"ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815","amount":-50}]}';
 	const { publicKey } = cryptography.getAddressAndPublicKeyFromPassphrase(passphrase);
-	const senderPublickey = publicKey.toString('hex');
+	const senderPublicKey = publicKey.toString('hex');
 	const mockEncodedTransaction = Buffer.from('encoded transaction');
 	const mockJSONTransaction = {
 		asset: {
@@ -217,7 +217,7 @@ describe('transaction:create command', () => {
 			});
 
 			describe(`transaction:create 2 0 100000000 --asset=${transferAsset} --no-signature`, () => {
-				it('should throw error when sender publickey not specified when no-signature flag is used.', async () => {
+				it('should throw error when sender public key not specified when no-signature flag is used.', async () => {
 					await expect(
 						CreateCommand.run(
 							[
@@ -233,7 +233,7 @@ describe('transaction:create command', () => {
 							],
 							config,
 						),
-					).rejects.toThrow('Sender publickey must be specified when no-signature flags is used');
+					).rejects.toThrow('Sender public key must be specified when no-signature flags is used');
 				});
 			});
 
@@ -261,7 +261,7 @@ describe('transaction:create command', () => {
 				});
 			});
 
-			describe(`transaction:create 2 0 100000000 --asset=${transferAsset} --no-signature --sender-publickey=${senderPublickey}`, () => {
+			describe(`transaction:create 2 0 100000000 --asset=${transferAsset} --no-signature --sender-public-key=${senderPublicKey}`, () => {
 				it('should return encoded transaction string in hex format without signature', async () => {
 					await CreateCommand.run(
 						[
@@ -271,7 +271,7 @@ describe('transaction:create command', () => {
 							'--offline',
 							`--asset=${transferAsset}`,
 							'--no-signature',
-							`--sender-publickey=${senderPublickey}`,
+							`--sender-public-key=${senderPublicKey}`,
 							'--network-identifier=873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3.',
 							'--nonce=1',
 							'--network=devnet',
@@ -411,7 +411,7 @@ describe('transaction:create command', () => {
 							'100000000',
 							`--asset=${transferAsset}`,
 							'--no-signature',
-							`--sender-publickey=${senderPublickey}`,
+							`--sender-public-key=${senderPublicKey}`,
 							'--json',
 							'--offline',
 							'--network=devnet',
@@ -489,13 +489,13 @@ describe('transaction:create command', () => {
 			});
 
 			describe(`transaction:create 2 0 100000000 --asset=${transferAsset} --no-signature`, () => {
-				it('should throw error when sender publickey not specified when no-signature flag is used.', async () => {
+				it('should throw error when sender public key not specified when no-signature flag is used.', async () => {
 					await expect(
 						CreateCommand.run(
 							['2', '0', '100000000', `--asset=${transferAsset}`, '--no-signature'],
 							config,
 						),
-					).rejects.toThrow('Sender publickey must be specified when no-signature flags is used');
+					).rejects.toThrow('Sender public key must be specified when no-signature flags is used');
 				});
 			});
 
@@ -512,7 +512,7 @@ describe('transaction:create command', () => {
 				});
 			});
 
-			describe(`transaction:create 2 0 100000000 --asset=${transferAsset} --no-signature --sender-publickey=${senderPublickey}`, () => {
+			describe(`transaction:create 2 0 100000000 --asset=${transferAsset} --no-signature --sender-public-key=${senderPublicKey}`, () => {
 				it('should return encoded transaction string in hex format without signature', async () => {
 					await CreateCommand.run(
 						[
@@ -521,7 +521,7 @@ describe('transaction:create command', () => {
 							'100000000',
 							`--asset=${transferAsset}`,
 							'--no-signature',
-							`--sender-publickey=${senderPublickey}`,
+							`--sender-public-key=${senderPublicKey}`,
 						],
 						config,
 					);
@@ -632,7 +632,7 @@ describe('transaction:create command', () => {
 							'100000000',
 							`--asset=${transferAsset}`,
 							'--no-signature',
-							`--sender-publickey=${senderPublickey}`,
+							`--sender-public-key=${senderPublicKey}`,
 							'--json',
 						],
 						config,

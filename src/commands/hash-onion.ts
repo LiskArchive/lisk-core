@@ -21,7 +21,10 @@ import * as path from 'path';
 export default class HashOnionCommand extends Command {
 	static description = 'Create hash onions to be used by the forger.';
 
-	static examples = ['hash-onion --count=1000000 --distance=2000'];
+	static examples = [
+		'hash-onion --count=1000000 --distance=2000',
+		'hash-onion --count=1000000 --distance=2000 --output ~/my_onion.json',
+	];
 
 	static flags = {
 		output: flagParser.string({
@@ -47,11 +50,11 @@ export default class HashOnionCommand extends Command {
 		} = this.parse(HashOnionCommand);
 
 		if (distance <= 0 || !validator.isValidInteger(distance)) {
-			throw new Error('Invalid distance. Distance has to be positive integer');
+			throw new Error('Distance flag must be an integer and greater than 0.');
 		}
 
 		if (count <= 0 || !validator.isValidInteger(count)) {
-			throw new Error('Invalid count. Count has to be positive integer');
+			throw new Error('Count flag must be an integer and greater than 0.');
 		}
 
 		if (output) {

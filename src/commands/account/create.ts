@@ -65,7 +65,7 @@ export default class CreateCommand extends Command {
 			!Number.isInteger(numberOfAccounts) ||
 			numberOfAccounts <= 0
 		) {
-			throw new Error('Count flag must be an integer and greater than 0');
+			throw new Error('Count flag must be an integer and greater than 0.');
 		}
 		const accounts = new Array(numberOfAccounts)
 			.fill(0)

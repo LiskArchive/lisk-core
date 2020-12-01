@@ -90,9 +90,9 @@ describe('passphrase:encrypt', () => {
 		});
 	});
 
-	describe('passphrase:encrypt --outputPublicKey', () => {
+	describe('passphrase:encrypt --output-public-key', () => {
 		it('should encrypt passphrase and output public key', async () => {
-			await EncryptCommand.run(['--outputPublicKey'], config);
+			await EncryptCommand.run(['--output-public-key'], config);
 			expect(cryptography.encryptPassphraseWithPassword).toHaveBeenCalledWith(
 				defaultInputs.passphrase,
 				defaultInputs.password,
