@@ -42,6 +42,7 @@
 		"lisk-core": "./bin/run"
 	},
 	"lisk": {
+		"daemons": ["start"],
 		"addressPrefix": "lsk"
 	},
 	"oclif": {
