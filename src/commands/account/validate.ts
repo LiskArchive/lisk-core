@@ -40,6 +40,7 @@ export default class ValidateCommand extends Command {
 
 			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
 			this.log(
+				// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
 				`Address ${address} is a valid base32 address and the corresponding binary address is ${binaryAddress}.`,
 			);
 		} catch (error) {
