@@ -18,7 +18,7 @@ import { EventEmitter } from 'events';
 import * as downloadUtil from '../../src/utils/download';
 
 describe('download utils', () => {
-	const url = 'https://downloads.lisk.io/lisk/betanet/blockchain.db.gz';
+	const url = 'https://downloads.lisk.io/lisk/betanet/blockchain.db.tar.gz';
 	const outDir = './tmp/cache/lisk-core';
 
 	describe('#download', () => {
