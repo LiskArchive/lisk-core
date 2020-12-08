@@ -39,8 +39,7 @@ export default class ValidateCommand extends Command {
 			const binaryAddress = cryptography.getAddressFromBase32Address(address).toString('hex');
 
 			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-			this.log(`Address ${address} is a valid base32 address.`);
-			this.log(`Address ${binaryAddress} is a valid binary address`);
+			this.log(`Address ${address} is a valid base32 address and the corresponding binary address is ${binaryAddress}.`);
 		} catch (error) {
 			this.error(error.message);
 		}
