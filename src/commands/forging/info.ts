@@ -19,6 +19,7 @@ export default class InfoCommand extends BaseIPCCommand {
 
 	static examples = [
 		'forging:info',
+		'forging:info --data-path ./sample --pretty',
 	];
 
 	static flags = {
