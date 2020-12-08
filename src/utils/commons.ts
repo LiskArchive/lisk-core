@@ -20,7 +20,7 @@ export const liskSnapshotUrl = (url: string, network: NETWORK): string => {
 		return '';
 	}
 	if (url && url.search(RELEASE_URL) >= 0) {
-		return `${RELEASE_URL}/${network}/blockchain.db.gz`;
+		return `${RELEASE_URL}/${network}/blockchain.db.tar.gz`;
 	}
 	return url;
 };

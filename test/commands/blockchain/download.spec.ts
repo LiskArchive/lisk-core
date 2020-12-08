@@ -20,7 +20,7 @@ import DownloadCommand from '../../../src/commands/blockchain/download';
 import { getConfig } from '../../utils/config';
 
 describe('blockchain:download', () => {
-	const SNAPSHOT_URL = 'https://downloads.lisk.io/lisk/mainnet/blockchain.db.gz';
+	const SNAPSHOT_URL = 'https://downloads.lisk.io/lisk/mainnet/blockchain.db.tar.gz';
 	const dataPath = process.cwd();
 
 	let stdout: string[];
