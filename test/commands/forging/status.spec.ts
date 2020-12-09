@@ -17,10 +17,10 @@ import { apiClient } from 'lisk-sdk';
 import * as Config from '@oclif/config';
 import baseIPC from '../../../src/base_ipc';
 import * as appUtils from '../../../src/utils/application';
-import InfoCommand from '../../../src/commands/forging/info';
+import StatusCommand from '../../../src/commands/forging/status';
 import { getConfig } from '../../utils/config';
 
-describe('forging:info command', () => {
+describe('forging:status command', () => {
 	const forgingInfoMock = [{ address: 'fake-address', forging: true }];
 	let stdout: string[];
 	let stderr: string[];
@@ -43,9 +43,9 @@ describe('forging:info command', () => {
 		jest.spyOn(baseIPC.prototype, 'printJSON');
 	});
 
-	describe('forging:', () => {
+	describe('forging:status', () => {
 		it('should throw an error when no arguments are provided.', async () => {
-			await InfoCommand.run([], config);
+			await StatusCommand.run([], config);
 			expect(invokeMock).toHaveBeenCalledTimes(1);
 			expect(invokeMock).toHaveBeenCalledWith('app:getForgingStatus');
 			expect(baseIPC.prototype.printJSON).toHaveBeenCalledTimes(1);
