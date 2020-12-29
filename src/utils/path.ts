@@ -65,7 +65,12 @@ export const getConfigDirs = (dataPath: string): string[] => {
 	return files.filter(file => fs.statSync(path.join(configPath, file)).isDirectory());
 };
 
-export const getGenesisBlockAndConfig = async (network: string) => {
+export const getGenesisBlockAndConfig = async (
+	network: string,
+): Promise<{
+	genesisBlock: Record<string, unknown>;
+	config: PartialApplicationConfig;
+}> => {
 	const {
 		genesisBlockFilePath: defaultGenesisBlockFilePath,
 		configFilePath: defaultConfigFilepath,
