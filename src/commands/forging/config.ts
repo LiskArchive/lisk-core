@@ -85,11 +85,15 @@ export default class ConfigCommand extends Command {
 			fs.writeJSONSync(output, { address, encryptedPassphrase, hashOnion });
 		} else {
 			const message = { address, encryptedPassphrase, hashOnion };
-			if (pretty) {
-				this.log(JSON.stringify(message, undefined, '  '));
-			} else {
-				this.log(JSON.stringify(message));
-			}
+			this.printJSON(message, pretty);
+		}
+	}
+
+	public printJSON(message?: object, pretty = false): void {
+		if (pretty) {
+			this.log(JSON.stringify(message, undefined, '  '));
+		} else {
+			this.log(JSON.stringify(message));
 		}
 	}
 }
