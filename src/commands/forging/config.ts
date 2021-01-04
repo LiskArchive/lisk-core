@@ -54,7 +54,14 @@ export default class ConfigCommand extends Command {
 
 	async run(): Promise<void> {
 		const {
-			flags: { count, distance, output, passphrase: passphraseSource, password: passwordSource, pretty },
+			flags: {
+				count,
+				distance,
+				output,
+				passphrase: passphraseSource,
+				password: passwordSource,
+				pretty,
+			},
 		} = this.parse(ConfigCommand);
 
 		if (distance <= 0 || !validator.isValidInteger(distance)) {
