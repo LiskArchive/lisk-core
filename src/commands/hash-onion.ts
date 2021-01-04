@@ -22,7 +22,7 @@ export default class HashOnionCommand extends Command {
 	static description = 'Create hash onions to be used by the forger.';
 
 	static examples = [
-		'hash-onion --count=1000000 --distance=2000',
+		'hash-onion --count=1000000 --distance=2000 --pretty',
 		'hash-onion --count=1000000 --distance=2000 --output ~/my_onion.json',
 	];
 
@@ -41,12 +41,15 @@ export default class HashOnionCommand extends Command {
 			description: 'Distance between each hashes',
 			default: 1000,
 		}),
+		pretty: flagParser.boolean({
+			description: 'Prints JSON in pretty format rather than condensed.',
+		}),
 	};
 
 	// eslint-disable-next-line @typescript-eslint/require-await
 	async run(): Promise<void> {
 		const {
-			flags: { output, count, distance },
+			flags: { output, count, distance, pretty },
 		} = this.parse(HashOnionCommand);
 
 		if (distance <= 0 || !validator.isValidInteger(distance)) {
@@ -72,7 +75,7 @@ export default class HashOnionCommand extends Command {
 		if (output) {
 			fs.writeJSONSync(output, result);
 		} else {
-			this.printJSON(result);
+			this.printJSON(result, pretty);
 		}
 	}
 
