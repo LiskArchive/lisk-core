@@ -31,8 +31,8 @@ export default class ConfigCommand extends Command {
 	];
 
 	static flags = {
-		password: flagParser.string({ ...commonFlags.password, required: true }),
-		passphrase: flagParser.string({ ...commonFlags.passphrase, required: true }),
+		password: flagParser.string({ ...commonFlags.password }),
+		passphrase: flagParser.string({ ...commonFlags.passphrase }),
 		count: flagParser.integer({
 			char: 'c',
 			description: 'Total number of hashes to produce',
