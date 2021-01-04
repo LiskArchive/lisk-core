@@ -25,7 +25,8 @@ export default class ConfigCommand extends Command {
 	static description = 'Generate delegate forging config for given passphrase and password.';
 
 	static examples = [
-		'forging:config, forging:config --password your_password',
+		'forging:config',
+		'forging:config --password your_password',
 		'forging:config --passphrase your_passphrase --password your_password --pretty',
 		'forging:config --count=1000000 --distance=2000 --output /tmp/forging_config.json',
 	];
