@@ -64,7 +64,7 @@ describe('passphrase:decrypt', () => {
 				encryptedPassphraseObject,
 				defaultInputs,
 			);
-			expect(DecryptCommand.prototype.printJSON).toHaveBeenCalledWith({ passphrase });
+			expect(DecryptCommand.prototype.printJSON).toHaveBeenCalledWith({ passphrase }, undefined);
 		});
 	});
 
@@ -81,7 +81,7 @@ describe('passphrase:decrypt', () => {
 			);
 			expect(DecryptCommand.prototype.printJSON).toHaveBeenCalledWith({
 				passphrase,
-			});
+			}, undefined);
 		});
 	});
 });
