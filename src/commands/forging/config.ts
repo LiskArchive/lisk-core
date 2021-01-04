@@ -25,7 +25,8 @@ export default class ConfigCommand extends Command {
 	static description = 'Generate delegate forging config for given passphrase and password.';
 
 	static examples = [
-		'forging:config, forging:config --password your_password, forging:config --passphrase your_passphrase --password your_password',
+		'forging:config, forging:config --password your_password',
+		'forging:config --passphrase your_passphrase --password your_password --pretty',
 		'forging:config --count=1000000 --distance=2000 --output /tmp/forging_config.json',
 	];
 
@@ -46,11 +47,14 @@ export default class ConfigCommand extends Command {
 			char: 'o',
 			description: 'Output file path',
 		}),
+		pretty: flagParser.boolean({
+			description: 'Prints JSON in pretty format rather than condensed.',
+		}),
 	};
 
 	async run(): Promise<void> {
 		const {
-			flags: { count, distance, output, passphrase: passphraseSource, password: passwordSource },
+			flags: { count, distance, output, passphrase: passphraseSource, password: passwordSource, pretty },
 		} = this.parse(ConfigCommand);
 
 		if (distance <= 0 || !validator.isValidInteger(distance)) {
@@ -80,15 +84,12 @@ export default class ConfigCommand extends Command {
 		if (output) {
 			fs.writeJSONSync(output, { address, encryptedPassphrase, hashOnion });
 		} else {
-			this.printJSON({ address, encryptedPassphrase, hashOnion });
-		}
-	}
-
-	public printJSON(message?: object, pretty = false): void {
-		if (pretty) {
-			this.log(JSON.stringify(message, undefined, '  '));
-		} else {
-			this.log(JSON.stringify(message));
+			const message = { address, encryptedPassphrase, hashOnion };
+			if (pretty) {
+				this.log(JSON.stringify(message, undefined, '  '));
+			} else {
+				this.log(JSON.stringify(message));
+			}
 		}
 	}
 }
