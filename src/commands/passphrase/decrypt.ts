@@ -16,7 +16,7 @@ import { cryptography } from 'lisk-sdk';
 import Command, { flags as flagParser } from '@oclif/command';
 
 import { flags as commonFlags } from '../../utils/flags';
-import { getPassphraseFromPrompt } from '../../utils/reader';
+import { getPasswordFromPrompt } from '../../utils/reader';
 
 interface Args {
 	readonly encryptedPassphrase?: string;
@@ -59,7 +59,7 @@ export default class DecryptCommand extends Command {
 			flags: { password: passwordSource },
 		} = this.parse(DecryptCommand);
 		const { encryptedPassphrase }: Args = args;
-		const password = passwordSource ?? (await getPassphraseFromPrompt('password', true));
+		const password = passwordSource ?? (await getPasswordFromPrompt('password', true));
 		const result = processInputs(password, encryptedPassphrase as string);
 		this.printJSON(result);
 	}

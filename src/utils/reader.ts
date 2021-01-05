@@ -36,8 +36,35 @@ interface Question {
 
 const capitalise = (text: string): string => `${text.charAt(0).toUpperCase()}${text.slice(1)}`;
 
-const getPassphraseVerificationFailError = (displayName: string): string =>
+const getPromptVerificationFailError = (displayName: string): string =>
 	`${capitalise(displayName)} was not successfully repeated.`;
+
+export const getPasswordFromPrompt = async (
+	displayName = 'password',
+	shouldConfirm = false,
+): Promise<string> => {
+	const questions = [
+		{
+			type: 'password',
+			name: 'password',
+			message: `Please enter ${displayName}: `,
+		},
+	];
+	if (shouldConfirm) {
+		questions.push({
+			type: 'password',
+			name: 'passwordRepeat',
+			message: `Please re-enter ${displayName}: `,
+		});
+	}
+
+	const { password, passwordRepeat } = await inquirer.prompt(questions);
+	if (!password || (shouldConfirm && password !== passwordRepeat)) {
+		throw new ValidationError(getPromptVerificationFailError(displayName));
+	}
+
+	return password;
+};
 
 export const getPassphraseFromPrompt = async (
 	displayName = 'passphrase',
@@ -58,11 +85,10 @@ export const getPassphraseFromPrompt = async (
 		});
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 	const { passphrase, passphraseRepeat } = await inquirer.prompt(questions);
 
 	if (!passphrase || (shouldConfirm && passphrase !== passphraseRepeat)) {
-		throw new ValidationError(getPassphraseVerificationFailError(displayName));
+		throw new ValidationError(getPromptVerificationFailError(displayName));
 	}
 
 	const passphraseErrors = [passphrase]
