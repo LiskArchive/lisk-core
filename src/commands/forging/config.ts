@@ -13,24 +13,27 @@
  *
  */
 
-import { cryptography, validator } from 'lisk-sdk';
-import Command, { flags as flagParser } from '@oclif/command';
+import { flags as flagParser, Command } from '@oclif/command';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import { cryptography, validator } from 'lisk-sdk';
+import { encryptPassphrase } from '../../utils/commons';
+import { flags as commonFlags } from '../../utils/flags';
+import { getPassphraseFromPrompt, getPasswordFromPrompt } from '../../utils/reader';
 
-export default class HashOnionCommand extends Command {
-	static description = 'Create hash onions to be used by the forger.';
+export default class ConfigCommand extends Command {
+	static description = 'Generate delegate forging config for given passphrase and password.';
 
 	static examples = [
-		'hash-onion --count=1000000 --distance=2000 --pretty',
-		'hash-onion --count=1000000 --distance=2000 --output ~/my_onion.json',
+		'forging:config',
+		'forging:config --password your_password',
+		'forging:config --passphrase your_passphrase --password your_password --pretty',
+		'forging:config --count=1000000 --distance=2000 --output /tmp/forging_config.json',
 	];
 
 	static flags = {
-		output: flagParser.string({
-			char: 'o',
-			description: 'Output file path',
-		}),
+		password: flagParser.string({ ...commonFlags.password }),
+		passphrase: flagParser.string({ ...commonFlags.passphrase }),
 		count: flagParser.integer({
 			char: 'c',
 			description: 'Total number of hashes to produce',
@@ -41,16 +44,26 @@ export default class HashOnionCommand extends Command {
 			description: 'Distance between each hashes',
 			default: 1000,
 		}),
+		output: flagParser.string({
+			char: 'o',
+			description: 'Output file path',
+		}),
 		pretty: flagParser.boolean({
 			description: 'Prints JSON in pretty format rather than condensed.',
 		}),
 	};
 
-	// eslint-disable-next-line @typescript-eslint/require-await
 	async run(): Promise<void> {
 		const {
-			flags: { output, count, distance, pretty },
-		} = this.parse(HashOnionCommand);
+			flags: {
+				count,
+				distance,
+				output,
+				passphrase: passphraseSource,
+				password: passwordSource,
+				pretty,
+			},
+		} = this.parse(ConfigCommand);
 
 		if (distance <= 0 || !validator.isValidInteger(distance)) {
 			throw new Error('Distance flag must be an integer and greater than 0.');
@@ -69,17 +82,22 @@ export default class HashOnionCommand extends Command {
 
 		const hashBuffers = cryptography.hashOnion(seed, count, distance);
 		const hashes = hashBuffers.map(buf => buf.toString('hex'));
+		const hashOnion = { count, distance, hashes };
 
-		const result = { count, distance, hashes };
+		const passphrase = passphraseSource ?? (await getPassphraseFromPrompt('passphrase', true));
+		const address = cryptography.getAddressFromPassphrase(passphrase).toString('hex');
+		const password = passwordSource ?? (await getPasswordFromPrompt('password', true));
+		const { encryptedPassphrase } = encryptPassphrase(passphrase, password, false);
+		const message = { address, encryptedPassphrase, hashOnion };
 
 		if (output) {
 			if (pretty) {
-				fs.writeJSONSync(output, result, { spaces: ' ' });
+				fs.writeJSONSync(output, message, { spaces: ' ' });
 			} else {
-				fs.writeJSONSync(output, result);
+				fs.writeJSONSync(output, message);
 			}
 		} else {
-			this.printJSON(result, pretty);
+			this.printJSON(message, pretty);
 		}
 	}
 

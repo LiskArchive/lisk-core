@@ -51,17 +51,20 @@ export default class DecryptCommand extends Command {
 
 	static flags = {
 		password: flagParser.string(commonFlags.password),
+		pretty: flagParser.boolean({
+			description: 'Prints JSON in pretty format rather than condensed.',
+		}),
 	};
 
 	async run(): Promise<void> {
 		const {
 			args,
-			flags: { password: passwordSource },
+			flags: { password: passwordSource, pretty },
 		} = this.parse(DecryptCommand);
 		const { encryptedPassphrase }: Args = args;
 		const password = passwordSource ?? (await getPasswordFromPrompt('password', true));
 		const result = processInputs(password, encryptedPassphrase as string);
-		this.printJSON(result);
+		this.printJSON(result, pretty);
 	}
 
 	public printJSON(message?: object, pretty = false): void {

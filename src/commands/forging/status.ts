@@ -17,7 +17,7 @@ import BaseIPCCommand from '../../base_ipc';
 export default class StatusCommand extends BaseIPCCommand {
 	static description = 'Get forging information for the locally running node.';
 
-	static examples = ['forging:info', 'forging:info --data-path ./sample --pretty'];
+	static examples = ['forging:status', 'forging:status --data-path ./sample --pretty'];
 
 	static flags = {
 		...BaseIPCCommand.flags,
