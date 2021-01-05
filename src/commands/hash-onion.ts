@@ -73,7 +73,11 @@ export default class HashOnionCommand extends Command {
 		const result = { count, distance, hashes };
 
 		if (output) {
-			fs.writeJSONSync(output, result);
+			if (pretty) {
+				fs.writeJSONSync(output, result, { spaces: ' ' });
+			} else {
+				fs.writeJSONSync(output, result);
+			}
 		} else {
 			this.printJSON(result, pretty);
 		}

@@ -88,11 +88,15 @@ export default class ConfigCommand extends Command {
 		const address = cryptography.getAddressFromPassphrase(passphrase).toString('hex');
 		const password = passwordSource ?? (await getPasswordFromPrompt('password', true));
 		const { encryptedPassphrase } = encryptPassphrase(passphrase, password, false);
+		const message = { address, encryptedPassphrase, hashOnion };
 
 		if (output) {
-			fs.writeJSONSync(output, { address, encryptedPassphrase, hashOnion });
+			if (pretty) {
+				fs.writeJSONSync(output, message, { spaces: ' ' });
+			} else {
+				fs.writeJSONSync(output, message);
+			}
 		} else {
-			const message = { address, encryptedPassphrase, hashOnion };
 			this.printJSON(message, pretty);
 		}
 	}

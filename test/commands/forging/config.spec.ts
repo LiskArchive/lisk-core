@@ -158,6 +158,19 @@ describe('forging:config command', () => {
 					expect.anything(),
 				);
 			});
+
+			it('should write forging config to file in pretty format', async () => {
+				await ConfigCommand.run(
+					['--count=2', '--distance=1', '--pretty', '--output=/tmp/forging_config.json'],
+					config,
+				);
+				expect(fs.ensureDirSync).toHaveBeenCalledWith('/tmp');
+				expect(fs.writeJSONSync).toHaveBeenCalledWith(
+					'/tmp/forging_config.json',
+					expect.anything(),
+					{ spaces: ' ' },
+				);
+			});
 		});
 	});
 });
