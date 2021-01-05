@@ -59,6 +59,17 @@ describe('hash-onion command', () => {
 			expect(fs.ensureDirSync).toHaveBeenCalledWith('./test');
 			expect(fs.writeJSONSync).toHaveBeenCalledWith('./test/sample.json', expect.anything());
 		});
+
+		it('should write to file in pretty format', async () => {
+			await HashOnionCommand.run(
+				['--count=1000', '--distance=200', '--pretty', '--output=./test/sample.json'],
+				config,
+			);
+			expect(fs.ensureDirSync).toHaveBeenCalledWith('./test');
+			expect(fs.writeJSONSync).toHaveBeenCalledWith('./test/sample.json', expect.anything(), {
+				spaces: ' ',
+			});
+		});
 	});
 
 	describe('hash-onion --count=777 --distance=200', () => {

@@ -91,9 +91,12 @@ describe('passphrase:encrypt', () => {
 			expect(readerUtils.getPassphraseFromPrompt).toHaveBeenCalledWith('passphrase', true);
 			expect(readerUtils.getPasswordFromPrompt).toHaveBeenCalledWith('password', true);
 
-			expect(EncryptCommand.prototype.printJSON).toHaveBeenCalledWith({
-				encryptedPassphrase: encryptedPassphraseString,
-			});
+			expect(EncryptCommand.prototype.printJSON).toHaveBeenCalledWith(
+				{
+					encryptedPassphrase: encryptedPassphraseString,
+				},
+				undefined,
+			);
 			expect(consoleWarnSpy).toHaveBeenCalledTimes(0);
 		});
 	});
@@ -110,10 +113,13 @@ describe('passphrase:encrypt', () => {
 			);
 			expect(readerUtils.getPassphraseFromPrompt).toHaveBeenCalledWith('passphrase', true);
 			expect(readerUtils.getPasswordFromPrompt).toHaveBeenCalledWith('password', true);
-			expect(EncryptCommand.prototype.printJSON).toHaveBeenCalledWith({
-				encryptedPassphrase: encryptedPassphraseString,
-				publicKey: defaultKeys.publicKey.toString('hex'),
-			});
+			expect(EncryptCommand.prototype.printJSON).toHaveBeenCalledWith(
+				{
+					encryptedPassphrase: encryptedPassphraseString,
+					publicKey: defaultKeys.publicKey.toString('hex'),
+				},
+				undefined,
+			);
 		});
 	});
 
@@ -132,9 +138,12 @@ describe('passphrase:encrypt', () => {
 			);
 			expect(readerUtils.getPassphraseFromPrompt).not.toHaveBeenCalledWith('passphrase', true);
 			expect(readerUtils.getPasswordFromPrompt).toHaveBeenCalledWith('password', true);
-			expect(EncryptCommand.prototype.printJSON).toHaveBeenCalledWith({
-				encryptedPassphrase: encryptedPassphraseString,
-			});
+			expect(EncryptCommand.prototype.printJSON).toHaveBeenCalledWith(
+				{
+					encryptedPassphrase: encryptedPassphraseString,
+				},
+				undefined,
+			);
 		});
 	});
 
@@ -156,9 +165,12 @@ describe('passphrase:encrypt', () => {
 			);
 			expect(readerUtils.getPassphraseFromPrompt).not.toHaveBeenCalledWith('passphrase', true);
 			expect(readerUtils.getPasswordFromPrompt).not.toHaveBeenCalledWith('password', true);
-			expect(EncryptCommand.prototype.printJSON).toHaveBeenCalledWith({
-				encryptedPassphrase: encryptedPassphraseString,
-			});
+			expect(EncryptCommand.prototype.printJSON).toHaveBeenCalledWith(
+				{
+					encryptedPassphrase: encryptedPassphraseString,
+				},
+				undefined,
+			);
 		});
 	});
 });

@@ -28,6 +28,7 @@ export default class EncryptCommand extends Command {
 		'passphrase:encrypt',
 		'passphrase:encrypt --passphrase your-passphrase',
 		'passphrase:encrypt --password your-password',
+		'passphrase:encrypt --password your-password --passphrase your-passphrase --pretty',
 		'passphrase:encrypt --output-public-key',
 	];
 
@@ -37,6 +38,9 @@ export default class EncryptCommand extends Command {
 		'output-public-key': flagParser.boolean({
 			description: outputPublicKeyOptionDescription,
 		}),
+		pretty: flagParser.boolean({
+			description: 'Prints JSON in pretty format rather than condensed.',
+		}),
 	};
 
 	async run(): Promise<void> {
@@ -45,6 +49,7 @@ export default class EncryptCommand extends Command {
 				passphrase: passphraseSource,
 				password: passwordSource,
 				'output-public-key': outputPublicKey,
+				pretty,
 			},
 		} = this.parse(EncryptCommand);
 
@@ -52,7 +57,7 @@ export default class EncryptCommand extends Command {
 		const password = passwordSource ?? (await getPasswordFromPrompt('password', true));
 		const result = encryptPassphrase(passphrase, password, outputPublicKey);
 
-		this.printJSON(result);
+		this.printJSON(result, pretty);
 	}
 
 	public printJSON(message?: object, pretty = false): void {
