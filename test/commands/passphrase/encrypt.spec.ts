@@ -38,6 +38,7 @@ describe('passphrase:encrypt', () => {
 		passphrase: 'enemy pill squeeze gold spoil aisle awake thumb congress false box wagon',
 		password: 'LbYpLpV9Wpec6ux8',
 	};
+	const consoleWarnSpy = jest.spyOn(console, 'warn');
 
 	let stdout: string[];
 	let stderr: string[];
@@ -64,6 +65,12 @@ describe('passphrase:encrypt', () => {
 				if (name === 'passphrase') {
 					return defaultInputs.passphrase;
 				}
+				return '';
+			});
+		jest
+			.spyOn(readerUtils, 'getPasswordFromPrompt')
+			// eslint-disable-next-line @typescript-eslint/require-await
+			.mockImplementation(async (name?: string) => {
 				if (name === 'password') {
 					return defaultInputs.password;
 				}
@@ -82,11 +89,15 @@ describe('passphrase:encrypt', () => {
 				encryptedPassphraseObject,
 			);
 			expect(readerUtils.getPassphraseFromPrompt).toHaveBeenCalledWith('passphrase', true);
-			expect(readerUtils.getPassphraseFromPrompt).toHaveBeenCalledWith('password', true);
+			expect(readerUtils.getPasswordFromPrompt).toHaveBeenCalledWith('password', true);
 
-			expect(EncryptCommand.prototype.printJSON).toHaveBeenCalledWith({
-				encryptedPassphrase: encryptedPassphraseString,
-			});
+			expect(EncryptCommand.prototype.printJSON).toHaveBeenCalledWith(
+				{
+					encryptedPassphrase: encryptedPassphraseString,
+				},
+				undefined,
+			);
+			expect(consoleWarnSpy).toHaveBeenCalledTimes(0);
 		});
 	});
 
@@ -101,11 +112,14 @@ describe('passphrase:encrypt', () => {
 				encryptedPassphraseObject,
 			);
 			expect(readerUtils.getPassphraseFromPrompt).toHaveBeenCalledWith('passphrase', true);
-			expect(readerUtils.getPassphraseFromPrompt).toHaveBeenCalledWith('password', true);
-			expect(EncryptCommand.prototype.printJSON).toHaveBeenCalledWith({
-				encryptedPassphrase: encryptedPassphraseString,
-				publicKey: defaultKeys.publicKey.toString('hex'),
-			});
+			expect(readerUtils.getPasswordFromPrompt).toHaveBeenCalledWith('password', true);
+			expect(EncryptCommand.prototype.printJSON).toHaveBeenCalledWith(
+				{
+					encryptedPassphrase: encryptedPassphraseString,
+					publicKey: defaultKeys.publicKey.toString('hex'),
+				},
+				undefined,
+			);
 		});
 	});
 
@@ -123,10 +137,13 @@ describe('passphrase:encrypt', () => {
 				encryptedPassphraseObject,
 			);
 			expect(readerUtils.getPassphraseFromPrompt).not.toHaveBeenCalledWith('passphrase', true);
-			expect(readerUtils.getPassphraseFromPrompt).toHaveBeenCalledWith('password', true);
-			expect(EncryptCommand.prototype.printJSON).toHaveBeenCalledWith({
-				encryptedPassphrase: encryptedPassphraseString,
-			});
+			expect(readerUtils.getPasswordFromPrompt).toHaveBeenCalledWith('password', true);
+			expect(EncryptCommand.prototype.printJSON).toHaveBeenCalledWith(
+				{
+					encryptedPassphrase: encryptedPassphraseString,
+				},
+				undefined,
+			);
 		});
 	});
 
@@ -147,10 +164,13 @@ describe('passphrase:encrypt', () => {
 				encryptedPassphraseObject,
 			);
 			expect(readerUtils.getPassphraseFromPrompt).not.toHaveBeenCalledWith('passphrase', true);
-			expect(readerUtils.getPassphraseFromPrompt).not.toHaveBeenCalledWith('password', true);
-			expect(EncryptCommand.prototype.printJSON).toHaveBeenCalledWith({
-				encryptedPassphrase: encryptedPassphraseString,
-			});
+			expect(readerUtils.getPasswordFromPrompt).not.toHaveBeenCalledWith('password', true);
+			expect(EncryptCommand.prototype.printJSON).toHaveBeenCalledWith(
+				{
+					encryptedPassphrase: encryptedPassphraseString,
+				},
+				undefined,
+			);
 		});
 	});
 });

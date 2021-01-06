@@ -44,7 +44,7 @@ describe('passphrase:decrypt', () => {
 		jest.spyOn(DecryptCommand.prototype, 'printJSON').mockReturnValue();
 		jest.spyOn(cryptography, 'parseEncryptedPassphrase').mockReturnValue(encryptedPassphraseObject);
 		jest.spyOn(cryptography, 'decryptPassphraseWithPassword').mockReturnValue(passphrase);
-		jest.spyOn(readerUtils, 'getPassphraseFromPrompt').mockResolvedValue(defaultInputs);
+		jest.spyOn(readerUtils, 'getPasswordFromPrompt').mockResolvedValue(defaultInputs);
 	});
 
 	describe('passphrase:decrypt', () => {
@@ -56,7 +56,7 @@ describe('passphrase:decrypt', () => {
 	describe('passphrase:decrypt encryptedPassphrase', () => {
 		it('should decrypt passphrase with arg', async () => {
 			await DecryptCommand.run([defaultEncryptedPassphrase], config);
-			expect(readerUtils.getPassphraseFromPrompt).toHaveBeenCalledWith('password', true);
+			expect(readerUtils.getPasswordFromPrompt).toHaveBeenCalledWith('password', true);
 			expect(cryptography.parseEncryptedPassphrase).toHaveBeenCalledWith(
 				defaultEncryptedPassphrase,
 			);
@@ -64,14 +64,14 @@ describe('passphrase:decrypt', () => {
 				encryptedPassphraseObject,
 				defaultInputs,
 			);
-			expect(DecryptCommand.prototype.printJSON).toHaveBeenCalledWith({ passphrase });
+			expect(DecryptCommand.prototype.printJSON).toHaveBeenCalledWith({ passphrase }, undefined);
 		});
 	});
 
 	describe('passphrase:decrypt --password=LbYpLpV9Wpec6ux8', () => {
 		it('should decrypt passphrase with passphrase flag and password flag', async () => {
 			await DecryptCommand.run([defaultEncryptedPassphrase, '--password=LbYpLpV9Wpec6ux8'], config);
-			expect(readerUtils.getPassphraseFromPrompt).not.toHaveBeenCalled();
+			expect(readerUtils.getPasswordFromPrompt).not.toHaveBeenCalled();
 			expect(cryptography.parseEncryptedPassphrase).toHaveBeenCalledWith(
 				defaultEncryptedPassphrase,
 			);
@@ -79,9 +79,12 @@ describe('passphrase:decrypt', () => {
 				encryptedPassphraseObject,
 				defaultInputs,
 			);
-			expect(DecryptCommand.prototype.printJSON).toHaveBeenCalledWith({
-				passphrase,
-			});
+			expect(DecryptCommand.prototype.printJSON).toHaveBeenCalledWith(
+				{
+					passphrase,
+				},
+				undefined,
+			);
 		});
 	});
 });
