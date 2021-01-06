@@ -110,7 +110,7 @@
 		"lisk-sdk": "5.0.0",
 		"tar": "6.0.2",
 		"tslib": "1.13.0",
-		"axios": "0.19.2"
+		"axios": "0.21.1"
 	},
 	"devDependencies": {
 		"@oclif/dev-cli": "1.22.2",
