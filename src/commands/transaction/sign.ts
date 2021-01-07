@@ -183,7 +183,12 @@ export default class SignCommand extends BaseIPCCommand {
 		}
 
 		if (json) {
-			this.printJSON(this.transactionToJSON(signedTransaction));
+			this.printJSON({
+				transaction: this.encodeTransaction(transactionObject).toString('hex'),
+			});
+			this.printJSON({
+				transaction: this.transactionToJSON(transactionObject)
+			});
 		} else {
 			this.printJSON({
 				transaction: this.encodeTransaction(signedTransaction).toString('hex'),
