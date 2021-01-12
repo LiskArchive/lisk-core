@@ -13,6 +13,7 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
+import { cryptography } from 'lisk-sdk';
 import { NETWORK, RELEASE_URL } from '../constants';
 
 export const liskSnapshotUrl = (url: string, network: NETWORK): string => {
@@ -23,4 +24,23 @@ export const liskSnapshotUrl = (url: string, network: NETWORK): string => {
 		return `${RELEASE_URL}/${network}/blockchain.db.tar.gz`;
 	}
 	return url;
+};
+
+export const encryptPassphrase = (
+	passphrase: string,
+	password: string,
+	outputPublicKey: boolean,
+): Record<string, unknown> => {
+	const encryptedPassphraseObject = cryptography.encryptPassphraseWithPassword(
+		passphrase,
+		password,
+	);
+	const encryptedPassphrase = cryptography.stringifyEncryptedPassphrase(encryptedPassphraseObject);
+
+	return outputPublicKey
+		? {
+				encryptedPassphrase,
+				publicKey: cryptography.getKeys(passphrase).publicKey.toString('hex'),
+		  }
+		: { encryptedPassphrase };
 };

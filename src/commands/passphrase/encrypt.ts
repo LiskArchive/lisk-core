@@ -12,29 +12,14 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import { cryptography } from 'lisk-sdk';
 import { flags as flagParser, Command } from '@oclif/command';
 
+import { encryptPassphrase } from '../../utils/commons';
 import { flags as commonFlags } from '../../utils/flags';
-import { getPassphraseFromPrompt } from '../../utils/reader';
+import { getPassphraseFromPrompt, getPasswordFromPrompt } from '../../utils/reader';
 
 const outputPublicKeyOptionDescription =
 	'Includes the public key in the output. This option is provided for the convenience of node operators.';
-
-const processInputs = (passphrase: string, password: string, outputPublicKey: boolean) => {
-	const encryptedPassphraseObject = cryptography.encryptPassphraseWithPassword(
-		passphrase,
-		password,
-	);
-	const encryptedPassphrase = cryptography.stringifyEncryptedPassphrase(encryptedPassphraseObject);
-
-	return outputPublicKey
-		? {
-				encryptedPassphrase,
-				publicKey: cryptography.getKeys(passphrase).publicKey.toString('hex'),
-		  }
-		: { encryptedPassphrase };
-};
 
 export default class EncryptCommand extends Command {
 	static description = 'Encrypt secret passphrase using password.';
@@ -43,6 +28,7 @@ export default class EncryptCommand extends Command {
 		'passphrase:encrypt',
 		'passphrase:encrypt --passphrase your-passphrase',
 		'passphrase:encrypt --password your-password',
+		'passphrase:encrypt --password your-password --passphrase your-passphrase --pretty',
 		'passphrase:encrypt --output-public-key',
 	];
 
@@ -52,6 +38,9 @@ export default class EncryptCommand extends Command {
 		'output-public-key': flagParser.boolean({
 			description: outputPublicKeyOptionDescription,
 		}),
+		pretty: flagParser.boolean({
+			description: 'Prints JSON in pretty format rather than condensed.',
+		}),
 	};
 
 	async run(): Promise<void> {
@@ -60,14 +49,15 @@ export default class EncryptCommand extends Command {
 				passphrase: passphraseSource,
 				password: passwordSource,
 				'output-public-key': outputPublicKey,
+				pretty,
 			},
 		} = this.parse(EncryptCommand);
 
 		const passphrase = passphraseSource ?? (await getPassphraseFromPrompt('passphrase', true));
-		const password = passwordSource ?? (await getPassphraseFromPrompt('password', true));
-		const result = processInputs(passphrase, password, outputPublicKey);
+		const password = passwordSource ?? (await getPasswordFromPrompt('password', true));
+		const result = encryptPassphrase(passphrase, password, outputPublicKey);
 
-		this.printJSON(result);
+		this.printJSON(result, pretty);
 	}
 
 	public printJSON(message?: object, pretty = false): void {
