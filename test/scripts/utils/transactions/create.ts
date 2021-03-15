@@ -13,121 +13,127 @@
  *
  */
 
-import {
-	codec,
-	cryptography,
-	DPoSVoteAsset,
-	DPoSRegisterAsset,
-	KeysRegisterAsset,
-	Transaction,
-	TokenTransferAsset,
-	transactions,
-} from 'lisk-sdk';
-
-import { ReclaimAsset } from '../../../../src/application/modules';
+import { apiClient, cryptography } from 'lisk-sdk';
 
 export interface Vote {
 	delegateAddress: Buffer;
 	amount: bigint;
 }
 
-export const createTransferTransaction = (input: {
+interface TransactionInput {
+	moduleID?: number;
+	moduleName?: string;
+	assetID?: number;
+	assetName?: string;
+	fee: bigint;
+	nonce?: bigint;
+	senderPublicKey?: Buffer;
+	asset: Record<string, unknown>;
+	signatures?: Buffer[];
+}
+
+const getClient = async () => await apiClient.createWSClient('ws://localhost:8080/ws');
+
+const createAndSignTransaction = async (
+	transaction: TransactionInput,
+	passphrases: string[],
+	options?: Record<string, unknown>,
+) => {
+	const client = await getClient();
+	const trx = await client.transaction.create(transaction, passphrases[0], options);
+
+	return client.transaction.sign(trx, passphrases, options);
+};
+
+export const createTransferTransaction = async (input: {
 	recipientAddress: Buffer;
 	amount?: bigint;
 	nonce: bigint;
 	networkIdentifier: Buffer;
 	passphrase: string;
 	fee?: bigint;
-}): string => {
-	const { schema } = new TokenTransferAsset(BigInt(5000000));
-	const encodedAsset = codec.encode(schema, {
+}): Promise<Record<string, unknown>> => {
+	const asset = {
 		recipientAddress: input.recipientAddress,
 		amount: input.amount ?? BigInt('10000000000'),
 		data: '',
-	});
+	};
 	const { publicKey } = cryptography.getAddressAndPublicKeyFromPassphrase(input.passphrase);
 
-	const tx = new Transaction({
-		moduleID: 2,
-		assetID: 0,
-		nonce: input.nonce,
-		senderPublicKey: publicKey,
-		fee: input.fee ?? BigInt('200000'),
-		asset: encodedAsset,
-		signatures: [],
-	});
-	(tx.signatures as Buffer[]).push(
-		cryptography.signData(
-			Buffer.concat([input.networkIdentifier, tx.getSigningBytes()]),
-			input.passphrase,
-		),
+	const tx = await createAndSignTransaction(
+		{
+			moduleID: 2,
+			assetID: 0,
+			nonce: input.nonce,
+			senderPublicKey: publicKey,
+			fee: input.fee ?? BigInt('200000'),
+			asset,
+			signatures: [],
+		},
+		[input.passphrase],
 	);
 
-	return tx.getBytes().toString('hex');
+	return tx;
 };
 
-export const createDelegateRegisterTransaction = (input: {
+export const createDelegateRegisterTransaction = async (input: {
 	nonce: bigint;
 	networkIdentifier: Buffer;
 	passphrase: string;
 	username: string;
 	fee?: bigint;
-}): string => {
-	const encodedAsset = codec.encode(new DPoSRegisterAsset().schema, {
+}): Promise<Record<string, unknown>> => {
+	const asset = {
 		username: input.username,
-	});
+	};
 	const { publicKey } = cryptography.getAddressAndPublicKeyFromPassphrase(input.passphrase);
 
-	const tx = new Transaction({
-		moduleID: 5,
-		assetID: 0,
-		nonce: input.nonce,
-		senderPublicKey: publicKey,
-		fee: input.fee ?? BigInt('2500000000'),
-		asset: encodedAsset,
-		signatures: [],
-	});
-	(tx.signatures as Buffer[]).push(
-		cryptography.signData(
-			Buffer.concat([input.networkIdentifier, tx.getSigningBytes()]),
-			input.passphrase,
-		),
+	const tx = await createAndSignTransaction(
+		{
+			moduleID: 5,
+			assetID: 0,
+			nonce: input.nonce,
+			senderPublicKey: publicKey,
+			fee: input.fee ?? BigInt('2500000000'),
+			asset,
+			signatures: [],
+		},
+		[input.passphrase],
 	);
 
-	return tx.getBytes().toString('hex');
+	return tx;
 };
 
-export const createDelegateVoteTransaction = (input: {
+export const createDelegateVoteTransaction = async (input: {
 	nonce: bigint;
 	networkIdentifier: Buffer;
 	passphrase: string;
 	votes: Vote[];
 	fee?: bigint;
-}): string => {
-	const encodedAsset = codec.encode(new DPoSVoteAsset().schema, {
+}): Promise<Record<string, unknown>> => {
+	const asset = {
 		votes: input.votes,
-	});
+	};
+
 	const { publicKey } = cryptography.getAddressAndPublicKeyFromPassphrase(input.passphrase);
 
-	const tx = new Transaction({
-		moduleID: 5,
-		assetID: 1,
-		nonce: input.nonce,
-		senderPublicKey: publicKey,
-		fee: input.fee ?? BigInt('100000000'),
-		asset: encodedAsset,
-		signatures: [],
-	});
-	(tx.signatures as Buffer[]).push(
-		cryptography.signData(
-			Buffer.concat([input.networkIdentifier, tx.getSigningBytes()]),
-			input.passphrase,
-		),
+	const tx = await createAndSignTransaction(
+		{
+			moduleID: 5,
+			assetID: 1,
+			nonce: input.nonce,
+			senderPublicKey: publicKey,
+			fee: input.fee ?? BigInt('100000000'),
+			asset,
+			signatures: [],
+		},
+		[input.passphrase],
 	);
-	return tx.getBytes().toString('hex');
+
+	return tx;
 };
 
-export const createMultiSignRegisterTransaction = (input: {
+export const createMultiSignRegisterTransaction = async (input: {
 	nonce: bigint;
 	networkIdentifier: Buffer;
 	fee?: bigint;
@@ -136,32 +142,14 @@ export const createMultiSignRegisterTransaction = (input: {
 	numberOfSignatures: number;
 	senderPassphrase: string;
 	passphrases: string[];
-}): string => {
-	const { schema } = new KeysRegisterAsset();
-	const encodedAsset = codec.encode(schema, {
-		mandatoryKeys: input.mandatoryKeys,
-		optionalKeys: input.optionalKeys,
-		numberOfSignatures: input.numberOfSignatures,
-	});
+}): Promise<Record<string, unknown>> => {
 	const asset = {
 		mandatoryKeys: input.mandatoryKeys,
 		optionalKeys: input.optionalKeys,
 		numberOfSignatures: input.numberOfSignatures,
 	};
 	const { publicKey } = cryptography.getAddressAndPublicKeyFromPassphrase(input.senderPassphrase);
-	const transaction = [input.senderPassphrase, ...input.passphrases].reduce<
-		Record<string, unknown>
-	>(
-		(prev, current) => {
-			return transactions.signMultiSignatureTransaction(
-				schema,
-				prev,
-				input.networkIdentifier,
-				current,
-				asset,
-				true,
-			);
-		},
+	const tx = await createAndSignTransaction(
 		{
 			moduleID: 4,
 			assetID: 0,
@@ -171,13 +159,19 @@ export const createMultiSignRegisterTransaction = (input: {
 			asset,
 			signatures: [],
 		},
+		[input.senderPassphrase, ...input.passphrases],
+		{
+			multisignatureKeys: {
+				mandatoryKeys: input.mandatoryKeys,
+				optionalKeys: input.optionalKeys,
+			},
+		},
 	);
 
-	const tx = new Transaction({ ...transaction, asset: encodedAsset } as any);
-	return tx.getBytes().toString('hex');
+	return tx;
 };
 
-export const createMultisignatureTransferTransaction = (input: {
+export const createMultisignatureTransferTransaction = async (input: {
 	nonce: bigint;
 	networkIdentifier: Buffer;
 	recipientAddress: Buffer;
@@ -187,70 +181,31 @@ export const createMultisignatureTransferTransaction = (input: {
 	optionalKeys: Buffer[];
 	senderPublicKey: Buffer;
 	passphrases: string[];
-}): string => {
-	const { schema } = new TokenTransferAsset(BigInt(5000000));
+}): Promise<Record<string, unknown>> => {
 	const asset = {
 		recipientAddress: input.recipientAddress,
 		amount: BigInt('10000000000'),
 		data: '',
 	};
-	const encodedAsset = codec.encode(schema, asset);
-	const transaction = input.passphrases.reduce<Record<string, unknown>>(
-		(prev, current) => {
-			return transactions.signMultiSignatureTransaction(
-				schema,
-				prev,
-				input.networkIdentifier,
-				current,
-				{
-					mandatoryKeys: input.mandatoryKeys,
-					optionalKeys: input.optionalKeys,
-				},
-			);
-		},
+
+	const tx = await createAndSignTransaction(
 		{
 			moduleID: 2,
 			assetID: 0,
 			nonce: input.nonce,
 			senderPublicKey: input.senderPublicKey,
-			fee: input.fee ?? BigInt('1100000000'),
+			fee: input.fee ?? BigInt('200000'),
 			asset,
 			signatures: [],
 		},
+		input.passphrases,
+		{
+			multisignatureKeys: {
+				mandatoryKeys: input.mandatoryKeys,
+				optionalKeys: input.optionalKeys,
+			},
+		},
 	);
 
-	const tx = new Transaction({ ...transaction, asset: encodedAsset } as any);
-	return tx.getBytes().toString('hex');
-};
-
-export const createReclaimTransaction = (input: {
-	amount: bigint;
-	networkIdentifier: Buffer;
-	passphrase: string;
-	fee?: bigint;
-	nonce?: bigint;
-}): string => {
-	const { schema } = new ReclaimAsset();
-	const encodedAsset = codec.encode(schema, {
-		amount: input.amount,
-	});
-	const { publicKey } = cryptography.getAddressAndPublicKeyFromPassphrase(input.passphrase);
-
-	const tx = new Transaction({
-		moduleID: 6,
-		assetID: 0,
-		nonce: input.nonce ?? BigInt(0), // since account doesn't exists
-		senderPublicKey: publicKey,
-		fee: input.fee ?? BigInt('500000'),
-		asset: encodedAsset,
-		signatures: [],
-	});
-	(tx.signatures as Buffer[]).push(
-		cryptography.signData(
-			Buffer.concat([input.networkIdentifier, tx.getSigningBytes()]),
-			input.passphrase,
-		),
-	);
-
-	return tx.getBytes().toString('hex');
+	return tx;
 };
