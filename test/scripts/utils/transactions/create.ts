@@ -13,7 +13,7 @@
  *
  */
 
-import { apiClient, cryptography } from 'lisk-sdk';
+import { cryptography, apiClient } from 'lisk-sdk';
 
 export interface Vote {
 	delegateAddress: Buffer;
@@ -32,27 +32,28 @@ interface TransactionInput {
 	signatures?: Buffer[];
 }
 
-const getClient = async () => await apiClient.createWSClient('ws://localhost:8080/ws');
-
 const createAndSignTransaction = async (
 	transaction: TransactionInput,
 	passphrases: string[],
+	client: apiClient.APIClient,
 	options?: Record<string, unknown>,
 ) => {
-	const client = await getClient();
 	const trx = await client.transaction.create(transaction, passphrases[0], options);
 
 	return client.transaction.sign(trx, passphrases, options);
 };
 
-export const createTransferTransaction = async (input: {
-	recipientAddress: Buffer;
-	amount?: bigint;
-	nonce: bigint;
-	networkIdentifier: Buffer;
-	passphrase: string;
-	fee?: bigint;
-}): Promise<Record<string, unknown>> => {
+export const createTransferTransaction = async (
+	input: {
+		recipientAddress: Buffer;
+		amount?: bigint;
+		nonce: bigint;
+		networkIdentifier: Buffer;
+		passphrase: string;
+		fee?: bigint;
+	},
+	client: apiClient.APIClient,
+): Promise<Record<string, unknown>> => {
 	const asset = {
 		recipientAddress: input.recipientAddress,
 		amount: input.amount ?? BigInt('10000000000'),
@@ -71,18 +72,22 @@ export const createTransferTransaction = async (input: {
 			signatures: [],
 		},
 		[input.passphrase],
+		client,
 	);
 
 	return tx;
 };
 
-export const createDelegateRegisterTransaction = async (input: {
-	nonce: bigint;
-	networkIdentifier: Buffer;
-	passphrase: string;
-	username: string;
-	fee?: bigint;
-}): Promise<Record<string, unknown>> => {
+export const createDelegateRegisterTransaction = async (
+	input: {
+		nonce: bigint;
+		networkIdentifier: Buffer;
+		passphrase: string;
+		username: string;
+		fee?: bigint;
+	},
+	client: apiClient.APIClient,
+): Promise<Record<string, unknown>> => {
 	const asset = {
 		username: input.username,
 	};
@@ -99,18 +104,22 @@ export const createDelegateRegisterTransaction = async (input: {
 			signatures: [],
 		},
 		[input.passphrase],
+		client,
 	);
 
 	return tx;
 };
 
-export const createDelegateVoteTransaction = async (input: {
-	nonce: bigint;
-	networkIdentifier: Buffer;
-	passphrase: string;
-	votes: Vote[];
-	fee?: bigint;
-}): Promise<Record<string, unknown>> => {
+export const createDelegateVoteTransaction = async (
+	input: {
+		nonce: bigint;
+		networkIdentifier: Buffer;
+		passphrase: string;
+		votes: Vote[];
+		fee?: bigint;
+	},
+	client: apiClient.APIClient,
+): Promise<Record<string, unknown>> => {
 	const asset = {
 		votes: input.votes,
 	};
@@ -128,21 +137,25 @@ export const createDelegateVoteTransaction = async (input: {
 			signatures: [],
 		},
 		[input.passphrase],
+		client,
 	);
 
 	return tx;
 };
 
-export const createMultiSignRegisterTransaction = async (input: {
-	nonce: bigint;
-	networkIdentifier: Buffer;
-	fee?: bigint;
-	mandatoryKeys: Buffer[];
-	optionalKeys: Buffer[];
-	numberOfSignatures: number;
-	senderPassphrase: string;
-	passphrases: string[];
-}): Promise<Record<string, unknown>> => {
+export const createMultiSignRegisterTransaction = async (
+	input: {
+		nonce: bigint;
+		networkIdentifier: Buffer;
+		fee?: bigint;
+		mandatoryKeys: Buffer[];
+		optionalKeys: Buffer[];
+		numberOfSignatures: number;
+		senderPassphrase: string;
+		passphrases: string[];
+	},
+	client: apiClient.APIClient,
+): Promise<Record<string, unknown>> => {
 	const asset = {
 		mandatoryKeys: input.mandatoryKeys,
 		optionalKeys: input.optionalKeys,
@@ -160,10 +173,12 @@ export const createMultiSignRegisterTransaction = async (input: {
 			signatures: [],
 		},
 		[input.senderPassphrase, ...input.passphrases],
+		client,
 		{
 			multisignatureKeys: {
 				mandatoryKeys: input.mandatoryKeys,
 				optionalKeys: input.optionalKeys,
+				numberOfSignatures: input.numberOfSignatures,
 			},
 		},
 	);
@@ -171,17 +186,20 @@ export const createMultiSignRegisterTransaction = async (input: {
 	return tx;
 };
 
-export const createMultisignatureTransferTransaction = async (input: {
-	nonce: bigint;
-	networkIdentifier: Buffer;
-	recipientAddress: Buffer;
-	amount: bigint;
-	fee?: bigint;
-	mandatoryKeys: Buffer[];
-	optionalKeys: Buffer[];
-	senderPublicKey: Buffer;
-	passphrases: string[];
-}): Promise<Record<string, unknown>> => {
+export const createMultisignatureTransferTransaction = async (
+	input: {
+		nonce: bigint;
+		networkIdentifier: Buffer;
+		recipientAddress: Buffer;
+		amount: bigint;
+		fee?: bigint;
+		mandatoryKeys: Buffer[];
+		optionalKeys: Buffer[];
+		senderPublicKey: Buffer;
+		passphrases: string[];
+	},
+	client: apiClient.APIClient,
+): Promise<Record<string, unknown>> => {
 	const asset = {
 		recipientAddress: input.recipientAddress,
 		amount: BigInt('10000000000'),
@@ -199,6 +217,7 @@ export const createMultisignatureTransferTransaction = async (input: {
 			signatures: [],
 		},
 		input.passphrases,
+		client,
 		{
 			multisignatureKeys: {
 				mandatoryKeys: input.mandatoryKeys,

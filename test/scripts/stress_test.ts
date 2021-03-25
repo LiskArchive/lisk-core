@@ -39,28 +39,35 @@ const chunkArray = (myArray: PassphraseAndKeys[], chunkSize = TRANSACTIONS_PER_A
 const wait = async (ms = 10000) => new Promise(resolve => setTimeout(() => resolve(), ms));
 
 const start = async (count = STRESS_COUNT) => {
-	const client = await apiClient.createWSClient('ws://localhost:8080/ws');
+	const URL = process.env.WS_CLIENT_URL || 'ws://localhost:8080/ws';
+	const client = await apiClient.createWSClient(URL);
 	const nodeInfo = await client.invoke<Record<string, unknown>>('app:getNodeInfo');
 
 	const accounts = [...Array(count)].map(() => createAccount());
 	const accountsLen = accounts.length;
 	// Due to TPool limit of 64 trx/account, fund initial accounts
 	const fundInitialAccount: PassphraseAndKeys[] = accounts.slice(0, TRANSACTIONS_PER_ACCOUNT);
-	await sendTokenTransferTransactions(nodeInfo, fundInitialAccount, genesisAccount);
+	await sendTokenTransferTransactions(nodeInfo, fundInitialAccount, genesisAccount, true, client);
 
 	// Wait for 2 blocks
 	await wait(20000);
 
 	const chunkedAccounts = chunkArray([...accounts]);
 	for (let i = 0; i < chunkedAccounts.length; i += 1) {
-		await sendTokenTransferTransactions(nodeInfo, chunkedAccounts[i], fundInitialAccount[i], false);
+		await sendTokenTransferTransactions(
+			nodeInfo,
+			chunkedAccounts[i],
+			fundInitialAccount[i],
+			false,
+			client,
+		);
 	}
 
 	console.log('\n');
 	await wait(20000);
 
 	for (let i = 0; i < accountsLen; i += 1) {
-		await sendDelegateRegistrationTransaction(nodeInfo, accounts[i]);
+		await sendDelegateRegistrationTransaction(nodeInfo, accounts[i], client);
 	}
 
 	console.log('\n');
@@ -74,7 +81,7 @@ const start = async (count = STRESS_COUNT) => {
 				amount: getBeddows('10'),
 			},
 		];
-		await sendVoteTransaction(nodeInfo, accounts[i], votes);
+		await sendVoteTransaction(nodeInfo, accounts[i], votes, client);
 	}
 
 	console.log('\n');
@@ -84,7 +91,7 @@ const start = async (count = STRESS_COUNT) => {
 		const unVotes = [
 			{ delegateAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('-10') },
 		];
-		await sendVoteTransaction(nodeInfo, accounts[i], unVotes);
+		await sendVoteTransaction(nodeInfo, accounts[i], unVotes, client);
 	}
 
 	console.log('\n');
@@ -99,7 +106,7 @@ const start = async (count = STRESS_COUNT) => {
 			numberOfSignatures: 2,
 		};
 		const passphrases = [account1.passphrase, account2.passphrase];
-		await sendMultiSigRegistrationTransaction(nodeInfo, accounts[i], asset, passphrases);
+		await sendMultiSigRegistrationTransaction(nodeInfo, accounts[i], asset, passphrases, client);
 	}
 
 	console.log('\n');
@@ -113,7 +120,13 @@ const start = async (count = STRESS_COUNT) => {
 			optionalKeys: [account2.publicKey],
 		};
 		const passphrases = [account1.passphrase, account2.passphrase];
-		await sendTransferTransactionFromMultiSigAccount(nodeInfo, accounts[i], asset, passphrases);
+		await sendTransferTransactionFromMultiSigAccount(
+			nodeInfo,
+			accounts[i],
+			asset,
+			passphrases,
+			client,
+		);
 	}
 
 	console.info('Finished!!');

@@ -36,15 +36,15 @@ const generateRandomUserName = () => {
 	return [...Array(20)].map(() => base[(Math.random() * base.length) | 0]).join('');
 };
 
-const getClient = async () => await apiClient.createWSClient('ws://localhost:8080/ws');
-
 const nonceSequenceItems = (AccountNonce: number, count = 63) => [
 	AccountNonce,
 	...Array.from({ length: count }, (_, k) => AccountNonce + k + 1),
 ];
 
-const getAccount = async (address: string): Promise<Record<string, unknown>> => {
-	const client = await getClient();
+const getAccount = async (
+	address: string,
+	client: apiClient.APIClient,
+): Promise<Record<string, unknown>> => {
 	const schema = await client.invoke<RegisteredSchema>('app:getSchema');
 	const account = await client.invoke<string>('app:getAccount', {
 		address,
@@ -53,8 +53,8 @@ const getAccount = async (address: string): Promise<Record<string, unknown>> => 
 	return codec.decodeJSON(schema.account, Buffer.from(account, 'hex'));
 };
 
-const getAccountNonce = async (address: string): Promise<number> => {
-	const account = await getAccount(address);
+const getAccountNonce = async (address: string, client: apiClient.APIClient): Promise<number> => {
+	const account = await getAccount(address, client);
 	const { sequence } = account as { sequence: { nonce: string } };
 	return Number(sequence.nonce);
 };
@@ -62,9 +62,9 @@ const getAccountNonce = async (address: string): Promise<number> => {
 const handleTransaction = async (
 	transaction: Record<string, unknown>,
 	transactionMessage: string,
+	client: apiClient.APIClient,
 ) => {
 	try {
-		const client = await getClient();
 		const result: any = await client.transaction.send(transaction);
 
 		if (result.transactionId) {
@@ -82,66 +82,80 @@ export const sendTokenTransferTransactions = async (
 	accounts: PassphraseAndKeys[],
 	fromAccount: PassphraseAndKeys,
 	fromGenesis = true,
+	client: apiClient.APIClient,
 ) => {
-	const AccountNonce = fromGenesis ? await getAccountNonce(fromAccount.address.toString('hex')) : 0;
+	const AccountNonce = fromGenesis
+		? await getAccountNonce(fromAccount.address.toString('hex'), client)
+		: 0;
 
 	const { networkIdentifier } = nodeInfo as { networkIdentifier: string };
 	const transferTransactions = await Promise.all(
 		nonceSequenceItems(AccountNonce).map(async (nonce, index) => {
-			const trx = await createTransferTransaction({
-				nonce: BigInt(nonce),
-				recipientAddress: accounts[index].address,
-				amount: getBeddows(fromGenesis ? '2000' : '25'),
-				fee: getBeddows('0.1'),
-				networkIdentifier: Buffer.from(networkIdentifier, 'hex'),
-				passphrase: fromAccount.passphrase,
-			});
+			const trx = await createTransferTransaction(
+				{
+					nonce: BigInt(nonce),
+					recipientAddress: accounts[index].address,
+					amount: getBeddows(fromGenesis ? '2000' : '25'),
+					fee: getBeddows('0.1'),
+					networkIdentifier: Buffer.from(networkIdentifier, 'hex'),
+					passphrase: fromAccount.passphrase,
+				},
+				client,
+			);
 
 			return trx;
 		}),
 	);
 
 	for (let i = 0; i < transferTransactions.length; i += 1) {
-		await handleTransaction(transferTransactions[i], 'token transfer');
+		await handleTransaction(transferTransactions[i], 'token transfer', client);
 	}
 };
 
 export const sendDelegateRegistrationTransaction = async (
 	nodeInfo: Record<string, unknown>,
 	fromAccount: PassphraseAndKeys,
+	client: apiClient.APIClient,
 ) => {
-	const AccountNonce = await getAccountNonce(fromAccount.address.toString('hex'));
+	const AccountNonce = await getAccountNonce(fromAccount.address.toString('hex'), client);
 	const username = generateRandomUserName();
 
 	const { networkIdentifier } = nodeInfo as { networkIdentifier: string };
-	const transaction = await createDelegateRegisterTransaction({
-		nonce: BigInt(AccountNonce),
-		username,
-		fee: getBeddows('15'),
-		networkIdentifier: Buffer.from(networkIdentifier, 'hex'),
-		passphrase: fromAccount.passphrase,
-	});
+	const transaction = await createDelegateRegisterTransaction(
+		{
+			nonce: BigInt(AccountNonce),
+			username,
+			fee: getBeddows('15'),
+			networkIdentifier: Buffer.from(networkIdentifier, 'hex'),
+			passphrase: fromAccount.passphrase,
+		},
+		client,
+	);
 
-	await handleTransaction(transaction, 'delegate registration');
+	await handleTransaction(transaction, 'delegate registration', client);
 };
 
 export const sendVoteTransaction = async (
 	nodeInfo: Record<string, unknown>,
 	fromAccount: PassphraseAndKeys,
 	votes: Vote[],
+	client: apiClient.APIClient,
 ) => {
-	const AccountNonce = await getAccountNonce(fromAccount.address.toString('hex'));
+	const AccountNonce = await getAccountNonce(fromAccount.address.toString('hex'), client);
 
 	const { networkIdentifier } = nodeInfo as { networkIdentifier: string };
-	const transaction = await createDelegateVoteTransaction({
-		nonce: BigInt(AccountNonce),
-		votes,
-		fee: getBeddows('0.3'),
-		networkIdentifier: Buffer.from(networkIdentifier, 'hex'),
-		passphrase: fromAccount.passphrase,
-	});
+	const transaction = await createDelegateVoteTransaction(
+		{
+			nonce: BigInt(AccountNonce),
+			votes,
+			fee: getBeddows('0.3'),
+			networkIdentifier: Buffer.from(networkIdentifier, 'hex'),
+			passphrase: fromAccount.passphrase,
+		},
+		client,
+	);
 
-	await handleTransaction(transaction, 'vote');
+	await handleTransaction(transaction, 'vote', client);
 };
 
 export const sendMultiSigRegistrationTransaction = async (
@@ -149,22 +163,26 @@ export const sendMultiSigRegistrationTransaction = async (
 	fromAccount: PassphraseAndKeys,
 	asset: { mandatoryKeys: Buffer[]; optionalKeys: Buffer[]; numberOfSignatures: number },
 	passphrases: string[],
+	client: apiClient.APIClient,
 ) => {
-	const AccountNonce = await getAccountNonce(fromAccount.address.toString('hex'));
+	const AccountNonce = await getAccountNonce(fromAccount.address.toString('hex'), client);
 
 	const { networkIdentifier } = nodeInfo as { networkIdentifier: string };
-	const transaction = await createMultiSignRegisterTransaction({
-		nonce: BigInt(AccountNonce),
-		mandatoryKeys: asset.mandatoryKeys,
-		optionalKeys: asset.optionalKeys,
-		numberOfSignatures: asset.numberOfSignatures,
-		senderPassphrase: fromAccount.passphrase,
-		fee: getBeddows('0.5'),
-		networkIdentifier: Buffer.from(networkIdentifier, 'hex'),
-		passphrases,
-	});
+	const transaction = await createMultiSignRegisterTransaction(
+		{
+			nonce: BigInt(AccountNonce),
+			mandatoryKeys: asset.mandatoryKeys,
+			optionalKeys: asset.optionalKeys,
+			numberOfSignatures: asset.numberOfSignatures,
+			senderPassphrase: fromAccount.passphrase,
+			fee: getBeddows('0.5'),
+			networkIdentifier: Buffer.from(networkIdentifier, 'hex'),
+			passphrases,
+		},
+		client,
+	);
 
-	await handleTransaction(transaction, 'multi signature registration');
+	await handleTransaction(transaction, 'multi signature registration', client);
 };
 
 export const sendTransferTransactionFromMultiSigAccount = async (
@@ -172,21 +190,25 @@ export const sendTransferTransactionFromMultiSigAccount = async (
 	fromAccount: PassphraseAndKeys,
 	asset: { mandatoryKeys: Buffer[]; optionalKeys: Buffer[] },
 	passphrases: string[],
+	client: apiClient.APIClient,
 ) => {
-	const AccountNonce = await getAccountNonce(fromAccount.address.toString('hex'));
+	const AccountNonce = await getAccountNonce(fromAccount.address.toString('hex'), client);
 
 	const { networkIdentifier } = nodeInfo as { networkIdentifier: string };
-	const transaction = await createMultisignatureTransferTransaction({
-		senderPublicKey: fromAccount.publicKey,
-		recipientAddress: fromAccount.address,
-		amount: getBeddows('1'),
-		nonce: BigInt(AccountNonce),
-		mandatoryKeys: asset.mandatoryKeys,
-		optionalKeys: asset.optionalKeys,
-		fee: getBeddows('0.5'),
-		networkIdentifier: Buffer.from(networkIdentifier, 'hex'),
-		passphrases,
-	});
+	const transaction = await createMultisignatureTransferTransaction(
+		{
+			senderPublicKey: fromAccount.publicKey,
+			recipientAddress: fromAccount.address,
+			amount: getBeddows('1'),
+			nonce: BigInt(AccountNonce),
+			mandatoryKeys: asset.mandatoryKeys,
+			optionalKeys: asset.optionalKeys,
+			fee: getBeddows('0.5'),
+			networkIdentifier: Buffer.from(networkIdentifier, 'hex'),
+			passphrases,
+		},
+		client,
+	);
 
-	await handleTransaction(transaction, 'transfer transaction from multisig account');
+	await handleTransaction(transaction, 'transfer transaction from multisig account', client);
 };
