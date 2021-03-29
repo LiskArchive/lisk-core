@@ -306,6 +306,7 @@ export default class StartCommand extends Command {
 				if (!ip || !port || Number.isNaN(Number(port))) {
 					this.error('Invalid seed-peers, ip or port is invalid or not specified.');
 				}
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 				config.network.seedPeers.push({ ip, port: Number(port) });
 			}
 		}
