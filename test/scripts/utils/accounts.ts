@@ -12,10 +12,13 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-import { passphrase as liskPassphrase } from 'lisk-sdk';
-import { cryptography } from 'lisk-sdk';
+import { passphrase as liskPassphrase, cryptography } from 'lisk-sdk';
 
 const { Mnemonic } = liskPassphrase;
+
+jest.mock('lisk-sdk', () => ({
+	...jest.requireActual('lisk-sdk'),
+}));
 
 export interface PassphraseAndKeys {
 	passphrase: string;
