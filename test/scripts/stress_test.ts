@@ -39,7 +39,7 @@ const chunkArray = (myArray: PassphraseAndKeys[], chunkSize = TRANSACTIONS_PER_A
 const wait = async (ms = 10000) => new Promise(resolve => setTimeout(() => resolve(), ms));
 
 const start = async (count = STRESS_COUNT) => {
-	const URL = process.env.WS_CLIENT_URL || 'ws://localhost:8080/ws';
+	const URL = process.env.WS_SERVER_URL || 'ws://localhost:8080/ws';
 	const client = await apiClient.createWSClient(URL);
 	const nodeInfo = await client.invoke<Record<string, unknown>>('app:getNodeInfo');
 

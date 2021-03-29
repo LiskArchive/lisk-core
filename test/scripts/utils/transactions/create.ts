@@ -162,7 +162,14 @@ export const createMultiSignRegisterTransaction = async (
 		numberOfSignatures: input.numberOfSignatures,
 	};
 	const { publicKey } = cryptography.getAddressAndPublicKeyFromPassphrase(input.senderPassphrase);
-	const tx = await createAndSignTransaction(
+	const options = {
+		multisignatureKeys: {
+			mandatoryKeys: input.mandatoryKeys,
+			optionalKeys: input.optionalKeys,
+			numberOfSignatures: input.numberOfSignatures,
+		},
+	};
+	let trx = await createAndSignTransaction(
 		{
 			moduleID: 4,
 			assetID: 0,
@@ -172,18 +179,16 @@ export const createMultiSignRegisterTransaction = async (
 			asset,
 			signatures: [],
 		},
-		[input.senderPassphrase, ...input.passphrases],
+		[input.senderPassphrase],
 		client,
-		{
-			multisignatureKeys: {
-				mandatoryKeys: input.mandatoryKeys,
-				optionalKeys: input.optionalKeys,
-				numberOfSignatures: input.numberOfSignatures,
-			},
-		},
+		options,
 	);
+	trx = await client.transaction.sign(trx, input.passphrases, {
+		includeSenderSignature: true,
+		...options,
+	});
 
-	return tx;
+	return trx;
 };
 
 export const createMultisignatureTransferTransaction = async (
