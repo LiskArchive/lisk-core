@@ -16,10 +16,6 @@ import { passphrase as liskPassphrase, cryptography } from 'lisk-sdk';
 
 const { Mnemonic } = liskPassphrase;
 
-jest.mock('lisk-sdk', () => ({
-	...jest.requireActual('lisk-sdk'),
-}));
-
 export interface PassphraseAndKeys {
 	passphrase: string;
 	privateKey?: Buffer;

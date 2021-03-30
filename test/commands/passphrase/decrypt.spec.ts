@@ -18,9 +18,10 @@ import * as readerUtils from '../../../src/utils/reader';
 import DecryptCommand from '../../../src/commands/passphrase/decrypt';
 import { getConfig } from '../../utils/config';
 
-jest.mock('lisk-sdk', () => ({
-	...jest.requireActual('lisk-sdk'),
-}));
+jest.mock('lisk-sdk', () => {
+	const actualSdk = jest.requireActual('lisk-sdk');
+	return { ...actualSdk, cryptography: { ...actualSdk.cryptography } };
+});
 
 describe('passphrase:decrypt', () => {
 	const defaultEncryptedPassphrase =
