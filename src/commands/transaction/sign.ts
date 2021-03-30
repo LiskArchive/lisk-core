@@ -79,7 +79,7 @@ export default class SignCommand extends BaseIPCCommand {
 
 	async run(): Promise<void> {
 		const {
-			args: { transaction },
+			args,
 			flags: {
 				'data-path': dataPath,
 				'include-sender': includeSender,
@@ -92,6 +92,7 @@ export default class SignCommand extends BaseIPCCommand {
 				'network-identifier': networkIdentifierSource,
 			},
 		} = this.parse(SignCommand);
+		const { transaction } = args as { transaction: string };
 
 		if (offline && dataPath) {
 			throw new Error('Flag: --data-path should not be specified while signing offline.');
