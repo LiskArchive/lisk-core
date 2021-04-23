@@ -25,7 +25,7 @@ export default class DownloadCommand extends Command {
 	static examples = [
 		'download',
 		'download --network betanet',
-		'download --url https://snapshots.lisk.io/lisk/mainnet/blockchain.db.tar.gz --output ./downloads',
+		'download --url https://snapshots.lisk.io/mainnet/blockchain.db.tar.gz --output ./downloads',
 	];
 
 	static flags = {
