@@ -22,4 +22,4 @@ export enum NETWORK {
 	DEVNET = 'devnet',
 }
 export const DEFAULT_NETWORK = NETWORK.MAINNET;
-export const RELEASE_URL = 'https://downloads.lisk.io/lisk';
+export const SNAPSHOT_URL = 'https://snapshots.lisk.io';

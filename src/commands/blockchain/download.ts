@@ -13,7 +13,7 @@
  *
  */
 import { Command, flags as flagParser } from '@oclif/command';
-import { NETWORK, RELEASE_URL, DEFAULT_NETWORK } from '../../constants';
+import { NETWORK, SNAPSHOT_URL, DEFAULT_NETWORK } from '../../constants';
 import { liskSnapshotUrl } from '../../utils/commons';
 import { getFullPath } from '../../utils/path';
 import { downloadAndValidate, getChecksum } from '../../utils/download';
@@ -25,7 +25,7 @@ export default class DownloadCommand extends Command {
 	static examples = [
 		'download',
 		'download --network betanet',
-		'download --url https://downloads.lisk.io/lisk/mainnet/blockchain.db.tar.gz --output ./downloads',
+		'download --url https://snapshots.lisk.io/mainnet/blockchain.db.tar.gz --output ./downloads',
 	];
 
 	static flags = {
@@ -48,7 +48,7 @@ export default class DownloadCommand extends Command {
 	async run(): Promise<void> {
 		const { flags } = this.parse(DownloadCommand);
 		const network = flags.network ? (flags.network as NETWORK) : DEFAULT_NETWORK;
-		const url = flags.url ? flags.url : liskSnapshotUrl(RELEASE_URL, network);
+		const url = flags.url ? flags.url : liskSnapshotUrl(SNAPSHOT_URL, network);
 		const dataPath = flags.output ? flags.output : process.cwd();
 		this.log(`Downloading snapshot from ${url} to ${getFullPath(dataPath)}`);
 
