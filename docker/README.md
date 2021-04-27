@@ -46,6 +46,7 @@ services:
     ports:
       - ${ENV_LISK_HTTP_PORT}
       - ${ENV_LISK_WS_PORT}
+      - ${ENV_LISK_API_WS_PORT}
 ```
 
 Increase log level to debug, enable public API:
