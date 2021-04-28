@@ -15,7 +15,7 @@
 import { Command, flags as flagParser } from '@oclif/command';
 import * as fs from 'fs-extra';
 import { dirname, join } from 'path';
-import { DEFAULT_NETWORK, NETWORK, RELEASE_URL } from '../../constants';
+import { DEFAULT_NETWORK, NETWORK, SNAPSHOT_URL } from '../../constants';
 import {
 	download,
 	downloadAndValidate,
@@ -24,8 +24,8 @@ import {
 	getDownloadedFileInfo,
 } from '../../utils/download';
 import { flags as commonFlags } from '../../utils/flags';
-import { getDefaultNetworkConfigFilesPath, getNetworkConfigFilesPath } from '../../utils/path';
-import { liskGenesisBlockUrl } from './../../utils/commons';
+import { getDefaultPath, getNetworkConfigFilesPath } from '../../utils/path';
+import { liskGenesisBlockUrl } from '../../utils/commons';
 
 export default class DownloadCommand extends Command {
 	static description = 'Download genesis block.';
@@ -62,14 +62,14 @@ export default class DownloadCommand extends Command {
 		}
 
 		const customUrl = !!flags.url;
-		const downloadUrl = url ?? liskGenesisBlockUrl(RELEASE_URL, network as NETWORK);
+		const downloadUrl = url ?? liskGenesisBlockUrl(SNAPSHOT_URL, network as NETWORK);
 
 		let genesisBlockPath: string;
 
 		if (network && dataPath) {
 			genesisBlockPath = getNetworkConfigFilesPath(dataPath, network).genesisBlockFilePath;
 		} else if (network) {
-			genesisBlockPath = getDefaultNetworkConfigFilesPath(network).genesisBlockFilePath;
+			genesisBlockPath = getNetworkConfigFilesPath(getDefaultPath(), network).genesisBlockFilePath;
 		} else if (dataPath) {
 			genesisBlockPath = getNetworkConfigFilesPath(dataPath, DEFAULT_NETWORK).genesisBlockFilePath;
 		} else {
