@@ -32,6 +32,7 @@ import {
 import { flags as commonFlags } from '../utils/flags';
 import { getApplication } from '../application';
 import { DEFAULT_NETWORK } from '../constants';
+import DownloadCommand from './genesis-block/download';
 
 interface Flags {
 	[key: string]: string | number | boolean | undefined;
@@ -246,9 +247,8 @@ export default class StartCommand extends Command {
 		const configFileExists = fs.existsSync(genesisBlockFilePath);
 
 		if (!genesisBlockExists && ['mainnet', 'testnet'].includes(flags.network)) {
-			this.error(
-				'Genesis block does not exists. Please use command "lisk-core genesis-block:download" to get before you start.',
-			);
+			this.log(`Genesis block from "${flags.network}" does not exists.`);
+			await DownloadCommand.run(['--network', flags.network]);
 		}
 
 		if (
