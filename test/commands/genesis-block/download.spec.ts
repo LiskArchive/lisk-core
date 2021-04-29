@@ -53,7 +53,7 @@ describe('genesis-block:download command', () => {
 	});
 
 	it('should show error if genesis block already exists', async () => {
-		jest.spyOn(pathUtils, 'getDefaultNetworkConfigFilesPath').mockReturnValue({
+		jest.spyOn(pathUtils, 'getNetworkConfigFilesPath').mockReturnValue({
 			genesisBlockFilePath: '/my/path/genesis_block.json',
 			configFilePath: 'my/config/path',
 		});

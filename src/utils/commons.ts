@@ -14,14 +14,14 @@
  *
  */
 import { cryptography } from 'lisk-sdk';
-import { NETWORK, SNAPSHOT_URL } from '../constants';
+import { NETWORK, SNAPSHOT_URL, DOWNLOAD_URL } from '../constants';
 
 export const liskGenesisBlockUrl = (url: string, network: NETWORK): string => {
 	if (!['testnet', 'mainnet', 'betanet'].includes(network.toLowerCase())) {
 		return '';
 	}
-	if (url && url.search(SNAPSHOT_URL) >= 0) {
-		return `${SNAPSHOT_URL}/${network}/genesis_block.json.tar.gz`;
+	if (url && url.search(DOWNLOAD_URL) >= 0) {
+		return `${DOWNLOAD_URL}/${network}/genesis_block.json.tar.gz`;
 	}
 	return url;
 };

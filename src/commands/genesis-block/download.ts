@@ -15,7 +15,7 @@
 import { Command, flags as flagParser } from '@oclif/command';
 import * as fs from 'fs-extra';
 import { dirname, join } from 'path';
-import { DEFAULT_NETWORK, NETWORK, SNAPSHOT_URL } from '../../constants';
+import { DEFAULT_NETWORK, NETWORK, DOWNLOAD_URL } from '../../constants';
 import {
 	download,
 	downloadAndValidate,
@@ -62,7 +62,7 @@ export default class DownloadCommand extends Command {
 		}
 
 		const customUrl = !!flags.url;
-		const downloadUrl = url ?? liskGenesisBlockUrl(SNAPSHOT_URL, network as NETWORK);
+		const downloadUrl = url ?? liskGenesisBlockUrl(DOWNLOAD_URL, network as NETWORK);
 
 		let genesisBlockPath: string;
 
