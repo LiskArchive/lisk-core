@@ -31,5 +31,5 @@ USER lisk
 RUN mkdir /home/lisk/.lisk
 VOLUME ["/home/lisk/.lisk"]
 
-ENTRYPOINT ["/home/lisk/node_modules/.bin/lisk-core", "start", "--enable-http-api-plugin"]
+ENTRYPOINT ["/home/lisk/node_modules/.bin/lisk-core", "start", "--enable-http-api-plugin", "--api-ws"]
 CMD ["--network", "mainnet"]

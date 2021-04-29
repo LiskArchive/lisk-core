@@ -9,6 +9,7 @@ services:
       - lisk-data:/home/lisk/.lisk
     ports:
       - ${ENV_LISK_HTTP_API_PLUGIN_PORT}:${ENV_LISK_HTTP_API_PLUGIN_PORT}
+      - ${ENV_LISK_API_WS_PORT}:${ENV_LISK_API_WS_PORT}
       - ${ENV_LISK_PORT}:${ENV_LISK_PORT}
     networks:
       - lisk
