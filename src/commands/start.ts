@@ -126,6 +126,7 @@ export default class StartCommand extends Command {
 		}),
 		'api-ws-port': flagParser.integer({
 			description: 'Port to be used for api-client websocket.',
+			env: 'LISK_API_WS_PORT',
 			dependsOn: ['api-ws'],
 		}),
 		'console-log': flagParser.string({
