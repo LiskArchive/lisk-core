@@ -21,6 +21,7 @@ import { Application } from 'lisk-sdk';
 import * as application from '../../src/application';
 import * as devnetGenesisBlock from '../../config/devnet/genesis_block.json';
 import StartCommand from '../../src/commands/start';
+import DownloadCommand from '../../src/commands/genesis-block/download';
 import { getConfig } from '../utils/config';
 
 import pJSON = require('../../package.json');
@@ -48,6 +49,13 @@ describe('start', () => {
 				},
 				plugins: {},
 			})
+			.calledWith('~/.lisk/lisk-core/config/testnet/config.json')
+			.mockResolvedValue({
+				logger: {
+					consoleLogLevel: 'error',
+				},
+				plugins: {},
+			})
 			.calledWith('~/.lisk/lisk-core/config/devnet/config.json')
 			.mockResolvedValue({
 				logger: {
@@ -57,14 +65,17 @@ describe('start', () => {
 			})
 			.calledWith('~/.lisk/lisk-core/config/mainnet/genesis_block.json')
 			.mockResolvedValue(devnetGenesisBlock)
+			.calledWith('~/.lisk/lisk-core/config/testnet/genesis_block.json')
+			.mockResolvedValue(devnetGenesisBlock)
 			.calledWith('~/.lisk/lisk-core/config/devnet/genesis_block.json')
 			.mockResolvedValue(devnetGenesisBlock);
 		jest.spyOn(fs, 'readdirSync');
 		when(fs.readdirSync as jest.Mock)
 			.mockReturnValue(['mainnet'])
 			.calledWith(path.join(__dirname, '../../config'))
-			.mockReturnValue(['mainnet', 'devnet']);
+			.mockReturnValue(['mainnet', 'testnet', 'devnet']);
 
+		jest.spyOn(fs, 'existsSync').mockReturnValue(true);
 		jest.spyOn(fs, 'ensureDirSync').mockReturnValue();
 		jest.spyOn(fs, 'removeSync').mockReturnValue();
 		jest.spyOn(fs, 'copyFileSync').mockReturnValue();
@@ -102,10 +113,51 @@ describe('start', () => {
 		});
 	});
 
+	describe('when genesis block does not exists and mainnet is started', () => {
+		it('should download the genesis block', async () => {
+			when(fs.existsSync as jest.Mock)
+				.calledWith('~/.lisk/lisk-core/config/mainnet/genesis_block.json')
+				.mockReturnValue(false);
+			jest.spyOn(DownloadCommand, 'run').mockResolvedValue(undefined);
+
+			await StartCommand.run(['-n', 'mainnet'], config);
+
+			expect(DownloadCommand.run).toHaveBeenCalledTimes(1);
+			expect(DownloadCommand.run).toHaveBeenCalledWith(['--network', 'mainnet']);
+		});
+	});
+
+	describe('when genesis block does not exists and testnet is started', () => {
+		it('should download the genesis block', async () => {
+			when(fs.existsSync as jest.Mock)
+				.calledWith('~/.lisk/lisk-core/config/testnet/genesis_block.json')
+				.mockReturnValue(false);
+			jest.spyOn(DownloadCommand, 'run').mockResolvedValue(undefined);
+
+			await StartCommand.run(['-n', 'testnet', '--overwrite-config'], config);
+
+			expect(DownloadCommand.run).toHaveBeenCalledTimes(1);
+			expect(DownloadCommand.run).toHaveBeenCalledWith(['--network', 'testnet']);
+		});
+	});
+
+	describe('when genesis block does not exists and devnet is started', () => {
+		it('should not download the genesis block', async () => {
+			when(fs.existsSync as jest.Mock)
+				.calledWith('~/.lisk/lisk-core/config/devnet/genesis_block.json')
+				.mockReturnValue(false);
+			jest.spyOn(DownloadCommand, 'run').mockResolvedValue(undefined);
+
+			await StartCommand.run(['-n', 'devnet', '--overwrite-config'], config);
+
+			expect(DownloadCommand.run).toHaveBeenCalledTimes(0);
+		});
+	});
+
 	describe('when unknown network is specified', () => {
 		it('should throw an error', async () => {
 			await expect(StartCommand.run(['-n', 'unknown'], config)).rejects.toThrow(
-				'Network must be one of mainnet,devnet but received unknown',
+				'Network must be one of mainnet,testnet,devnet but received unknown',
 			);
 		});
 	});

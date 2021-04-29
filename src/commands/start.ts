@@ -32,6 +32,7 @@ import {
 import { flags as commonFlags } from '../utils/flags';
 import { getApplication } from '../application';
 import { DEFAULT_NETWORK } from '../constants';
+import DownloadCommand from './genesis-block/download';
 
 interface Flags {
 	[key: string]: string | number | boolean | undefined;
@@ -242,16 +243,25 @@ export default class StartCommand extends Command {
 			genesisBlockFilePath: defaultGenesisBlockFilePath,
 			configFilePath: defaultConfigFilepath,
 		} = getDefaultNetworkConfigFilesPath(flags.network);
+
+		const genesisBlockExists = fs.existsSync(genesisBlockFilePath);
+		const configFileExists = fs.existsSync(configFilePath);
+
+		if (!genesisBlockExists && ['mainnet', 'testnet'].includes(flags.network)) {
+			this.log(`Genesis block from "${flags.network}" does not exists.`);
+			await DownloadCommand.run(['--network', flags.network]);
+		}
+
 		if (
-			!fs.existsSync(genesisBlockFilePath) ||
-			(fs.existsSync(genesisBlockFilePath) && flags['overwrite-config'])
+			!genesisBlockExists ||
+			(genesisBlockExists &&
+				flags['overwrite-config'] &&
+				!['mainnet', 'testnet'].includes(flags.network))
 		) {
 			fs.copyFileSync(defaultGenesisBlockFilePath, genesisBlockFilePath);
 		}
-		if (
-			!fs.existsSync(configFilePath) ||
-			(fs.existsSync(configFilePath) && flags['overwrite-config'])
-		) {
+
+		if (!configFileExists || (configFileExists && flags['overwrite-config'])) {
 			fs.copyFileSync(defaultConfigFilepath, configFilePath);
 		}
 

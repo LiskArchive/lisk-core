@@ -23,3 +23,4 @@ export enum NETWORK {
 }
 export const DEFAULT_NETWORK = NETWORK.MAINNET;
 export const SNAPSHOT_URL = 'https://snapshots.lisk.io';
+export const DOWNLOAD_URL = 'https://downloads.lisk.io/lisk';
