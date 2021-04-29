@@ -22,9 +22,6 @@ import * as pathUtils from '../../../src/utils/path';
 import { getConfig } from '../../utils/config';
 
 describe('genesis-block:download command', () => {
-	// const SNAPSHOT_URL = 'https://downloads.lisk.io/lisk/mainnet/blockchain.db.tar.gz';
-	// const dataPath = process.cwd();
-
 	let stdout: string[];
 	let stderr: string[];
 	let config: Config.IConfig;
