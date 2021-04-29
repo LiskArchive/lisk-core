@@ -244,7 +244,7 @@ export default class StartCommand extends Command {
 		} = getDefaultNetworkConfigFilesPath(flags.network);
 
 		const genesisBlockExists = fs.existsSync(genesisBlockFilePath);
-		const configFileExists = fs.existsSync(genesisBlockFilePath);
+		const configFileExists = fs.existsSync(configFilePath);
 
 		if (!genesisBlockExists && ['mainnet', 'testnet'].includes(flags.network)) {
 			this.log(`Genesis block from "${flags.network}" does not exists.`);
