@@ -78,17 +78,15 @@ export default class ConfigCommand extends Command {
 			fs.ensureDirSync(dir);
 		}
 
-		const seed = cryptography.generateHashOnionSeed();
-
-		const hashBuffers = cryptography.hashOnion(seed, count, distance);
-		const hashes = hashBuffers.map(buf => buf.toString('hex'));
-		const hashOnion = { count, distance, hashes };
-
 		const passphrase = passphraseSource ?? (await getPassphraseFromPrompt('passphrase', true));
 		const address = cryptography.getAddressFromPassphrase(passphrase).toString('hex');
 		const password = passwordSource ?? (await getPasswordFromPrompt('password', true));
+		const seed = cryptography.generateHashOnionSeed();
+		const hashBuffers = cryptography.hashOnion(seed, count, distance);
+		const hashes = hashBuffers.map(buf => buf.toString('hex'));
+		const hashOnion = { count, distance, hashes };
 		const { encryptedPassphrase } = encryptPassphrase(passphrase, password, false);
-		const message = { address, encryptedPassphrase, hashOnion };
+		const message = { forging: { delegates: [{ address, encryptedPassphrase, hashOnion }] } };
 
 		if (output) {
 			if (pretty) {

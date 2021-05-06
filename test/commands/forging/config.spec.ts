@@ -103,12 +103,18 @@ describe('forging:config command', () => {
 
 				expect(ConfigCommand.prototype.printJSON).toHaveBeenCalledWith(
 					{
-						address,
-						encryptedPassphrase: encryptedPassphraseString,
-						hashOnion: {
-							count: 2,
-							distance: 1,
-							hashes: expect.anything(),
+						forging: {
+							delegates: [
+								{
+									address,
+									encryptedPassphrase: encryptedPassphraseString,
+									hashOnion: {
+										count: 2,
+										distance: 1,
+										hashes: expect.anything(),
+									},
+								},
+							],
 						},
 					},
 					true,
@@ -138,12 +144,18 @@ describe('forging:config command', () => {
 				expect(readerUtils.getPasswordFromPrompt).not.toHaveBeenCalledWith('password', true);
 				expect(ConfigCommand.prototype.printJSON).toHaveBeenCalledWith(
 					{
-						address,
-						encryptedPassphrase: encryptedPassphraseString,
-						hashOnion: {
-							count: 2,
-							distance: 1,
-							hashes: expect.anything(),
+						forging: {
+							delegates: [
+								{
+									address,
+									encryptedPassphrase: encryptedPassphraseString,
+									hashOnion: {
+										count: 2,
+										distance: 1,
+										hashes: expect.anything(),
+									},
+								},
+							],
 						},
 					},
 					true,
