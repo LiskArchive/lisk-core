@@ -2,7 +2,7 @@
 
 lisk/core version 3 does not have any external dependencies and thus does not require using `docker-compose`.
 
-Note: podman can be used. Simply replace occurences of `docker` with `podman` or `alias docker=podman`.
+Note: [podman](https://github.com/containers/podman/) can be used. Simply replace occurrences of `docker` with `podman` or `alias docker=podman`.
 
 ## Run
 
