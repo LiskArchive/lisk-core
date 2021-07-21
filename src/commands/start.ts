@@ -90,7 +90,7 @@ export default class StartCommand extends Command {
 		'start',
 		'start --network devnet --data-path /path/to/data-dir --log debug',
 		'start --network devnet --api-ws',
-		'start --network devnet --api-ws --api-ws-port 8888',
+		'start --network devnet --api-ws --api-ws-host 0.0.0.0 --api-ws-port 8888',
 		'start --network devnet --port 9000',
 		'start --network devnet --port 9002 --seed-peers 127.0.0.1:9001,127.0.0.1:9000',
 		'start --network testnet --overwrite-config',
@@ -137,7 +137,7 @@ export default class StartCommand extends Command {
 		'api-ws-host': flagParser.string({
 			description: 'Host to be used for api-client websocket.',
 			env: 'LISK_API_WS_HOST',
-			exclusive: ['api-ws'],
+			dependsOn: ['api-ws'],
 		}),
 		'api-ws-port': flagParser.integer({
 			description: 'Port to be used for api-client websocket.',
@@ -199,7 +199,7 @@ export default class StartCommand extends Command {
 		}),
 		'monitor-plugin-host': flagParser.string({
 			description:
-				'Host to be used for HTTP API Plugin. Environment variable "LISK_MONITOR_PLUGIN_HOST" can also be used.',
+				'Host to be used for Monitor Plugin. Environment variable "LISK_MONITOR_PLUGIN_HOST" can also be used.',
 			env: 'LISK_MONITOR_PLUGIN_HOST',
 			dependsOn: ['enable-monitor-plugin'],
 		}),
