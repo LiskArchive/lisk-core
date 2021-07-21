@@ -41,6 +41,11 @@ interface Flags {
 const LOG_OPTIONS = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
 
 const setPluginConfig = (config: ApplicationConfig, flags: Flags): void => {
+	if (flags['http-api-plugin-host'] !== undefined) {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		config.plugins[HTTPAPIPlugin.alias] = config.plugins[HTTPAPIPlugin.alias] ?? {};
+		config.plugins[HTTPAPIPlugin.alias].host = flags['http-api-plugin-host'];
+	}
 	if (flags['http-api-plugin-port'] !== undefined) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		config.plugins[HTTPAPIPlugin.alias] = config.plugins[HTTPAPIPlugin.alias] ?? {};
@@ -55,6 +60,11 @@ const setPluginConfig = (config: ApplicationConfig, flags: Flags): void => {
 		config.plugins[HTTPAPIPlugin.alias].whiteList = flags['http-api-plugin-whitelist']
 			.split(',')
 			.filter(Boolean);
+	}
+	if (flags['monitor-plugin-host'] !== undefined) {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		config.plugins[MonitorPlugin.alias] = config.plugins[MonitorPlugin.alias] ?? {};
+		config.plugins[MonitorPlugin.alias].host = flags['monitor-plugin-host'];
 	}
 	if (flags['monitor-plugin-port'] !== undefined) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -124,6 +134,11 @@ export default class StartCommand extends Command {
 			default: false,
 			exclusive: ['api-ipc'],
 		}),
+		'api-ws-host': flagParser.string({
+			description: 'Host to be used for api-client websocket.',
+			env: 'LISK_API_WS_HOST',
+			exclusive: ['api-ws'],
+		}),
 		'api-ws-port': flagParser.integer({
 			description: 'Port to be used for api-client websocket.',
 			env: 'LISK_API_WS_PORT',
@@ -152,6 +167,12 @@ export default class StartCommand extends Command {
 			env: 'LISK_ENABLE_HTTP_API_PLUGIN',
 			default: false,
 		}),
+		'http-api-plugin-host': flagParser.string({
+			description:
+				'Host to be used for HTTP API Plugin. Environment variable "LISK_HTTP_API_PLUGIN_HOST" can also be used.',
+			env: 'LISK_HTTP_API_PLUGIN_HOST',
+			dependsOn: ['enable-http-api-plugin'],
+		}),
 		'http-api-plugin-port': flagParser.integer({
 			description:
 				'Port to be used for HTTP API Plugin. Environment variable "LISK_HTTP_API_PLUGIN_PORT" can also be used.',
@@ -175,6 +196,12 @@ export default class StartCommand extends Command {
 				'Enable Monitor Plugin. Environment variable "LISK_ENABLE_MONITOR_PLUGIN" can also be used.',
 			env: 'LISK_ENABLE_MONITOR_PLUGIN',
 			default: false,
+		}),
+		'monitor-plugin-host': flagParser.string({
+			description:
+				'Host to be used for HTTP API Plugin. Environment variable "LISK_MONITOR_PLUGIN_HOST" can also be used.',
+			env: 'LISK_MONITOR_PLUGIN_HOST',
+			dependsOn: ['enable-monitor-plugin'],
 		}),
 		'monitor-plugin-port': flagParser.integer({
 			description:
@@ -289,6 +316,7 @@ export default class StartCommand extends Command {
 			config.rpc = utils.objects.mergeDeep({}, config.rpc, {
 				enable: flags['api-ws'],
 				mode: 'ws',
+				host: flags['api-ws-host'],
 				port: flags['api-ws-port'],
 			});
 		}
