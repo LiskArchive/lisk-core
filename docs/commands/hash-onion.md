@@ -1,8 +1,9 @@
-# `lisk-core hash-onion`
+`lisk-core hash-onion`
+======================
 
 Create hash onions to be used by the forger.
 
-- [`lisk-core hash-onion`](#lisk-core-hash-onion)
+* [`lisk-core hash-onion`](#lisk-core-hash-onion)
 
 ## `lisk-core hash-onion`
 
@@ -16,9 +17,11 @@ OPTIONS
   -c, --count=count        [default: 1000000] Total number of hashes to produce
   -d, --distance=distance  [default: 1000] Distance between each hashes
   -o, --output=output      Output file path
+  --pretty                 Prints JSON in pretty format rather than condensed.
 
-EXAMPLE
-  hash-onion --count=1000000 --distance=2000
+EXAMPLES
+  hash-onion --count=1000000 --distance=2000 --pretty
+  hash-onion --count=1000000 --distance=2000 --output ~/my_onion.json
 ```
 
-_See code: [dist/commands/hash-onion.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.5/dist/commands/hash-onion.ts)_
+_See code: [dist/commands/hash-onion.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/hash-onion.ts)_

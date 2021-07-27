@@ -212,6 +212,14 @@ describe('start', () => {
 		});
 	});
 
+	describe('when custom host with --api-ws-host is specified along with --api-ws', () => {
+		it('should update the config value', async () => {
+			await StartCommand.run(['--api-ws', '--api-ws-host', '0.0.0.0'], config);
+			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
+			expect(usedConfig.rpc.host).toBe('0.0.0.0');
+		});
+	});
+
 	describe('when custom port with --api-ws-port is specified along with --api-ws', () => {
 		it('should update the config value', async () => {
 			await StartCommand.run(['--api-ws', '--api-ws-port', '8888'], config);
@@ -225,6 +233,17 @@ describe('start', () => {
 			await StartCommand.run(['--enable-http-api-plugin'], config);
 			const [, , options] = (application.getApplication as jest.Mock).mock.calls[0];
 			expect(options.enableHTTPAPIPlugin).toBe(true);
+		});
+	});
+
+	describe('when custom host with --http-api-plugin-host is specified along with --enable-http-api-plugin', () => {
+		it('should update the config value', async () => {
+			await StartCommand.run(
+				['--enable-http-api-plugin', '--http-api-plugin-host', '0.0.0.0'],
+				config,
+			);
+			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
+			expect(usedConfig.plugins.httpApi.host).toBe('0.0.0.0');
 		});
 	});
 
@@ -278,6 +297,17 @@ describe('start', () => {
 			await StartCommand.run(['--enable-monitor-plugin'], config);
 			const [, , options] = (application.getApplication as jest.Mock).mock.calls[0];
 			expect(options.enableMonitorPlugin).toBe(true);
+		});
+	});
+
+	describe('when custom host with --monitor-plugin-host is specified along with --enable-monitor-plugin', () => {
+		it('should update the config value', async () => {
+			await StartCommand.run(
+				['--enable-monitor-plugin', '--monitor-plugin-host', '0.0.0.0'],
+				config,
+			);
+			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
+			expect(usedConfig.plugins.monitor.host).toBe('0.0.0.0');
 		});
 	});
 

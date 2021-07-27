@@ -1,8 +1,9 @@
-# `lisk-core node`
+`lisk-core node`
+================
 
 Commands relating to Lisk Core node.
 
-- [`lisk-core node:info`](#lisk-core-nodeinfo)
+* [`lisk-core node:info`](#lisk-core-nodeinfo)
 
 ## `lisk-core node:info`
 
@@ -23,4 +24,4 @@ EXAMPLES
   node:info --data-path ./lisk
 ```
 
-_See code: [dist/commands/node/info.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.5/dist/commands/node/info.ts)_
+_See code: [dist/commands/node/info.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/node/info.ts)_
