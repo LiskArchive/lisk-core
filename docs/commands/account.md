@@ -1,11 +1,12 @@
-# `lisk-core account`
+`lisk-core account`
+===================
 
 Commands relating to Lisk Core accounts.
 
-- [`lisk-core account:create`](#lisk-core-accountcreate)
-- [`lisk-core account:get ADDRESS`](#lisk-core-accountget-address)
-- [`lisk-core account:show`](#lisk-core-accountshow)
-- [`lisk-core account:validate ADDRESS`](#lisk-core-accountvalidate-address)
+* [`lisk-core account:create`](#lisk-core-accountcreate)
+* [`lisk-core account:get ADDRESS`](#lisk-core-accountget-address)
+* [`lisk-core account:show`](#lisk-core-accountshow)
+* [`lisk-core account:validate ADDRESS`](#lisk-core-accountvalidate-address)
 
 ## `lisk-core account:create`
 
@@ -23,7 +24,7 @@ EXAMPLES
   account:create --count=3
 ```
 
-_See code: [dist/commands/account/create.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.5/dist/commands/account/create.ts)_
+_See code: [dist/commands/account/create.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/account/create.ts)_
 
 ## `lisk-core account:get ADDRESS`
 
@@ -46,7 +47,7 @@ EXAMPLE
   account:get ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815
 ```
 
-_See code: [dist/commands/account/get.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.5/dist/commands/account/get.ts)_
+_See code: [dist/commands/account/get.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/account/get.ts)_
 
 ## `lisk-core account:show`
 
@@ -67,7 +68,7 @@ EXAMPLE
   account:show
 ```
 
-_See code: [dist/commands/account/show.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.5/dist/commands/account/show.ts)_
+_See code: [dist/commands/account/show.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/account/show.ts)_
 
 ## `lisk-core account:validate ADDRESS`
 
@@ -84,4 +85,4 @@ EXAMPLE
   account:validate lskoaknq582o6fw7sp82bm2hnj7pzp47mpmbmux2g
 ```
 
-_See code: [dist/commands/account/validate.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.5/dist/commands/account/validate.ts)_
+_See code: [dist/commands/account/validate.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/account/validate.ts)_

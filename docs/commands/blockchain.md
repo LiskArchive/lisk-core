@@ -1,12 +1,13 @@
-# `lisk-core blockchain`
+`lisk-core blockchain`
+======================
 
 Commands relating to Lisk Core blockchain data.
 
-- [`lisk-core blockchain:download`](#lisk-core-blockchaindownload)
-- [`lisk-core blockchain:export`](#lisk-core-blockchainexport)
-- [`lisk-core blockchain:hash`](#lisk-core-blockchainhash)
-- [`lisk-core blockchain:import FILEPATH`](#lisk-core-blockchainimport-filepath)
-- [`lisk-core blockchain:reset`](#lisk-core-blockchainreset)
+* [`lisk-core blockchain:download`](#lisk-core-blockchaindownload)
+* [`lisk-core blockchain:export`](#lisk-core-blockchainexport)
+* [`lisk-core blockchain:hash`](#lisk-core-blockchainhash)
+* [`lisk-core blockchain:import FILEPATH`](#lisk-core-blockchainimport-filepath)
+* [`lisk-core blockchain:reset`](#lisk-core-blockchainreset)
 
 ## `lisk-core blockchain:download`
 
@@ -28,10 +29,10 @@ OPTIONS
 EXAMPLES
   download
   download --network betanet
-  download --url https://snapshots.lisk.io/mainnet/blockchain.db.gz --output ./downloads
+  download --url https://snapshots.lisk.io/mainnet/blockchain.db.tar.gz --output ./downloads
 ```
 
-_See code: [dist/commands/blockchain/download.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.5/dist/commands/blockchain/download.ts)_
+_See code: [dist/commands/blockchain/download.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/blockchain/download.ts)_
 
 ## `lisk-core blockchain:export`
 
@@ -52,7 +53,7 @@ EXAMPLES
   blockchain:export --data-path ./data --output ./my/path/
 ```
 
-_See code: [dist/commands/blockchain/export.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.5/dist/commands/blockchain/export.ts)_
+_See code: [dist/commands/blockchain/export.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/blockchain/export.ts)_
 
 ## `lisk-core blockchain:hash`
 
@@ -71,7 +72,7 @@ EXAMPLES
   blockchain:hash --data-path ./data
 ```
 
-_See code: [dist/commands/blockchain/hash.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.5/dist/commands/blockchain/hash.ts)_
+_See code: [dist/commands/blockchain/hash.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/blockchain/hash.ts)_
 
 ## `lisk-core blockchain:import FILEPATH`
 
@@ -91,11 +92,12 @@ OPTIONS
   -f, --force                Delete and overwrite existing blockchain data
 
 EXAMPLES
-  blockchain:import ./path/to/blockchain.db.gz
-  blockchain:import ./path/to/blockchain.db.gz --data-path ./lisk/
+  blockchain:import ./path/to/blockchain.db.tar.gz
+  blockchain:import ./path/to/blockchain.db.tar.gz --data-path ./lisk/
+  blockchain:import ./path/to/blockchain.db.tar.gz --data-path ./lisk/ --force
 ```
 
-_See code: [dist/commands/blockchain/import.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.5/dist/commands/blockchain/import.ts)_
+_See code: [dist/commands/blockchain/import.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/blockchain/import.ts)_
 
 ## `lisk-core blockchain:reset`
 
@@ -117,4 +119,4 @@ EXAMPLES
   blockchain:reset --yes
 ```
 
-_See code: [dist/commands/blockchain/reset.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.5/dist/commands/blockchain/reset.ts)_
+_See code: [dist/commands/blockchain/reset.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/blockchain/reset.ts)_

@@ -1,9 +1,10 @@
-# `lisk-core passphrase`
+`lisk-core passphrase`
+======================
 
 Commands relating to Lisk Core passphrases.
 
-- [`lisk-core passphrase:decrypt ENCRYPTEDPASSPHRASE`](#lisk-core-passphrasedecrypt-encryptedpassphrase)
-- [`lisk-core passphrase:encrypt`](#lisk-core-passphraseencrypt)
+* [`lisk-core passphrase:decrypt ENCRYPTEDPASSPHRASE`](#lisk-core-passphrasedecrypt-encryptedpassphrase)
+* [`lisk-core passphrase:encrypt`](#lisk-core-passphraseencrypt)
 
 ## `lisk-core passphrase:decrypt ENCRYPTEDPASSPHRASE`
 
@@ -22,13 +23,18 @@ OPTIONS
                            Examples:
                            - --password=pass:password123 (should only be used where security is not important)
 
-EXAMPLE
-  passphrase:decrypt
+  --pretty                 Prints JSON in pretty format rather than condensed.
+
+EXAMPLES
+  passphrase:decrypt 
   "iterations=1000000&cipherText=9b1c60&iv=5c8843f52ed3c0f2aa0086b0&salt=2240b7f1aa9c899894e528cf5b600e9c&tag=23c0111213
   4317a63bcf3d41ea74e83b&version=1"
+  passphrase:decrypt 
+  "iterations=1000000&cipherText=9b1c60&iv=5c8843f52ed3c0f2aa0086b0&salt=2240b7f1aa9c899894e528cf5b600e9c&tag=23c0111213
+  4317a63bcf3d41ea74e83b&version=1" --password your-password
 ```
 
-_See code: [dist/commands/passphrase/decrypt.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.5/dist/commands/passphrase/decrypt.ts)_
+_See code: [dist/commands/passphrase/decrypt.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/passphrase/decrypt.ts)_
 
 ## `lisk-core passphrase:encrypt`
 
@@ -50,11 +56,17 @@ OPTIONS
                                Examples:
                                - --password=pass:password123 (should only be used where security is not important)
 
-  --outputPublicKey            Includes the public key in the output. This option is provided for the convenience of
+  --output-public-key          Includes the public key in the output. This option is provided for the convenience of
                                node operators.
 
-EXAMPLE
+  --pretty                     Prints JSON in pretty format rather than condensed.
+
+EXAMPLES
   passphrase:encrypt
+  passphrase:encrypt --passphrase your-passphrase
+  passphrase:encrypt --password your-password
+  passphrase:encrypt --password your-password --passphrase your-passphrase --pretty
+  passphrase:encrypt --output-public-key
 ```
 
-_See code: [dist/commands/passphrase/encrypt.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.5/dist/commands/passphrase/encrypt.ts)_
+_See code: [dist/commands/passphrase/encrypt.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/passphrase/encrypt.ts)_

@@ -1,9 +1,10 @@
-# `lisk-core forger-info`
+`lisk-core forger-info`
+=======================
 
 Commands relating to Lisk Core forger-info data.
 
-- [`lisk-core forger-info:export`](#lisk-core-forger-infoexport)
-- [`lisk-core forger-info:import SOURCEPATH`](#lisk-core-forger-infoimport-sourcepath)
+* [`lisk-core forger-info:export`](#lisk-core-forger-infoexport)
+* [`lisk-core forger-info:import SOURCEPATH`](#lisk-core-forger-infoimport-sourcepath)
 
 ## `lisk-core forger-info:export`
 
@@ -24,7 +25,7 @@ EXAMPLES
   forger-info:export --data-path ./data --output ./my/path/
 ```
 
-_See code: [dist/commands/forger-info/export.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.5/dist/commands/forger-info/export.ts)_
+_See code: [dist/commands/forger-info/export.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/forger-info/export.ts)_
 
 ## `lisk-core forger-info:import SOURCEPATH`
 
@@ -48,4 +49,4 @@ EXAMPLES
   forger-info:import --data-path ./data --force
 ```
 
-_See code: [dist/commands/forger-info/import.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.5/dist/commands/forger-info/import.ts)_
+_See code: [dist/commands/forger-info/import.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/forger-info/import.ts)_

@@ -1,8 +1,9 @@
-# `lisk-core config`
+`lisk-core config`
+==================
 
 Commands relating to Lisk Core node configuration.
 
-- [`lisk-core config:show`](#lisk-core-configshow)
+* [`lisk-core config:show`](#lisk-core-configshow)
 
 ## `lisk-core config:show`
 
@@ -22,7 +23,8 @@ OPTIONS
 
 EXAMPLES
   config:show
+  config:show --pretty
   config:show --config ./custom-config.json --data-path ./data
 ```
 
-_See code: [dist/commands/config/show.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0-beta.2.5/dist/commands/config/show.ts)_
+_See code: [dist/commands/config/show.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/config/show.ts)_
