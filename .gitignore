@@ -1,4 +1,5 @@
 # General
+~
 .DS_Store
 .project
 __MACOSX/
@@ -12,6 +13,7 @@ REVISION
 npm-shrinkwrap.json
 
 # Dependency directories
+tsconfig.tsbuildinfo
 node_modules/
 
 # Docs
@@ -50,3 +52,4 @@ helm/**/charts/*tgz
 
 # Build Directory
 dist
+data

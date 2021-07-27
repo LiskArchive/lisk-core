@@ -1,10 +1,11 @@
 {
 	"compilerOptions": {
 		"forceConsistentCasingInFileNames": true,
-		"target": "es2017",
+		"target": "es2019",
 		"module": "commonjs",
 		"moduleResolution": "node",
 		"newLine": "lf",
+		"importHelpers": true,
 		"noFallthroughCasesInSwitch": true,
 		"noImplicitReturns": true,
 		"noUnusedLocals": true,
@@ -16,11 +17,9 @@
 		"strict": true,
 		"composite": true,
 		"declaration": true,
-		"esModuleInterop": true,
-		"importHelpers": true,
 		"noImplicitAny": false,
 		"rootDir": "./src",
 		"outDir": "./dist"
 	},
-	"include": ["./src/**/*"]
+	"include": ["./src/**/*.ts", "./src/**/*.json"]
 }

@@ -1,87 +1,53 @@
-# Using docker-compose
+# Using the lisk/core docker image
 
-## Copy sample .env file
+lisk/core version 3 does not have any external dependencies and thus does not require using `docker-compose`.
 
-Choose one of the sample `.env.*` file and copy it to `.env`.
-You should set `ENV_LISK_VERSION` to the version of Lisk and can change the database configuration.
-Note: to configure Lisk Core itself, see below.
+Note: [podman](https://github.com/containers/podman/) can be used. Simply replace occurrences of `docker` with `podman` or `alias docker=podman`.
 
-## Run docker-compose
+## Run
 
-You can run docker-compose directly
+Create a "lisk-core" container for betanet:
 
 ```
-docker-compose up -d
-docker-compose ps
-docker-compose logs
-```
-(see https://docs.docker.com/compose/reference/overview/)
-
-or use the `Makefile` (you will need to install `make`) for convenience:
-
-```
-make            # will run `docker-compose up` for you
-make coldstart  # will download and restore a blockchain snapshot for you
+docker run --volume lisk-data:/home/lisk/.lisk \
+           --publish 5001:5001 \
+           --name lisk-core \
+           lisk/core:3.0.0-rc.4 \
+             start --network=betanet
 ```
 
-# Configure Lisk Core
+### Configuration
 
-Edit the `docker-compose.override.yml` (not `docker-compose.yml`) file to customize your setup.
-Some command examples can be found below. All supported environment variables can be found in the [top-level README](../README.md#command-line-options)
-
-(see https://docs.docker.com/compose/extends/#multiple-compose-files)
-
-## Examples
-
-Do not expose ports:
-
-(see https://docs.docker.com/compose/compose-file/#ports)
+Further parameters can be passed after `--network`, e.g.:
 
 ```
-version: "3"
-services:
-
-  lisk:
-    ports:
-      - ${ENV_LISK_HTTP_PORT}
-      - ${ENV_LISK_WS_PORT}
+docker run --volume lisk-data:/home/lisk/.lisk \
+           --publish 5001:5001 \
+           --publish 127.0.0.1:5000:5000 \
+           --name lisk-core \
+           lisk/core:3.0.0-rc.4 \
+             start --network=betanet --enable-http-api-plugin
 ```
 
-Increase log level to debug, enable public API:
-
-(see https://docs.docker.com/compose/compose-file/#environment)
+Environment variables can be set with `--env`:
 
 ```
-version: "3"
-services:
-
-  lisk:
-    environment:
-      - LISK_CONSOLE_LOG_LEVEL=debug
-      - LISK_API_PUBLIC=true
+docker run --volume lisk-data:/home/lisk/.lisk \
+           --publish 5001:5001 \
+           --env LISK_CONSOLE_LOG_LEVEL=debug \
+           --name lisk-core \
+           lisk/core:3.0.0-rc.4 \
+             start --network=betanet`
 ```
 
-Add forging delegates and whitelist IPs:
+See https://lisk.com/documentation/lisk-core/v3/management/configuration.html for a reference of configuration options.
 
-(see https://docs.docker.com/compose/compose-file/#environment)
+## Import blockchain snapshot
 
 ```
-version: "3"
-services:
-
-  lisk:
-    environment:
-      - LISK_FORGING_DELEGATES=publicKey1|encryptedPassphrase1,publicKey2|encryptedPassphrase2
-      - LISK_API_WHITELIST=127.0.0.1,172.17.0.1
-      - LISK_FORGING_WHITELIST=127.0.0.1,172.17.0.1
+docker run --volume lisk-data:/home/lisk/.lisk -it --rm lisk/core:3.0.0-rc.4 blockchain:download --network=betanet --output=/home/lisk/.lisk/tmp/
+docker run --volume lisk-data:/home/lisk/.lisk -it --rm lisk/core:3.0.0-rc.4 blockchain:import /home/lisk/.lisk/tmp/blockchain.db.tar.gz
+docker run --volume lisk-data:/home/lisk/.lisk -it --rm --entrypoint rm lisk/core:3.0.0-rc.4 -f /home/lisk/.lisk/tmp/blockchain.db.tar.gz
+docker start lisk-core
+docker logs -f lisk-core
 ```
-
-## For advanced users
-
-### Use redis for caching
-
-Caching using redis can be enabled with the `docker-compose.redis.yml` file, e.g.:
-
-`docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.redis.yml up -d`
-
-Note that this could be done in the `docker-compose.override.yml` as well.
