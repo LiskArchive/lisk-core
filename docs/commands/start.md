@@ -1,9 +1,8 @@
-`lisk-core start`
-=================
+# `lisk-core start`
 
 Start Lisk Core Node.
 
-* [`lisk-core start`](#lisk-core-start)
+- [`lisk-core start`](#lisk-core-start)
 
 ## `lisk-core start`
 
