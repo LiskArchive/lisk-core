@@ -1,6 +1,6 @@
 {
 	"name": "lisk-core",
-	"version": "2.1.6",
+	"version": "2.1.7",
 	"description": "Lisk blockchain application platform",
 	"author": "Lisk Foundation <admin@lisk.io>, lightcurve GmbH <admin@lightcurve.io>",
 	"license": "Apache-2.0",
@@ -21,8 +21,8 @@
 		"url": "https://github.com/LiskHQ/lisk-sdk/issues"
 	},
 	"engines": {
-		"node": "10.20.1",
-		"npm": "6.14.4"
+		"node": "10.24.1",
+		"npm": "6.14.12"
 	},
 	"main": "dist/index.js",
 	"scripts": {
@@ -44,8 +44,8 @@
 		"commander": "2.19.0",
 		"deep-diff": "1.0.2",
 		"lisk-commander": "2.2.3",
-		"lisk-sdk": "2.3.8",
-		"lodash": "4.17.14",
+		"lisk-sdk": "2.3.9",
+		"lodash": "4.17.21",
 		"moment": "2.23.0",
 		"pm2": "3.5.0",
 		"semver": "5.6.0",
