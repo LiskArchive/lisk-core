@@ -51,6 +51,7 @@ npm run build
 ## From NPM
 
 <!-- usage -->
+
 ```sh-session
 $ npm install -g lisk-core
 $ lisk-core COMMAND
@@ -62,26 +63,28 @@ USAGE
   $ lisk-core COMMAND
 ...
 ```
+
 <!-- usagestop -->
 
 <!-- commands -->
+
 # Command Topics
 
-* [`lisk-core account`](docs/commands/account.md) - Commands relating to Lisk Core accounts.
-* [`lisk-core autocomplete`](docs/commands/autocomplete.md) - display autocomplete installation instructions
-* [`lisk-core block`](docs/commands/block.md) - Commands relating to Lisk Core blocks.
-* [`lisk-core blockchain`](docs/commands/blockchain.md) - Commands relating to Lisk Core blockchain data.
-* [`lisk-core config`](docs/commands/config.md) - Commands relating to Lisk Core node configuration.
-* [`lisk-core forger-info`](docs/commands/forger-info.md) - Commands relating to Lisk Core forger-info data.
-* [`lisk-core forging`](docs/commands/forging.md) - Commands relating to Lisk Core forging.
-* [`lisk-core genesis-block`](docs/commands/genesis-block.md) - Download genesis block.
-* [`lisk-core hash-onion`](docs/commands/hash-onion.md) - Create hash onions to be used by the forger.
-* [`lisk-core help`](docs/commands/help.md) - display help for lisk-core
-* [`lisk-core node`](docs/commands/node.md) - Commands relating to Lisk Core node.
-* [`lisk-core passphrase`](docs/commands/passphrase.md) - Commands relating to Lisk Core passphrases.
-* [`lisk-core sdk`](docs/commands/sdk.md) - Commands relating to Lisk SDK development.
-* [`lisk-core start`](docs/commands/start.md) - Start Lisk Core Node.
-* [`lisk-core transaction`](docs/commands/transaction.md) - Commands relating to Lisk Core transactions.
+- [`lisk-core account`](docs/commands/account.md) - Commands relating to Lisk Core accounts.
+- [`lisk-core autocomplete`](docs/commands/autocomplete.md) - display autocomplete installation instructions
+- [`lisk-core block`](docs/commands/block.md) - Commands relating to Lisk Core blocks.
+- [`lisk-core blockchain`](docs/commands/blockchain.md) - Commands relating to Lisk Core blockchain data.
+- [`lisk-core config`](docs/commands/config.md) - Commands relating to Lisk Core node configuration.
+- [`lisk-core forger-info`](docs/commands/forger-info.md) - Commands relating to Lisk Core forger-info data.
+- [`lisk-core forging`](docs/commands/forging.md) - Commands relating to Lisk Core forging.
+- [`lisk-core genesis-block`](docs/commands/genesis-block.md) - Download genesis block.
+- [`lisk-core hash-onion`](docs/commands/hash-onion.md) - Create hash onions to be used by the forger.
+- [`lisk-core help`](docs/commands/help.md) - display help for lisk-core
+- [`lisk-core node`](docs/commands/node.md) - Commands relating to Lisk Core node.
+- [`lisk-core passphrase`](docs/commands/passphrase.md) - Commands relating to Lisk Core passphrases.
+- [`lisk-core sdk`](docs/commands/sdk.md) - Commands relating to Lisk SDK development.
+- [`lisk-core start`](docs/commands/start.md) - Start Lisk Core Node.
+- [`lisk-core transaction`](docs/commands/transaction.md) - Commands relating to Lisk Core transactions.
 
 <!-- commandsstop -->
 

@@ -1,9 +1,8 @@
-`lisk-core autocomplete`
-========================
+# `lisk-core autocomplete`
 
 display autocomplete installation instructions
 
-* [`lisk-core autocomplete [SHELL]`](#lisk-core-autocomplete-shell)
+- [`lisk-core autocomplete [SHELL]`](#lisk-core-autocomplete-shell)
 
 ## `lisk-core autocomplete [SHELL]`
 

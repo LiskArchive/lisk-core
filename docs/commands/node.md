@@ -1,9 +1,8 @@
-`lisk-core node`
-================
+# `lisk-core node`
 
 Commands relating to Lisk Core node.
 
-* [`lisk-core node:info`](#lisk-core-nodeinfo)
+- [`lisk-core node:info`](#lisk-core-nodeinfo)
 
 ## `lisk-core node:info`
 

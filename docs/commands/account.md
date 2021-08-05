@@ -1,12 +1,11 @@
-`lisk-core account`
-===================
+# `lisk-core account`
 
 Commands relating to Lisk Core accounts.
 
-* [`lisk-core account:create`](#lisk-core-accountcreate)
-* [`lisk-core account:get ADDRESS`](#lisk-core-accountget-address)
-* [`lisk-core account:show`](#lisk-core-accountshow)
-* [`lisk-core account:validate ADDRESS`](#lisk-core-accountvalidate-address)
+- [`lisk-core account:create`](#lisk-core-accountcreate)
+- [`lisk-core account:get ADDRESS`](#lisk-core-accountget-address)
+- [`lisk-core account:show`](#lisk-core-accountshow)
+- [`lisk-core account:validate ADDRESS`](#lisk-core-accountvalidate-address)
 
 ## `lisk-core account:create`
 

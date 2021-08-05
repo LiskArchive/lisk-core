@@ -1,9 +1,8 @@
-`lisk-core sdk`
-===============
+# `lisk-core sdk`
 
 Commands relating to Lisk SDK development.
 
-* [`lisk-core sdk:link TARGETSDKFOLDER`](#lisk-core-sdklink-targetsdkfolder)
+- [`lisk-core sdk:link TARGETSDKFOLDER`](#lisk-core-sdklink-targetsdkfolder)
 
 ## `lisk-core sdk:link TARGETSDKFOLDER`
 

@@ -1,9 +1,8 @@
-`lisk-core config`
-==================
+# `lisk-core config`
 
 Commands relating to Lisk Core node configuration.
 
-* [`lisk-core config:show`](#lisk-core-configshow)
+- [`lisk-core config:show`](#lisk-core-configshow)
 
 ## `lisk-core config:show`
 
