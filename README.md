@@ -207,5 +207,4 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-[lisk documentation site]: https://lisk.com/documentation
-[lisk sdk github]: https://github.com/LiskHQ/lisk-sdk
+[lisk documentation site]: https://lisk.com/documentation/lisk-core/
