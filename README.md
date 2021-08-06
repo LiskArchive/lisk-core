@@ -9,11 +9,11 @@
 ![GitHub issues](https://img.shields.io/github/issues-raw/liskhq/lisk-core)
 ![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/liskhq/lisk-core)
 
-Lisk is a next-generation crypto-currency and decentralized application platform, written entirely in JavaScript. The official documentation about the whole ecosystem can be found in https://lisk.io/documentation.
+Lisk is a next-generation crypto-currency and decentralized application platform, written entirely in JavaScript. The official documentation about the whole ecosystem can be found in https://lisk.com/docs.
 
-[Lisk Core](https://lisk.io/documentation/lisk-core) is the program that implements the [Lisk Protocol](https://lisk.io/documentation/lisk-protocol). In other words, Lisk Core is what every machine needs to set-up to run a node that allows for participation in the network.
+[Lisk Core](https://lisk.com/documentation/lisk-core/) is the program that implements the [Lisk Protocol](https://lisk.com/documentation/lisk-sdk/protocol/). In other words, Lisk Core is what every machine needs to set-up to run a node that allows for participation in the network.
 
-This document details how to install Lisk Core from source and from npm registry, but there are two other ways to participate in the network: [binaries](https://lisk.io/documentation/lisk-core/setup/pre-install/binary) and [Docker images](https://lisk.io/documentation/lisk-core/setup/pre-install/docker).
+This document details how to install Lisk Core from source and from npm registry, but there are two other ways to participate in the network: [binaries](https://lisk.com/documentation/lisk-core/setup/binary) and [Docker images](https://lisk.com/documentation/lisk-core/setup/docker).
 If you have satisfied the requirements from the Pre-Installation section, you can jump directly to the next section [Installation Steps](#installation).
 
 ## Index
@@ -34,7 +34,7 @@ The following dependencies need to be installed in order to run applications cre
 | ------------ | ------- |
 | NodeJS       | 12.22.3 |
 
-You can find further details on installing these dependencies in our [pre-installation setup guide](https://lisk.io/documentation/lisk-core/setup/source#pre-install).
+You can find further details on installing these dependencies in our [pre-installation setup guide](https://lisk.com/documentation/lisk-core/setup/source.html#source-pre-install).
 Clone the Lisk Core repository using Git and initialize the modules.
 
 ## From Source
@@ -159,7 +159,7 @@ Running a command will overwrite the default config and use the specified option
 lisk-core start -n devnet -c ./custom-config.json
 ```
 
-For a more detailed understanding of configuration read this [online documentation](https://lisk.io/documentation/lisk-core/user-guide/configuration).
+For a more detailed understanding of configuration read this [online documentation](https://lisk.com/documentation/lisk-core/reference/config.html).
 
 ## Tests
 
@@ -179,7 +179,7 @@ In order to run a node for a local test, in a root folder of lisk-core, run belo
 ./bin/run start -n devnet --data-path ./devnet-data --port 3333 --api-ws --enable-http-api-plugin --http-api-plugin-port 3334 --enable-forger-plugin
 ```
 
-This command will start a lisk-core node using data path `./devent-data` with HTTPAPI and Forger Plugins.
+This command will start a lisk-core node using data path `./devnet-data` with HTTPAPI and Forger Plugins.
 Data on the node can be obtained by commands like
 
 ```
@@ -207,5 +207,4 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-[lisk documentation site]: https://lisk.io/documentation
-[lisk sdk github]: https://github.com/LiskHQ/lisk-sdk
+[lisk documentation site]: https://lisk.com/documentation/lisk-core/
