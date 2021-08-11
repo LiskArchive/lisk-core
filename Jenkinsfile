@@ -9,7 +9,7 @@ pipeline {
 	agent { node { label 'lisk-build' } }
 	options {
 		skipDefaultCheckout()
-		timeout(time: 10, unit: 'MINUTES')
+		timeout(time: 15, unit: 'MINUTES')
 	}
 	stages {
 		stage('Checkout SCM') {
@@ -42,7 +42,7 @@ pipeline {
 						npm install --global yarn
 						yarn
 						yarn build
-						npm install --global
+						yarn global add link:$PWD
 						'''
 					}
 				}
@@ -56,7 +56,6 @@ pipeline {
 						npm install --global yarn
 						yarn
 						yarn build
-						npx lerna exec yarn unlink
 						npx lerna exec yarn link
 						npx lerna --loglevel error list >../packages
 						'''
@@ -93,7 +92,7 @@ pipeline {
 			steps {
 				dir('lisk-core') {
 					nvm(readFile(".nvmrc").trim()) {
-						sh 'oclif-dev pack --targets=linux-x64'
+						sh 'oclif-dev pack --targets=linux-x64,darwin-x64'
 					}
 				}
 			}

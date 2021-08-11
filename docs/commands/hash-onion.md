@@ -1,9 +1,8 @@
-`lisk-core hash-onion`
-======================
+# `lisk-core hash-onion`
 
 Create hash onions to be used by the forger.
 
-* [`lisk-core hash-onion`](#lisk-core-hash-onion)
+- [`lisk-core hash-onion`](#lisk-core-hash-onion)
 
 ## `lisk-core hash-onion`
 
