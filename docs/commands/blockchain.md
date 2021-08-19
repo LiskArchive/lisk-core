@@ -1,13 +1,12 @@
-`lisk-core blockchain`
-======================
+# `lisk-core blockchain`
 
 Commands relating to Lisk Core blockchain data.
 
-* [`lisk-core blockchain:download`](#lisk-core-blockchaindownload)
-* [`lisk-core blockchain:export`](#lisk-core-blockchainexport)
-* [`lisk-core blockchain:hash`](#lisk-core-blockchainhash)
-* [`lisk-core blockchain:import FILEPATH`](#lisk-core-blockchainimport-filepath)
-* [`lisk-core blockchain:reset`](#lisk-core-blockchainreset)
+- [`lisk-core blockchain:download`](#lisk-core-blockchaindownload)
+- [`lisk-core blockchain:export`](#lisk-core-blockchainexport)
+- [`lisk-core blockchain:hash`](#lisk-core-blockchainhash)
+- [`lisk-core blockchain:import FILEPATH`](#lisk-core-blockchainimport-filepath)
+- [`lisk-core blockchain:reset`](#lisk-core-blockchainreset)
 
 ## `lisk-core blockchain:download`
 

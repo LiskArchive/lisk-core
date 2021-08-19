@@ -1,12 +1,11 @@
-`lisk-core forging`
-===================
+# `lisk-core forging`
 
 Commands relating to Lisk Core forging.
 
-* [`lisk-core forging:config`](#lisk-core-forgingconfig)
-* [`lisk-core forging:disable ADDRESS`](#lisk-core-forgingdisable-address)
-* [`lisk-core forging:enable ADDRESS HEIGHT MAXHEIGHTPREVIOUSLYFORGED MAXHEIGHTPREVOTED`](#lisk-core-forgingenable-address-height-maxheightpreviouslyforged-maxheightprevoted)
-* [`lisk-core forging:status`](#lisk-core-forgingstatus)
+- [`lisk-core forging:config`](#lisk-core-forgingconfig)
+- [`lisk-core forging:disable ADDRESS`](#lisk-core-forgingdisable-address)
+- [`lisk-core forging:enable ADDRESS HEIGHT MAXHEIGHTPREVIOUSLYFORGED MAXHEIGHTPREVOTED`](#lisk-core-forgingenable-address-height-maxheightpreviouslyforged-maxheightprevoted)
+- [`lisk-core forging:status`](#lisk-core-forgingstatus)
 
 ## `lisk-core forging:config`
 

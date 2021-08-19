@@ -1,9 +1,8 @@
-`lisk-core help`
-================
+# `lisk-core help`
 
 display help for lisk-core
 
-* [`lisk-core help [COMMAND]`](#lisk-core-help-command)
+- [`lisk-core help [COMMAND]`](#lisk-core-help-command)
 
 ## `lisk-core help [COMMAND]`
 
