@@ -191,7 +191,7 @@ describe('transaction:create command', () => {
 							config,
 						),
 					).rejects.toThrow(
-						'Flag: --network-identifier must be specified while creating transaction offline',
+						'Flag: --network-identifier must be specified while creating transaction offline with signature.',
 					);
 				});
 			});
