@@ -102,6 +102,8 @@ export default abstract class BaseIPCCommand extends Command {
 			: getDefaultPath();
 
 		if (this.baseIPCFlags.offline) {
+			// As we just need module schema, which have no dependency on genesis block
+			// and configuration. So passing empty objects.
 			const app = getApplication(
 				{},
 				{},
