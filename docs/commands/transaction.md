@@ -1,12 +1,11 @@
-`lisk-core transaction`
-=======================
+# `lisk-core transaction`
 
 Commands relating to Lisk Core transactions.
 
-* [`lisk-core transaction:create MODULEID ASSETID FEE`](#lisk-core-transactioncreate-moduleid-assetid-fee)
-* [`lisk-core transaction:get ID`](#lisk-core-transactionget-id)
-* [`lisk-core transaction:send TRANSACTION`](#lisk-core-transactionsend-transaction)
-* [`lisk-core transaction:sign TRANSACTION`](#lisk-core-transactionsign-transaction)
+- [`lisk-core transaction:create MODULEID ASSETID FEE`](#lisk-core-transactioncreate-moduleid-assetid-fee)
+- [`lisk-core transaction:get ID`](#lisk-core-transactionget-id)
+- [`lisk-core transaction:send TRANSACTION`](#lisk-core-transactionsend-transaction)
+- [`lisk-core transaction:sign TRANSACTION`](#lisk-core-transactionsign-transaction)
 
 ## `lisk-core transaction:create MODULEID ASSETID FEE`
 
@@ -54,13 +53,13 @@ OPTIONS
   --pretty                                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
-  transaction:create 2 0 100000000 
+  transaction:create 2 0 100000000
   --asset='{"amount":100000000,"recipientAddress":"ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815","data":"send token"}'
-  transaction:create 2 0 100000000 
-  --asset='{"amount":100000000,"recipientAddress":"ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815","data":"send token"}' 
+  transaction:create 2 0 100000000
+  --asset='{"amount":100000000,"recipientAddress":"ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815","data":"send token"}'
   --json
-  transaction:create 2 0 100000000 --offline --network mainnet --network-identifier 
-  873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 --nonce 1 
+  transaction:create 2 0 100000000 --offline --network mainnet --network-identifier
+  873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 --nonce 1
   --asset='{"amount":100000000,"recipientAddress":"ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815","data":"send token"}'
 ```
 
@@ -107,7 +106,7 @@ OPTIONS
   --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLE
-  transaction:send 
+  transaction:send
   080810011880cab5ee012220fd061b9146691f3c56504be051175d5b76d1b1d0179c5c4370e18534c58821222a2408641214ab0041a7d3f7b2c290
   b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e324028edd3601cdc35a41bb23415a0d9f3c3e9cf188d9971adf18742cea39d58aa84809a
   a87bcfe6feaac46211c80472ad9297fd87727709f5d7e7b4134caf106b02

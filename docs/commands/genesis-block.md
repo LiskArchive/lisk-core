@@ -1,9 +1,8 @@
-`lisk-core genesis-block`
-=========================
+# `lisk-core genesis-block`
 
 Download genesis block.
 
-* [`lisk-core genesis-block:download`](#lisk-core-genesis-blockdownload)
+- [`lisk-core genesis-block:download`](#lisk-core-genesis-blockdownload)
 
 ## `lisk-core genesis-block:download`
 
