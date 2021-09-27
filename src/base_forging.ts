@@ -26,6 +26,14 @@ interface Args {
 	readonly maxHeightPrevoted?: number;
 }
 
+interface ForgingStatus {
+	readonly address?: string;
+	readonly forging?: boolean;
+	readonly height?: number;
+	readonly maxHeightPreviouslyForged?: number;
+	readonly maxHeightPrevoted?: number;
+}
+
 const isLessThanZero = (value: number | undefined | null): boolean =>
 	value === null || value === undefined || value < 0;
 
@@ -54,15 +62,63 @@ export class BaseForgingCommand extends BaseIPCCommand {
 		const { address, height, maxHeightPreviouslyForged, maxHeightPrevoted } = args as Args;
 		let password: string;
 
+		if (!this._client) {
+			this.error('APIClient is not initialized.');
+		}
+
 		if (
 			this.forging &&
+			flags['use-status-values'] &&
+			(height || maxHeightPreviouslyForged || maxHeightPrevoted)
+		) {
+			throw new Error(
+				'Flag --use-status-values can not be used along with arguments height, maxHeightPreviouslyForged, maxHeightPrevoted',
+			);
+		}
+
+		if (
+			this.forging &&
+			!flags['use-status-values'] &&
 			(isLessThanZero(height) ||
 				isLessThanZero(maxHeightPreviouslyForged) ||
 				isLessThanZero(maxHeightPrevoted))
 		) {
 			throw new Error(
-				'The maxHeightPreviouslyForged and maxHeightPrevoted parameter value must be greater than or equal to 0',
+				'The height, maxHeightPreviouslyForged and maxHeightPrevoted parameter value must be greater than or equal to 0',
 			);
+		}
+
+		let forgerStatus: ForgingStatus | undefined;
+		if (flags['use-status-values']) {
+			const forgingStatuses = await this._client.invoke<ForgingStatus[]>('app:getForgingStatus');
+			forgerStatus = forgingStatuses.find(f => f.address === address);
+
+			if (!forgerStatus) {
+				this.log(`Forging status not found for provided account: ${address}.`);
+				return;
+			}
+
+			// eslint-disable-next-line dot-notation
+			if (!flags['yes']) {
+				// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+				this.log(
+					`\n Current forging status is height: ${forgerStatus.height}, maxHeightPrevoted: ${forgerStatus.maxHeightPrevoted} and maxHeightPreviouslyForged: ${forgerStatus.maxHeightPreviouslyForged}.\n`,
+				);
+
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+				const { answer } = await inquirer.prompt([
+					{
+						name: 'answer',
+						message: 'Do you want to use these values to enable forging?',
+						type: 'list',
+						choices: ['yes', 'no'],
+					},
+				]);
+
+				if (answer === 'no') {
+					return;
+				}
+			}
 		}
 
 		if (flags.password) {
@@ -79,9 +135,7 @@ export class BaseForgingCommand extends BaseIPCCommand {
 			]);
 			password = (answers as { password: string }).password;
 		}
-		if (!this._client) {
-			this.error('APIClient is not initialized.');
-		}
+
 		try {
 			const result = await this._client.invoke<{ address: string; forging: boolean }>(
 				'app:updateForgingStatus',
@@ -89,9 +143,11 @@ export class BaseForgingCommand extends BaseIPCCommand {
 					address,
 					password,
 					forging: this.forging,
-					height: Number(height ?? 0),
-					maxHeightPreviouslyForged: Number(maxHeightPreviouslyForged ?? 0),
-					maxHeightPrevoted: Number(maxHeightPrevoted ?? 0),
+					height: Number(height ?? forgerStatus?.height),
+					maxHeightPreviouslyForged: Number(
+						maxHeightPreviouslyForged ?? forgerStatus?.maxHeightPreviouslyForged,
+					),
+					maxHeightPrevoted: Number(maxHeightPrevoted ?? forgerStatus?.maxHeightPrevoted),
 					overwrite: flags.overwrite,
 				},
 			);
