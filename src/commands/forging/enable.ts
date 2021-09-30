@@ -13,10 +13,23 @@
  *
  */
 
-import { BaseForgingCommand } from '../../base_forging';
 import { flags as flagParser } from '@oclif/command';
+import * as inquirer from 'inquirer';
 
-export default class EnableForgingCommand extends BaseForgingCommand {
+import BaseIPCCommand from '../../base_ipc';
+import { flags as commonFlags } from '../../utils/flags';
+
+interface Args {
+	readonly address: string;
+	readonly height?: number;
+	readonly maxHeightPreviouslyForged?: number;
+	readonly maxHeightPrevoted?: number;
+}
+
+const isLessThanZero = (value: number | undefined | null): boolean =>
+	value === null || value === undefined || value < 0;
+
+export default class EnableForgingCommand extends BaseIPCCommand {
 	static description = 'Enable forging for given delegate address.';
 
 	static examples = [
@@ -29,7 +42,12 @@ export default class EnableForgingCommand extends BaseForgingCommand {
 	];
 
 	static flags = {
-		...BaseForgingCommand.flags,
+		...BaseIPCCommand.flags,
+		password: flagParser.string(commonFlags.password),
+		overwrite: flagParser.boolean({
+			description: 'Overwrites the forger info',
+			default: false,
+		}),
 		'use-status-values': flagParser.boolean({
 			description: 'Use delegates forging status values',
 		}),
@@ -41,23 +59,139 @@ export default class EnableForgingCommand extends BaseForgingCommand {
 	};
 
 	static args = [
-		...BaseForgingCommand.args,
+		{
+			name: 'address',
+			required: true,
+			description: 'Address of an account in a base32 format.',
+		},
 		{
 			name: 'height',
+			required: false,
 			description: 'Last forged block height.',
 		},
 		{
 			name: 'maxHeightPreviouslyForged',
+			required: false,
 			description: 'Delegates largest previously forged height.',
 		},
 		{
 			name: 'maxHeightPrevoted',
+			required: false,
 			description: 'Delegates largest prevoted height for a block.',
 		},
 	];
 
-	async init(): Promise<void> {
-		await super.init();
-		this.forging = true;
+	async run(): Promise<void> {
+		const { args, flags } = this.parse(this.constructor as typeof EnableForgingCommand);
+		const { address, height, maxHeightPreviouslyForged, maxHeightPrevoted } = args as Args;
+		let password: string;
+
+		if (!this._client) {
+			this.error('APIClient is not initialized.');
+		}
+
+		if (flags['use-status-values'] && (height || maxHeightPreviouslyForged || maxHeightPrevoted)) {
+			throw new Error(
+				'Flag --use-status-values can not be used along with arguments height, maxHeightPreviouslyForged, maxHeightPrevoted',
+			);
+		}
+
+		if (
+			!flags['use-status-values'] &&
+			(isLessThanZero(height) ||
+				isLessThanZero(maxHeightPreviouslyForged) ||
+				isLessThanZero(maxHeightPrevoted))
+		) {
+			throw new Error(
+				'The height, maxHeightPreviouslyForged and maxHeightPrevoted parameter value must be greater than or equal to 0',
+			);
+		}
+
+		const forgingStatus = await this._client.invoke<Args[]>('app:getForgingStatus');
+		const forgerInfo = forgingStatus.find(f => f.address === address);
+
+		if (flags['use-status-values']) {
+			// eslint-disable-next-line dot-notation
+			if (!flags['yes'] && forgerInfo) {
+				this.log(
+					// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+					`\n Current forging status for delegate account ${address} is:`,
+				);
+				this.printJSON({
+					height: forgerInfo.height,
+					maxHeightPrevoted: forgerInfo.maxHeightPrevoted,
+					maxHeightPreviouslyForged: forgerInfo.maxHeightPreviouslyForged,
+				});
+
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+				const { answer } = await inquirer.prompt([
+					{
+						name: 'answer',
+						message: 'Do you want to use these values to enable forging?',
+						type: 'list',
+						choices: ['yes', 'no'],
+					},
+				]);
+
+				if (answer === 'no') {
+					return;
+				}
+			}
+		}
+
+		if (flags.overwrite) {
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+			const { answer } = await inquirer.prompt([
+				{
+					name: 'answer',
+					message:
+						'Do you want to overwrite the forging config? If you provide incorrect forging information you can be punished.',
+					type: 'list',
+					choices: ['yes', 'no'],
+				},
+			]);
+
+			if (answer === 'no') {
+				return;
+			}
+		}
+
+		if (flags.password) {
+			password = flags.password;
+		} else {
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+			const answers = await inquirer.prompt([
+				{
+					type: 'password',
+					message: 'Enter password to decrypt the encrypted passphrase: ',
+					name: 'password',
+					mask: '*',
+				},
+			]);
+			password = (answers as { password: string }).password;
+		}
+
+		try {
+			const params = {
+				address,
+				password,
+				forging: true,
+				height: Number(height ?? forgerInfo?.height),
+				maxHeightPreviouslyForged: Number(
+					maxHeightPreviouslyForged ?? forgerInfo?.maxHeightPreviouslyForged,
+				),
+				maxHeightPrevoted: Number(maxHeightPrevoted ?? forgerInfo?.maxHeightPrevoted),
+				overwrite: flags.overwrite,
+			};
+
+			const result = await this._client.invoke<{ address: string; forging: boolean }>(
+				'app:updateForgingStatus',
+				params,
+			);
+			this.log('Updated forging status:');
+			this.printJSON(result);
+		} catch (error) {
+			this.error(error);
+		}
 	}
 }
