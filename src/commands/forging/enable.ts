@@ -127,7 +127,7 @@ export default class EnableForgingCommand extends BaseIPCCommand {
 				const { answer } = await inquirer.prompt([
 					{
 						name: 'answer',
-						message: 'Do you want to use these values to enable forging?',
+						message: 'Do you want to use the above values to enable forging?',
 						type: 'list',
 						choices: ['yes', 'no'],
 					},
