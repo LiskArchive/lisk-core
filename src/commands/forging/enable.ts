@@ -145,7 +145,7 @@ export default class EnableForgingCommand extends BaseIPCCommand {
 				{
 					name: 'answer',
 					message:
-						'Do you want to overwrite the forging config? If you provide incorrect forging information you can be punished.',
+						'CAUTION: Do you really want to overwrite the forging config? If you provide incorrect forging information you will be punished.',
 					type: 'list',
 					choices: ['yes', 'no'],
 				},
