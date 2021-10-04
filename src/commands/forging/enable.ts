@@ -26,8 +26,9 @@ interface Args {
 	readonly maxHeightPrevoted?: number;
 }
 
-const isLessThanZero = (value: number | undefined | null): boolean =>
-	value === null || value === undefined || value < 0;
+const isLessThanZero = (value: number): boolean => !Number.isNaN(value) && value < 0;
+
+const isZeroAndAbove = (value: number): boolean => !Number.isNaN(value) && value >= 0;
 
 export default class EnableForgingCommand extends BaseIPCCommand {
 	static description = 'Enable forging for given delegate address.';
@@ -83,21 +84,30 @@ export default class EnableForgingCommand extends BaseIPCCommand {
 
 	async run(): Promise<void> {
 		const { args, flags } = this.parse(this.constructor as typeof EnableForgingCommand);
-		const { address, height, maxHeightPreviouslyForged, maxHeightPrevoted } = args as Args;
+		const { address } = args as Args;
+		const useStatusValue = flags['use-status-values'];
+		const height = parseInt(args.height, 10);
+		const maxHeightPrevoted = parseInt(args.maxHeightPrevoted, 10);
+		const maxHeightPreviouslyForged = parseInt(args.maxHeightPreviouslyForged, 10);
 		let password: string;
 
 		if (!this._client) {
 			this.error('APIClient is not initialized.');
 		}
 
-		if (flags['use-status-values'] && (height || maxHeightPreviouslyForged || maxHeightPrevoted)) {
+		if (
+			useStatusValue &&
+			(isZeroAndAbove(height) ||
+				isZeroAndAbove(maxHeightPreviouslyForged) ||
+				isZeroAndAbove(maxHeightPrevoted))
+		) {
 			throw new Error(
 				'Flag --use-status-values can not be used along with arguments height, maxHeightPreviouslyForged, maxHeightPrevoted',
 			);
 		}
 
 		if (
-			!flags['use-status-values'] &&
+			!useStatusValue &&
 			(isLessThanZero(height) ||
 				isLessThanZero(maxHeightPreviouslyForged) ||
 				isLessThanZero(maxHeightPrevoted))
@@ -108,11 +118,13 @@ export default class EnableForgingCommand extends BaseIPCCommand {
 		}
 
 		const forgingStatus = await this._client.invoke<Args[]>('app:getForgingStatus');
-		const forgerInfo = forgingStatus.find(f => f.address === address);
+		const defaultForgerInfo = { height: 0, maxHeightPrevoted: 0, maxHeightPreviouslyForged: 0 };
+		let forgerInfo = forgingStatus.find(f => f.address === address);
 
-		if (flags['use-status-values']) {
+		if (useStatusValue && forgerInfo) {
+			forgerInfo = { ...defaultForgerInfo, ...forgerInfo };
 			// eslint-disable-next-line dot-notation
-			if (!flags['yes'] && forgerInfo) {
+			if (!flags['yes']) {
 				this.log(
 					// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
 					`\n Current forging status for delegate account ${address} is:`,
@@ -176,11 +188,13 @@ export default class EnableForgingCommand extends BaseIPCCommand {
 				address,
 				password,
 				forging: true,
-				height: Number(height ?? forgerInfo?.height),
+				height: Number(useStatusValue ? forgerInfo?.height : height),
 				maxHeightPreviouslyForged: Number(
-					maxHeightPreviouslyForged ?? forgerInfo?.maxHeightPreviouslyForged,
+					useStatusValue ? forgerInfo?.maxHeightPreviouslyForged : maxHeightPreviouslyForged,
 				),
-				maxHeightPrevoted: Number(maxHeightPrevoted ?? forgerInfo?.maxHeightPrevoted),
+				maxHeightPrevoted: Number(
+					useStatusValue ? forgerInfo?.maxHeightPrevoted : maxHeightPrevoted,
+				),
 				overwrite: flags.overwrite,
 			};
 

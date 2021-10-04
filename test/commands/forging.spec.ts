@@ -27,6 +27,12 @@ describe('forging', () => {
 		address: 'actionAddress',
 		forging: true,
 	};
+	const forgingStatus = {
+		height: 1,
+		maxHeightPrevoted: 1,
+		maxHeightPreviouslyForged: 1,
+	};
+
 	let stdout: string[];
 	let stderr: string[];
 	let config: Config.IConfig;
@@ -44,7 +50,7 @@ describe('forging', () => {
 		invokeMock = jest.fn();
 		when(invokeMock)
 			.calledWith('app:getForgingStatus')
-			.mockResolvedValue([{ address: 'actionAddress', forging: true }]);
+			.mockResolvedValue([{ address: 'actionAddress', forging: true, ...forgingStatus }]);
 		when(invokeMock)
 			.calledWith('app:updateForgingStatus', expect.anything())
 			.mockResolvedValue({ address: 'actionAddress', forging: true });
@@ -91,6 +97,18 @@ describe('forging', () => {
 					maxHeightPrevoted: 1,
 					overwrite: false,
 				});
+			});
+
+			it('should use 0 as default when forging for first time', async () => {
+				const forgingData = { height: 0, maxHeightPrevoted: 0, maxHeightPreviouslyForged: 0 };
+				when(invokeMock)
+					.calledWith('app:getForgingStatus')
+					.mockResolvedValue([{ address: 'actionAddress', forging: true, ...forgingData }]);
+				await EnableCommand.run(
+					['actionAddress', '--use-status-values', '--password=my-password'],
+					config,
+				);
+				expect(EnableCommand.prototype.printJSON).toHaveBeenCalledWith(forgingData);
 			});
 		});
 
