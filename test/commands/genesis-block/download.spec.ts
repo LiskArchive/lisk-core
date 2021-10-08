@@ -69,7 +69,7 @@ describe('genesis-block:download command', () => {
 		await DownloadCommand.run(['-n', 'mainnet'], config);
 
 		expect(downloadUtils.downloadAndValidate).toHaveBeenCalledWith(
-			'https://downloads.lisk.io/lisk/mainnet/genesis_block.json.tar.gz',
+			'https://downloads.lisk.com/lisk/mainnet/genesis_block.json.tar.gz',
 			'',
 		);
 	});
