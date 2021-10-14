@@ -23,7 +23,7 @@
 		"activeDelegates": 101,
 		"standbyDelegates": 2,
 		"delegateListRoundOffset": 2,
-		"unlockFixHeight": 16767878
+		"unlockFixHeight": 16785878
 	},
 	"logger": {
 		"fileLogLevel": "error",
