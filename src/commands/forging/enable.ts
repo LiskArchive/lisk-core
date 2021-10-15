@@ -63,7 +63,7 @@ export default class EnableForgingCommand extends BaseIPCCommand {
 		{
 			name: 'address',
 			required: true,
-			description: 'Address of an account in a base32 format.',
+			description: 'Address of an account in a hex format.',
 		},
 		{
 			name: 'height',
