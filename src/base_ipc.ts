@@ -77,15 +77,13 @@ export default abstract class BaseIPCCommand extends Command {
 	public baseIPCFlags!: BaseIPCFlags;
 	protected _client: PromiseResolvedType<ReturnType<typeof apiClient.createIPCClient>> | undefined;
 	protected _schema!: RegisteredSchema;
+	protected _dataPath!: string;
 
 	// eslint-disable-next-line @typescript-eslint/require-await
 	async finally(error?: Error | string): Promise<void> {
 		if (error) {
-			// TODO: replace this logic with isApplicationRunning util and log the error accordingly
-			if (/^IPC Socket client connection timeout./.test((error as Error).message)) {
-				this.error(
-					'Please ensure the app is up and running with ipc enabled before using the command!',
-				);
+			if (!isApplicationRunning(this._dataPath)) {
+				throw new Error(`Application at data path ${this._dataPath} is not running.`);
 			}
 			this.error(error instanceof Error ? error.message : error);
 		}
@@ -97,7 +95,7 @@ export default abstract class BaseIPCCommand extends Command {
 	async init(): Promise<void> {
 		const { flags } = this.parse(this.constructor as typeof BaseIPCCommand);
 		this.baseIPCFlags = flags;
-		const dataPath = this.baseIPCFlags['data-path']
+		this._dataPath = this.baseIPCFlags['data-path']
 			? this.baseIPCFlags['data-path']
 			: getDefaultPath();
 
@@ -118,10 +116,10 @@ export default abstract class BaseIPCCommand extends Command {
 			return;
 		}
 
-		if (!isApplicationRunning(dataPath)) {
-			throw new Error(`Application at data path ${dataPath} is not running.`);
+		if (!isApplicationRunning(this._dataPath)) {
+			throw new Error(`Application at data path ${this._dataPath} is not running.`);
 		}
-		this._client = await apiClient.createIPCClient(dataPath);
+		this._client = await apiClient.createIPCClient(this._dataPath);
 		this._schema = this._client.schemas;
 	}
 
