@@ -35,12 +35,12 @@ pipeline {
 					nvm(readFile(".nvmrc").trim()) {
 						withCredentials([string(credentialsId: 'npm_lisk_io_registry_password', variable: 'PASS')]) {
 							sh '''#!/bin/bash -e
-							echo //npm.lisk.io/:_authToken=$( curl --silent https://npm.lisk.io/-/user/org.couchdb.user:jenkins/-rev/undefined -u jenkins:$PASS -X PUT \
+							echo //npm.lisk.com/:_authToken=$( curl --silent https://npm.lisk.com/-/user/org.couchdb.user:jenkins/-rev/undefined -u jenkins:$PASS -X PUT \
 							  -d '{"_id":"org.couchdb.user:jenkins","name":"jenkins","password":"'$PASS'","type":"user","roles":[],"date":"2020-07-23T06:13:20.194Z","ok":"you are authenticated as 'undefined'"}' \
 							  -H content-type:application/json |jq --raw-output .token ) >~/.npmrc
 							'''
 						}
-						sh 'npx lerna publish --canary --preid nightly$BUILD_NUMBER --registry https://npm.lisk.io --ignore-scripts --yes |tee lerna_publish.log'
+						sh 'npx lerna publish --canary --preid nightly$BUILD_NUMBER --registry https://npm.lisk.com --ignore-scripts --yes |tee lerna_publish.log'
 					}
 				}
 			}
@@ -63,7 +63,7 @@ pipeline {
 						# TODO: set SDK version
 						published_sdk_version=$( grep --after-context=100 '^Successfully published:' ../lisk-sdk/lerna_publish.log |grep '^ - lisk-sdk@' | cut -d @ -f 2 )
 						jq '.dependencies["lisk-sdk"]="'$published_sdk_version'"' package.json >package.json_; mv -f package.json_ package.json
-						npm install --registry https://npm.lisk.io/
+						npm install --registry https://npm.lisk.com/
 						npm install --global yarn
 						npm run build
 						npm test
@@ -79,12 +79,12 @@ pipeline {
 					nvm(readFile(".nvmrc").trim()) {
 						withCredentials([string(credentialsId: 'npm_lisk_io_registry_password', variable: 'PASS')]) {
 							sh '''#!/bin/bash -e
-							echo //npm.lisk.io/:_authToken=$( curl --silent https://npm.lisk.io/-/user/org.couchdb.user:jenkins/-rev/undefined -u jenkins:$PASS -X PUT \
+							echo //npm.lisk.com/:_authToken=$( curl --silent https://npm.lisk.com/-/user/org.couchdb.user:jenkins/-rev/undefined -u jenkins:$PASS -X PUT \
 							  -d '{"_id":"org.couchdb.user:jenkins","name":"jenkins","password":"'$PASS'","type":"user","roles":[],"date":"2020-07-23T06:13:20.194Z","ok":"you are authenticated as 'undefined'"}' \
 							  -H content-type:application/json |jq --raw-output .token ) >~/.npmrc
 							'''
 						}
-						sh 'npm publish --registry https://npm.lisk.io'
+						sh 'npm publish --registry https://npm.lisk.com'
 					}
 				}
 			}
