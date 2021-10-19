@@ -352,6 +352,15 @@ describe('start', () => {
 
 	describe('when config is specified', () => {
 		it('should update the config value', async () => {
+			when(fs.readJSON as jest.Mock)
+				.calledWith('./config.json')
+				.mockResolvedValue({
+					logger: {
+						consoleLogLevel: 'error',
+					},
+					plugins: {},
+				});
+
 			await StartCommand.run(['--config=./config.json'], config);
 			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
 			expect(fs.readJSON).toHaveBeenCalledWith('./config.json');
