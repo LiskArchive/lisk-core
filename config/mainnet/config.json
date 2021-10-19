@@ -32,7 +32,7 @@
 	"network": {
 		"seedPeers": [
 			{
-				"ip": "mainnet-seed-01.lisk.io",
+				"ip": "mainnet-seed-01.lisk.com",
 				"port": 8001
 			},
 			{
@@ -40,7 +40,7 @@
 				"port": 8001
 			},
 			{
-				"ip": "mainnet-seed-03.lisk.io",
+				"ip": "mainnet-seed-03.lisk.com",
 				"port": 8001
 			},
 			{
@@ -48,7 +48,7 @@
 				"port": 8001
 			},
 			{
-				"ip": "mainnet-seed-05.lisk.io",
+				"ip": "mainnet-seed-05.lisk.com",
 				"port": 8001
 			},
 			{
@@ -56,7 +56,7 @@
 				"port": 8001
 			},
 			{
-				"ip": "mainnet-seed-07.lisk.io",
+				"ip": "mainnet-seed-07.lisk.com",
 				"port": 8001
 			},
 			{
@@ -64,7 +64,7 @@
 				"port": 8001
 			},
 			{
-				"ip": "mainnet-seed-09.lisk.io",
+				"ip": "mainnet-seed-09.lisk.com",
 				"port": 8001
 			},
 			{

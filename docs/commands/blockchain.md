@@ -28,7 +28,7 @@ OPTIONS
 EXAMPLES
   download
   download --network betanet
-  download --url https://snapshots.lisk.io/mainnet/blockchain.db.tar.gz --output ./downloads
+  download --url https://snapshots.lisk.com/mainnet/blockchain.db.tar.gz --output ./downloads
 ```
 
 _See code: [dist/commands/blockchain/download.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/blockchain/download.ts)_
