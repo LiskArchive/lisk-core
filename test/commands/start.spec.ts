@@ -44,6 +44,7 @@ describe('start', () => {
 		when(fs.readJSON as jest.Mock)
 			.calledWith('~/.lisk/lisk-core/config/mainnet/config.json')
 			.mockResolvedValue({
+				networkVersion: '3.0',
 				logger: {
 					consoleLogLevel: 'error',
 				},
@@ -81,6 +82,7 @@ describe('start', () => {
 		when(fs.readJSON as jest.Mock)
 			.calledWith('./custom_config.json')
 			.mockResolvedValue({
+				networkVersion: '3.1',
 				genesisConfig: {
 					blockTime: 60,
 				}
@@ -374,6 +376,8 @@ describe('start', () => {
 			expect(fs.readJSON).toHaveBeenCalledWith('./custom_config.json');
 			expect(usedConfig.genesisConfig.blockTime).not.toEqual(60);
 			expect(usedConfig.genesisConfig.blockTime).toEqual(10);
+			expect(usedConfig.networkVersion).not.toEqual('3.1');
+			expect(usedConfig.networkVersion).toEqual('3.0');
 		});
 	});
 
