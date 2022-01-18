@@ -44,10 +44,14 @@ describe('start', () => {
 		when(fs.readJSON as jest.Mock)
 			.calledWith('~/.lisk/lisk-core/config/mainnet/config.json')
 			.mockResolvedValue({
+				networkVersion: '3.0',
 				logger: {
 					consoleLogLevel: 'error',
 				},
 				plugins: {},
+				genesisConfig: {
+					blockTime: 10,
+				}
 			})
 			.calledWith('~/.lisk/lisk-core/config/testnet/config.json')
 			.mockResolvedValue({
@@ -75,6 +79,14 @@ describe('start', () => {
 			.calledWith(path.join(__dirname, '../../config'))
 			.mockReturnValue(['mainnet', 'testnet', 'devnet']);
 
+		when(fs.readJSON as jest.Mock)
+			.calledWith('./custom_config.json')
+			.mockResolvedValue({
+				networkVersion: '3.1',
+				genesisConfig: {
+					blockTime: 60,
+				}
+			});
 		jest.spyOn(fs, 'existsSync').mockReturnValue(true);
 		jest.spyOn(fs, 'ensureDirSync').mockReturnValue();
 		jest.spyOn(fs, 'removeSync').mockReturnValue();
@@ -356,6 +368,16 @@ describe('start', () => {
 			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
 			expect(fs.readJSON).toHaveBeenCalledWith('./config.json');
 			expect(usedConfig.logger.consoleLogLevel).toBe('error');
+		});
+
+		it('should not override the genesis config', async () => {
+			await StartCommand.run(['--config=./custom_config.json'], config);
+			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
+			expect(fs.readJSON).toHaveBeenCalledWith('./custom_config.json');
+			expect(usedConfig.genesisConfig.blockTime).not.toEqual(60);
+			expect(usedConfig.genesisConfig.blockTime).toEqual(10);
+			expect(usedConfig.networkVersion).not.toEqual('3.1');
+			expect(usedConfig.networkVersion).toEqual('3.0');
 		});
 	});
 
