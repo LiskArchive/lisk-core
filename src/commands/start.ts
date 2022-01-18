@@ -295,8 +295,8 @@ export default class StartCommand extends Command {
 
 		// Get config from network config or config specified
 		const genesisBlock = await fs.readJSON(genesisBlockFilePath);
+		const defaultConfig = await fs.readJSON(defaultConfigFilepath);
 		let config = await fs.readJSON(configFilePath);
-		const { networkVersion, genesisConfig } = config;
 
 		if (flags.config) {
 			const customConfig: ApplicationConfig = await fs.readJSON(flags.config);
@@ -357,8 +357,8 @@ export default class StartCommand extends Command {
 		// Get application and start
 		try {
 			// Restore source code genesisConfig and networkVersion
-			config.genesisConfig = genesisConfig;
-			config.networkVersion = networkVersion;
+			config.genesisConfig = defaultConfig.genesisConfig;
+			config.networkVersion = defaultConfig.networkVersion;
 
 			const app = getApplication(genesisBlock, config, {
 				enableHTTPAPIPlugin: flags['enable-http-api-plugin'],
