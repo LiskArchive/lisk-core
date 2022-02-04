@@ -240,62 +240,6 @@ describe('start', () => {
 		});
 	});
 
-	describe('when --enable-http-api-plugin is specified', () => {
-		it('should pass this value to configuration', async () => {
-			await StartCommand.run(['--enable-http-api-plugin'], config);
-			const [, , options] = (application.getApplication as jest.Mock).mock.calls[0];
-			expect(options.enableHTTPAPIPlugin).toBe(true);
-		});
-	});
-
-	describe('when custom host with --http-api-plugin-host is specified along with --enable-http-api-plugin', () => {
-		it('should update the config value', async () => {
-			await StartCommand.run(
-				['--enable-http-api-plugin', '--http-api-plugin-host', '0.0.0.0'],
-				config,
-			);
-			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
-			expect(usedConfig.plugins.httpApi.host).toBe('0.0.0.0');
-		});
-	});
-
-	describe('when custom port with --http-api-plugin-port is specified along with --enable-http-api-plugin', () => {
-		it('should update the config value', async () => {
-			await StartCommand.run(
-				['--enable-http-api-plugin', '--http-api-plugin-port', '8888'],
-				config,
-			);
-			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
-			expect(usedConfig.plugins.httpApi.port).toBe(8888);
-		});
-	});
-
-	describe('when custom white list with --http-api-plugin-whitelist is specified along with --enable-http-api-plugin', () => {
-		it('should update the config value', async () => {
-			await StartCommand.run(
-				[
-					'--enable-http-api-plugin',
-					'--http-api-plugin-whitelist',
-					'192.08.0.1:8888,192.08.0.2:8888',
-				],
-				config,
-			);
-			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
-			expect(usedConfig.plugins.httpApi.whiteList).toEqual(['192.08.0.1:8888', '192.08.0.2:8888']);
-		});
-	});
-
-	describe('when empty white list with --http-api-plugin-whitelist is specified along with --enable-http-api-plugin', () => {
-		it('should update the config value', async () => {
-			await StartCommand.run(
-				['--enable-http-api-plugin', '--http-api-plugin-whitelist', ''],
-				config,
-			);
-			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
-			expect(usedConfig.plugins.httpApi.whiteList).toEqual([]);
-		});
-	});
-
 	describe('when --enable-forger-plugin is specified', () => {
 		it('should pass this value to configuration', async () => {
 			await StartCommand.run(['--enable-forger-plugin'], config);

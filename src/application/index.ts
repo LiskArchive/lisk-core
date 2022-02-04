@@ -13,7 +13,6 @@
  */
 import {
 	Application,
-	HTTPAPIPlugin,
 	ForgerPlugin,
 	MonitorPlugin,
 	PartialApplicationConfig,
@@ -22,7 +21,6 @@ import {
 import { LegacyAccountModule } from './modules';
 
 export interface Options {
-	enableHTTPAPIPlugin: boolean;
 	enableForgerPlugin: boolean;
 	enableMonitorPlugin: boolean;
 	enableReportMisbehaviorPlugin: boolean;
@@ -38,9 +36,6 @@ export const getApplication = (
 	const app = Application.defaultApplication(genesisBlock, config);
 	app.registerModule(LegacyAccountModule);
 
-	if (options.enableHTTPAPIPlugin) {
-		app.registerPlugin(HTTPAPIPlugin, { loadAsChildProcess: true });
-	}
 	if (options.enableForgerPlugin) {
 		app.registerPlugin(ForgerPlugin, { loadAsChildProcess: true });
 	}
