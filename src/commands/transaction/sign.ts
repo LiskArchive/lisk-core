@@ -15,15 +15,17 @@
 
 import { flags as flagParser } from '@oclif/command';
 import { transactions, cryptography } from 'lisk-sdk';
-import BaseIPCCommand from '../../base_ipc';
+import BaseIPCCommand, { Schema } from '../../base_ipc';
 import { flags as commonFlags } from '../../utils/flags';
 import { getPassphraseFromPrompt } from '../../utils/reader';
 import { DEFAULT_NETWORK } from '../../constants';
 
-interface KeysAsset {
+interface AuthAccount {
+	nonce: string;
 	mandatoryKeys: Array<Readonly<string>>;
 	optionalKeys: Array<Readonly<string>>;
 }
+
 export default class SignCommand extends BaseIPCCommand {
 	static description = 'Sign encoded transaction.';
 
@@ -120,16 +122,16 @@ export default class SignCommand extends BaseIPCCommand {
 		const passphrase = passphraseSource ?? (await getPassphraseFromPrompt('passphrase', true));
 		const networkIdentifierBuffer = Buffer.from(networkIdentifier, 'hex');
 		const transactionObject = this.decodeTransaction(transaction);
-		const assetSchema = this.getAssetSchema(
+		const commandSchema = this.getCommandSchema(
 			transactionObject.moduleID as number,
-			transactionObject.assetID as number,
+			transactionObject.commandID as number,
 		);
 		let signedTransaction: Record<string, unknown>;
 
 		// sign from multi sig account offline using input keys
 		if (!includeSender && !senderPublicKey) {
 			signedTransaction = transactions.signTransaction(
-				assetSchema.schema,
+				commandSchema.schema as Schema,
 				transactionObject,
 				networkIdentifierBuffer,
 				passphrase,
@@ -146,7 +148,7 @@ export default class SignCommand extends BaseIPCCommand {
 			};
 
 			signedTransaction = transactions.signMultiSignatureTransaction(
-				assetSchema.schema,
+				commandSchema.schema as Schema,
 				transactionObject,
 				networkIdentifierBuffer,
 				passphrase,
@@ -161,20 +163,22 @@ export default class SignCommand extends BaseIPCCommand {
 				);
 			}
 			const address = cryptography.getAddressFromPublicKey(Buffer.from(senderPublicKey, 'hex'));
-			const account = (await this._client?.account.get(address)) as { keys: KeysAsset };
-			let keysAsset: KeysAsset;
-			if (account.keys?.mandatoryKeys.length === 0 && account.keys?.optionalKeys.length === 0) {
-				keysAsset = transactionObject.asset as KeysAsset;
+			const account = await this._client?.invoke<AuthAccount>('auth_getAuthAccount', {
+				address: address.toString('hex'),
+			});
+			let authAccount: AuthAccount;
+			if (account?.mandatoryKeys.length === 0 && account.optionalKeys.length === 0) {
+				authAccount = transactionObject.params as AuthAccount;
 			} else {
-				keysAsset = account.keys;
+				authAccount = account as AuthAccount;
 			}
 			const keys = {
-				mandatoryKeys: keysAsset.mandatoryKeys.map(k => Buffer.from(k, 'hex')),
-				optionalKeys: keysAsset.optionalKeys.map(k => Buffer.from(k, 'hex')),
+				mandatoryKeys: authAccount.mandatoryKeys.map(k => Buffer.from(k, 'hex')),
+				optionalKeys: authAccount.optionalKeys.map(k => Buffer.from(k, 'hex')),
 			};
 
 			signedTransaction = transactions.signMultiSignatureTransaction(
-				assetSchema.schema,
+				commandSchema.schema as Schema,
 				transactionObject,
 				networkIdentifierBuffer,
 				passphrase,

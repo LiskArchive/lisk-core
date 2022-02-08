@@ -16,9 +16,8 @@ import {
 	cryptography,
 	transactions,
 	codec,
-	TokenTransferAsset,
-	KeysRegisterAsset,
-	DPoSVoteAsset,
+	TransferCommand,
+	VoteCommand,
 } from 'lisk-sdk';
 import { Schema } from '../../src/base_ipc';
 
@@ -30,11 +29,45 @@ const account = {
 	address: '9cabee3d27426676b852ce6b804cb2fdff7cd0b5',
 };
 
-const tokenTransferAsset = new TokenTransferAsset(BigInt(500000));
-
-export const tokenTransferAssetSchema = tokenTransferAsset.schema;
-export const keysRegisterAssetSchema = new KeysRegisterAsset().schema;
-export const dposVoteAssetSchema = new DPoSVoteAsset().schema;
+// TODO: Needs to use the auth command and get the schema
+export const registerMultisignatureParamsSchema = {
+	$id: '/auth/command/regMultisig',
+	type: 'object',
+	properties: {
+		numberOfSignatures: {
+			dataType: 'uint32',
+			fieldNumber: 1,
+			minimum: 1,
+			maximum: 64,
+		},
+		mandatoryKeys: {
+			type: 'array',
+			items: {
+				dataType: 'bytes',
+				minLength: 32,
+				maxLength: 32,
+			},
+			fieldNumber: 2,
+			minItems: 0,
+			maxItems: 64,
+		},
+		optionalKeys: {
+			type: 'array',
+			items: {
+				dataType: 'bytes',
+				minLength: 32,
+				maxLength: 32,
+			},
+			fieldNumber: 3,
+			minItems: 0,
+			maxItems: 64,
+		},
+	},
+	required: ['numberOfSignatures', 'mandatoryKeys', 'optionalKeys'],
+};
+export const tokenTransferCommandSchema = new TransferCommand(1).schema;
+export const dposVoteCommandSchema = new VoteCommand(2).schema;
+export const keysRegisterCommandSchema = registerMultisignatureParamsSchema;
 export const accountSchema = {
 	$id: '/account/base',
 	properties: {
@@ -203,14 +236,14 @@ export const createTransferTransaction = ({
 	nonce: number;
 }): Record<string, unknown> => {
 	const transaction = transactions.signTransaction(
-		tokenTransferAsset.schema,
+		tokenTransferCommandSchema,
 		{
 			moduleID: 2,
-			assetID: 0,
+			commandID: 0,
 			nonce: BigInt(nonce),
 			fee: BigInt(transactions.convertLSKToBeddows(fee)),
 			senderPublicKey: Buffer.from(account.publicKey, 'hex'),
-			asset: {
+			params: {
 				amount: BigInt(transactions.convertLSKToBeddows(amount)),
 				recipientAddress: Buffer.from(recipientAddress, 'hex'),
 				data: '',
@@ -225,10 +258,10 @@ export const createTransferTransaction = ({
 		id: transaction.id.toString('hex'),
 		senderPublicKey: transaction.senderPublicKey.toString('hex'),
 		signatures: transaction.signatures.map(s => (s as Buffer).toString('hex')),
-		asset: {
-			...transaction.asset,
-			amount: transaction.asset.amount.toString(),
-			recipientAddress: transaction.asset.recipientAddress.toString('hex'),
+		params: {
+			...transaction.params,
+			amount: transaction.params.amount.toString(),
+			recipientAddress: transaction.params.recipientAddress.toString('hex'),
 		},
 		nonce: transaction.nonce.toString(),
 		fee: transaction.fee.toString(),
@@ -238,10 +271,10 @@ export const createTransferTransaction = ({
 export const encodeTransactionFromJSON = (
 	transaction: Record<string, unknown>,
 	baseSchema: Schema,
-	assetsSchemas: { moduleID: number; assetID: number; schema: Schema }[],
+	assetsSchemas: { moduleID: number; commandID: number; schema: Schema }[],
 ): string => {
 	const transactionTypeAssetSchema = assetsSchemas.find(
-		as => as.moduleID === transaction.moduleID && as.assetID === transaction.assetID,
+		as => as.moduleID === transaction.moduleID && as.commandID === transaction.commandID,
 	);
 
 	if (!transactionTypeAssetSchema) {
@@ -250,14 +283,14 @@ export const encodeTransactionFromJSON = (
 
 	const transactionAssetBuffer = codec.encode(
 		transactionTypeAssetSchema.schema,
-		codec.fromJSON(transactionTypeAssetSchema.schema, transaction.asset as object),
+		codec.fromJSON(transactionTypeAssetSchema.schema, transaction.params as object),
 	);
 
 	const transactionBuffer = codec.encode(
 		baseSchema,
 		codec.fromJSON(baseSchema, {
 			...transaction,
-			asset: transactionAssetBuffer,
+			params: transactionAssetBuffer,
 		}),
 	);
 

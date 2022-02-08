@@ -17,7 +17,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Command, flags as flagParser } from '@oclif/command';
 import * as fs from 'fs-extra';
-import { ApplicationConfig, MonitorPlugin, utils } from 'lisk-sdk';
+import { ApplicationConfig, utils } from 'lisk-sdk';
+import { MonitorPlugin } from '@liskhq/lisk-framework-monitor-plugin';
+
 import {
 	getDefaultPath,
 	splitPath,
@@ -43,21 +45,21 @@ const LOG_OPTIONS = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
 const setPluginConfig = (config: ApplicationConfig, flags: Flags): void => {
 	if (flags['monitor-plugin-host'] !== undefined) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		config.plugins[MonitorPlugin.alias] = config.plugins[MonitorPlugin.alias] ?? {};
-		config.plugins[MonitorPlugin.alias].host = flags['monitor-plugin-host'];
+		config.plugins[MonitorPlugin.name] = config.plugins[MonitorPlugin.name] ?? {};
+		config.plugins[MonitorPlugin.name].host = flags['monitor-plugin-host'];
 	}
 	if (flags['monitor-plugin-port'] !== undefined) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		config.plugins[MonitorPlugin.alias] = config.plugins[MonitorPlugin.alias] ?? {};
-		config.plugins[MonitorPlugin.alias].port = flags['monitor-plugin-port'];
+		config.plugins[MonitorPlugin.name] = config.plugins[MonitorPlugin.name] ?? {};
+		config.plugins[MonitorPlugin.name].port = flags['monitor-plugin-port'];
 	}
 	if (
 		flags['monitor-plugin-whitelist'] !== undefined &&
 		typeof flags['monitor-plugin-whitelist'] === 'string'
 	) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		config.plugins[MonitorPlugin.alias] = config.plugins[MonitorPlugin.alias] ?? {};
-		config.plugins[MonitorPlugin.alias].whiteList = flags['monitor-plugin-whitelist']
+		config.plugins[MonitorPlugin.name] = config.plugins[MonitorPlugin.name] ?? {};
+		config.plugins[MonitorPlugin.name].whiteList = flags['monitor-plugin-whitelist']
 			.split(',')
 			.filter(Boolean);
 	}
@@ -190,8 +192,7 @@ export default class StartCommand extends Command {
 		const defaultNetworkConfigDir = getConfigDirs(defaultNetworkConfigs);
 		if (!defaultNetworkConfigDir.includes(flags.network)) {
 			this.error(
-				`Network must be one of ${defaultNetworkConfigDir.join(',')} but received ${
-					flags.network
+				`Network must be one of ${defaultNetworkConfigDir.join(',')} but received ${flags.network
 				}.`,
 			);
 		}
@@ -316,15 +317,15 @@ export default class StartCommand extends Command {
 			config.genesisConfig = defaultConfig.genesisConfig;
 			config.networkVersion = defaultConfig.networkVersion;
 
-			const app = getApplication(genesisBlock, config, {
+			const app = getApplication(config, {
 				enableForgerPlugin: flags['enable-forger-plugin'],
 				enableMonitorPlugin: flags['enable-monitor-plugin'],
 				enableReportMisbehaviorPlugin: flags['enable-report-misbehavior-plugin'],
 			});
-			await app.run();
+			await app.run(genesisBlock);
 		} catch (errors) {
 			this.error(
-				Array.isArray(errors) ? errors.map(err => (err as Error).message).join(',') : errors,
+				Array.isArray(errors as Error[]) ? (errors as Error[]).map(err => err.message).join(',') : errors as Error,
 			);
 		}
 	}

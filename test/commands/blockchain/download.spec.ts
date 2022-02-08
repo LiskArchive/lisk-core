@@ -35,7 +35,7 @@ describe('blockchain:download', () => {
 		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
 		jest.spyOn(application, 'getApplication').mockReturnValue({
 			run: async () => Promise.resolve(),
-		} as Application);
+		} as unknown as Application);
 		jest.spyOn(downloadUtils, 'downloadAndValidate').mockResolvedValue(undefined);
 		jest.spyOn(downloadUtils, 'getChecksum').mockResolvedValue('checksum' as never);
 	});

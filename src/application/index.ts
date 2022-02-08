@@ -13,12 +13,11 @@
  */
 import {
 	Application,
-	ForgerPlugin,
-	MonitorPlugin,
 	PartialApplicationConfig,
-	ReportMisbehaviorPlugin,
 } from 'lisk-sdk';
-import { LegacyAccountModule } from './modules';
+import { ForgerPlugin } from '@liskhq/lisk-framework-forger-plugin';
+import { ReportMisbehaviorPlugin } from '@liskhq/lisk-framework-report-misbehavior-plugin';
+import { MonitorPlugin } from '@liskhq/lisk-framework-monitor-plugin';
 
 export interface Options {
 	enableForgerPlugin: boolean;
@@ -26,24 +25,21 @@ export interface Options {
 	enableReportMisbehaviorPlugin: boolean;
 }
 
-// Temporally disable eslint
-/* eslint-disable */
 export const getApplication = (
-	genesisBlock: Record<string, unknown>,
 	config: PartialApplicationConfig,
 	options: Options,
 ): Application => {
-	const app = Application.defaultApplication(genesisBlock, config);
-	app.registerModule(LegacyAccountModule);
+	const { app } = Application.defaultApplication(config);
 
+	// Instatiate and register modules and plugins
 	if (options.enableForgerPlugin) {
-		app.registerPlugin(ForgerPlugin, { loadAsChildProcess: true });
+		app.registerPlugin(new ForgerPlugin(), { loadAsChildProcess: true });
 	}
 	if (options.enableMonitorPlugin) {
-		app.registerPlugin(MonitorPlugin, { loadAsChildProcess: true });
+		app.registerPlugin(new MonitorPlugin(), { loadAsChildProcess: true });
 	}
 	if (options.enableReportMisbehaviorPlugin) {
-		app.registerPlugin(ReportMisbehaviorPlugin, { loadAsChildProcess: true });
+		app.registerPlugin(new ReportMisbehaviorPlugin(), { loadAsChildProcess: true });
 	}
 
 	return app;

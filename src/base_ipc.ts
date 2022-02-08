@@ -104,9 +104,7 @@ export default abstract class BaseIPCCommand extends Command {
 			// and configuration. So passing empty objects.
 			const app = getApplication(
 				{},
-				{},
 				{
-					enableHTTPAPIPlugin: false,
 					enableForgerPlugin: false,
 					enableMonitorPlugin: false,
 					enableReportMisbehaviorPlugin: false,
@@ -131,19 +129,19 @@ export default abstract class BaseIPCCommand extends Command {
 		}
 	}
 
-	protected getAssetSchema(
+	protected getCommandSchema(
 		moduleID: number,
-		assetID: number,
-	): RegisteredSchema['transactionsAssets'][0] {
-		const assetSchema = this._schema.transactionsAssets.find(
-			schema => schema.moduleID === moduleID && schema.assetID === assetID,
+		commandID: number,
+	): RegisteredSchema['commands'][0] {
+		const commandSchema = this._schema.commands.find(
+			schema => schema.moduleID === moduleID && schema.commandID === commandID,
 		);
-		if (!assetSchema) {
+		if (!commandSchema) {
 			throw new Error(
-				`Transaction moduleID:${moduleID} with assetID:${assetID} is not registered in the application.`,
+				`Transaction moduleID:${moduleID} with commandID:${commandID} is not registered in the application.`,
 			);
 		}
-		return assetSchema;
+		return commandSchema;
 	}
 
 	protected decodeTransaction(transactionHexStr: string): Record<string, unknown> {
@@ -153,11 +151,11 @@ export default abstract class BaseIPCCommand extends Command {
 		}
 		const id = cryptography.hash(transactionBytes);
 		const transaction = codec.decode<Transaction>(this._schema.transaction, transactionBytes);
-		const assetSchema = this.getAssetSchema(transaction.moduleID, transaction.assetID);
-		const asset = codec.decode<Record<string, unknown>>(assetSchema.schema, transaction.asset);
+		const commandSchema = this.getCommandSchema(transaction.moduleID, transaction.commandID);
+		const params = codec.decode<Record<string, unknown>>(commandSchema.schema as Schema, transaction.params);
 		return {
 			...transaction,
-			asset,
+			params,
 			id,
 		};
 	}
@@ -166,12 +164,13 @@ export default abstract class BaseIPCCommand extends Command {
 		if (this._client) {
 			return this._client.transaction.encode(transaction);
 		}
-		const assetSchema = this.getAssetSchema(
+		const commandSchema = this.getCommandSchema(
 			transaction.moduleID as number,
-			transaction.assetID as number,
+			transaction.commandID as number,
 		);
-		const assetBytes = codec.encode(assetSchema.schema, transaction.asset as object);
-		const txBytes = codec.encode(this._schema.transaction, { ...transaction, asset: assetBytes });
+		// eslint-disable-next-line @typescript-eslint/ban-types
+		const paramBytes = codec.encode(commandSchema.schema as Schema, transaction.params as object);
+		const txBytes = codec.encode(this._schema.transaction, { ...transaction, params: paramBytes });
 		return txBytes;
 	}
 
@@ -179,16 +178,17 @@ export default abstract class BaseIPCCommand extends Command {
 		if (this._client) {
 			return this._client.transaction.toJSON(transaction);
 		}
-		const assetSchema = this.getAssetSchema(
+		const commandSchema = this.getCommandSchema(
 			transaction.moduleID as number,
 			transaction.assetID as number,
 		);
-		const assetJSON = codec.toJSON(assetSchema.schema, transaction.asset as object);
+		// eslint-disable-next-line @typescript-eslint/ban-types
+		const paramsJSON = codec.toJSON(commandSchema.schema as Schema, transaction.params as object);
 		const { id, asset, ...txWithoutAsset } = transaction;
 		const txJSON = codec.toJSON(this._schema.transaction, txWithoutAsset);
 		return {
 			...txJSON,
-			asset: assetJSON,
+			params: paramsJSON,
 			id: Buffer.isBuffer(id) ? id.toString('hex') : undefined,
 		};
 	}

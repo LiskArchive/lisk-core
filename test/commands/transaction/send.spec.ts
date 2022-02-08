@@ -22,7 +22,7 @@ import * as appUtils from '../../../src/utils/application';
 import {
 	createTransferTransaction,
 	encodeTransactionFromJSON,
-	tokenTransferAssetSchema,
+	tokenTransferCommandSchema,
 } from '../../utils/transactions';
 import SendCommand from '../../../src/commands/transaction/send';
 import { getConfig } from '../../utils/config';
@@ -31,8 +31,8 @@ describe('transaction:send command', () => {
 	const transactionsAssetSchemas = [
 		{
 			moduleID: 2,
-			assetID: 0,
-			schema: tokenTransferAssetSchema,
+			commandID: 0,
+			schema: tokenTransferCommandSchema,
 		},
 	];
 	const { id: transactionId, ...transferTransaction } = createTransferTransaction({

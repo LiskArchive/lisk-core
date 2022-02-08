@@ -64,7 +64,7 @@ export const createTransferTransaction = async (
 	const tx = await createAndSignTransaction(
 		{
 			moduleID: 2,
-			assetID: 0,
+			commandID: 0,
 			nonce: input.nonce,
 			senderPublicKey: publicKey,
 			fee: input.fee ?? BigInt('200000'),
@@ -96,7 +96,7 @@ export const createDelegateRegisterTransaction = async (
 	const tx = await createAndSignTransaction(
 		{
 			moduleID: 5,
-			assetID: 0,
+			commandID: 0,
 			nonce: input.nonce,
 			senderPublicKey: publicKey,
 			fee: input.fee ?? BigInt('2500000000'),
@@ -129,7 +129,7 @@ export const createDelegateVoteTransaction = async (
 	const tx = await createAndSignTransaction(
 		{
 			moduleID: 5,
-			assetID: 1,
+			commandID: 1,
 			nonce: input.nonce,
 			senderPublicKey: publicKey,
 			fee: input.fee ?? BigInt('100000000'),
@@ -172,7 +172,7 @@ export const createMultiSignRegisterTransaction = async (
 	let trx = await createAndSignTransaction(
 		{
 			moduleID: 4,
-			assetID: 0,
+			commandID: 0,
 			nonce: input.nonce,
 			senderPublicKey: publicKey,
 			fee: input.fee ?? BigInt('1100000000'),
@@ -214,7 +214,7 @@ export const createMultisignatureTransferTransaction = async (
 	const tx = await createAndSignTransaction(
 		{
 			moduleID: 2,
-			assetID: 0,
+			commandID: 0,
 			nonce: input.nonce,
 			senderPublicKey: input.senderPublicKey,
 			fee: input.fee ?? BigInt('200000'),
