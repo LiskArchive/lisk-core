@@ -1,36 +1,25 @@
 {
-	"networkVersion": "3.1",
 	"label": "devnet",
-	"genesisConfig": {
-		"blockTime": 10,
-		"communityIdentifier": "Lisk",
-		"maxPayloadLength": 15360,
-		"bftThreshold": 68,
-		"minFeePerByte": 1000,
-		"baseFees": [
-			{
-				"moduleID": 5,
-				"assetID": 0,
-				"baseFee": "1000000000"
-			}
-		],
-		"rewards": {
-			"milestones": ["500000000", "400000000", "300000000", "200000000", "100000000"],
-			"offset": 2160,
-			"distance": 3000000
-		},
-		"minRemainingBalance": "5000000",
-		"activeDelegates": 101,
-		"standbyDelegates": 2,
-		"delegateListRoundOffset": 2
-	},
+	"version": "0.0.0",
+	"networkVersion": "3.1",
+	"rootPath": "~/.lisk",
 	"logger": {
 		"fileLogLevel": "debug",
 		"consoleLogLevel": "info"
 	},
 	"rpc": {
-		"enable": false,
-		"mode": "ipc"
+		"modes": [
+			"ipc"
+		],
+		"ws": {
+			"port": 8080,
+			"host": "127.0.0.1",
+			"path": "/ws"
+		},
+		"http": {
+			"port": 8000,
+			"host": "127.0.0.1"
+		}
 	},
 	"network": {
 		"port": 5000,
@@ -41,7 +30,23 @@
 			}
 		]
 	},
-	"forging": {
+	"transactionPool": {},
+	"plugins": {},
+	"genesis": {
+		"blockTime": 10,
+		"communityIdentifier": "Lisk",
+		"maxTransactionsSize": 15360,
+		"minFeePerByte": 1000,
+		"modules": {},
+		"baseFees": [
+			{
+				"moduleID": 5,
+				"assetID": 0,
+				"baseFee": "1000000000"
+			}
+		]
+	},
+	"generation": {
 		"force": true,
 		"waitThreshold": 2,
 		"delegates": [
@@ -2209,7 +2214,7 @@
 				"address": "5ade564399e670bd1d429583059067f3a6ca2b7f"
 			}
 		],
-		"defaultPassword": "elephant tree paris dragon chair galaxy"
-	},
-	"plugins": {}
+		"modules": {},
+		"password": "elephant tree paris dragon chair galaxy"
+	}
 }
