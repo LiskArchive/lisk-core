@@ -180,7 +180,7 @@ export default abstract class BaseIPCCommand extends Command {
 		}
 		const commandSchema = this.getCommandSchema(
 			transaction.moduleID as number,
-			transaction.assetID as number,
+			transaction.commandID as number,
 		);
 		// eslint-disable-next-line @typescript-eslint/ban-types
 		const paramsJSON = codec.toJSON(commandSchema.schema as Schema, transaction.params as object);
