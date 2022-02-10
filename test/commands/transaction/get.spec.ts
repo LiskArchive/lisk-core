@@ -50,7 +50,7 @@ describe('transaction:get command', () => {
 	const transactionsAssets = [
 		{
 			moduleID: 2,
-			assetID: 0,
+			commandID: 0,
 			schema: transferAssetSchema,
 		},
 	];

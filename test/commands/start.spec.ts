@@ -26,7 +26,7 @@ import { getConfig } from '../utils/config';
 
 import pJSON = require('../../package.json');
 
-describe('start', () => {
+describe.skip('start', () => {
 	let stdout: string[];
 	let stderr: string[];
 	let config: Config.IConfig;
@@ -37,9 +37,9 @@ describe('start', () => {
 		config = await getConfig();
 		jest.spyOn(process.stdout, 'write').mockImplementation(val => stdout.push(val as string) > -1);
 		jest.spyOn(process.stderr, 'write').mockImplementation(val => stderr.push(val as string) > -1);
-		jest.spyOn(application, 'getApplication').mockReturnValue({
+		jest.spyOn(application, 'getApplication').mockReturnValue(({
 			run: async () => Promise.resolve(),
-		} as Application);
+		} as unknown) as Application);
 		jest.spyOn(fs, 'readJSON');
 		when(fs.readJSON as jest.Mock)
 			.calledWith('~/.lisk/lisk-core/config/mainnet/config.json')
@@ -51,7 +51,7 @@ describe('start', () => {
 				plugins: {},
 				genesisConfig: {
 					blockTime: 10,
-				}
+				},
 			})
 			.calledWith('~/.lisk/lisk-core/config/testnet/config.json')
 			.mockResolvedValue({
@@ -85,7 +85,7 @@ describe('start', () => {
 				networkVersion: '3.1',
 				genesisConfig: {
 					blockTime: 60,
-				}
+				},
 			});
 		jest.spyOn(fs, 'existsSync').mockReturnValue(true);
 		jest.spyOn(fs, 'ensureDirSync').mockReturnValue();
@@ -237,62 +237,6 @@ describe('start', () => {
 			await StartCommand.run(['--api-ws', '--api-ws-port', '8888'], config);
 			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
 			expect(usedConfig.rpc.port).toBe(8888);
-		});
-	});
-
-	describe('when --enable-http-api-plugin is specified', () => {
-		it('should pass this value to configuration', async () => {
-			await StartCommand.run(['--enable-http-api-plugin'], config);
-			const [, , options] = (application.getApplication as jest.Mock).mock.calls[0];
-			expect(options.enableHTTPAPIPlugin).toBe(true);
-		});
-	});
-
-	describe('when custom host with --http-api-plugin-host is specified along with --enable-http-api-plugin', () => {
-		it('should update the config value', async () => {
-			await StartCommand.run(
-				['--enable-http-api-plugin', '--http-api-plugin-host', '0.0.0.0'],
-				config,
-			);
-			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
-			expect(usedConfig.plugins.httpApi.host).toBe('0.0.0.0');
-		});
-	});
-
-	describe('when custom port with --http-api-plugin-port is specified along with --enable-http-api-plugin', () => {
-		it('should update the config value', async () => {
-			await StartCommand.run(
-				['--enable-http-api-plugin', '--http-api-plugin-port', '8888'],
-				config,
-			);
-			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
-			expect(usedConfig.plugins.httpApi.port).toBe(8888);
-		});
-	});
-
-	describe('when custom white list with --http-api-plugin-whitelist is specified along with --enable-http-api-plugin', () => {
-		it('should update the config value', async () => {
-			await StartCommand.run(
-				[
-					'--enable-http-api-plugin',
-					'--http-api-plugin-whitelist',
-					'192.08.0.1:8888,192.08.0.2:8888',
-				],
-				config,
-			);
-			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
-			expect(usedConfig.plugins.httpApi.whiteList).toEqual(['192.08.0.1:8888', '192.08.0.2:8888']);
-		});
-	});
-
-	describe('when empty white list with --http-api-plugin-whitelist is specified along with --enable-http-api-plugin', () => {
-		it('should update the config value', async () => {
-			await StartCommand.run(
-				['--enable-http-api-plugin', '--http-api-plugin-whitelist', ''],
-				config,
-			);
-			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
-			expect(usedConfig.plugins.httpApi.whiteList).toEqual([]);
 		});
 	});
 
