@@ -11,10 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import {
-	Application,
-	PartialApplicationConfig,
-} from 'lisk-sdk';
+import { Application, PartialApplicationConfig } from 'lisk-sdk';
 import { ForgerPlugin } from '@liskhq/lisk-framework-forger-plugin';
 import { ReportMisbehaviorPlugin } from '@liskhq/lisk-framework-report-misbehavior-plugin';
 import { MonitorPlugin } from '@liskhq/lisk-framework-monitor-plugin';
@@ -25,10 +22,7 @@ export interface Options {
 	enableReportMisbehaviorPlugin: boolean;
 }
 
-export const getApplication = (
-	config: PartialApplicationConfig,
-	options: Options,
-): Application => {
+export const getApplication = (config: PartialApplicationConfig, options: Options): Application => {
 	const { app } = Application.defaultApplication(config);
 
 	// Instatiate and register modules and plugins
