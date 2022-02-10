@@ -17,7 +17,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Command, flags as flagParser } from '@oclif/command';
 import * as fs from 'fs-extra';
-import { ApplicationConfig, HTTPAPIPlugin, MonitorPlugin, utils } from 'lisk-sdk';
+import { ApplicationConfig, utils } from 'lisk-sdk';
+import { MonitorPlugin } from '@liskhq/lisk-framework-monitor-plugin';
+
 import {
 	getDefaultPath,
 	splitPath,
@@ -41,43 +43,23 @@ interface Flags {
 const LOG_OPTIONS = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
 
 const setPluginConfig = (config: ApplicationConfig, flags: Flags): void => {
-	if (flags['http-api-plugin-host'] !== undefined) {
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		config.plugins[HTTPAPIPlugin.alias] = config.plugins[HTTPAPIPlugin.alias] ?? {};
-		config.plugins[HTTPAPIPlugin.alias].host = flags['http-api-plugin-host'];
-	}
-	if (flags['http-api-plugin-port'] !== undefined) {
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		config.plugins[HTTPAPIPlugin.alias] = config.plugins[HTTPAPIPlugin.alias] ?? {};
-		config.plugins[HTTPAPIPlugin.alias].port = flags['http-api-plugin-port'];
-	}
-	if (
-		flags['http-api-plugin-whitelist'] !== undefined &&
-		typeof flags['http-api-plugin-whitelist'] === 'string'
-	) {
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		config.plugins[HTTPAPIPlugin.alias] = config.plugins[HTTPAPIPlugin.alias] ?? {};
-		config.plugins[HTTPAPIPlugin.alias].whiteList = flags['http-api-plugin-whitelist']
-			.split(',')
-			.filter(Boolean);
-	}
 	if (flags['monitor-plugin-host'] !== undefined) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		config.plugins[MonitorPlugin.alias] = config.plugins[MonitorPlugin.alias] ?? {};
-		config.plugins[MonitorPlugin.alias].host = flags['monitor-plugin-host'];
+		config.plugins[MonitorPlugin.name] = config.plugins[MonitorPlugin.name] ?? {};
+		config.plugins[MonitorPlugin.name].host = flags['monitor-plugin-host'];
 	}
 	if (flags['monitor-plugin-port'] !== undefined) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		config.plugins[MonitorPlugin.alias] = config.plugins[MonitorPlugin.alias] ?? {};
-		config.plugins[MonitorPlugin.alias].port = flags['monitor-plugin-port'];
+		config.plugins[MonitorPlugin.name] = config.plugins[MonitorPlugin.name] ?? {};
+		config.plugins[MonitorPlugin.name].port = flags['monitor-plugin-port'];
 	}
 	if (
 		flags['monitor-plugin-whitelist'] !== undefined &&
 		typeof flags['monitor-plugin-whitelist'] === 'string'
 	) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		config.plugins[MonitorPlugin.alias] = config.plugins[MonitorPlugin.alias] ?? {};
-		config.plugins[MonitorPlugin.alias].whiteList = flags['monitor-plugin-whitelist']
+		config.plugins[MonitorPlugin.name] = config.plugins[MonitorPlugin.name] ?? {};
+		config.plugins[MonitorPlugin.name].whiteList = flags['monitor-plugin-whitelist']
 			.split(',')
 			.filter(Boolean);
 	}
@@ -160,30 +142,6 @@ export default class StartCommand extends Command {
 			env: 'LISK_SEED_PEERS',
 			description:
 				'Seed peers to initially connect to in format of comma separated "ip:port". IP can be DNS name or IPV4 format. Environment variable "LISK_SEED_PEERS" can also be used.',
-		}),
-		'enable-http-api-plugin': flagParser.boolean({
-			description:
-				'Enable HTTP API Plugin. Environment variable "LISK_ENABLE_HTTP_API_PLUGIN" can also be used.',
-			env: 'LISK_ENABLE_HTTP_API_PLUGIN',
-			default: false,
-		}),
-		'http-api-plugin-host': flagParser.string({
-			description:
-				'Host to be used for HTTP API Plugin. Environment variable "LISK_HTTP_API_PLUGIN_HOST" can also be used.',
-			env: 'LISK_HTTP_API_PLUGIN_HOST',
-			dependsOn: ['enable-http-api-plugin'],
-		}),
-		'http-api-plugin-port': flagParser.integer({
-			description:
-				'Port to be used for HTTP API Plugin. Environment variable "LISK_HTTP_API_PLUGIN_PORT" can also be used.',
-			env: 'LISK_HTTP_API_PLUGIN_PORT',
-			dependsOn: ['enable-http-api-plugin'],
-		}),
-		'http-api-plugin-whitelist': flagParser.string({
-			description:
-				'List of IPs in comma separated value to allow the connection. Environment variable "LISK_HTTP_API_PLUGIN_WHITELIST" can also be used.',
-			env: 'LISK_HTTP_API_PLUGIN_WHITELIST',
-			dependsOn: ['enable-http-api-plugin'],
 		}),
 		'enable-forger-plugin': flagParser.boolean({
 			description:
@@ -360,16 +318,17 @@ export default class StartCommand extends Command {
 			config.genesisConfig = defaultConfig.genesisConfig;
 			config.networkVersion = defaultConfig.networkVersion;
 
-			const app = getApplication(genesisBlock, config, {
-				enableHTTPAPIPlugin: flags['enable-http-api-plugin'],
+			const app = getApplication(config, {
 				enableForgerPlugin: flags['enable-forger-plugin'],
 				enableMonitorPlugin: flags['enable-monitor-plugin'],
 				enableReportMisbehaviorPlugin: flags['enable-report-misbehavior-plugin'],
 			});
-			await app.run();
+			await app.run(genesisBlock);
 		} catch (errors) {
 			this.error(
-				Array.isArray(errors) ? errors.map(err => (err as Error).message).join(',') : errors,
+				Array.isArray(errors as Error[])
+					? (errors as Error[]).map(err => err.message).join(',')
+					: (errors as Error),
 			);
 		}
 	}

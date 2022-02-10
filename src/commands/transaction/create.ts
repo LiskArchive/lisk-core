@@ -16,27 +16,20 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { flags as flagParser } from '@oclif/command';
 import { codec, cryptography, transactions, validator } from 'lisk-sdk';
-import BaseIPCCommand from '../../base_ipc';
+import BaseIPCCommand, { Schema } from '../../base_ipc';
 import { flags as commonFlags } from '../../utils/flags';
 import { getAssetFromPrompt, getPassphraseFromPrompt } from '../../utils/reader';
 import { DEFAULT_NETWORK } from '../../constants';
 
 interface Args {
 	readonly moduleID: number;
-	readonly assetID: number;
+	readonly commandID: number;
 	readonly fee: string;
 }
 
-const isSequenceObject = (
-	input: Record<string, unknown>,
-	key: string,
-): input is { sequence: { nonce: bigint } } => {
+const isAuthObject = (input: Record<string, unknown>, key: string): input is { nonce: bigint } => {
 	const value = input[key];
-	if (typeof value !== 'object' || Array.isArray(value) || value === null) {
-		return false;
-	}
-	const sequence = value as Record<string, unknown>;
-	if (typeof sequence.nonce !== 'bigint') {
+	if (typeof value !== 'bigint') {
 		return false;
 	}
 	return true;
@@ -54,7 +47,7 @@ export default class CreateCommand extends BaseIPCCommand {
 			description: 'Registered transaction module id.',
 		},
 		{
-			name: 'assetID',
+			name: 'commandID',
 			required: true,
 			description: 'Registered transaction asset id.',
 		},
@@ -122,7 +115,7 @@ export default class CreateCommand extends BaseIPCCommand {
 				offline,
 			},
 		} = this.parse(CreateCommand);
-		const { fee, moduleID, assetID } = args as Args;
+		const { fee, moduleID, commandID } = args as Args;
 
 		if (offline && dataPath) {
 			throw new Error(
@@ -144,22 +137,22 @@ export default class CreateCommand extends BaseIPCCommand {
 			throw new Error('Flag: --nonce must be specified while creating transaction offline.');
 		}
 
-		const assetSchema = this._schema.transactionsAssets.find(
-			as => as.moduleID === Number(moduleID) && as.assetID === Number(assetID),
+		const commandSchema = this._schema.commands.find(
+			as => as.moduleID === Number(moduleID) && as.commandID === Number(commandID),
 		);
 
-		if (!assetSchema) {
+		if (!commandSchema) {
 			throw new Error(
-				`Transaction moduleID:${moduleID} with assetID:${assetID} is not registered in the application.`,
+				`Transaction moduleID:${moduleID} with commandID:${commandID} is not registered in the application.`,
 			);
 		}
 
 		const rawAsset = assetSource
 			? JSON.parse(assetSource)
-			: await getAssetFromPrompt(assetSchema.schema);
-		const assetObject = codec.fromJSON(assetSchema.schema, rawAsset);
+			: await getAssetFromPrompt(commandSchema.schema as Schema);
+		const assetObject = codec.fromJSON(commandSchema.schema as Schema, rawAsset);
 
-		const assetErrors = validator.validator.validate(assetSchema.schema, assetObject);
+		const assetErrors = validator.validator.validate(commandSchema.schema as Schema, assetObject);
 		if (assetErrors.length) {
 			throw new validator.LiskValidationError([...assetErrors]);
 		}
@@ -181,8 +174,8 @@ export default class CreateCommand extends BaseIPCCommand {
 
 		const incompleteTransaction = {
 			moduleID: Number(moduleID),
-			assetID: Number(assetID),
-			nonce: nonceSource ? BigInt(nonceSource) : undefined,
+			commandID: Number(commandID),
+			nonce: nonceSource ? BigInt(nonceSource) : 0,
 			fee: BigInt(fee),
 			senderPublicKey: senderPublicKeySource
 				? Buffer.from(senderPublicKeySource, 'hex')
@@ -205,11 +198,13 @@ export default class CreateCommand extends BaseIPCCommand {
 			const address = cryptography.getAddressFromPublicKey(
 				incompleteTransaction.senderPublicKey as Buffer,
 			);
-			const account = await this._client.account.get(address);
-			if (!isSequenceObject(account, 'sequence')) {
-				this.error('Account does not have sequence property.');
+			const account = await this._client.invoke<{ nonce: string }>('auth_getAuthAccount', {
+				address: address.toString('hex'),
+			});
+			if (!isAuthObject(account, 'nonce')) {
+				this.error('Account does not have nonce property.');
 			}
-			incompleteTransaction.nonce = account.sequence.nonce;
+			incompleteTransaction.nonce = account.nonce;
 		}
 
 		if (!offline && nonceSource && BigInt(incompleteTransaction.nonce) > BigInt(nonceSource)) {
@@ -235,7 +230,7 @@ export default class CreateCommand extends BaseIPCCommand {
 
 		if (!noSignature) {
 			transactions.signTransaction(
-				assetSchema.schema,
+				commandSchema.schema as Schema,
 				transactionObject,
 				Buffer.from(networkIdentifier, 'hex'),
 				passphrase,
