@@ -19,6 +19,8 @@ import { ForgerPlugin } from '@liskhq/lisk-framework-forger-plugin';
 import { ReportMisbehaviorPlugin } from '@liskhq/lisk-framework-report-misbehavior-plugin';
 import { MonitorPlugin } from '@liskhq/lisk-framework-monitor-plugin';
 
+import { LegacyAccountModule } from './modules';
+
 export interface Options {
 	enableForgerPlugin: boolean;
 	enableMonitorPlugin: boolean;
@@ -30,6 +32,7 @@ export const getApplication = (
 	options: Options,
 ): Application => {
 	const { app } = Application.defaultApplication(config);
+	app.registerModule(new LegacyAccountModule());
 
 	// Instatiate and register modules and plugins
 	if (options.enableForgerPlugin) {
