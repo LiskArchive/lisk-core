@@ -16,6 +16,8 @@ import { ForgerPlugin } from '@liskhq/lisk-framework-forger-plugin';
 import { ReportMisbehaviorPlugin } from '@liskhq/lisk-framework-report-misbehavior-plugin';
 import { MonitorPlugin } from '@liskhq/lisk-framework-monitor-plugin';
 
+import { LegacyModule } from './modules';
+
 export interface Options {
 	enableForgerPlugin: boolean;
 	enableMonitorPlugin: boolean;
@@ -24,6 +26,7 @@ export interface Options {
 
 export const getApplication = (config: PartialApplicationConfig, options: Options): Application => {
 	const { app } = Application.defaultApplication(config);
+	app.registerModule(new LegacyModule());
 
 	// Instatiate and register modules and plugins
 	if (options.enableForgerPlugin) {
