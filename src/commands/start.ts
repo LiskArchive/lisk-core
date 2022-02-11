@@ -144,15 +144,11 @@ export default class StartCommand extends Command {
 				'Seed peers to initially connect to in format of comma separated "ip:port". IP can be DNS name or IPV4 format. Environment variable "LISK_SEED_PEERS" can also be used.',
 		}),
 		'enable-forger-plugin': flagParser.boolean({
-			description:
-				'Enable Forger Plugin. Environment variable "LISK_ENABLE_FORGER_PLUGIN" can also be used.',
-			env: 'LISK_ENABLE_FORGER_PLUGIN',
+			description: 'Enable Forger Plugin.',
 			default: false,
 		}),
 		'enable-monitor-plugin': flagParser.boolean({
-			description:
-				'Enable Monitor Plugin. Environment variable "LISK_ENABLE_MONITOR_PLUGIN" can also be used.',
-			env: 'LISK_ENABLE_MONITOR_PLUGIN',
+			description: 'Enable Monitor Plugin.',
 			default: false,
 		}),
 		'monitor-plugin-host': flagParser.string({
@@ -174,9 +170,11 @@ export default class StartCommand extends Command {
 			dependsOn: ['enable-monitor-plugin'],
 		}),
 		'enable-report-misbehavior-plugin': flagParser.boolean({
-			description:
-				'Enable ReportMisbehavior Plugin. Environment variable "LISK_ENABLE_REPORT_MISBEHAVIOR_PLUGIN" can also be used.',
-			env: 'LISK_ENABLE_MONITOR_PLUGIN',
+			description: 'Enable ReportMisbehavior Plugin.',
+			default: false,
+		}),
+		'enable-faucet-plugin': flagParser.boolean({
+			description: 'Enable Faucet Plugin.',
 			default: false,
 		}),
 	};
@@ -264,6 +262,13 @@ export default class StartCommand extends Command {
 		config.rootPath = pathConfig.rootPath;
 		config.label = pathConfig.label;
 		config.version = this.config.pjson.version;
+
+		if (flags['enable-faucet-plugin']) {
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			if (!['devnet', 'betanet', 'testnet'].includes(flags.network)) {
+				this.error('Faucet plugin can be enabled for test networks: devnet/betanet/testnet');
+			}
+		}
 		// Inject other properties specified
 		if (flags['api-ipc']) {
 			config.rpc = utils.objects.mergeDeep({}, config.rpc, {
@@ -319,6 +324,7 @@ export default class StartCommand extends Command {
 			config.networkVersion = defaultConfig.networkVersion;
 
 			const app = getApplication(config, {
+				enableFaucetPlugin: flags['enable-faucet-plugin'],
 				enableForgerPlugin: flags['enable-forger-plugin'],
 				enableMonitorPlugin: flags['enable-monitor-plugin'],
 				enableReportMisbehaviorPlugin: flags['enable-report-misbehavior-plugin'],
