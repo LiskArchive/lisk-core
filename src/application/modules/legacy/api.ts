@@ -14,6 +14,4 @@
 
 import { BaseAPI } from 'lisk-sdk';
 
-export class LegacyAPI extends BaseAPI {
-
-}
+export class LegacyAPI extends BaseAPI {}

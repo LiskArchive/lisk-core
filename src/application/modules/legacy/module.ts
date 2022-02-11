@@ -18,8 +18,8 @@ import { LegacyAPI } from './api';
 import { MODULE_ID_LEGACY } from './constants';
 
 export class LegacyModule extends BaseModule {
-    public name = 'legacy';
-    public id = MODULE_ID_LEGACY;
-    public endpoint = new LegacyEndpoint(this.id);
-    public api = new LegacyAPI(this.id);
+	public name = 'legacy';
+	public id = MODULE_ID_LEGACY;
+	public endpoint = new LegacyEndpoint(this.id);
+	public api = new LegacyAPI(this.id);
 }

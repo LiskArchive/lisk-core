@@ -13,41 +13,41 @@
  */
 
 export const legacyAccountsSchema = {
-    $id: 'lisk/legacyAccount/balance',
-    type: 'object',
-    required: ['balance'],
-    properties: {
-        balance: {
-            dataType: 'uint64',
-            fieldNumber: 1
-        }
-    }
-}
+	$id: 'lisk/legacyAccount/balance',
+	type: 'object',
+	required: ['balance'],
+	properties: {
+		balance: {
+			dataType: 'uint64',
+			fieldNumber: 1,
+		},
+	},
+};
 
 export const reclaimParamsSchema = {
-    $id: 'lisk/legacyAccount/reclaim',
-    type: 'object',
-    required: ['amount'],
-    properties: {
-        amount: {
-            dataType: 'uint64',
-            fieldNumber: 1
-        }
-    }
-}
+	$id: 'lisk/legacyAccount/reclaim',
+	type: 'object',
+	required: ['amount'],
+	properties: {
+		amount: {
+			dataType: 'uint64',
+			fieldNumber: 1,
+		},
+	},
+};
 
 export const registerBLSKeyParamsSchema = {
-    $id: 'lisk/legacyAccount/registerBLSKey',
-    type: 'object',
-    required: ['blsKey', 'proofOfPossession'],
-    properties: {
-        blsKey: {
-            dataType: 'bytes',
-            fieldNumber: 1
-        },
-        proofOfPossession: {
-            dataType: 'bytes',
-            fieldNumber: 2
-        }
-    }
-}
+	$id: 'lisk/legacyAccount/registerBLSKey',
+	type: 'object',
+	required: ['blsKey', 'proofOfPossession'],
+	properties: {
+		blsKey: {
+			dataType: 'bytes',
+			fieldNumber: 1,
+		},
+		proofOfPossession: {
+			dataType: 'bytes',
+			fieldNumber: 2,
+		},
+	},
+};

@@ -16,11 +16,9 @@ import { BaseCommand } from 'lisk-sdk';
 import { COMMAND_ID_RECLAIM } from '../constants';
 
 export class ReclaimCommand extends BaseCommand {
-    public id = COMMAND_ID_RECLAIM;
-    public name = 'reclaim';
+	public id = COMMAND_ID_RECLAIM;
+	public name = 'reclaim';
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    public async execute(): Promise<void> {
-
-    }
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	public async execute(): Promise<void> {}
 }

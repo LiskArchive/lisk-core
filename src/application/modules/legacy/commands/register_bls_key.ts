@@ -16,11 +16,9 @@ import { BaseCommand } from 'lisk-sdk';
 import { COMMAND_ID_REGISTER_BLS_KEY } from '../constants';
 
 export class RegisterBLSKeyCommand extends BaseCommand {
-    public id = COMMAND_ID_REGISTER_BLS_KEY;
-    public name = 'registerblskey';
+	public id = COMMAND_ID_REGISTER_BLS_KEY;
+	public name = 'registerblskey';
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    public async execute(): Promise<void> {
-
-    }
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	public async execute(): Promise<void> {}
 }

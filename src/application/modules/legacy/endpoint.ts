@@ -14,6 +14,4 @@
 
 import { BaseEndpoint } from 'lisk-sdk';
 
-export class LegacyEndpoint extends BaseEndpoint {
-
-}
+export class LegacyEndpoint extends BaseEndpoint {}
