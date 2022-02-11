@@ -19,6 +19,7 @@ export class ReclaimCommand extends BaseCommand {
     public id = COMMAND_ID_RECLAIM;
     public name = 'reclaim';
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     public async execute(): Promise<void> {
 
     }

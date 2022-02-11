@@ -12,8 +12,15 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-import { BaseAPI } from 'lisk-sdk';
+import { BaseCommand } from 'lisk-sdk';
+import { COMMAND_ID_REGISTER_BLS_KEY } from '../constants';
 
-export class LegacyAccountAPI extends BaseAPI {
+export class RegisterBLSKeyCommand extends BaseCommand {
+    public id = COMMAND_ID_REGISTER_BLS_KEY;
+    public name = 'registerblskey';
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    public async execute(): Promise<void> {
+
+    }
 }

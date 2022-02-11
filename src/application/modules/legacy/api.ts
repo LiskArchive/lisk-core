@@ -12,14 +12,8 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-import { BaseCommand } from 'lisk-sdk';
-import { COMMAND_ID_REGISTER_BLS_KEY } from '../constants';
+import { BaseAPI } from 'lisk-sdk';
 
-export class RegisterBLSKeyCommand extends BaseCommand {
-    public id = COMMAND_ID_REGISTER_BLS_KEY;
-    public name = 'registerblskey';
+export class LegacyAPI extends BaseAPI {
 
-    public async execute(): Promise<void> {
-
-    }
 }

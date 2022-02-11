@@ -13,13 +13,13 @@
  */
 
 import { BaseModule } from 'lisk-sdk';
-import { LegacyAccountEndpoint } from './endpoint';
-import { LegacyAccountAPI } from './api';
+import { LegacyEndpoint } from './endpoint';
+import { LegacyAPI } from './api';
 import { MODULE_ID_LEGACY } from './constants';
 
-export class LegacyAccountModule extends BaseModule {
-    public name = 'legacyAccount';
+export class LegacyModule extends BaseModule {
+    public name = 'legacy';
     public id = MODULE_ID_LEGACY;
-    public endpoint = new LegacyAccountEndpoint(this.id);
-    public api = new LegacyAccountAPI(this.id);
+    public endpoint = new LegacyEndpoint(this.id);
+    public api = new LegacyAPI(this.id);
 }
