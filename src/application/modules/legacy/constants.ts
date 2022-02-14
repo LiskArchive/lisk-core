@@ -14,6 +14,7 @@
  */
 
 export const MODULE_ID_LEGACY = 0; // TODO: TBD
+export const MODULE_NAME_LEGACY = 'legacy';
 export const STORE_PREFIX_LEGACY_ACCOUNTS = 0x0000;
 
 // Commands

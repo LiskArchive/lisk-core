@@ -15,10 +15,10 @@
 import { BaseModule } from 'lisk-sdk';
 import { LegacyEndpoint } from './endpoint';
 import { LegacyAPI } from './api';
-import { MODULE_ID_LEGACY } from './constants';
+import { MODULE_NAME_LEGACY, MODULE_ID_LEGACY } from './constants';
 
 export class LegacyModule extends BaseModule {
-	public name = 'legacy';
+	public name = MODULE_NAME_LEGACY;
 	public id = MODULE_ID_LEGACY;
 	public endpoint = new LegacyEndpoint(this.id);
 	public api = new LegacyAPI(this.id);

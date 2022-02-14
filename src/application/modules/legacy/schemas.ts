@@ -88,8 +88,3 @@ export const getLegacyAccountRequestSchema = {
 		},
 	},
 };
-
-export interface LegacyStoreData {
-	legacyAddress: string;
-	balance: bigint;
-}
