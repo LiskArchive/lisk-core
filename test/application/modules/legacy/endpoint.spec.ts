@@ -96,9 +96,7 @@ describe('LegacyEndpoint', () => {
 				balance: '1000',
 			};
 
-			when(mockStoreHas)
-				.calledWith(existingPublicKey)
-				.mockReturnValue(true);
+			when(mockStoreHas).calledWith(existingPublicKey).mockReturnValue(true);
 			when(mockGetWithSchema)
 				.calledWith(existingPublicKey, legacyAccountSchema)
 				.mockReturnValue(expectedLegacyAccount);
@@ -117,9 +115,7 @@ describe('LegacyEndpoint', () => {
 				},
 			});
 
-			when(mockStoreHas)
-				.calledWith(nonExistingPublicKey)
-				.mockReturnValue(false);
+			when(mockStoreHas).calledWith(nonExistingPublicKey).mockReturnValue(false);
 			when(mockGetWithSchema)
 				.calledWith(nonExistingPublicKey, legacyAccountSchema)
 				.mockRejectedValue(new NotFoundError(Buffer.alloc(0)));
