@@ -30,9 +30,14 @@ describe('LegacyEndpoint', () => {
 	let legacyModule: LegacyModule;
 	let legacyEndpoint: LegacyEndpoint;
 
-	const subStoreMock = jest.fn();
+	const mockGetWithSchema = jest.fn();
+	const mockStoreHas = jest.fn();
+
 	const stateStore: any = {
-		getStore: () => ({ getWithSchema: subStoreMock }),
+		getStore: () => ({
+			getWithSchema: mockGetWithSchema,
+			has: mockStoreHas,
+		}),
 	};
 
 	interface Accounts {
@@ -91,7 +96,10 @@ describe('LegacyEndpoint', () => {
 				balance: '1000',
 			};
 
-			when(subStoreMock)
+			when(mockStoreHas)
+				.calledWith(existingPublicKey)
+				.mockReturnValue(true);
+			when(mockGetWithSchema)
 				.calledWith(existingPublicKey, legacyAccountSchema)
 				.mockReturnValue(expectedLegacyAccount);
 
@@ -109,7 +117,10 @@ describe('LegacyEndpoint', () => {
 				},
 			});
 
-			when(subStoreMock)
+			when(mockStoreHas)
+				.calledWith(nonExistingPublicKey)
+				.mockReturnValue(false);
+			when(mockGetWithSchema)
 				.calledWith(nonExistingPublicKey, legacyAccountSchema)
 				.mockRejectedValue(new NotFoundError(Buffer.alloc(0)));
 

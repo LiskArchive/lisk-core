@@ -43,6 +43,9 @@ export class LegacyEndpoint extends BaseEndpoint {
 		const legacyStore = ctx.getStore(this.moduleID, STORE_PREFIX_LEGACY_ACCOUNTS);
 
 		try {
+			const isLegacyAddressExists = await legacyStore.has(publicKey);
+			if (!isLegacyAddressExists) throw new NotFoundError(publicKey);
+
 			const legacyAccount = await legacyStore.getWithSchema<LegacyStoreData>(
 				publicKey,
 				legacyAccountSchema,
