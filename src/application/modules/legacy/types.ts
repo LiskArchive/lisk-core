@@ -11,3 +11,11 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+export interface legacyAccount {
+	readonly address: Buffer;
+	readonly balance: bigint;
+}
+
+export interface legacyAccountsAddresses {
+	readonly legacyAccountsAddresses: legacyAccount[];
+}
