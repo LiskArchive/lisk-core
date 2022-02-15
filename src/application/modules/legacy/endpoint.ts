@@ -12,6 +12,53 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-import { BaseEndpoint } from 'lisk-sdk';
+import {
+	BaseEndpoint,
+	JSONObject,
+	ModuleEndpointContext,
+	chain,
+	cryptography,
+	validator as liskValidator,
+} from 'lisk-sdk';
 
-export class LegacyEndpoint extends BaseEndpoint {}
+import { STORE_PREFIX_LEGACY_ACCOUNTS } from './constants';
+import { getLegacyAccountRequestSchema, legacyAccountSchema } from './schemas';
+import { LegacyStoreData } from './types';
+
+const { LiskValidationError, validator } = liskValidator;
+const { getLegacyAddressFromPublicKey } = cryptography;
+const { NotFoundError } = chain;
+
+export class LegacyEndpoint extends BaseEndpoint {
+	public async getLegacyAccount(
+		ctx: ModuleEndpointContext,
+	): Promise<JSONObject<LegacyStoreData> | undefined> {
+		const reqErrors = validator.validate(getLegacyAccountRequestSchema, ctx.params);
+		if (reqErrors.length) {
+			throw new LiskValidationError(reqErrors);
+		}
+
+		const publicKey = Buffer.from(ctx.params.publicKey as string, 'hex');
+		const legacyAddress = getLegacyAddressFromPublicKey(publicKey);
+		const legacyStore = ctx.getStore(this.moduleID, STORE_PREFIX_LEGACY_ACCOUNTS);
+
+		try {
+			const isLegacyAddressExists = await legacyStore.has(publicKey);
+			if (!isLegacyAddressExists) throw new NotFoundError(publicKey);
+
+			const legacyAccount = await legacyStore.getWithSchema<LegacyStoreData>(
+				publicKey,
+				legacyAccountSchema,
+			);
+			return {
+				legacyAddress,
+				balance: legacyAccount.balance.toString(),
+			};
+		} catch (err) {
+			if (err instanceof NotFoundError) {
+				return undefined;
+			}
+			throw err;
+		}
+	}
+}

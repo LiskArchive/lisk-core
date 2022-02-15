@@ -12,8 +12,8 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-export const legacyAccountsSchema = {
-	$id: 'lisk/legacyAccount/balance',
+export const legacyAccountSchema = {
+	$id: 'lisk/legacy/legacyAccount',
 	type: 'object',
 	required: ['balance'],
 	properties: {
@@ -25,7 +25,7 @@ export const legacyAccountsSchema = {
 };
 
 export const reclaimParamsSchema = {
-	$id: 'lisk/legacyAccount/reclaim',
+	$id: 'lisk/legacy/reclaim',
 	type: 'object',
 	required: ['amount'],
 	properties: {
@@ -37,7 +37,7 @@ export const reclaimParamsSchema = {
 };
 
 export const registerBLSKeyParamsSchema = {
-	$id: 'lisk/legacyAccount/registerBLSKey',
+	$id: 'lisk/legacy/registerBLSKey',
 	type: 'object',
 	required: ['blsKey', 'proofOfPossession'],
 	properties: {
@@ -48,6 +48,43 @@ export const registerBLSKeyParamsSchema = {
 		proofOfPossession: {
 			dataType: 'bytes',
 			fieldNumber: 2,
+		},
+	},
+};
+
+export const genesisLegacyStoreSchema = {
+	type: 'object',
+	required: ['accounts'],
+	properties: {
+		accounts: {
+			type: 'array',
+			fieldNumber: 1,
+			items: {
+				type: 'object',
+				required: ['address', 'balance'],
+				properties: {
+					address: {
+						dataType: 'bytes',
+						fieldNumber: 1,
+					},
+					balance: {
+						dataType: 'uint64',
+						fieldNumber: 2,
+					},
+				},
+			},
+		},
+	},
+};
+
+export const getLegacyAccountRequestSchema = {
+	$id: 'lisk/legacy/endpoint/getLegacyAccount',
+	type: 'object',
+	required: ['publicKey'],
+	properties: {
+		publicKey: {
+			type: 'string',
+			format: 'hex',
 		},
 	},
 };
