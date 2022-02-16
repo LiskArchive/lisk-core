@@ -11,6 +11,12 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+// TODO: Fix lint errors before sending for review
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/await-thenable */
 import {
 	BaseModule,
 	codec,
@@ -30,45 +36,38 @@ export class LegacyModule extends BaseModule {
 	public endpoint = new LegacyEndpoint(this.id);
 	public api = new LegacyAPI(this.id);
 
-	// eslint-disable-next-line class-methods-use-this
-	public async afterGenesisBlockExecute({
-		assets,
-		getStore,
-	}: GenesisBlockExecuteContext): Promise<void> {
-		const { data } = assets.filter(asset => asset.moduleID === this.id);
-		try {
-			const { accounts: genesisBlockAssetObject } = codec.decode(
-				genesisLegacyStoreSchema,
-				Buffer.from(data as string, 'hex'),
-			);
+	public async afterGenesisBlockExecute(ctx: GenesisBlockExecuteContext): Promise<void> {
+		const legacyAssetsBuffer = await ctx.assets.getAsset(this.id);
 
-			for (const account of genesisBlockAssetObject) {
-				if (account.address.length !== 8) throw new Error('Invalid legacy account address');
-				const reqErrors = validator.validate(genesisLegacyStoreSchema, account);
-				if (reqErrors.length) {
-					throw new LiskValidationError(reqErrors);
-				}
-			}
+		const { accounts } = codec.decode(genesisLegacyStoreSchema, legacyAssetsBuffer as Buffer);
 
-			const isDistinctPair = new Set(genesisBlockAssetObject.map(item => item.address));
-			if (isDistinctPair.size !== genesisBlockAssetObject.length)
-				throw new Error('List of legacy accounts is invalid');
-
-			const totalBalance = genesisBlockAssetObject.reduce(
-				(acc, account) => acc + BigInt(account.balance),
-				BigInt('0'),
-			);
-			if (totalBalance >= 2 ** 64) throw new Error('Invalid balance');
-
-			const legacyStore = getStore(this.id, STORE_PREFIX_LEGACY_ACCOUNTS);
-
-			await Promise.all(
-				genesisBlockAssetObject.map(acc =>
-					legacyStore.setWithSchema(acc.address, acc.balance, legacyAccountSchema),
-				),
-			);
-		} catch (error) {
-			throw error;
+		const reqErrors = validator.validate(genesisLegacyStoreSchema, { accounts });
+		if (reqErrors.length) {
+			throw new LiskValidationError(reqErrors);
 		}
+
+		for (const account of accounts) {
+			if (account.address.length !== 8) throw new Error('Invalid legacy address found');
+		}
+
+		const uniqueLegacyAccounts = new Set(accounts.map(item => item.address.toString('hex')));
+		if (uniqueLegacyAccounts.size !== accounts.length) {
+			throw new Error('Legacy address entries are not pair-wise distinct');
+		}
+
+		const totalBalance = accounts.reduce(
+			(acc, account) => BigInt(acc) + BigInt(account.balance),
+			BigInt('0'),
+		);
+		if (totalBalance >= 2 ** 64)
+			throw new Error('Total balance for all legacy accounts cannot exceed 2^64');
+
+		const legacyStore = ctx.getStore(this.id, STORE_PREFIX_LEGACY_ACCOUNTS);
+
+		await Promise.all(
+			accounts.map(async acc =>
+				legacyStore.setWithSchema(acc.address, acc.balance, legacyAccountSchema),
+			),
+		);
 	}
 }
