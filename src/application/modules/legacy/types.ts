@@ -11,3 +11,8 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+
+export interface LegacyStoreData {
+	legacyAddress: string;
+	balance: bigint;
+}
