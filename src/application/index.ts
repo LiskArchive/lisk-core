@@ -12,6 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import { Application, PartialApplicationConfig } from 'lisk-sdk';
+import { FaucetPlugin } from '@liskhq/lisk-framework-faucet-plugin';
 import { ForgerPlugin } from '@liskhq/lisk-framework-forger-plugin';
 import { ReportMisbehaviorPlugin } from '@liskhq/lisk-framework-report-misbehavior-plugin';
 import { MonitorPlugin } from '@liskhq/lisk-framework-monitor-plugin';
@@ -19,6 +20,7 @@ import { MonitorPlugin } from '@liskhq/lisk-framework-monitor-plugin';
 import { LegacyModule } from './modules';
 
 export interface Options {
+	enableFaucetPlugin: boolean;
 	enableForgerPlugin: boolean;
 	enableMonitorPlugin: boolean;
 	enableReportMisbehaviorPlugin: boolean;
@@ -29,6 +31,9 @@ export const getApplication = (config: PartialApplicationConfig, options: Option
 	app.registerModule(new LegacyModule());
 
 	// Instatiate and register modules and plugins
+	if (options.enableFaucetPlugin) {
+		app.registerPlugin(new FaucetPlugin(), { loadAsChildProcess: true });
+	}
 	if (options.enableForgerPlugin) {
 		app.registerPlugin(new ForgerPlugin(), { loadAsChildProcess: true });
 	}

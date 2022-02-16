@@ -105,6 +105,7 @@ export default abstract class BaseIPCCommand extends Command {
 			const app = getApplication(
 				{},
 				{
+					enableFaucetPlugin: false,
 					enableForgerPlugin: false,
 					enableMonitorPlugin: false,
 					enableReportMisbehaviorPlugin: false,
