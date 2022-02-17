@@ -25,7 +25,7 @@ import {
 	MODULE_ID_LEGACY,
 	STORE_PREFIX_LEGACY_ACCOUNTS,
 	LEGACY_ACCOUNT_LENGTH,
-	LEGACY_ACCOUNTS_TOTAL_BALANCE,
+	LEGACY_ACC_MAX_TOTAL_BAL_NON_INC,
 } from './constants';
 import { LegacyEndpoint } from './endpoint';
 import { genesisLegacyStoreSchema, legacyAccountSchema } from './schemas';
@@ -51,21 +51,22 @@ export class LegacyModule extends BaseModule {
 			throw new LiskValidationError(reqErrors);
 		}
 
+		const uniqueLegacyAccounts = new Set();
+		let totalBalance = BigInt('0');
+
 		for (const account of accounts) {
 			if (account.address.length !== LEGACY_ACCOUNT_LENGTH)
 				throw new Error('Invalid legacy address found');
+
+			uniqueLegacyAccounts.add(account.address.toString('hex'));
+			totalBalance += account.balance;
 		}
 
-		const uniqueLegacyAccounts = new Set(accounts.map(item => item.address.toString('hex')));
 		if (uniqueLegacyAccounts.size !== accounts.length) {
 			throw new Error('Legacy address entries are not pair-wise distinct');
 		}
 
-		const totalBalance = accounts.reduce(
-			(acc, account) => BigInt(acc) + BigInt(account.balance),
-			BigInt('0'),
-		);
-		if (totalBalance >= LEGACY_ACCOUNTS_TOTAL_BALANCE)
+		if (totalBalance >= LEGACY_ACC_MAX_TOTAL_BAL_NON_INC)
 			throw new Error('Total balance for all legacy accounts cannot exceed 2^64');
 
 		const legacyStore = ctx.getStore(this.id, STORE_PREFIX_LEGACY_ACCOUNTS);

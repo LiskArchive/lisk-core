@@ -21,15 +21,24 @@ import { LegacyEndpoint } from '../../../../src/application/modules/legacy/endpo
 import {
 	MODULE_NAME_LEGACY,
 	MODULE_ID_LEGACY,
-	LEGACY_ACCOUNTS_TOTAL_BALANCE,
+	LEGACY_ACC_MAX_TOTAL_BAL_NON_INC,
 } from '../../../../src/application/modules/legacy/constants';
 import { genesisLegacyStoreSchema } from '../../../../src/application/modules/legacy/schemas';
-//
-const { getAddressAndPublicKeyFromPassphrase } = cryptography;
+import { genesisLegacyAccountDatum } from '../../../../src/application/modules/legacy/types';
 
 const getLegacyBytesFromPassphrase = (passphrase: string): Buffer => {
-	const { publicKey } = getAddressAndPublicKeyFromPassphrase(passphrase);
+	const { publicKey } = cryptography.getAddressAndPublicKeyFromPassphrase(passphrase);
 	return cryptography.getFirstEightBytesReversed(cryptography.hash(publicKey));
+};
+
+const getContext = (accounts: object, getStore: object): any => {
+	const mockAssets = codec.encode(genesisLegacyStoreSchema, { accounts });
+	return {
+		assets: {
+			getAsset: () => mockAssets,
+		},
+		getStore,
+	} as any;
 };
 
 describe('LegacyModule', () => {
@@ -37,17 +46,8 @@ describe('LegacyModule', () => {
 	interface Accounts {
 		[key: string]: {
 			passphrase: string;
-			publicKey?: Buffer;
-			address?: string;
-			balance?: BigInt;
 		};
 	}
-	interface LegacyAccounts {
-		address: Buffer;
-		balance: BigInt;
-	}
-
-	const legacyAccounts: LegacyAccounts[] = [];
 
 	const testAccounts: Accounts = {
 		account1: {
@@ -60,13 +60,6 @@ describe('LegacyModule', () => {
 			passphrase: 'february large secret save risk album opera rebel tray roast air captain',
 		},
 	};
-
-	for (const account of Object.values(testAccounts)) {
-		legacyAccounts.push({
-			address: getLegacyBytesFromPassphrase(account.passphrase),
-			balance: BigInt(Math.floor(Math.random() * 1000)),
-		});
-	}
 
 	beforeAll(() => {
 		legacyModule = new LegacyModule();
@@ -97,6 +90,7 @@ describe('LegacyModule', () => {
 	});
 
 	describe('afterGenesisBlockExecute', () => {
+		let legacyAccounts: genesisLegacyAccountDatum[];
 		const mockSetWithSchema = jest.fn();
 		const mockStoreHas = jest.fn();
 
@@ -105,15 +99,19 @@ describe('LegacyModule', () => {
 			has: mockStoreHas,
 		});
 
+		beforeEach(() => {
+			legacyAccounts = [];
+			for (const account of Object.values(testAccounts)) {
+				legacyAccounts.push({
+					address: getLegacyBytesFromPassphrase(account.passphrase),
+					balance: BigInt(Math.floor(Math.random() * 1000)),
+				});
+			}
+		});
+
 		it('should save legacy accounts to state store if accounts are valid', async () => {
 			const accounts = legacyAccounts;
-			const mockAssets = codec.encode(genesisLegacyStoreSchema, { accounts });
-			const genesisBlockExecuteContextInput = {
-				assets: {
-					getAsset: () => mockAssets,
-				},
-				getStore,
-			} as any;
+			const genesisBlockExecuteContextInput = getContext(accounts, getStore);
 			await legacyModule.afterGenesisBlockExecute(genesisBlockExecuteContextInput);
 
 			for (const account of accounts) {
@@ -125,112 +123,109 @@ describe('LegacyModule', () => {
 			}
 		});
 
-		it('Rejects the block when address entries are not pair-wise distinct', async () => {
+		it('should reject the block when address entries are not pair-wise distinct', async () => {
 			const accounts = legacyAccounts;
 			accounts.push(legacyAccounts[0]);
-			const mockAssets = codec.encode(genesisLegacyStoreSchema, { accounts });
-			const genesisBlockExecuteContextInput = {
-				assets: {
-					getAsset: () => mockAssets,
-				},
-				getStore,
-			} as any;
+			const genesisBlockExecuteContextInput = getContext(accounts, getStore);
 
 			await expect(
 				legacyModule.afterGenesisBlockExecute(genesisBlockExecuteContextInput),
 			).rejects.toThrow();
 		});
 
-		it('Rejects the block when total balance for all legacy accounts is equal 2^64', async () => {
-			const accounts = [
-				{
-					address: getLegacyBytesFromPassphrase(
-						'recycle capable perfect help trade retreat animal enrich time obvious song play',
-					),
-					balance: BigInt(LEGACY_ACCOUNTS_TOTAL_BALANCE),
-				},
-			];
-			const mockAssets = codec.encode(genesisLegacyStoreSchema, { accounts });
-			const genesisBlockExecuteContextInput = {
-				assets: {
-					getAsset: () => mockAssets,
-				},
-				getStore,
-			} as any;
+		it('should save legacy accounts to state store when total balance for all legacy accounts is less than 2^64', async () => {
+			const accounts = legacyAccounts;
+			const currentTotalBalance = accounts.reduce(
+				(total, account) => total + account.balance,
+				BigInt('0'),
+			);
+
+			accounts.push({
+				address: getLegacyBytesFromPassphrase(
+					'dolphin curious because horror unfold smoke write type badge ecology say pet',
+				),
+				balance: BigInt(LEGACY_ACC_MAX_TOTAL_BAL_NON_INC) - currentTotalBalance - BigInt('1'),
+			});
+			const genesisBlockExecuteContextInput = getContext(accounts, getStore);
+			await legacyModule.afterGenesisBlockExecute(genesisBlockExecuteContextInput);
+
+			for (const account of accounts) {
+				when(mockStoreHas).calledWith(account.address).mockReturnValue(true);
+				const isAccountInStore = await genesisBlockExecuteContextInput
+					.getStore()
+					.has(account.address);
+				expect(isAccountInStore).toBe(true);
+			}
+		});
+
+		it('should reject the block when total balance for all legacy accounts equals 2^64', async () => {
+			const accounts = legacyAccounts;
+			const currentTotalBalance = accounts.reduce(
+				(total, account) => total + account.balance,
+				BigInt('0'),
+			);
+
+			accounts.push({
+				address: getLegacyBytesFromPassphrase(
+					'strategy phone follow wait moon figure cart primary comic recall silver donate',
+				),
+				balance: BigInt(LEGACY_ACC_MAX_TOTAL_BAL_NON_INC) - currentTotalBalance,
+			});
+			const genesisBlockExecuteContextInput = getContext(accounts, getStore);
 			await expect(
 				legacyModule.afterGenesisBlockExecute(genesisBlockExecuteContextInput),
 			).rejects.toThrow();
 		});
 
-		it('Rejects the block when total balance for all legacy accounts is greater than 2^64', async () => {
+		it('should reject the block when total balance for all legacy accounts is greater than 2^64', async () => {
 			const accounts = legacyAccounts;
 			accounts.push({
 				address: getLegacyBytesFromPassphrase(
 					'elephant version solar amused enhance fuel black armor vendor regular tortoise tank',
 				),
-				balance: BigInt(LEGACY_ACCOUNTS_TOTAL_BALANCE),
+				balance: BigInt(LEGACY_ACC_MAX_TOTAL_BAL_NON_INC),
 			});
-			const mockAssets = codec.encode(genesisLegacyStoreSchema, { accounts });
-			const genesisBlockExecuteContextInput = {
-				assets: {
-					getAsset: () => mockAssets,
-				},
-				getStore,
-			} as any;
+			const genesisBlockExecuteContextInput = getContext(accounts, getStore);
+
 			await expect(
 				legacyModule.afterGenesisBlockExecute(genesisBlockExecuteContextInput),
 			).rejects.toThrow();
 		});
 
-		it('Rejects the block when address property of accounts have length 7', async () => {
+		it('should reject the block when address property of accounts have length 7', async () => {
 			const accounts = legacyAccounts;
 			accounts.push({
 				address: Buffer.from('02089ca'),
 				balance: BigInt(Math.floor(Math.random()) * 1000),
 			});
-			const mockAssets = codec.encode(genesisLegacyStoreSchema, { accounts });
-			const genesisBlockExecuteContextInput = {
-				assets: {
-					getAsset: () => mockAssets,
-				},
-				getStore,
-			} as any;
+			const genesisBlockExecuteContextInput = getContext(accounts, getStore);
+
 			await expect(
 				legacyModule.afterGenesisBlockExecute(genesisBlockExecuteContextInput),
 			).rejects.toThrow();
 		});
 
-		it('Rejects the block when address property of accounts have length 9', async () => {
+		it('should reject the block when address property of accounts have length 9', async () => {
 			const accounts = legacyAccounts;
 			accounts.push({
 				address: Buffer.from('0208930ca'),
 				balance: BigInt(Math.floor(Math.random()) * 1000),
 			});
-			const mockAssets = codec.encode(genesisLegacyStoreSchema, { accounts });
-			const genesisBlockExecuteContextInput = {
-				assets: {
-					getAsset: () => mockAssets,
-				},
-				getStore,
-			} as any;
+			const genesisBlockExecuteContextInput = getContext(accounts, getStore);
+
 			await expect(
 				legacyModule.afterGenesisBlockExecute(genesisBlockExecuteContextInput),
 			).rejects.toThrow();
 		});
 
-		it('Rejects the block when address property of accounts have length 20', async () => {
+		it('should reject the block when address property of accounts have length 20', async () => {
 			const accounts = legacyAccounts;
 			accounts.push({
 				address: Buffer.from('lsk27mhpk85653zkwa5h5jhncze4nwwd3twtvrpxo'),
 				balance: BigInt(Math.floor(Math.random()) * 1000),
 			});
-			const mockAssets = codec.encode(genesisLegacyStoreSchema, { accounts });
-			const genesisBlockExecuteContextInput = {
-				assets: {
-					getAsset: () => mockAssets,
-				},
-				getStore,
-			} as any;
+			const genesisBlockExecuteContextInput = getContext(accounts, getStore);
+
 			await expect(
 				legacyModule.afterGenesisBlockExecute(genesisBlockExecuteContextInput),
 			).rejects.toThrow();

@@ -17,10 +17,10 @@ export interface LegacyStoreData {
 	balance: bigint;
 }
 
-interface genesisLegacyAccountData {
+export interface genesisLegacyAccountDatum {
 	address: Buffer;
 	balance: bigint;
 }
 export interface genesisLegacyStoreData {
-	accounts: genesisLegacyAccountData[];
+	accounts: genesisLegacyAccountDatum[];
 }
