@@ -109,7 +109,7 @@ describe('LegacyModule', () => {
 			const mockAssets = codec.encode(genesisLegacyStoreSchema, { accounts });
 			const genesisBlockExecuteContextInput = {
 				assets: {
-					getAsset: jest.fn().mockResolvedValue(mockAssets),
+					getAsset: () => mockAssets,
 				},
 				getStore,
 			} as any;
@@ -130,7 +130,7 @@ describe('LegacyModule', () => {
 			const mockAssets = codec.encode(genesisLegacyStoreSchema, { accounts });
 			const genesisBlockExecuteContextInput = {
 				assets: {
-					getAsset: jest.fn().mockResolvedValue(mockAssets),
+					getAsset: () => mockAssets,
 				},
 				getStore,
 			} as any;
@@ -152,7 +152,7 @@ describe('LegacyModule', () => {
 			const mockAssets = codec.encode(genesisLegacyStoreSchema, { accounts });
 			const genesisBlockExecuteContextInput = {
 				assets: {
-					getAsset: jest.fn().mockResolvedValue(mockAssets),
+					getAsset: () => mockAssets,
 				},
 				getStore,
 			} as any;
@@ -172,7 +172,7 @@ describe('LegacyModule', () => {
 			const mockAssets = codec.encode(genesisLegacyStoreSchema, { accounts });
 			const genesisBlockExecuteContextInput = {
 				assets: {
-					getAsset: jest.fn().mockResolvedValue(mockAssets),
+					getAsset: () => mockAssets,
 				},
 				getStore,
 			} as any;
@@ -190,7 +190,7 @@ describe('LegacyModule', () => {
 			const mockAssets = codec.encode(genesisLegacyStoreSchema, { accounts });
 			const genesisBlockExecuteContextInput = {
 				assets: {
-					getAsset: jest.fn().mockResolvedValue(mockAssets),
+					getAsset: () => mockAssets,
 				},
 				getStore,
 			} as any;
@@ -208,7 +208,7 @@ describe('LegacyModule', () => {
 			const mockAssets = codec.encode(genesisLegacyStoreSchema, { accounts });
 			const genesisBlockExecuteContextInput = {
 				assets: {
-					getAsset: jest.fn().mockResolvedValue(mockAssets),
+					getAsset: () => mockAssets,
 				},
 				getStore,
 			} as any;
@@ -226,7 +226,7 @@ describe('LegacyModule', () => {
 			const mockAssets = codec.encode(genesisLegacyStoreSchema, { accounts });
 			const genesisBlockExecuteContextInput = {
 				assets: {
-					getAsset: jest.fn().mockResolvedValue(mockAssets),
+					getAsset: () => mockAssets,
 				},
 				getStore,
 			} as any;
