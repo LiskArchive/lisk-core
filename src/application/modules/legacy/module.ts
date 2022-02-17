@@ -20,7 +20,13 @@ import {
 } from 'lisk-sdk';
 
 import { LegacyAPI } from './api';
-import { MODULE_NAME_LEGACY, MODULE_ID_LEGACY, STORE_PREFIX_LEGACY_ACCOUNTS } from './constants';
+import {
+	MODULE_NAME_LEGACY,
+	MODULE_ID_LEGACY,
+	STORE_PREFIX_LEGACY_ACCOUNTS,
+	LEGACY_ACCOUNT_LENGTH,
+	LEGACY_ACCOUNTS_TOTAL_BALANCE,
+} from './constants';
 import { LegacyEndpoint } from './endpoint';
 import { genesisLegacyStoreSchema, legacyAccountSchema } from './schemas';
 import { genesisLegacyStoreData } from './types';
@@ -46,7 +52,8 @@ export class LegacyModule extends BaseModule {
 		}
 
 		for (const account of accounts) {
-			if (account.address.length !== 8) throw new Error('Invalid legacy address found');
+			if (account.address.length !== LEGACY_ACCOUNT_LENGTH)
+				throw new Error('Invalid legacy address found');
 		}
 
 		const uniqueLegacyAccounts = new Set(accounts.map(item => item.address.toString('hex')));
@@ -58,7 +65,7 @@ export class LegacyModule extends BaseModule {
 			(acc, account) => BigInt(acc) + BigInt(account.balance),
 			BigInt('0'),
 		);
-		if (totalBalance >= 2 ** 64)
+		if (totalBalance >= LEGACY_ACCOUNTS_TOTAL_BALANCE)
 			throw new Error('Total balance for all legacy accounts cannot exceed 2^64');
 
 		const legacyStore = ctx.getStore(this.id, STORE_PREFIX_LEGACY_ACCOUNTS);

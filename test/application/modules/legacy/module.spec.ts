@@ -21,6 +21,7 @@ import { LegacyEndpoint } from '../../../../src/application/modules/legacy/endpo
 import {
 	MODULE_NAME_LEGACY,
 	MODULE_ID_LEGACY,
+	LEGACY_ACCOUNTS_TOTAL_BALANCE,
 } from '../../../../src/application/modules/legacy/constants';
 import { genesisLegacyStoreSchema } from '../../../../src/application/modules/legacy/schemas';
 //
@@ -146,7 +147,7 @@ describe('LegacyModule', () => {
 					address: getLegacyBytesFromPassphrase(
 						'recycle capable perfect help trade retreat animal enrich time obvious song play',
 					),
-					balance: BigInt(2 ** 64),
+					balance: BigInt(LEGACY_ACCOUNTS_TOTAL_BALANCE),
 				},
 			];
 			const mockAssets = codec.encode(genesisLegacyStoreSchema, { accounts });
@@ -167,7 +168,7 @@ describe('LegacyModule', () => {
 				address: getLegacyBytesFromPassphrase(
 					'elephant version solar amused enhance fuel black armor vendor regular tortoise tank',
 				),
-				balance: BigInt(2 ** 64),
+				balance: BigInt(LEGACY_ACCOUNTS_TOTAL_BALANCE),
 			});
 			const mockAssets = codec.encode(genesisLegacyStoreSchema, { accounts });
 			const genesisBlockExecuteContextInput = {
