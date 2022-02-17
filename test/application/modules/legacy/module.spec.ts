@@ -12,7 +12,8 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-import { BaseModule, cryptography, codec } from 'lisk-sdk';
+import { BaseModule, codec, cryptography } from 'lisk-sdk';
+import { when } from 'jest-when';
 
 import { LegacyModule } from '../../../../src/application/modules';
 import { LegacyAPI } from '../../../../src/application/modules/legacy/api';
@@ -32,12 +33,6 @@ const getLegacyBytesFromPassphrase = (passphrase: string): Buffer => {
 
 describe('LegacyModule', () => {
 	let legacyModule: LegacyModule;
-
-	const mockSetWithSchema = jest.fn();
-
-	const getStore: any = () => ({
-		setWithSchema: mockSetWithSchema,
-	});
 	interface Accounts {
 		[key: string]: {
 			passphrase: string;
@@ -101,7 +96,15 @@ describe('LegacyModule', () => {
 	});
 
 	describe('afterGenesisBlockExecute', () => {
-		it('should save legacy accounts to state store', async () => {
+		const mockSetWithSchema = jest.fn();
+		const mockStoreHas = jest.fn();
+
+		const getStore: any = () => ({
+			setWithSchema: mockSetWithSchema,
+			has: mockStoreHas,
+		});
+
+		it('should save legacy accounts to state store if accounts are valid', async () => {
 			const accounts = legacyAccounts;
 			const mockAssets = codec.encode(genesisLegacyStoreSchema, { accounts });
 			const genesisBlockExecuteContextInput = {
@@ -111,9 +114,17 @@ describe('LegacyModule', () => {
 				getStore,
 			} as any;
 			await legacyModule.afterGenesisBlockExecute(genesisBlockExecuteContextInput);
+
+			for (const account of accounts) {
+				when(mockStoreHas).calledWith(account.address).mockReturnValue(true);
+				const isAccountInStore = await genesisBlockExecuteContextInput
+					.getStore()
+					.has(account.address);
+				expect(isAccountInStore).toBe(true);
+			}
 		});
 
-		it('Reject the block when accounts are NOT pair-wise distinct', async () => {
+		it('Rejects the block when address entries are not pair-wise distinct', async () => {
 			const accounts = legacyAccounts;
 			accounts.push(legacyAccounts[0]);
 			const mockAssets = codec.encode(genesisLegacyStoreSchema, { accounts });
@@ -126,16 +137,37 @@ describe('LegacyModule', () => {
 
 			await expect(
 				legacyModule.afterGenesisBlockExecute(genesisBlockExecuteContextInput),
-			).rejects.toThrow('Legacy address entries are not pair-wise distinct');
+			).rejects.toThrow();
 		});
 
-		it('Reject the block when sum of balance of all accounts is greater than equals to 2^64', async () => {
+		it('Rejects the block when total balance for all legacy accounts is equal 2^64', async () => {
+			const accounts = [
+				{
+					address: getLegacyBytesFromPassphrase(
+						'recycle capable perfect help trade retreat animal enrich time obvious song play',
+					),
+					balance: BigInt(2 ** 64),
+				},
+			];
+			const mockAssets = codec.encode(genesisLegacyStoreSchema, { accounts });
+			const genesisBlockExecuteContextInput = {
+				assets: {
+					getAsset: jest.fn().mockResolvedValue(mockAssets),
+				},
+				getStore,
+			} as any;
+			await expect(
+				legacyModule.afterGenesisBlockExecute(genesisBlockExecuteContextInput),
+			).rejects.toThrow();
+		});
+
+		it('Rejects the block when total balance for all legacy accounts is greater than 2^64', async () => {
 			const accounts = legacyAccounts;
 			accounts.push({
 				address: getLegacyBytesFromPassphrase(
 					'elephant version solar amused enhance fuel black armor vendor regular tortoise tank',
 				),
-				balance: BigInt(2 ** 64 - 2000),
+				balance: BigInt(2 ** 64),
 			});
 			const mockAssets = codec.encode(genesisLegacyStoreSchema, { accounts });
 			const genesisBlockExecuteContextInput = {
@@ -149,7 +181,43 @@ describe('LegacyModule', () => {
 			).rejects.toThrow();
 		});
 
-		it('Reject the block when address property of accounts not have length 8', async () => {
+		it('Rejects the block when address property of accounts have length 7', async () => {
+			const accounts = legacyAccounts;
+			accounts.push({
+				address: Buffer.from('02089ca'),
+				balance: BigInt(Math.floor(Math.random()) * 1000),
+			});
+			const mockAssets = codec.encode(genesisLegacyStoreSchema, { accounts });
+			const genesisBlockExecuteContextInput = {
+				assets: {
+					getAsset: jest.fn().mockResolvedValue(mockAssets),
+				},
+				getStore,
+			} as any;
+			await expect(
+				legacyModule.afterGenesisBlockExecute(genesisBlockExecuteContextInput),
+			).rejects.toThrow();
+		});
+
+		it('Rejects the block when address property of accounts have length 9', async () => {
+			const accounts = legacyAccounts;
+			accounts.push({
+				address: Buffer.from('0208930ca'),
+				balance: BigInt(Math.floor(Math.random()) * 1000),
+			});
+			const mockAssets = codec.encode(genesisLegacyStoreSchema, { accounts });
+			const genesisBlockExecuteContextInput = {
+				assets: {
+					getAsset: jest.fn().mockResolvedValue(mockAssets),
+				},
+				getStore,
+			} as any;
+			await expect(
+				legacyModule.afterGenesisBlockExecute(genesisBlockExecuteContextInput),
+			).rejects.toThrow();
+		});
+
+		it('Rejects the block when address property of accounts have length 20', async () => {
 			const accounts = legacyAccounts;
 			accounts.push({
 				address: Buffer.from('lsk27mhpk85653zkwa5h5jhncze4nwwd3twtvrpxo'),
@@ -164,7 +232,7 @@ describe('LegacyModule', () => {
 			} as any;
 			await expect(
 				legacyModule.afterGenesisBlockExecute(genesisBlockExecuteContextInput),
-			).rejects.toThrow('Invalid legacy address found');
+			).rejects.toThrow();
 		});
 	});
 });

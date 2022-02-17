@@ -11,12 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-// TODO: Fix lint errors before sending for review
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/await-thenable */
+
 import {
 	BaseModule,
 	codec,
@@ -28,6 +23,7 @@ import { LegacyAPI } from './api';
 import { MODULE_NAME_LEGACY, MODULE_ID_LEGACY, STORE_PREFIX_LEGACY_ACCOUNTS } from './constants';
 import { LegacyEndpoint } from './endpoint';
 import { genesisLegacyStoreSchema, legacyAccountSchema } from './schemas';
+import { genesisLegacyStoreData } from './types';
 
 const { LiskValidationError, validator } = liskValidator;
 export class LegacyModule extends BaseModule {
@@ -37,9 +33,12 @@ export class LegacyModule extends BaseModule {
 	public api = new LegacyAPI(this.id);
 
 	public async afterGenesisBlockExecute(ctx: GenesisBlockExecuteContext): Promise<void> {
-		const legacyAssetsBuffer = await ctx.assets.getAsset(this.id);
+		const legacyAssetsBuffer = ctx.assets.getAsset(this.id);
 
-		const { accounts } = codec.decode(genesisLegacyStoreSchema, legacyAssetsBuffer as Buffer);
+		const { accounts } = codec.decode<genesisLegacyStoreData>(
+			genesisLegacyStoreSchema,
+			legacyAssetsBuffer as Buffer,
+		);
 
 		const reqErrors = validator.validate(genesisLegacyStoreSchema, { accounts });
 		if (reqErrors.length) {
@@ -65,8 +64,12 @@ export class LegacyModule extends BaseModule {
 		const legacyStore = ctx.getStore(this.id, STORE_PREFIX_LEGACY_ACCOUNTS);
 
 		await Promise.all(
-			accounts.map(async acc =>
-				legacyStore.setWithSchema(acc.address, acc.balance, legacyAccountSchema),
+			accounts.map(async account =>
+				legacyStore.setWithSchema(
+					account.address,
+					{ balance: account.balance },
+					legacyAccountSchema,
+				),
 			),
 		);
 	}

@@ -16,3 +16,11 @@ export interface LegacyStoreData {
 	legacyAddress: string;
 	balance: bigint;
 }
+
+interface genesisLegacyAccountData {
+	address: Buffer;
+	balance: bigint;
+}
+export interface genesisLegacyStoreData {
+	accounts: genesisLegacyAccountData[];
+}
