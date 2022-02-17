@@ -24,14 +24,14 @@ import {
 	LEGACY_ACC_MAX_TOTAL_BAL_NON_INC,
 } from '../../../../src/application/modules/legacy/constants';
 import { genesisLegacyStoreSchema } from '../../../../src/application/modules/legacy/schemas';
-import { genesisLegacyAccountDatum } from '../../../../src/application/modules/legacy/types';
+import { genesisLegacyAccount } from '../../../../src/application/modules/legacy/types';
 
 const getLegacyBytesFromPassphrase = (passphrase: string): Buffer => {
 	const { publicKey } = cryptography.getAddressAndPublicKeyFromPassphrase(passphrase);
 	return cryptography.getFirstEightBytesReversed(cryptography.hash(publicKey));
 };
 
-const getContext = (accounts: object, getStore: object): any => {
+const getContext = (accounts: genesisLegacyAccount[], getStore: any): any => {
 	const mockAssets = codec.encode(genesisLegacyStoreSchema, { accounts });
 	return {
 		assets: {
@@ -90,7 +90,7 @@ describe('LegacyModule', () => {
 	});
 
 	describe('afterGenesisBlockExecute', () => {
-		let legacyAccounts: genesisLegacyAccountDatum[];
+		let legacyAccounts: genesisLegacyAccount[];
 		const mockSetWithSchema = jest.fn();
 		const mockStoreHas = jest.fn();
 
