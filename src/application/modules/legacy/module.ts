@@ -56,7 +56,9 @@ export class LegacyModule extends BaseModule {
 
 		for (const account of accounts) {
 			if (account.address.length !== LEGACY_ACCOUNT_LENGTH)
-				throw new Error('Invalid legacy address found');
+				throw new Error(
+					`legacy address length is invalid, expected ${LEGACY_ACCOUNT_LENGTH}, actual ${account.address.length}`,
+				);
 
 			uniqueLegacyAccounts.add(account.address.toString('hex'));
 			totalBalance += account.balance;

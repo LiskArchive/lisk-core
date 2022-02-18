@@ -172,6 +172,7 @@ describe('LegacyModule', () => {
 				balance: BigInt(LEGACY_ACC_MAX_TOTAL_BAL_NON_INC) - currentTotalBalance,
 			});
 			const genesisBlockExecuteContextInput = getContext(accounts, getStore);
+			
 			await expect(
 				legacyModule.afterGenesisBlockExecute(genesisBlockExecuteContextInput),
 			).rejects.toThrow();
@@ -192,43 +193,20 @@ describe('LegacyModule', () => {
 			).rejects.toThrow();
 		});
 
-		it('should reject the block when address property of accounts have length 7', async () => {
-			const accounts = legacyAccounts;
-			accounts.push({
-				address: Buffer.from('02089ca'),
-				balance: BigInt(Math.floor(Math.random()) * 1000),
-			});
-			const genesisBlockExecuteContextInput = getContext(accounts, getStore);
+		it('should reject the block when address property of accounts is invalid', async () => {
+			const invalidLegacyAccountAddresses = ['02089ca', '0208930ca', '4644873072065426945L'];
+			for (const invalidLegacyAddress of invalidLegacyAccountAddresses) {
+				const accounts = [...legacyAccounts];
+				accounts.push({
+					address: Buffer.from(invalidLegacyAddress),
+					balance: BigInt(Math.floor(Math.random()) * 1000),
+				});
+				const genesisBlockExecuteContextInput = getContext(accounts, getStore);
 
-			await expect(
-				legacyModule.afterGenesisBlockExecute(genesisBlockExecuteContextInput),
-			).rejects.toThrow();
-		});
-
-		it('should reject the block when address property of accounts have length 9', async () => {
-			const accounts = legacyAccounts;
-			accounts.push({
-				address: Buffer.from('0208930ca'),
-				balance: BigInt(Math.floor(Math.random()) * 1000),
-			});
-			const genesisBlockExecuteContextInput = getContext(accounts, getStore);
-
-			await expect(
-				legacyModule.afterGenesisBlockExecute(genesisBlockExecuteContextInput),
-			).rejects.toThrow();
-		});
-
-		it('should reject the block when address property of accounts have length 20', async () => {
-			const accounts = legacyAccounts;
-			accounts.push({
-				address: Buffer.from('lsk27mhpk85653zkwa5h5jhncze4nwwd3twtvrpxo'),
-				balance: BigInt(Math.floor(Math.random()) * 1000),
-			});
-			const genesisBlockExecuteContextInput = getContext(accounts, getStore);
-
-			await expect(
-				legacyModule.afterGenesisBlockExecute(genesisBlockExecuteContextInput),
-			).rejects.toThrow();
+				await expect(
+					legacyModule.afterGenesisBlockExecute(genesisBlockExecuteContextInput),
+				).rejects.toThrow();
+			}
 		});
 	});
 });
