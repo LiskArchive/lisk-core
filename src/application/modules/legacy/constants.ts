@@ -18,5 +18,6 @@ export const MODULE_NAME_LEGACY = 'legacy';
 export const STORE_PREFIX_LEGACY_ACCOUNTS = 0x0000;
 
 // Commands
+export const COMMAND_NAME_RECLAIM = 'reclaimLSK';
 export const COMMAND_ID_RECLAIM = 0;
 export const COMMAND_ID_REGISTER_BLS_KEY = 1;
