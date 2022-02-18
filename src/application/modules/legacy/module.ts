@@ -38,7 +38,7 @@ export class LegacyModule extends BaseModule {
 	public endpoint = new LegacyEndpoint(this.id);
 	public api = new LegacyAPI(this.id);
 
-	public async afterGenesisBlockExecute(ctx: GenesisBlockExecuteContext): Promise<void> {
+	public async initGenesisState(ctx: GenesisBlockExecuteContext): Promise<void> {
 		const legacyAssetsBuffer = ctx.assets.getAsset(this.id);
 
 		const { accounts } = codec.decode<genesisLegacyStoreData>(

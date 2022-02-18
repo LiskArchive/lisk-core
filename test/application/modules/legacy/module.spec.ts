@@ -89,7 +89,7 @@ describe('LegacyModule', () => {
 		});
 	});
 
-	describe('afterGenesisBlockExecute', () => {
+	describe('initGenesisState', () => {
 		let legacyAccounts: genesisLegacyAccount[];
 		const mockSetWithSchema = jest.fn();
 		const mockStoreHas = jest.fn();
@@ -112,7 +112,7 @@ describe('LegacyModule', () => {
 		it('should save legacy accounts to state store if accounts are valid', async () => {
 			const accounts = legacyAccounts;
 			const genesisBlockExecuteContextInput = getContext(accounts, getStore);
-			await legacyModule.afterGenesisBlockExecute(genesisBlockExecuteContextInput);
+			await legacyModule.initGenesisState(genesisBlockExecuteContextInput);
 
 			for (const account of accounts) {
 				when(mockStoreHas).calledWith(account.address).mockReturnValue(true);
@@ -129,7 +129,7 @@ describe('LegacyModule', () => {
 			const genesisBlockExecuteContextInput = getContext(accounts, getStore);
 
 			await expect(
-				legacyModule.afterGenesisBlockExecute(genesisBlockExecuteContextInput),
+				legacyModule.initGenesisState(genesisBlockExecuteContextInput),
 			).rejects.toThrow();
 		});
 
@@ -147,7 +147,7 @@ describe('LegacyModule', () => {
 				balance: BigInt(LEGACY_ACC_MAX_TOTAL_BAL_NON_INC) - currentTotalBalance - BigInt('1'),
 			});
 			const genesisBlockExecuteContextInput = getContext(accounts, getStore);
-			await legacyModule.afterGenesisBlockExecute(genesisBlockExecuteContextInput);
+			await legacyModule.initGenesisState(genesisBlockExecuteContextInput);
 
 			for (const account of accounts) {
 				when(mockStoreHas).calledWith(account.address).mockReturnValue(true);
@@ -174,7 +174,7 @@ describe('LegacyModule', () => {
 			const genesisBlockExecuteContextInput = getContext(accounts, getStore);
 			
 			await expect(
-				legacyModule.afterGenesisBlockExecute(genesisBlockExecuteContextInput),
+				legacyModule.initGenesisState(genesisBlockExecuteContextInput),
 			).rejects.toThrow();
 		});
 
@@ -189,7 +189,7 @@ describe('LegacyModule', () => {
 			const genesisBlockExecuteContextInput = getContext(accounts, getStore);
 
 			await expect(
-				legacyModule.afterGenesisBlockExecute(genesisBlockExecuteContextInput),
+				legacyModule.initGenesisState(genesisBlockExecuteContextInput),
 			).rejects.toThrow();
 		});
 
@@ -204,7 +204,7 @@ describe('LegacyModule', () => {
 				const genesisBlockExecuteContextInput = getContext(accounts, getStore);
 
 				await expect(
-					legacyModule.afterGenesisBlockExecute(genesisBlockExecuteContextInput),
+					legacyModule.initGenesisState(genesisBlockExecuteContextInput),
 				).rejects.toThrow();
 			}
 		});
