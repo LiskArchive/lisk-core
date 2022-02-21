@@ -16,3 +16,11 @@ export interface LegacyStoreData {
 	legacyAddress: string;
 	balance: bigint;
 }
+
+export interface ReclaimParamData {
+	amount: bigint;
+}
+
+export interface LegacyAccountData {
+	balance: bigint;
+}

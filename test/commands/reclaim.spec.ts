@@ -41,4 +41,19 @@ describe('Reclaim command', () => {
 			expect(reclaimCommand.schema).toEqual(reclaimParamsSchema);
 		});
 	});
+
+	describe('execute', () => {
+		it(`should call mint for a valid reclaim transaction`, async () => {
+		});
+
+		it('should reject the transaction when user send invalid amount', async () => {
+		});
+
+		it('should reject the transaction when user has no entry in the leagcy account substore', async () => {
+		});
+
+		it('should reject the transaction when transaction params does not follow reclaimParamsSchema', async () => {
+		});
+	});
+
 });

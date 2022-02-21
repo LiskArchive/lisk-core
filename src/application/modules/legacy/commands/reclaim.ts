@@ -27,6 +27,7 @@ import {
 } from '../constants';
 
 import { reclaimParamsSchema, legacyAccountSchema } from '../schemas';
+import { ReclaimParamData, LegacyAccountData } from '../types';
 
 const { LiskValidationError, validator } = liskValidator;
 const { getLegacyAddressFromPublicKey, getAddressFromPublicKey } = cryptography;
@@ -42,7 +43,8 @@ export class ReclaimCommand extends BaseCommand {
 	}
 
 	public async execute(ctx: CommandExecuteContext): Promise<void> {
-		const reqErrors = validator.validate(reclaimParamsSchema, ctx.transaction.params);
+		const transactionParams = JSON.parse(ctx.transaction.params.toString('hex')) as ReclaimParamData;
+		const reqErrors = validator.validate(reclaimParamsSchema, transactionParams);
 		if (reqErrors.length) {
 			throw new LiskValidationError(reqErrors);
 		}
@@ -58,14 +60,13 @@ export class ReclaimCommand extends BaseCommand {
 				)} was not found`,
 			);
 
-		const params = JSON.parse(ctx.transaction.params.toString('hex'));
 		const legacyAccount = (await legacyStore.getWithSchema(
 			Buffer.from(legacyAddress, 'hex'),
 			legacyAccountSchema,
-		)) as any;
+		));
 
-		if (legacyAccount.balance !== params.amount)
-			throw new Error(`Invalid amount:${params.amount} claimed by the sender: ${legacyAddress}`);
+		if (legacyAccount.balance !== transactionParams.amount)
+			throw new Error(`Invalid amount:${transactionParams.amount} claimed by the sender: ${legacyAddress}`);
 
 		// Delete the entry from the legacy accounts substore if exists
 		await legacyStore.del(Buffer.from(legacyAddress, 'hex'));
@@ -78,7 +79,7 @@ export class ReclaimCommand extends BaseCommand {
 				chainID: 0,
 				localID: 0,
 			},
-			BigInt(params.amount),
+			BigInt(transactionParams.amount),
 		);
 	}
 }
