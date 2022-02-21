@@ -44,10 +44,10 @@ export class ReclaimCommand extends BaseCommand {
 	}
 
 	public async execute(ctx: CommandExecuteContext): Promise<void> {
-		const transactionParams = codec.decode(
+		const transactionParams = codec.decode<ReclaimParamData>(
 			reclaimParamsSchema,
 			ctx.transaction.params,
-		) as ReclaimParamData;
+		) ;
 
 		const reqErrors = validator.validate(reclaimParamsSchema, transactionParams);
 		if (reqErrors.length) {
