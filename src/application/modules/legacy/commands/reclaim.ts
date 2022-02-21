@@ -63,7 +63,7 @@ export class ReclaimCommand extends BaseCommand {
 		const legacyAccount = (await legacyStore.getWithSchema(
 			Buffer.from(legacyAddress, 'hex'),
 			legacyAccountSchema,
-		));
+		)) as LegacyAccountData;
 
 		if (legacyAccount.balance !== transactionParams.amount)
 			throw new Error(`Invalid amount:${transactionParams.amount} claimed by the sender: ${legacyAddress}`);
