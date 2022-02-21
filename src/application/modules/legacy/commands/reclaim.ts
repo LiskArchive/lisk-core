@@ -18,6 +18,7 @@ import {
 	validator as liskValidator,
 	cryptography,
 	TokenAPI,
+	codec,
 } from 'lisk-sdk';
 
 import {
@@ -27,7 +28,7 @@ import {
 } from '../constants';
 
 import { reclaimParamsSchema, legacyAccountSchema } from '../schemas';
-import { ReclaimParamData, LegacyAccountData } from '../types';
+import { ReclaimParamData, LegacyStoreData } from '../types';
 
 const { LiskValidationError, validator } = liskValidator;
 const { getLegacyAddressFromPublicKey, getAddressFromPublicKey } = cryptography;
@@ -43,16 +44,23 @@ export class ReclaimCommand extends BaseCommand {
 	}
 
 	public async execute(ctx: CommandExecuteContext): Promise<void> {
-		const transactionParams = JSON.parse(ctx.transaction.params.toString('hex')) as ReclaimParamData;
+		const transactionParams = codec.decode(
+			reclaimParamsSchema,
+			ctx.transaction.params,
+		) as ReclaimParamData;
+
 		const reqErrors = validator.validate(reclaimParamsSchema, transactionParams);
 		if (reqErrors.length) {
 			throw new LiskValidationError(reqErrors);
 		}
 
-		const legacyAddress = getLegacyAddressFromPublicKey(ctx.transaction.senderPublicKey);
+		const legacyAddress = Buffer.from(
+			getLegacyAddressFromPublicKey(ctx.transaction.senderPublicKey),
+			'hex',
+		);
 		const legacyStore = ctx.getStore(this.moduleID, STORE_PREFIX_LEGACY_ACCOUNTS);
 
-		const isLegacyAddressExists = await legacyStore.has(Buffer.from(legacyAddress, 'hex'));
+		const isLegacyAddressExists = await legacyStore.has(legacyAddress);
 		if (!isLegacyAddressExists)
 			throw new Error(
 				`Legacy address corresponding to sender publickey ${ctx.transaction.senderPublicKey.toString(
@@ -60,16 +68,19 @@ export class ReclaimCommand extends BaseCommand {
 				)} was not found`,
 			);
 
-		const legacyAccount = (await legacyStore.getWithSchema(
-			Buffer.from(legacyAddress, 'hex'),
+		const legacyAccount = await legacyStore.getWithSchema<LegacyStoreData>(
+			legacyAddress,
 			legacyAccountSchema,
-		)) as LegacyAccountData;
+		);
 
 		if (legacyAccount.balance !== transactionParams.amount)
-			throw new Error(`Invalid amount:${transactionParams.amount} claimed by the sender: ${legacyAddress}`);
+			throw new Error(
+				`Invalid amount:${transactionParams.amount} claimed by the sender: ${legacyAddress.toString(
+					'hex',
+				)}`,
+			);
 
-		// Delete the entry from the legacy accounts substore if exists
-		await legacyStore.del(Buffer.from(legacyAddress, 'hex'));
+		await legacyStore.del(legacyAddress);
 		const APIContext = ctx.getAPIContext();
 
 		await this._tokenAPI.mint(

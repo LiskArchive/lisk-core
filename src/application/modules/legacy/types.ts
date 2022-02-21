@@ -20,7 +20,3 @@ export interface LegacyStoreData {
 export interface ReclaimParamData {
 	amount: bigint;
 }
-
-export interface LegacyAccountData {
-	balance: bigint;
-}
