@@ -19,11 +19,13 @@ import {
 	cryptography,
 	TokenAPI,
 } from 'lisk-sdk';
+
 import {
 	COMMAND_ID_RECLAIM,
 	COMMAND_NAME_RECLAIM,
 	STORE_PREFIX_LEGACY_ACCOUNTS,
 } from '../constants';
+
 import { reclaimParamsSchema, legacyAccountSchema } from '../schemas';
 
 const { LiskValidationError, validator } = liskValidator;
@@ -33,6 +35,11 @@ export class ReclaimCommand extends BaseCommand {
 	public name = COMMAND_NAME_RECLAIM;
 	public id = COMMAND_ID_RECLAIM;
 	public schema = reclaimParamsSchema;
+	private _tokenAPI!: TokenAPI;
+
+	public addDependencies(tokenAPI: TokenAPI) {
+		this._tokenAPI = tokenAPI;
+	}
 
 	public async execute(ctx: CommandExecuteContext): Promise<void> {
 		const reqErrors = validator.validate(reclaimParamsSchema, ctx.transaction.params);
@@ -45,23 +52,26 @@ export class ReclaimCommand extends BaseCommand {
 
 		const isLegacyAddressExists = await legacyStore.has(Buffer.from(legacyAddress, 'hex'));
 		if (!isLegacyAddressExists)
-			throw new Error('Legacy address corresponding to sender publickey was not found');
+			throw new Error(
+				`Legacy address corresponding to sender publickey ${ctx.transaction.senderPublicKey.toString(
+					'hex',
+				)} was not found`,
+			);
 
 		const params = JSON.parse(ctx.transaction.params.toString('hex'));
 		const legacyAccount = (await legacyStore.getWithSchema(
 			Buffer.from(legacyAddress, 'hex'),
 			legacyAccountSchema,
 		)) as any;
+
 		if (legacyAccount.balance !== params.amount)
 			throw new Error(`Invalid amount:${params.amount} claimed by the sender: ${legacyAddress}`);
 
 		// Delete the entry from the legacy accounts substore if exists
 		await legacyStore.del(Buffer.from(legacyAddress, 'hex'));
-
-		const getTokenModule = new TokenAPI(this.moduleID);
 		const APIContext = ctx.getAPIContext();
 
-		await getTokenModule.mint(
+		await this._tokenAPI.mint(
 			APIContext,
 			getAddressFromPublicKey(ctx.transaction.senderPublicKey),
 			{
