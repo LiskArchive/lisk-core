@@ -25,12 +25,10 @@ import {
 	COMMAND_ID_RECLAIM,
 	COMMAND_NAME_RECLAIM,
 	STORE_PREFIX_LEGACY_ACCOUNTS,
-	CHAIN_ID,
-	LOCAL_ID,
 } from '../constants';
 
 import { reclaimParamsSchema, legacyAccountSchema } from '../schemas';
-import { ReclaimParamData, LegacyStoreData } from '../types';
+import { ReclaimParamData, LegacyStoreData, TokenIDReclaim } from '../types';
 
 const { LiskValidationError, validator } = liskValidator;
 const { getLegacyAddressFromPublicKey, getAddressFromPublicKey } = cryptography;
@@ -40,9 +38,14 @@ export class ReclaimCommand extends BaseCommand {
 	public id = COMMAND_ID_RECLAIM;
 	public schema = reclaimParamsSchema;
 	private _tokenAPI!: TokenAPI;
+	private _tokenIDReclaim!: TokenIDReclaim;
 
 	public addDependencies(tokenAPI: TokenAPI) {
 		this._tokenAPI = tokenAPI;
+	}
+
+	public init(args: { tokenIDReclaim: TokenIDReclaim }) {
+		this._tokenIDReclaim = args.tokenIDReclaim;
 	}
 
 	public async execute(ctx: CommandExecuteContext): Promise<void> {
@@ -87,7 +90,7 @@ export class ReclaimCommand extends BaseCommand {
 		await this._tokenAPI.mint(
 			ctx.getAPIContext(),
 			getAddressFromPublicKey(ctx.transaction.senderPublicKey),
-			{ chainID: CHAIN_ID, localID: LOCAL_ID },
+			this._tokenIDReclaim,
 			transactionParams.amount,
 		);
 	}

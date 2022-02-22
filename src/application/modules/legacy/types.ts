@@ -20,3 +20,15 @@ export interface LegacyStoreData {
 export interface ReclaimParamData {
 	amount: bigint;
 }
+
+export interface TokenIDReclaim {
+	chainID: number;
+	localID: number;
+}
+export interface ModuleConfig {
+	tokenIDReclaim: TokenIDReclaim;
+}
+
+export interface ModuleInitArgs {
+	moduleConfig: Record<string, unknown>;
+}
