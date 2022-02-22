@@ -16,3 +16,8 @@ export interface LegacyStoreData {
 	legacyAddress: string;
 	balance: bigint;
 }
+
+export interface registerBLSKeyData {
+	blsKey: Buffer;
+	proofOfPossession: Buffer;
+}

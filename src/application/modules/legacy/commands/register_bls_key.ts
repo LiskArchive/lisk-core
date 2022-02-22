@@ -12,13 +12,46 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-import { BaseCommand } from 'lisk-sdk';
+import {
+	BaseCommand,
+	ValidatorsAPI,
+	CommandExecuteContext,
+	validator as liskValidator,
+	cryptography,
+} from 'lisk-sdk';
 import { COMMAND_ID_REGISTER_BLS_KEY } from '../constants';
+import { registerBLSKeyParamsSchema } from '../schemas';
+import { registerBLSKeyData } from '../types';
+
+const { getAddressFromPublicKey } = cryptography;
+const { LiskValidationError, validator } = liskValidator;
 
 export class RegisterBLSKeyCommand extends BaseCommand {
 	public id = COMMAND_ID_REGISTER_BLS_KEY;
 	public name = 'registerblskey';
 
-	// eslint-disable-next-line @typescript-eslint/no-empty-function
-	public async execute(): Promise<void> {}
+	private _validatorsAPI!: ValidatorsAPI;
+
+	public addDependencies(validatorsAPI: ValidatorsAPI) {
+		this._validatorsAPI = validatorsAPI;
+	}
+
+	public async execute(ctx: CommandExecuteContext): Promise<void> {
+		const params = (ctx.params as any) as registerBLSKeyData;
+		const reqErrors = validator.validate(registerBLSKeyParamsSchema, params);
+		if (reqErrors.length) {
+			throw new LiskValidationError(reqErrors);
+		}
+
+		const isExists = await this._validatorsAPI.setValidatorBLSKey(
+			ctx.getAPIContext(),
+			getAddressFromPublicKey(ctx.transaction.senderPublicKey),
+			params.proofOfPossession,
+			params.blsKey,
+		);
+
+		if (!isExists) {
+			throw new Error('Validator keys does not exists');
+		}
+	}
 }
