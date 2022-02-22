@@ -25,6 +25,8 @@ import {
 	COMMAND_ID_RECLAIM,
 	COMMAND_NAME_RECLAIM,
 	STORE_PREFIX_LEGACY_ACCOUNTS,
+	CHAIN_ID,
+	LOCAL_ID,
 } from '../constants';
 
 import { reclaimParamsSchema, legacyAccountSchema } from '../schemas';
@@ -81,16 +83,12 @@ export class ReclaimCommand extends BaseCommand {
 			);
 
 		await legacyStore.del(legacyAddress);
-		const APIContext = ctx.getAPIContext();
 
 		await this._tokenAPI.mint(
-			APIContext,
+			ctx.getAPIContext(),
 			getAddressFromPublicKey(ctx.transaction.senderPublicKey),
-			{
-				chainID: 0,
-				localID: 0,
-			},
-			BigInt(transactionParams.amount),
+			{ chainID: CHAIN_ID, localID: LOCAL_ID },
+			transactionParams.amount,
 		);
 	}
 }

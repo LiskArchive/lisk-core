@@ -27,14 +27,18 @@ import {
 
 const { getLegacyAddressFromPublicKey } = cryptography;
 
+const getLegacyAddress = (publicKey): any => {
+	return Buffer.from(getLegacyAddressFromPublicKey(Buffer.from(publicKey, 'hex')), 'hex');
+};
+
 const getContext = (amount, publicKey, getAPIContext, getStore): any => {
-	const mockParams = codec.encode(reclaimParamsSchema, { amount: BigInt(amount) });
-	const mockSenderPublicKey = Buffer.from(publicKey, 'hex');
+	const params = codec.encode(reclaimParamsSchema, { amount: BigInt(amount) });
+	const senderPublicKey = Buffer.from(publicKey, 'hex');
 
 	return {
 		transaction: {
-			params: mockParams,
-			senderPublicKey: mockSenderPublicKey,
+			params,
+			senderPublicKey,
 		},
 		getStore,
 		getAPIContext,
@@ -48,7 +52,6 @@ describe('Reclaim command', () => {
 	beforeEach(() => {
 		mint = jest.fn();
 		reclaimCommand = new ReclaimCommand(COMMAND_ID_RECLAIM);
-
 		reclaimCommand.addDependencies({ mint } as any);
 	});
 
@@ -71,6 +74,9 @@ describe('Reclaim command', () => {
 	});
 
 	describe('execute', () => {
+		const senderPublicKey = '275ce55f7b42fab1a12f718a14eb886f59631d172e236be46255c33506a64c6c';
+		const legacyAddress = getLegacyAddress(senderPublicKey);
+		const reclaimBalance = BigInt(10000);
 		const mockGetWithSchema = jest.fn();
 		const mockStoreHas = jest.fn();
 		const mockStoreDel = jest.fn();
@@ -86,77 +92,61 @@ describe('Reclaim command', () => {
 		});
 
 		it(`should call mint for a valid reclaim transaction`, async () => {
-			const senderPublicKey = '275ce55f7b42fab1a12f718a14eb886f59631d172e236be46255c33506a64c6c';
-			const legacyAddressfromPublicKey = Buffer.from(
-				getLegacyAddressFromPublicKey(Buffer.from(senderPublicKey, 'hex')),
-				'hex',
-			);
-
 			const commandExecuteContextInput = getContext(
-				BigInt(10000),
+				reclaimBalance,
 				senderPublicKey,
 				getAPIContext,
 				getStore,
 			);
 
-			when(mockStoreHas).calledWith(legacyAddressfromPublicKey).mockReturnValue(true);
+			when(mockStoreHas).calledWith(legacyAddress).mockReturnValue(true);
 			when(mockGetWithSchema)
-				.calledWith(legacyAddressfromPublicKey, legacyAccountSchema)
-				.mockReturnValue({ balance: BigInt(10000) });
+				.calledWith(legacyAddress, legacyAccountSchema)
+				.mockReturnValue({ balance: reclaimBalance });
 			await reclaimCommand.execute(commandExecuteContextInput);
 			expect(mint).toHaveBeenCalledTimes(1);
 		});
 
 		it('should reject the transaction when user send invalid amount', async () => {
-			const senderPublicKey = '275ce55f7b42fab1a12f718a14eb886f59631d172e236be46255c33506a64c6c';
-			const legacyAddressfromPublicKey = Buffer.from(
-				getLegacyAddressFromPublicKey(Buffer.from(senderPublicKey, 'hex')),
-				'hex',
-			);
-
 			const commandExecuteContextInput = getContext(
-				BigInt(10000),
+				reclaimBalance + BigInt(10000),
 				senderPublicKey,
 				getAPIContext,
 				getStore,
 			);
 
-			when(mockStoreHas).calledWith(legacyAddressfromPublicKey).mockReturnValue(true);
+			when(mockStoreHas).calledWith(legacyAddress).mockReturnValue(true);
 			when(mockGetWithSchema)
-				.calledWith(legacyAddressfromPublicKey, legacyAccountSchema)
-				.mockReturnValue({ balance: BigInt(5000) });
+				.calledWith(legacyAddress, legacyAccountSchema)
+				.mockReturnValue({ balance: reclaimBalance });
 			await expect(reclaimCommand.execute(commandExecuteContextInput)).rejects.toThrow();
 			expect(mint).toHaveBeenCalledTimes(0);
 		});
 
 		it('should reject the transaction when user has no entry in the legacy account substore', async () => {
-			const senderPublicKey = '275ce55f7b42fab1a12f718a14eb886f59631d172e236be46255c33506a64c6c';
-			const legacyAddressfromPublicKey = Buffer.from(
-				getLegacyAddressFromPublicKey(Buffer.from(senderPublicKey, 'hex')),
-				'hex',
-			);
-
 			const commandExecuteContextInput = getContext(
-				BigInt(10000),
+				reclaimBalance,
 				senderPublicKey,
 				getAPIContext,
 				getStore,
 			);
 
-			when(mockStoreHas).calledWith(legacyAddressfromPublicKey).mockReturnValue(false);
+			when(mockStoreHas).calledWith(legacyAddress).mockReturnValue(false);
 			await expect(reclaimCommand.execute(commandExecuteContextInput)).rejects.toThrow();
 			expect(mint).toHaveBeenCalledTimes(0);
 		});
 
 		it('should reject the transaction when transaction params does not follow reclaimParamsSchema', async () => {
-			const senderPublicKey = '275ce55f7b42fab1a12f718a14eb886f59631d172e236be46255c33506a64c6c';
+			const params = codec.encode(reclaimParamsSchema, { balance: reclaimBalance });
 
-			const commandExecuteContextInput = getContext(
-				BigInt(10000),
-				senderPublicKey,
-				getAPIContext,
+			const commandExecuteContextInput = {
+				transaction: {
+					params,
+					senderPublicKey: Buffer.from(senderPublicKey, 'hex'),
+				},
 				getStore,
-			);
+				getAPIContext,
+			} as any;
 
 			await expect(reclaimCommand.execute(commandExecuteContextInput)).rejects.toThrow();
 			expect(mint).toHaveBeenCalledTimes(0);
