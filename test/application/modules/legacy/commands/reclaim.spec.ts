@@ -43,9 +43,13 @@ const getContext = (amount, publicKey, getAPIContext, getStore): any => {
 
 describe('Reclaim command', () => {
 	let reclaimCommand: ReclaimCommand;
+	let mint: any;
 
 	beforeEach(() => {
-		reclaimCommand = new ReclaimCommand(0);
+		mint = jest.fn();
+		reclaimCommand = new ReclaimCommand(COMMAND_ID_RECLAIM);
+
+		reclaimCommand.addDependencies({ mint } as any);
 	});
 
 	it('should inherit from BaseCommand', () => {
@@ -99,8 +103,8 @@ describe('Reclaim command', () => {
 			when(mockGetWithSchema)
 				.calledWith(legacyAddressfromPublicKey, legacyAccountSchema)
 				.mockReturnValue({ balance: BigInt(10000) });
-
 			await reclaimCommand.execute(commandExecuteContextInput);
+			expect(mint).toHaveBeenCalledTimes(1);
 		});
 
 		it('should reject the transaction when user send invalid amount', async () => {
@@ -121,8 +125,8 @@ describe('Reclaim command', () => {
 			when(mockGetWithSchema)
 				.calledWith(legacyAddressfromPublicKey, legacyAccountSchema)
 				.mockReturnValue({ balance: BigInt(5000) });
-
 			await expect(reclaimCommand.execute(commandExecuteContextInput)).rejects.toThrow();
+			expect(mint).toHaveBeenCalledTimes(0);
 		});
 
 		it('should reject the transaction when user has no entry in the legacy account substore', async () => {
@@ -141,17 +145,21 @@ describe('Reclaim command', () => {
 
 			when(mockStoreHas).calledWith(legacyAddressfromPublicKey).mockReturnValue(false);
 			await expect(reclaimCommand.execute(commandExecuteContextInput)).rejects.toThrow();
+			expect(mint).toHaveBeenCalledTimes(0);
 		});
 
 		it('should reject the transaction when transaction params does not follow reclaimParamsSchema', async () => {
 			const senderPublicKey = '275ce55f7b42fab1a12f718a14eb886f59631d172e236be46255c33506a64c6c';
+
 			const commandExecuteContextInput = await getContext(
 				BigInt(10000),
 				senderPublicKey,
 				getAPIContext,
 				getStore,
 			);
+
 			await expect(reclaimCommand.execute(commandExecuteContextInput)).rejects.toThrow();
+			expect(mint).toHaveBeenCalledTimes(0);
 		});
 	});
 });

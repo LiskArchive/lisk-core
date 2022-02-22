@@ -47,7 +47,7 @@ export class ReclaimCommand extends BaseCommand {
 		const transactionParams = codec.decode<ReclaimParamData>(
 			reclaimParamsSchema,
 			ctx.transaction.params,
-		) ;
+		);
 
 		const reqErrors = validator.validate(reclaimParamsSchema, transactionParams);
 		if (reqErrors.length) {
