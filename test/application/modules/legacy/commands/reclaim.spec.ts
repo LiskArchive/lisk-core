@@ -92,7 +92,7 @@ describe('Reclaim command', () => {
 				'hex',
 			);
 
-			const commandExecuteContextInput = await getContext(
+			const commandExecuteContextInput = getContext(
 				BigInt(10000),
 				senderPublicKey,
 				getAPIContext,
@@ -114,7 +114,7 @@ describe('Reclaim command', () => {
 				'hex',
 			);
 
-			const commandExecuteContextInput = await getContext(
+			const commandExecuteContextInput = getContext(
 				BigInt(10000),
 				senderPublicKey,
 				getAPIContext,
@@ -136,7 +136,7 @@ describe('Reclaim command', () => {
 				'hex',
 			);
 
-			const commandExecuteContextInput = await getContext(
+			const commandExecuteContextInput = getContext(
 				BigInt(10000),
 				senderPublicKey,
 				getAPIContext,
@@ -151,7 +151,7 @@ describe('Reclaim command', () => {
 		it('should reject the transaction when transaction params does not follow reclaimParamsSchema', async () => {
 			const senderPublicKey = '275ce55f7b42fab1a12f718a14eb886f59631d172e236be46255c33506a64c6c';
 
-			const commandExecuteContextInput = await getContext(
+			const commandExecuteContextInput = getContext(
 				BigInt(10000),
 				senderPublicKey,
 				getAPIContext,
