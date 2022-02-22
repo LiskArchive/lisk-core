@@ -15,10 +15,12 @@
 import {
 	BaseCommand,
 	CommandExecuteContext,
+	CommandVerifyContext,
+	VerificationResult,
+	VerifyStatus,
 	validator as liskValidator,
 	cryptography,
 	TokenAPI,
-	codec,
 } from 'lisk-sdk';
 
 import {
@@ -33,6 +35,8 @@ import { ReclaimParamData, LegacyStoreData, TokenIDReclaim } from '../types';
 const { LiskValidationError, validator } = liskValidator;
 const { getLegacyAddressFromPublicKey, getAddressFromPublicKey } = cryptography;
 
+const getLegacyAddress = (puhlicKey): Buffer =>
+	Buffer.from(getLegacyAddressFromPublicKey(puhlicKey), 'hex');
 export class ReclaimCommand extends BaseCommand {
 	public name = COMMAND_NAME_RECLAIM;
 	public id = COMMAND_ID_RECLAIM;
@@ -48,50 +52,59 @@ export class ReclaimCommand extends BaseCommand {
 		this._tokenIDReclaim = args.tokenIDReclaim;
 	}
 
-	public async execute(ctx: CommandExecuteContext): Promise<void> {
-		const transactionParams = codec.decode<ReclaimParamData>(
-			reclaimParamsSchema,
-			ctx.transaction.params,
-		);
-
-		const reqErrors = validator.validate(reclaimParamsSchema, transactionParams);
+	public async verify(ctx: CommandVerifyContext): Promise<VerificationResult> {
+		const params = (ctx.params as any) as ReclaimParamData;
+		const reqErrors = validator.validate(reclaimParamsSchema, params);
 		if (reqErrors.length) {
-			throw new LiskValidationError(reqErrors);
+			return {
+				status: VerifyStatus.FAIL,
+				error: new LiskValidationError(reqErrors),
+			};
 		}
 
-		const legacyAddress = Buffer.from(
-			getLegacyAddressFromPublicKey(ctx.transaction.senderPublicKey),
-			'hex',
-		);
+		const legacyAddress = getLegacyAddress(ctx.transaction.senderPublicKey);
 		const legacyStore = ctx.getStore(this.moduleID, STORE_PREFIX_LEGACY_ACCOUNTS);
-
 		const isLegacyAddressExists = await legacyStore.has(legacyAddress);
-		if (!isLegacyAddressExists)
-			throw new Error(
-				`Legacy address corresponding to sender publickey ${ctx.transaction.senderPublicKey.toString(
-					'hex',
-				)} was not found`,
-			);
+
+		if (!isLegacyAddressExists) {
+			return {
+				status: VerifyStatus.FAIL,
+				error: new Error(
+					`Legacy address corresponding to sender publickey ${ctx.transaction.senderPublicKey.toString(
+						'hex',
+					)} was not found`,
+				),
+			};
+		}
 
 		const legacyAccount = await legacyStore.getWithSchema<LegacyStoreData>(
 			legacyAddress,
 			legacyAccountSchema,
 		);
 
-		if (legacyAccount.balance !== transactionParams.amount)
-			throw new Error(
-				`Invalid amount:${transactionParams.amount} claimed by the sender: ${legacyAddress.toString(
-					'hex',
-				)}`,
-			);
+		if (legacyAccount.balance !== params.amount) {
+			return {
+				status: VerifyStatus.FAIL,
+				error: new Error(
+					`Invalid amount:${params.amount} claimed by the sender: ${legacyAddress.toString('hex')}`,
+				),
+			};
+		}
 
+		return { status: VerifyStatus.OK };
+	}
+
+	public async execute(ctx: CommandExecuteContext): Promise<void> {
+		const params = (ctx.params as any) as ReclaimParamData;
+		const legacyAddress = getLegacyAddress(ctx.transaction.senderPublicKey);
+		const legacyStore = ctx.getStore(this.moduleID, STORE_PREFIX_LEGACY_ACCOUNTS);
 		await legacyStore.del(legacyAddress);
 
 		await this._tokenAPI.mint(
 			ctx.getAPIContext(),
 			getAddressFromPublicKey(ctx.transaction.senderPublicKey),
 			this._tokenIDReclaim,
-			transactionParams.amount,
+			params.amount,
 		);
 	}
 }

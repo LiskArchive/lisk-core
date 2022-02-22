@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-import { BaseCommand, codec, cryptography } from 'lisk-sdk';
+import { BaseCommand, cryptography, VerifyStatus } from 'lisk-sdk';
 import { when } from 'jest-when';
 
 import {
@@ -32,12 +32,12 @@ const getLegacyAddress = (publicKey): any => {
 };
 
 const getContext = (amount, publicKey, getAPIContext, getStore): any => {
-	const params = codec.encode(reclaimParamsSchema, { amount: BigInt(amount) });
+	const params = { amount: BigInt(amount) };
 	const senderPublicKey = Buffer.from(publicKey, 'hex');
 
 	return {
+		params,
 		transaction: {
-			params,
 			senderPublicKey,
 		},
 		getStore,
@@ -48,6 +48,22 @@ const getContext = (amount, publicKey, getAPIContext, getStore): any => {
 describe('Reclaim command', () => {
 	let reclaimCommand: ReclaimCommand;
 	let mint: any;
+	const senderPublicKey = '275ce55f7b42fab1a12f718a14eb886f59631d172e236be46255c33506a64c6c';
+	const legacyAddress = getLegacyAddress(senderPublicKey);
+	const reclaimBalance = BigInt(10000);
+	const mockGetWithSchema = jest.fn();
+	const mockStoreHas = jest.fn();
+	const mockStoreDel = jest.fn();
+
+	const getStore: any = () => ({
+		getWithSchema: mockGetWithSchema,
+		has: mockStoreHas,
+		del: mockStoreDel,
+	});
+
+	const getAPIContext: any = () => ({
+		getStore,
+	});
 
 	beforeEach(() => {
 		mint = jest.fn();
@@ -73,24 +89,80 @@ describe('Reclaim command', () => {
 		});
 	});
 
+	describe('verify', () => {
+		it(`should return status Ok`, async () => {
+			const commandVerifyContextInput = getContext(
+				reclaimBalance,
+				senderPublicKey,
+				getAPIContext,
+				getStore,
+			);
+
+			when(mockStoreHas).calledWith(legacyAddress).mockReturnValue(true);
+			when(mockGetWithSchema)
+				.calledWith(legacyAddress, legacyAccountSchema)
+				.mockReturnValue({ balance: reclaimBalance });
+
+			await expect(reclaimCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
+				'status',
+				VerifyStatus.OK,
+			);
+		});
+
+		it('should throw error when user send invalid amount', async () => {
+			const commandVerifyContextInput = getContext(
+				reclaimBalance + BigInt(10000),
+				senderPublicKey,
+				getAPIContext,
+				getStore,
+			);
+
+			when(mockStoreHas).calledWith(legacyAddress).mockReturnValue(true);
+			when(mockGetWithSchema)
+				.calledWith(legacyAddress, legacyAccountSchema)
+				.mockReturnValue({ balance: reclaimBalance });
+
+			await expect(reclaimCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
+				'status',
+				VerifyStatus.FAIL,
+			);
+		});
+
+		it('should throw error when user has no entry in the legacy account substore', async () => {
+			const commandVerifyContextInput = getContext(
+				reclaimBalance,
+				senderPublicKey,
+				getAPIContext,
+				getStore,
+			);
+
+			when(mockStoreHas).calledWith(legacyAddress).mockReturnValue(false);
+			await expect(reclaimCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
+				'status',
+				VerifyStatus.FAIL,
+			);
+		});
+
+		it('should throw error when transaction params does not follow reclaimParamsSchema', async () => {
+			const params = { balance: reclaimBalance };
+
+			const commandVerifyContextInput = {
+				params,
+				transaction: {
+					senderPublicKey: Buffer.from(senderPublicKey, 'hex'),
+				},
+				getStore,
+				getAPIContext,
+			} as any;
+
+			await expect(reclaimCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
+				'status',
+				VerifyStatus.FAIL,
+			);
+		});
+	});
+
 	describe('execute', () => {
-		const senderPublicKey = '275ce55f7b42fab1a12f718a14eb886f59631d172e236be46255c33506a64c6c';
-		const legacyAddress = getLegacyAddress(senderPublicKey);
-		const reclaimBalance = BigInt(10000);
-		const mockGetWithSchema = jest.fn();
-		const mockStoreHas = jest.fn();
-		const mockStoreDel = jest.fn();
-
-		const getStore: any = () => ({
-			getWithSchema: mockGetWithSchema,
-			has: mockStoreHas,
-			del: mockStoreDel,
-		});
-
-		const getAPIContext: any = () => ({
-			getStore,
-		});
-
 		it(`should call mint for a valid reclaim transaction`, async () => {
 			const commandExecuteContextInput = getContext(
 				reclaimBalance,
@@ -105,51 +177,6 @@ describe('Reclaim command', () => {
 				.mockReturnValue({ balance: reclaimBalance });
 			await reclaimCommand.execute(commandExecuteContextInput);
 			expect(mint).toHaveBeenCalledTimes(1);
-		});
-
-		it('should reject the transaction when user send invalid amount', async () => {
-			const commandExecuteContextInput = getContext(
-				reclaimBalance + BigInt(10000),
-				senderPublicKey,
-				getAPIContext,
-				getStore,
-			);
-
-			when(mockStoreHas).calledWith(legacyAddress).mockReturnValue(true);
-			when(mockGetWithSchema)
-				.calledWith(legacyAddress, legacyAccountSchema)
-				.mockReturnValue({ balance: reclaimBalance });
-			await expect(reclaimCommand.execute(commandExecuteContextInput)).rejects.toThrow();
-			expect(mint).toHaveBeenCalledTimes(0);
-		});
-
-		it('should reject the transaction when user has no entry in the legacy account substore', async () => {
-			const commandExecuteContextInput = getContext(
-				reclaimBalance,
-				senderPublicKey,
-				getAPIContext,
-				getStore,
-			);
-
-			when(mockStoreHas).calledWith(legacyAddress).mockReturnValue(false);
-			await expect(reclaimCommand.execute(commandExecuteContextInput)).rejects.toThrow();
-			expect(mint).toHaveBeenCalledTimes(0);
-		});
-
-		it('should reject the transaction when transaction params does not follow reclaimParamsSchema', async () => {
-			const params = codec.encode(reclaimParamsSchema, { balance: reclaimBalance });
-
-			const commandExecuteContextInput = {
-				transaction: {
-					params,
-					senderPublicKey: Buffer.from(senderPublicKey, 'hex'),
-				},
-				getStore,
-				getAPIContext,
-			} as any;
-
-			await expect(reclaimCommand.execute(commandExecuteContextInput)).rejects.toThrow();
-			expect(mint).toHaveBeenCalledTimes(0);
 		});
 	});
 });
