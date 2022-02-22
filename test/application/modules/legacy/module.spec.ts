@@ -52,4 +52,13 @@ describe('LegacyModule', () => {
 			expect(legacyModule.api).toBeInstanceOf(LegacyAPI);
 		});
 	});
+
+	describe('init', () => {
+		const moduleConfig = { tokenIDReclaim: { chainID: 0, localID: 0 } } as any;
+
+		it('should initialize config with defaultConfig', async () => {
+			await expect(legacyModule.init({ moduleConfig: {} })).resolves;
+			expect(legacyModule['_moduleConfig']).toEqual(moduleConfig);
+		});
+	});
 });
