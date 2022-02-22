@@ -51,7 +51,7 @@ describe('start', () => {
 				plugins: {},
 				genesisConfig: {
 					blockTime: 10,
-				}
+				},
 			})
 			.calledWith('~/.lisk/lisk-core/config/testnet/config.json')
 			.mockResolvedValue({
@@ -85,7 +85,7 @@ describe('start', () => {
 				networkVersion: '3.1',
 				genesisConfig: {
 					blockTime: 60,
-				}
+				},
 			});
 		jest.spyOn(fs, 'existsSync').mockReturnValue(true);
 		jest.spyOn(fs, 'ensureDirSync').mockReturnValue();
