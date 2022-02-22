@@ -1,6 +1,6 @@
 properties([
 	parameters([
-		string(name: 'COMMITISH_SDK', description: 'Commit-ish of LiskHQ/lisk-sdk to use', defaultValue: 'development' ),
+		string(name: 'COMMITISH_SDK', description: 'Commit-ish of LiskHQ/lisk-sdk to use', defaultValue: 'main' ),
 		string(name: 'COMMITISH_CORE', description: 'Commit-ish of LiskHQ/lisk-core to use', defaultValue: 'development' ),
 	])
 ])
@@ -9,7 +9,7 @@ pipeline {
 	agent { node { label 'lisk-build' } }
 	options {
 		skipDefaultCheckout()
-		timeout(time: 10, unit: 'MINUTES')
+		timeout(time: 15, unit: 'MINUTES')
 	}
 	stages {
 		stage('Checkout SCM') {
@@ -42,7 +42,7 @@ pipeline {
 						npm install --global yarn
 						yarn
 						yarn build
-						npm install --global
+						yarn global add link:$PWD
 						'''
 					}
 				}
@@ -56,7 +56,6 @@ pipeline {
 						npm install --global yarn
 						yarn
 						yarn build
-						npx lerna exec yarn unlink
 						npx lerna exec yarn link
 						npx lerna --loglevel error list >../packages
 						'''
@@ -69,7 +68,7 @@ pipeline {
 				dir('lisk-core') {
 					nvm(readFile(".nvmrc").trim()) {
 						sh '''
-						npm install --registry https://npm.lisk.io/
+						npm install --registry https://npm.lisk.com/
 						npm install --global yarn
 						for package in $( cat ../packages ); do
 						  yarn link "$package"
@@ -93,7 +92,7 @@ pipeline {
 			steps {
 				dir('lisk-core') {
 					nvm(readFile(".nvmrc").trim()) {
-						sh 'oclif-dev pack --targets=linux-x64'
+						sh 'oclif-dev pack --targets=linux-x64,darwin-x64'
 					}
 				}
 			}
