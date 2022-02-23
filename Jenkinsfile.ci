@@ -24,6 +24,7 @@ pipeline {
 				dir('lisk-sdk') {
 					nvm(readFile(".nvmrc").trim()) {
 						sh '''
+						rm -rf node_modules
 						npm install --global yarn
 						yarn
 						yarn build
@@ -39,6 +40,7 @@ pipeline {
 				dir('lisk-core') {
 					nvm(readFile(".nvmrc").trim()) {
 						sh '''
+						rm -rf node_modules
 						npm install --registry https://npm.lisk.com/
 						npm install --global yarn
 						for package in $( cat ../packages ); do
