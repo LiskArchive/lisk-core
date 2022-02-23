@@ -24,7 +24,6 @@ pipeline {
 				dir('lisk-sdk') {
 					nvm(readFile(".nvmrc").trim()) {
 						sh '''
-						rm -rf node_modules
 						npm install --global yarn
 						yarn
 						yarn build
