@@ -19,7 +19,7 @@ import {
 	validator as liskValidator,
 	cryptography,
 } from 'lisk-sdk';
-import { COMMAND_ID_REGISTER_BLS_KEY } from '../constants';
+import { COMMAND_ID_REGISTER_BLS_KEY, COMMAND_NAME_REGISTER_BLS_KEY } from '../constants';
 import { registerBLSKeyParamsSchema } from '../schemas';
 import { registerBLSKeyData } from '../types';
 
@@ -28,8 +28,8 @@ const { LiskValidationError, validator } = liskValidator;
 
 export class RegisterBLSKeyCommand extends BaseCommand {
 	public id = COMMAND_ID_REGISTER_BLS_KEY;
-	public name = 'registerblskey';
-
+	public name = COMMAND_NAME_REGISTER_BLS_KEY;
+	public schema = registerBLSKeyParamsSchema;
 	private _validatorsAPI!: ValidatorsAPI;
 
 	public addDependencies(validatorsAPI: ValidatorsAPI) {
@@ -51,7 +51,7 @@ export class RegisterBLSKeyCommand extends BaseCommand {
 		);
 
 		if (!isExists) {
-			throw new Error('Validator keys does not exists');
+			throw new Error('Failed to register validator BLS keys');
 		}
 	}
 }
