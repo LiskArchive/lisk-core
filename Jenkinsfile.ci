@@ -39,7 +39,7 @@ pipeline {
 				dir('lisk-core') {
 					nvm(readFile(".nvmrc").trim()) {
 						sh '''
-						npm ci
+						npm install --registry https://npm.lisk.com/
 						npm install --global yarn
 						for package in $( cat ../packages ); do
 						  yarn link "$package"
