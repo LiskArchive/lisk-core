@@ -24,14 +24,14 @@ export class LegacyModule extends BaseModule {
 	public endpoint = new LegacyEndpoint(this.id);
 	public api = new LegacyAPI(this.id);
 
-	private readonly _registerBlsKey = new RegisterBLSKeyCommand(this.id);
+	private readonly _registerBlsKeyCommand = new RegisterBLSKeyCommand(this.id);
 
 	// eslint-disable-next-line @typescript-eslint/member-ordering
-	public commands = [this._registerBlsKey];
+	public commands = [this._registerBlsKeyCommand];
 	private _validatorsAPI!: ValidatorsAPI;
 
 	public addDependencies(validatorsAPI: ValidatorsAPI) {
 		this._validatorsAPI = validatorsAPI;
-		this._registerBlsKey.addDependencies(this._validatorsAPI);
+		this._registerBlsKeyCommand.addDependencies(this._validatorsAPI);
 	}
 }

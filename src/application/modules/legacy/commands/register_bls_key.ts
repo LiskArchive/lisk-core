@@ -51,7 +51,7 @@ export class RegisterBLSKeyCommand extends BaseCommand {
 		);
 
 		if (!isExists) {
-			throw new Error('Failed to register validator BLS keys');
+			throw new Error('Failed to set validator BLS keys');
 		}
 	}
 }
