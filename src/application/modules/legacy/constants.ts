@@ -13,9 +13,11 @@
  *
  */
 
-export const MODULE_ID_LEGACY = 0; // TODO: TBD
+export const MODULE_ID_LEGACY = 9000; // TODO: TBD
 export const MODULE_NAME_LEGACY = 'legacy';
 export const STORE_PREFIX_LEGACY_ACCOUNTS = 0x0000;
+export const LEGACY_ACCOUNT_LENGTH = 8;
+export const LEGACY_ACC_MAX_TOTAL_BAL_NON_INC = 2 ** 64;
 
 // Commands
 export const COMMAND_ID_RECLAIM = 0;
