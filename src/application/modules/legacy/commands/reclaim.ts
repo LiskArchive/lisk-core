@@ -30,7 +30,7 @@ import {
 } from '../constants';
 
 import { reclaimParamsSchema, legacyAccountSchema } from '../schemas';
-import { ReclaimParamData, LegacyStoreData, TokenIDReclaim } from '../types';
+import { ReclaimParamsData, LegacyStoreData, TokenIDReclaim } from '../types';
 
 const { LiskValidationError, validator } = liskValidator;
 const { getLegacyAddressFromPublicKey, getAddressFromPublicKey } = cryptography;
@@ -53,7 +53,7 @@ export class ReclaimCommand extends BaseCommand {
 	}
 
 	public async verify(ctx: CommandVerifyContext): Promise<VerificationResult> {
-		const params = (ctx.params as any) as ReclaimParamData;
+		const params = (ctx.params as any) as ReclaimParamsData;
 		const reqErrors = validator.validate(reclaimParamsSchema, params);
 		if (reqErrors.length) {
 			return {
@@ -95,7 +95,7 @@ export class ReclaimCommand extends BaseCommand {
 	}
 
 	public async execute(ctx: CommandExecuteContext): Promise<void> {
-		const params = (ctx.params as any) as ReclaimParamData;
+		const params = (ctx.params as any) as ReclaimParamsData;
 		const legacyAddress = getLegacyAddress(ctx.transaction.senderPublicKey);
 		const legacyStore = ctx.getStore(this.moduleID, STORE_PREFIX_LEGACY_ACCOUNTS);
 		await legacyStore.del(legacyAddress);
