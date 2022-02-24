@@ -43,14 +43,14 @@ export class RegisterBLSKeyCommand extends BaseCommand {
 			throw new LiskValidationError(reqErrors);
 		}
 
-		const isExists = await this._validatorsAPI.setValidatorBLSKey(
+		const isValidatorBLSKeySet = await this._validatorsAPI.setValidatorBLSKey(
 			ctx.getAPIContext(),
 			getAddressFromPublicKey(ctx.transaction.senderPublicKey),
 			params.proofOfPossession,
 			params.blsKey,
 		);
 
-		if (!isExists) {
+		if (!isValidatorBLSKeySet) {
 			throw new Error('Failed to set validator BLS keys');
 		}
 	}
