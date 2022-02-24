@@ -172,7 +172,7 @@ describe('LegacyModule', () => {
 				balance: BigInt(LEGACY_ACC_MAX_TOTAL_BAL_NON_INC) - currentTotalBalance,
 			});
 			const genesisBlockExecuteContextInput = getContext(accounts, getStore);
-			
+
 			await expect(
 				legacyModule.initGenesisState(genesisBlockExecuteContextInput),
 			).rejects.toThrow();
