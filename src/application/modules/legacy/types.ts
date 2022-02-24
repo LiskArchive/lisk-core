@@ -21,3 +21,10 @@ export interface registerBLSKeyData {
 	blsKey: Buffer;
 	proofOfPossession: Buffer;
 }
+export interface genesisLegacyAccount {
+	address: Buffer;
+	balance: bigint;
+}
+export interface genesisLegacyStoreData {
+	accounts: genesisLegacyAccount[];
+}
