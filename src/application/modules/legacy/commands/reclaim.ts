@@ -35,8 +35,8 @@ import { ReclaimParamsData, LegacyStoreData, TokenIDReclaim } from '../types';
 const { LiskValidationError, validator } = liskValidator;
 const { getLegacyAddressFromPublicKey, getAddressFromPublicKey } = cryptography;
 
-const getLegacyAddress = (puhlicKey): Buffer =>
-	Buffer.from(getLegacyAddressFromPublicKey(puhlicKey), 'hex');
+const getLegacyAddress = (publicKey): Buffer =>
+	Buffer.from(getLegacyAddressFromPublicKey(publicKey), 'hex');
 export class ReclaimCommand extends BaseCommand {
 	public name = COMMAND_NAME_RECLAIM;
 	public id = COMMAND_ID_RECLAIM;
