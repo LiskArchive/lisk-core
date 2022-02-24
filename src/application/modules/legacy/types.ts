@@ -17,6 +17,10 @@ export interface LegacyStoreData {
 	balance: bigint;
 }
 
+export interface registerBLSKeyData {
+	blsKey: Buffer;
+	proofOfPossession: Buffer;
+}
 export interface genesisLegacyAccount {
 	address: Buffer;
 	balance: bigint;

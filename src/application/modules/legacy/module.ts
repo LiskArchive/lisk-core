@@ -14,12 +14,15 @@
 
 import {
 	BaseModule,
+	ValidatorsAPI,
 	codec,
 	GenesisBlockExecuteContext,
 	validator as liskValidator,
 } from 'lisk-sdk';
-
+import { LegacyEndpoint } from './endpoint';
 import { LegacyAPI } from './api';
+import { RegisterBLSKeyCommand } from './commands/register_bls_key';
+
 import {
 	MODULE_NAME_LEGACY,
 	MODULE_ID_LEGACY,
@@ -27,7 +30,6 @@ import {
 	LEGACY_ACCOUNT_LENGTH,
 	LEGACY_ACC_MAX_TOTAL_BAL_NON_INC,
 } from './constants';
-import { LegacyEndpoint } from './endpoint';
 import { genesisLegacyStoreSchema, legacyAccountSchema } from './schemas';
 import { genesisLegacyStoreData } from './types';
 
@@ -37,6 +39,17 @@ export class LegacyModule extends BaseModule {
 	public id = MODULE_ID_LEGACY;
 	public endpoint = new LegacyEndpoint(this.id);
 	public api = new LegacyAPI(this.id);
+
+	private readonly _registerBlsKeyCommand = new RegisterBLSKeyCommand(this.id);
+
+	// eslint-disable-next-line @typescript-eslint/member-ordering
+	public commands = [this._registerBlsKeyCommand];
+	private _validatorsAPI!: ValidatorsAPI;
+
+	public addDependencies(validatorsAPI: ValidatorsAPI) {
+		this._validatorsAPI = validatorsAPI;
+		this._registerBlsKeyCommand.addDependencies(this._validatorsAPI);
+	}
 
 	public async initGenesisState(ctx: GenesisBlockExecuteContext): Promise<void> {
 		const legacyAssetsBuffer = ctx.assets.getAsset(this.id);

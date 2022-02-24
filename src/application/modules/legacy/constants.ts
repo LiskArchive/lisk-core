@@ -22,3 +22,4 @@ export const LEGACY_ACC_MAX_TOTAL_BAL_NON_INC = 2 ** 64;
 // Commands
 export const COMMAND_ID_RECLAIM = 0;
 export const COMMAND_ID_REGISTER_BLS_KEY = 1;
+export const COMMAND_NAME_REGISTER_BLS_KEY = 'registerblskey';
