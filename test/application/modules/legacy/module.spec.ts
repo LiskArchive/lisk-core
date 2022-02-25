@@ -89,6 +89,14 @@ describe('LegacyModule', () => {
 		});
 	});
 
+	describe('init', () => {
+		it('should initialize config with defaultConfig', async () => {
+			const moduleConfig = { tokenIDReclaim: { chainID: 0, localID: 0 } } as any;
+			await expect(legacyModule.init({ moduleConfig: {} })).resolves.toBeUndefined();
+			expect(legacyModule['_moduleConfig']).toEqual(moduleConfig);
+		});
+	});
+
 	describe('initGenesisState', () => {
 		let legacyAccounts: genesisLegacyAccount[];
 		const mockSetWithSchema = jest.fn();

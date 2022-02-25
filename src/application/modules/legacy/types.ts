@@ -17,6 +17,21 @@ export interface LegacyStoreData {
 	balance: bigint;
 }
 
+export interface ReclaimParamsData {
+	amount: bigint;
+}
+
+export interface TokenIDReclaim {
+	chainID: number;
+	localID: number;
+}
+export interface ModuleConfig {
+	tokenIDReclaim: TokenIDReclaim;
+}
+
+export interface ModuleInitArgs {
+	moduleConfig: Record<string, unknown>;
+}
 export interface registerBLSKeyData {
 	blsKey: Buffer;
 	proofOfPossession: Buffer;
