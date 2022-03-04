@@ -1,4 +1,4 @@
-ARG NODEJS_VERSION=12
+ARG NODEJS_VERSION=16
 FROM node:$NODEJS_VERSION-alpine
 
 ARG CORE_VERSION
@@ -17,7 +17,7 @@ USER lisk
 WORKDIR /home/lisk
 
 RUN if [ -n "$REGISTRY_URL" ]; then \
-      echo -e "registry=$REGISTRY_URL/\n${REGISTRY_URL#*:}/:_authToken=$REGISTRY_AUTH_TOKEN" >/home/lisk/.npmrc; \
+    echo -e "registry=$REGISTRY_URL/\n${REGISTRY_URL#*:}/:_authToken=$REGISTRY_AUTH_TOKEN" >/home/lisk/.npmrc; \
     fi
 RUN npm install lisk-core@$CORE_VERSION && \
     rm -f /home/lisk/.npmrc
