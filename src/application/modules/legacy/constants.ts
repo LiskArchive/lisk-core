@@ -13,7 +13,7 @@
  *
  */
 
-export const MODULE_ID_LEGACY = 9000; // TODO: TBD
+export const MODULE_ID_LEGACY = 32768;
 export const MODULE_NAME_LEGACY = 'legacy';
 export const STORE_PREFIX_LEGACY_ACCOUNTS = 0x0000;
 export const LEGACY_ACCOUNT_LENGTH = 8;
