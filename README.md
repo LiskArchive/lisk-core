@@ -32,7 +32,7 @@ The following dependencies need to be installed in order to run applications cre
 
 | Dependencies | Version |
 | ------------ | ------- |
-| NodeJS       | 16.14.0 |
+| NodeJS       | 16.14.2 |
 
 You can find further details on installing these dependencies in our [pre-installation setup guide](https://lisk.io/documentation/lisk-core/setup/source#pre-install).
 Clone the Lisk Core repository using Git and initialize the modules.
@@ -57,7 +57,7 @@ $ npm install -g lisk-core
 $ lisk-core COMMAND
 running command...
 $ lisk-core (-v|--version|version)
-lisk-core/3.0.3 darwin-x64 node-v16.14.0
+lisk-core/3.0.4 darwin-x64 node-v16.14.2
 $ lisk-core --help [COMMAND]
 USAGE
   $ lisk-core COMMAND
