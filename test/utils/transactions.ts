@@ -12,8 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-import { cryptography, transactions, codec, TransferCommand, VoteCommand } from 'lisk-sdk';
-import { Schema } from '../../src/base_ipc';
+import { cryptography, transactions, codec, TransferCommand, VoteCommand, Schema } from 'lisk-sdk';
 
 const account = {
 	passphrase: 'endless focus guilt bronze hold economy bulk parent soon tower cement venue',
@@ -277,7 +276,7 @@ export const encodeTransactionFromJSON = (
 
 	const transactionAssetBuffer = codec.encode(
 		transactionTypeAssetSchema.schema,
-		codec.fromJSON(transactionTypeAssetSchema.schema, transaction.params as object),
+		codec.fromJSON(transactionTypeAssetSchema.schema, transaction.params as Record<string, unknown>),
 	);
 
 	const transactionBuffer = codec.encode(
