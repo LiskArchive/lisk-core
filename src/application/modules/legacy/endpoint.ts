@@ -39,15 +39,15 @@ export class LegacyEndpoint extends BaseEndpoint {
 		}
 
 		const publicKey = Buffer.from(ctx.params.publicKey as string, 'hex');
-		const legacyAddress = getLegacyAddressFromPublicKey(publicKey);
 		const legacyStore = ctx.getStore(this.moduleID, STORE_PREFIX_LEGACY_ACCOUNTS);
 
 		try {
 			const isLegacyAddressExists = await legacyStore.has(publicKey);
 			if (!isLegacyAddressExists) throw new NotFoundError(publicKey);
 
+			const legacyAddress = getLegacyAddressFromPublicKey(publicKey);
 			const legacyAccount = await legacyStore.getWithSchema<LegacyStoreData>(
-				publicKey,
+				Buffer.from(legacyAddress, 'hex'),
 				legacyAccountSchema,
 			);
 			return {
