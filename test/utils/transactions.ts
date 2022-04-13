@@ -276,7 +276,10 @@ export const encodeTransactionFromJSON = (
 
 	const transactionAssetBuffer = codec.encode(
 		transactionTypeAssetSchema.schema,
-		codec.fromJSON(transactionTypeAssetSchema.schema, transaction.params as Record<string, unknown>),
+		codec.fromJSON(
+			transactionTypeAssetSchema.schema,
+			transaction.params as Record<string, unknown>,
+		),
 	);
 
 	const transactionBuffer = codec.encode(

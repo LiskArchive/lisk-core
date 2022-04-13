@@ -72,7 +72,7 @@ export class LegacyModule extends BaseModule {
 		const legacyAssetsBuffer = ctx.assets.getAsset(this.id);
 
 		if (!legacyAssetsBuffer) {
-			return
+			return;
 		}
 
 		const { legacySubstore } = codec.decode<genesisLegacyStoreData>(

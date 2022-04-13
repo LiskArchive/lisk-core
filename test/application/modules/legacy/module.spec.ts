@@ -131,7 +131,10 @@ describe('LegacyModule', () => {
 		});
 
 		it('should reject the block when address entries are not pair-wise distinct', async () => {
-			const genesisBlockExecuteContextInput = getContext({ legacySubstore: [...storeData.legacySubstore, ...storeData.legacySubstore] }, getStore);
+			const genesisBlockExecuteContextInput = getContext(
+				{ legacySubstore: [...storeData.legacySubstore, ...storeData.legacySubstore] },
+				getStore,
+			);
 
 			await expect(
 				legacyModule.initGenesisState(genesisBlockExecuteContextInput),
@@ -198,7 +201,7 @@ describe('LegacyModule', () => {
 		it('should reject the block when address property of accounts is invalid', async () => {
 			const invalidLegacyAccountAddresses = ['02089ca', '0208930ca', '4644873072065426945L'];
 			for (const invalidLegacyAddress of invalidLegacyAccountAddresses) {
-				const updatedStoreData = { legacySubstore: [...storeData.legacySubstore] };;
+				const updatedStoreData = { legacySubstore: [...storeData.legacySubstore] };
 				updatedStoreData.legacySubstore.push({
 					address: Buffer.from(invalidLegacyAddress),
 					balance: BigInt(Math.floor(Math.random()) * 1000),

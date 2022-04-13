@@ -9,9 +9,7 @@
 		"logFileName": "lisk.log"
 	},
 	"rpc": {
-		"modes": [
-			"ipc"
-		]
+		"modes": ["ipc"]
 	},
 	"genesis": {
 		"blockTime": 10,
