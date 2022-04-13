@@ -98,7 +98,7 @@ describe('LegacyEndpoint', () => {
 
 			when(mockStoreHas).calledWith(existingPublicKey).mockReturnValue(true);
 			when(mockGetWithSchema)
-				.calledWith(existingPublicKey, legacyAccountSchema)
+				.calledWith(Buffer.from(expectedLegacyAccount.legacyAddress, 'hex'), legacyAccountSchema)
 				.mockReturnValue(expectedLegacyAccount);
 
 			const legacyAccount = await legacyEndpoint.getLegacyAccount(context);
