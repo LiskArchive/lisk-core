@@ -37,7 +37,7 @@ export class RegisterBLSKeyCommand extends BaseCommand {
 	}
 
 	public async execute(ctx: CommandExecuteContext): Promise<void> {
-		const params = (ctx.params as any) as registerBLSKeyData;
+		const params = (ctx.params as unknown) as registerBLSKeyData;
 		const reqErrors = validator.validate(registerBLSKeyParamsSchema, params);
 		if (reqErrors.length) {
 			throw new LiskValidationError(reqErrors);

@@ -50,7 +50,7 @@ export default class DownloadCommand extends Command {
 			char: 'f',
 			description: 'Delete and overwrite existing blockchain data',
 			default: false,
-		}),
+		}) as flagParser.IFlag<boolean>,
 	};
 
 	async run(): Promise<void> {

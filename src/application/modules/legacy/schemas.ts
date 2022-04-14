@@ -55,9 +55,9 @@ export const registerBLSKeyParamsSchema = {
 export const genesisLegacyStoreSchema = {
 	$id: 'lisk/legacy/genesisLegacyStore',
 	type: 'object',
-	required: ['accounts'],
+	required: ['legacySubstore'],
 	properties: {
-		accounts: {
+		legacySubstore: {
 			type: 'array',
 			fieldNumber: 1,
 			items: {
