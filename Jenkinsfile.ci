@@ -1,9 +1,3 @@
-properties([
-	parameters([
-		string(name: 'COMMITISH_SDK', description: 'Commit-ish of LiskHQ/lisk-sdk to use', defaultValue: 'development' ),
-	])
-])
-
 pipeline {
 	agent { node { label 'lisk-core' } }
 	options { skipDefaultCheckout() }
@@ -11,26 +5,8 @@ pipeline {
 		stage('Checkout SCM') {
 			steps {
 				cleanWs()
-				dir('lisk-sdk') {
-					checkout([$class: 'GitSCM', branches: [[name: "${params.COMMITISH_SDK}" ]], userRemoteConfigs: [[url: 'https://github.com/LiskHQ/lisk-sdk']]])
-				}
 				dir('lisk-core') {
 					checkout scm
-				}
-			}
-		}
-		stage('Build SDK') {
-			steps {
-				dir('lisk-sdk') {
-					nvm(readFile(".nvmrc").trim()) {
-						sh '''
-						npm install --global yarn
-						yarn
-						yarn build
-						npx lerna exec yarn link
-						npx lerna --loglevel error list >../packages
-						'''
-					}
 				}
 			}
 		}
