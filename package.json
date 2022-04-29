@@ -20,7 +20,7 @@
 		"url": "https://github.com/LiskHQ/lisk-sdk/issues"
 	},
 	"engines": {
-		"node": ">=16.14.2 <=16",
+		"node": ">=16.15.0 <=16",
 		"npm": ">=8.3.1"
 	},
 	"main": "dist/index.js",
@@ -108,7 +108,7 @@
 		"axios": "0.25.0",
 		"fs-extra": "9.0.1",
 		"inquirer": "7.3.2",
-		"lisk-sdk": "5.2.2-alpha.1",
+		"lisk-sdk": "5.2.2",
 		"tar": "6.1.11",
 		"tslib": "1.13.0"
 	},
