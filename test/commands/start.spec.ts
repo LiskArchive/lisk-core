@@ -364,9 +364,9 @@ describe('start', () => {
 
 	describe('when config is specified', () => {
 		it('should update the config value', async () => {
-			await StartCommand.run(['--config=./config.json'], config);
+			await StartCommand.run(['--config=./custom_config.json'], config);
 			const [, usedConfig] = (application.getApplication as jest.Mock).mock.calls[0];
-			expect(fs.readJSON).toHaveBeenCalledWith('./config.json');
+			expect(fs.readJSON).toHaveBeenCalledWith('./custom_config.json');
 			expect(usedConfig.logger.consoleLogLevel).toBe('error');
 		});
 
@@ -376,8 +376,6 @@ describe('start', () => {
 			expect(fs.readJSON).toHaveBeenCalledWith('./custom_config.json');
 			expect(usedConfig.genesisConfig.blockTime).not.toEqual(60);
 			expect(usedConfig.genesisConfig.blockTime).toEqual(10);
-			expect(usedConfig.networkVersion).not.toEqual('3.1');
-			expect(usedConfig.networkVersion).toEqual('3.0');
 		});
 	});
 
