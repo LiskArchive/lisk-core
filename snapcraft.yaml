@@ -15,7 +15,7 @@ parts:
       - curl
       - jq
     plugin: nodejs
-    nodejs-version: 16.14.2
+    nodejs-version: 16.15.0
     nodejs-package-manager: npm
     source: .
     override-build: |
