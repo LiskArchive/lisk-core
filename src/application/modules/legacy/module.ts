@@ -71,12 +71,16 @@ export class LegacyModule extends BaseModule {
 	public async initGenesisState(ctx: GenesisBlockExecuteContext): Promise<void> {
 		const legacyAssetsBuffer = ctx.assets.getAsset(this.id);
 
-		const { accounts } = codec.decode<genesisLegacyStoreData>(
+		if (!legacyAssetsBuffer) {
+			return;
+		}
+
+		const { legacySubstore } = codec.decode<genesisLegacyStoreData>(
 			genesisLegacyStoreSchema,
-			legacyAssetsBuffer as Buffer,
+			legacyAssetsBuffer,
 		);
 
-		const reqErrors = validator.validate(genesisLegacyStoreSchema, { accounts });
+		const reqErrors = validator.validate(genesisLegacyStoreSchema, { legacySubstore });
 		if (reqErrors.length) {
 			throw new LiskValidationError(reqErrors);
 		}
@@ -84,7 +88,7 @@ export class LegacyModule extends BaseModule {
 		const uniqueLegacyAccounts = new Set();
 		let totalBalance = BigInt('0');
 
-		for (const account of accounts) {
+		for (const account of legacySubstore) {
 			if (account.address.length !== LEGACY_ACCOUNT_LENGTH)
 				throw new Error(
 					`legacy address length is invalid, expected ${LEGACY_ACCOUNT_LENGTH}, actual ${account.address.length}`,
@@ -94,7 +98,7 @@ export class LegacyModule extends BaseModule {
 			totalBalance += account.balance;
 		}
 
-		if (uniqueLegacyAccounts.size !== accounts.length) {
+		if (uniqueLegacyAccounts.size !== legacySubstore.length) {
 			throw new Error('Legacy address entries are not pair-wise distinct');
 		}
 
@@ -104,7 +108,7 @@ export class LegacyModule extends BaseModule {
 		const legacyStore = ctx.getStore(this.id, STORE_PREFIX_LEGACY_ACCOUNTS);
 
 		await Promise.all(
-			accounts.map(async account =>
+			legacySubstore.map(async account =>
 				legacyStore.setWithSchema(
 					account.address,
 					{ balance: account.balance },

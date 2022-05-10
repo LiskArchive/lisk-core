@@ -32,14 +32,15 @@ export interface ModuleConfig {
 export interface ModuleInitArgs {
 	moduleConfig: Record<string, unknown>;
 }
+
 export interface registerBLSKeyData {
 	blsKey: Buffer;
 	proofOfPossession: Buffer;
 }
-export interface genesisLegacyAccount {
-	address: Buffer;
-	balance: bigint;
-}
+
 export interface genesisLegacyStoreData {
-	accounts: genesisLegacyAccount[];
+	legacySubstore: {
+		address: Buffer;
+		balance: bigint;
+	}[];
 }
