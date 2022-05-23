@@ -73,8 +73,8 @@ export class RegisterBLSKeyCommand extends BaseCommand {
 
 	public async execute(ctx: CommandExecuteContext): Promise<void> {
 		const params = (ctx.params as unknown) as registerBLSKeyData;
-		const validatorAddress = getAddressFromPublicKey(ctx.transaction.senderPublicKey);
-		const validatorAccount = await this._validatorsAPI.getValidatorAccount(ctx.getAPIContext(), validatorAddress);
+		// const validatorAddress = getAddressFromPublicKey(ctx.transaction.senderPublicKey);
+		// const validatorAccount = await this._validatorsAPI.getValidatorAccount(ctx.getAPIContext(), validatorAddress);
 		const reqErrors = validator.validate(registerBLSKeyParamsSchema, params);
 		if (reqErrors.length) {
 			throw new LiskValidationError(reqErrors);
