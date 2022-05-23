@@ -39,7 +39,7 @@ export const reclaimParamsSchema = {
 export const registerBLSKeyParamsSchema = {
 	$id: 'lisk/legacy/registerBLSKey',
 	type: 'object',
-	required: ['blsKey', 'proofOfPossession'],
+	required: ['blsKey', 'proofOfPossession', 'generatorKey'],
 	properties: {
 		blsKey: {
 			dataType: 'bytes',
@@ -49,6 +49,10 @@ export const registerBLSKeyParamsSchema = {
 			dataType: 'bytes',
 			fieldNumber: 2,
 		},
+		generatorKey: {
+			dataType: 'bytes',
+			fieldNumber: 3
+		}
 	},
 };
 

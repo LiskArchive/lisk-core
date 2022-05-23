@@ -36,6 +36,7 @@ export interface ModuleInitArgs {
 export interface registerBLSKeyData {
 	blsKey: Buffer;
 	proofOfPossession: Buffer;
+	generatorKey: Buffer;
 }
 
 export interface genesisLegacyStoreData {
