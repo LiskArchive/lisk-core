@@ -26,6 +26,7 @@ export const COMMAND_ID_REGISTER_KEYS = 1;
 export const COMMAND_NAME_REGISTER_KEY = 'registerkey';
 
 export const INVALID_BLS_KEY = Buffer.alloc(48);
+export const INVALID_ED25519_KEY = Buffer.alloc(32, 255);
 
 export const defaultConfig = {
 	tokenIDReclaim: {

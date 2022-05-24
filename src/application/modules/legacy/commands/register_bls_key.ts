@@ -26,6 +26,7 @@ import {
 	COMMAND_ID_REGISTER_KEYS,
 	COMMAND_NAME_REGISTER_KEY,
 	INVALID_BLS_KEY,
+	INVALID_ED25519_KEY,
 } from '../constants';
 import { registerBLSKeyParamsSchema } from '../schemas';
 import { registerBLSKeyData } from '../types';
@@ -54,7 +55,7 @@ export class RegisterBLSKeyCommand extends BaseCommand {
 			};
 		}
 
-		if (validatorAccount.generatorKey !== params.generatorKey) {
+		if (validatorAccount.generatorKey !== INVALID_ED25519_KEY &&  validatorAccount.generatorKey === params.generatorKey) {
 			return {
 				status: VerifyStatus.FAIL,
 				error: new Error('Input generator key does not equal the one set in the store.'),
@@ -73,24 +74,24 @@ export class RegisterBLSKeyCommand extends BaseCommand {
 
 	public async execute(ctx: CommandExecuteContext): Promise<void> {
 		const params = (ctx.params as unknown) as registerBLSKeyData;
-		// const validatorAddress = getAddressFromPublicKey(ctx.transaction.senderPublicKey);
-		// const validatorAccount = await this._validatorsAPI.getValidatorAccount(ctx.getAPIContext(), validatorAddress);
+		const validatorAddress = getAddressFromPublicKey(ctx.transaction.senderPublicKey);
+		const validatorAccount = await this._validatorsAPI.getValidatorAccount(ctx.getAPIContext(), validatorAddress);
 		const reqErrors = validator.validate(registerBLSKeyParamsSchema, params);
 		if (reqErrors.length) {
 			throw new LiskValidationError(reqErrors);
 		}
 
-		// if (validatorAccount.generatorKey === INVALID_ED25519_KEY) {
-		// 	await this._validatorsAPI.setValidatorGeneratorKey(
-		// 		ctx.getAPIContext(),
-		// 		getAddressFromPublicKey(ctx.transaction.senderPublicKey),
-		// 		params.generatorKey,
-		// 	);
-		// }
+		if (validatorAccount.generatorKey === INVALID_ED25519_KEY) {
+			await this._validatorsAPI.setValidatorGeneratorKey(
+				ctx.getAPIContext(),
+				validatorAddress,
+				params.generatorKey,
+			);
+		}
 
 		const isValidatorBLSKeySet = await this._validatorsAPI.setValidatorBLSKey(
 			ctx.getAPIContext(),
-			getAddressFromPublicKey(ctx.transaction.senderPublicKey),
+			validatorAddress,
 			params.proofOfPossession,
 			params.blsKey,
 		);
