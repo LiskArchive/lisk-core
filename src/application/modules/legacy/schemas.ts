@@ -51,8 +51,8 @@ export const registerBLSKeyParamsSchema = {
 		},
 		generatorKey: {
 			dataType: 'bytes',
-			fieldNumber: 3
-		}
+			fieldNumber: 3,
+		},
 	},
 };
 

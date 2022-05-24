@@ -47,7 +47,10 @@ export class RegisterBLSKeyCommand extends BaseCommand {
 	public async verify(ctx: CommandVerifyContext): Promise<VerificationResult> {
 		const params = (ctx.params as unknown) as registerBLSKeyData;
 		const validatorAddress = getAddressFromPublicKey(ctx.transaction.senderPublicKey);
-		const validatorAccount = await this._validatorsAPI.getValidatorAccount(ctx.getAPIContext(), validatorAddress);
+		const validatorAccount = await this._validatorsAPI.getValidatorAccount(
+			ctx.getAPIContext(),
+			validatorAddress,
+		);
 		if (!validatorAccount) {
 			return {
 				status: VerifyStatus.FAIL,
@@ -55,7 +58,10 @@ export class RegisterBLSKeyCommand extends BaseCommand {
 			};
 		}
 
-		if (validatorAccount.generatorKey !== INVALID_ED25519_KEY &&  validatorAccount.generatorKey === params.generatorKey) {
+		if (
+			validatorAccount.generatorKey !== INVALID_ED25519_KEY &&
+			validatorAccount.generatorKey === params.generatorKey
+		) {
 			return {
 				status: VerifyStatus.FAIL,
 				error: new Error('Input generator key does not equal the one set in the store.'),
@@ -75,7 +81,10 @@ export class RegisterBLSKeyCommand extends BaseCommand {
 	public async execute(ctx: CommandExecuteContext): Promise<void> {
 		const params = (ctx.params as unknown) as registerBLSKeyData;
 		const validatorAddress = getAddressFromPublicKey(ctx.transaction.senderPublicKey);
-		const validatorAccount = await this._validatorsAPI.getValidatorAccount(ctx.getAPIContext(), validatorAddress);
+		const validatorAccount = await this._validatorsAPI.getValidatorAccount(
+			ctx.getAPIContext(),
+			validatorAddress,
+		);
 		const reqErrors = validator.validate(registerBLSKeyParamsSchema, params);
 		if (reqErrors.length) {
 			throw new LiskValidationError(reqErrors);
