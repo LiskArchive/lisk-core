@@ -24,7 +24,7 @@ import {
 } from 'lisk-sdk';
 import {
 	COMMAND_ID_REGISTER_KEYS,
-	COMMAND_NAME_REGISTER_KEY,
+	COMMAND_NAME_REGISTER_KEYS,
 	INVALID_BLS_KEY,
 	INVALID_ED25519_KEY,
 } from '../constants';
@@ -36,8 +36,10 @@ const { LiskValidationError, validator } = liskValidator;
 
 export class RegisterBLSKeyCommand extends BaseCommand {
 	public id = COMMAND_ID_REGISTER_KEYS;
-	public name = COMMAND_NAME_REGISTER_KEY;
+	public name = COMMAND_NAME_REGISTER_KEYS;
 	public schema = registerBLSKeyParamsSchema;
+	public invalidBlsKey = INVALID_BLS_KEY;
+	public invalidEd25519Key = INVALID_ED25519_KEY;
 	private _validatorsAPI!: ValidatorsAPI;
 
 	public addDependencies(validatorsAPI: ValidatorsAPI) {
@@ -59,7 +61,7 @@ export class RegisterBLSKeyCommand extends BaseCommand {
 		}
 
 		if (
-			validatorAccount.generatorKey !== INVALID_ED25519_KEY &&
+			Buffer.compare(validatorAccount.generatorKey, this.invalidEd25519Key) !== 0 &&
 			validatorAccount.generatorKey === params.generatorKey
 		) {
 			return {
@@ -68,7 +70,10 @@ export class RegisterBLSKeyCommand extends BaseCommand {
 			};
 		}
 
-		if (validatorAccount.blsKey !== INVALID_BLS_KEY) {
+		if (
+			validatorAccount.blsKey &&
+			Buffer.compare(validatorAccount.blsKey, this.invalidBlsKey) !== 0
+		) {
 			return {
 				status: VerifyStatus.FAIL,
 				error: new Error('Validator already has a registered BLS key.'),
@@ -90,7 +95,7 @@ export class RegisterBLSKeyCommand extends BaseCommand {
 			throw new LiskValidationError(reqErrors);
 		}
 
-		if (validatorAccount.generatorKey === INVALID_ED25519_KEY) {
+		if (Buffer.compare(validatorAccount.generatorKey, this.invalidEd25519Key) === 0) {
 			await this._validatorsAPI.setValidatorGeneratorKey(
 				ctx.getAPIContext(),
 				validatorAddress,
