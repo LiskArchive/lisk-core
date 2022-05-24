@@ -61,6 +61,7 @@ export class RegisterBLSKeyCommand extends BaseCommand {
 		}
 
 		if (
+			validatorAccount.generatorKey &&
 			Buffer.compare(validatorAccount.generatorKey, this.invalidEd25519Key) !== 0 &&
 			validatorAccount.generatorKey === params.generatorKey
 		) {
@@ -95,7 +96,10 @@ export class RegisterBLSKeyCommand extends BaseCommand {
 			throw new LiskValidationError(reqErrors);
 		}
 
-		if (Buffer.compare(validatorAccount.generatorKey, this.invalidEd25519Key) === 0) {
+		if (
+			validatorAccount.generatorKey &&
+			Buffer.compare(validatorAccount.generatorKey, this.invalidEd25519Key) === 0
+		) {
 			await this._validatorsAPI.setValidatorGeneratorKey(
 				ctx.getAPIContext(),
 				validatorAddress,
