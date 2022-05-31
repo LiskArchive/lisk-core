@@ -21,14 +21,19 @@ import {
 	VerifyStatus,
 	validator as liskValidator,
 	cryptography,
+	// codec,
 } from 'lisk-sdk';
 import {
 	COMMAND_ID_REGISTER_KEYS,
 	COMMAND_NAME_REGISTER_KEYS,
 	INVALID_BLS_KEY,
-	INVALID_ED25519_KEY,
+	TYPE_ID_KEYS_REGISTERED,
+	MODULE_ID_LEGACY,
 } from '../constants';
-import { registerBLSKeyParamsSchema } from '../schemas';
+import {
+	registerBLSKeyParamsSchema,
+	// keysRegisteredEventDataSchema,
+} from '../schemas';
 import { registerBLSKeyData } from '../types';
 
 const { getAddressFromPublicKey } = cryptography;
@@ -38,8 +43,9 @@ export class RegisterBLSKeyCommand extends BaseCommand {
 	public id = COMMAND_ID_REGISTER_KEYS;
 	public name = COMMAND_NAME_REGISTER_KEYS;
 	public schema = registerBLSKeyParamsSchema;
+	public moduleID = MODULE_ID_LEGACY;
 	public invalidBlsKey = INVALID_BLS_KEY;
-	public invalidEd25519Key = INVALID_ED25519_KEY;
+	public typeID = TYPE_ID_KEYS_REGISTERED;
 	private _validatorsAPI!: ValidatorsAPI;
 
 	public addDependencies(validatorsAPI: ValidatorsAPI) {
@@ -47,7 +53,6 @@ export class RegisterBLSKeyCommand extends BaseCommand {
 	}
 
 	public async verify(ctx: CommandVerifyContext): Promise<VerificationResult> {
-		const params = (ctx.params as unknown) as registerBLSKeyData;
 		const validatorAddress = getAddressFromPublicKey(ctx.transaction.senderPublicKey);
 		const validatorAccount = await this._validatorsAPI.getValidatorAccount(
 			ctx.getAPIContext(),
@@ -57,17 +62,6 @@ export class RegisterBLSKeyCommand extends BaseCommand {
 			return {
 				status: VerifyStatus.FAIL,
 				error: new Error('Public key does not correspond to a registered validator.'),
-			};
-		}
-
-		if (
-			validatorAccount.generatorKey &&
-			Buffer.compare(validatorAccount.generatorKey, this.invalidEd25519Key) !== 0 &&
-			validatorAccount.generatorKey === params.generatorKey
-		) {
-			return {
-				status: VerifyStatus.FAIL,
-				error: new Error('Input generator key does not equal the one set in the store.'),
 			};
 		}
 
@@ -86,36 +80,38 @@ export class RegisterBLSKeyCommand extends BaseCommand {
 
 	public async execute(ctx: CommandExecuteContext): Promise<void> {
 		const params = (ctx.params as unknown) as registerBLSKeyData;
-		const validatorAddress = getAddressFromPublicKey(ctx.transaction.senderPublicKey);
-		const validatorAccount = await this._validatorsAPI.getValidatorAccount(
-			ctx.getAPIContext(),
-			validatorAddress,
-		);
 		const reqErrors = validator.validate(registerBLSKeyParamsSchema, params);
 		if (reqErrors.length) {
 			throw new LiskValidationError(reqErrors);
 		}
 
-		if (
-			validatorAccount.generatorKey &&
-			Buffer.compare(validatorAccount.generatorKey, this.invalidEd25519Key) === 0
-		) {
-			await this._validatorsAPI.setValidatorGeneratorKey(
-				ctx.getAPIContext(),
-				validatorAddress,
-				params.generatorKey,
-			);
-		}
+		const validatorAddress = getAddressFromPublicKey(ctx.transaction.senderPublicKey);
 
-		const isValidatorBLSKeySet = await this._validatorsAPI.setValidatorBLSKey(
+		await this._validatorsAPI.setValidatorGeneratorKey(
+			ctx.getAPIContext(),
+			validatorAddress,
+			params.generatorKey,
+		);
+
+		await this._validatorsAPI.setValidatorBLSKey(
 			ctx.getAPIContext(),
 			validatorAddress,
 			params.proofOfPossession,
 			params.blsKey,
 		);
 
-		if (!isValidatorBLSKeySet) {
-			throw new Error('Failed to set validator BLS keys');
-		}
+		// const topics = [
+		// 	validatorAddress,
+		// 	params.generatorKey,
+		// 	params.blsKey
+		// ];
+
+		// const data = codec.encode(keysRegisteredEventDataSchema, {
+		// 	address: validatorAddress,
+		// 	generatorKey: params.generatorKey,
+		// 	blsKey: params.blsKey
+		// })
+
+		// ctx.eventQueue.add(this.moduleID, this.typeID, data, topics)
 	}
 }

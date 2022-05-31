@@ -119,7 +119,7 @@ describe('Register BLS Keys command', () => {
 			generatorKey: getRandomBytes(32),
 		};
 
-		it('should setValidatorGeneratorKey in case of invalid key', async () => {
+		it('should setValidatorGeneratorKey', async () => {
 			const setValidatorBLSKey = jest.fn().mockReturnValue(true);
 			const setValidatorGeneratorKey = jest.fn().mockReturnValue(true);
 			const getValidatorAccount = jest
@@ -135,21 +135,17 @@ describe('Register BLS Keys command', () => {
 			expect(setValidatorGeneratorKey).toHaveBeenCalledTimes(1);
 		});
 
-		it('should resolves when setValidatorBLSKey return true', async () => {
+		it('should setValidatorBLSKey', async () => {
 			const setValidatorBLSKey = jest.fn().mockReturnValue(true);
+			const setValidatorGeneratorKey = jest.fn().mockReturnValue(true);
 			const getValidatorAccount = jest.fn().mockReturnValue({ generatorKey: Buffer.alloc(32) });
-			registerBLSKeyCommand.addDependencies({ setValidatorBLSKey, getValidatorAccount } as any);
+			registerBLSKeyCommand.addDependencies({
+				setValidatorBLSKey,
+				getValidatorAccount,
+				setValidatorGeneratorKey,
+			} as any);
 			const context = getContext(transactionParams, publicKey, getAPIContext);
 			await expect(registerBLSKeyCommand.execute(context)).resolves.toBeUndefined();
-			expect(setValidatorBLSKey).toHaveBeenCalledTimes(1);
-		});
-
-		it('should throw error if setValidatorBLSKey return false', async () => {
-			const setValidatorBLSKey = jest.fn().mockReturnValue(false);
-			const getValidatorAccount = jest.fn().mockReturnValue({ generatorKey: Buffer.alloc(32) });
-			registerBLSKeyCommand.addDependencies({ setValidatorBLSKey, getValidatorAccount } as any);
-			const context = getContext(transactionParams, publicKey, getAPIContext);
-			await expect(registerBLSKeyCommand.execute(context)).rejects.toThrow();
 			expect(setValidatorBLSKey).toHaveBeenCalledTimes(1);
 		});
 

@@ -24,9 +24,9 @@ export const COMMAND_NAME_RECLAIM = 'reclaimLSK';
 export const COMMAND_ID_RECLAIM = 0;
 export const COMMAND_ID_REGISTER_KEYS = 1;
 export const COMMAND_NAME_REGISTER_KEYS = 'registerkeys';
+export const TYPE_ID_KEYS_REGISTERED = 0x0001;
 
 export const INVALID_BLS_KEY = Buffer.alloc(48);
-export const INVALID_ED25519_KEY = Buffer.alloc(32, 255);
 
 export const defaultConfig = {
 	tokenIDReclaim: {

@@ -93,3 +93,23 @@ export const getLegacyAccountRequestSchema = {
 		},
 	},
 };
+
+export const keysRegisteredEventDataSchema = {
+	$id: 'lisk/legacy/keysRegisteredEventData',
+	type: 'object',
+	required: ['address', 'generatorKey', 'blsKey'],
+	properties: {
+		address: {
+			dataType: 'bytes',
+			fieldNumber: 1,
+		},
+		generatorKey: {
+			dataType: 'bytes',
+			fieldNumber: 2,
+		},
+		blsKey: {
+			dataType: 'bytes',
+			fieldNumber: 3,
+		},
+	},
+};
