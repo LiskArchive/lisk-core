@@ -100,6 +100,7 @@ export class RegisterBLSKeyCommand extends BaseCommand {
 			params.blsKey,
 		);
 
+		// TODO: Enable with the issue https://github.com/LiskHQ/lisk-core/issues/632
 		// const topics = [
 		// 	validatorAddress,
 		// 	params.generatorKey,
