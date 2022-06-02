@@ -44,8 +44,8 @@ export class RegisterKeysCommand extends BaseCommand {
 	public name = COMMAND_NAME_REGISTER_KEYS;
 	public schema = registerKeysParamsSchema;
 	public moduleID = MODULE_ID_LEGACY;
-	public invalidBlsKey = INVALID_BLS_KEY;
 	public typeID = TYPE_ID_KEYS_REGISTERED;
+	private readonly invalidBlsKey = INVALID_BLS_KEY;
 	private _validatorsAPI!: ValidatorsAPI;
 
 	public addDependencies(validatorsAPI: ValidatorsAPI) {
@@ -53,6 +53,7 @@ export class RegisterKeysCommand extends BaseCommand {
 	}
 
 	public async verify(ctx: CommandVerifyContext): Promise<VerificationResult> {
+		const params = (ctx.params as unknown) as registerKeysData;
 		const validatorAddress = getAddressFromPublicKey(ctx.transaction.senderPublicKey);
 		const validatorAccount = await this._validatorsAPI.getValidatorAccount(
 			ctx.getAPIContext(),
@@ -65,10 +66,35 @@ export class RegisterKeysCommand extends BaseCommand {
 			};
 		}
 
-		if (
-			validatorAccount.blsKey &&
-			Buffer.compare(validatorAccount.blsKey, this.invalidBlsKey) !== 0
-		) {
+		if (!params.blsKey || params.blsKey.length !== 48) {
+			return {
+				status: VerifyStatus.FAIL,
+				error: new Error("Require valid 'blsKey'."),
+			};
+		}
+
+		if (!params.proofOfPossession || params.proofOfPossession.length !== 96) {
+			return {
+				status: VerifyStatus.FAIL,
+				error: new Error("Require valid 'proofOfPossession'."),
+			};
+		}
+
+		if (!params.generatorKey || params.generatorKey.length !== 32) {
+			return {
+				status: VerifyStatus.FAIL,
+				error: new Error("Require valid 'generatorKey'."),
+			};
+		}
+
+		if (!validatorAccount.blsKey) {
+			return {
+				status: VerifyStatus.FAIL,
+				error: new Error('Validator has a no BLS key.'),
+			};
+		}
+
+		if (Buffer.compare(validatorAccount.blsKey, this.invalidBlsKey) !== 0) {
 			return {
 				status: VerifyStatus.FAIL,
 				error: new Error('Validator already has a registered BLS key.'),
