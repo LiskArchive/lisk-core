@@ -35,7 +35,7 @@ const getContext = (params, publicKey, getAPIContext): any => {
 	} as any;
 };
 
-describe('Register BLS Keys command', () => {
+describe('Register keys command', () => {
 	let registerKeysCommand: RegisterKeysCommand;
 
 	const getStore: any = () => ({

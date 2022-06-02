@@ -90,7 +90,7 @@ export class RegisterKeysCommand extends BaseCommand {
 		if (!validatorAccount.blsKey) {
 			return {
 				status: VerifyStatus.FAIL,
-				error: new Error('Validator has a no BLS key.'),
+				error: new Error('Validator has no BLS key.'),
 			};
 		}
 
