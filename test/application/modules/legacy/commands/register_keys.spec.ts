@@ -78,7 +78,7 @@ describe('Register BLS Keys command', () => {
 			generatorKey: getRandomBytes(32),
 		};
 
-		it('should return status Ok', async () => {
+		it('should return status OK', async () => {
 			const commandVerifyContextInput = getContext(transactionParams, publicKey, getAPIContext);
 			const getValidatorAccount = jest
 				.fn()
