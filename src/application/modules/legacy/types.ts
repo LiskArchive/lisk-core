@@ -33,7 +33,7 @@ export interface ModuleInitArgs {
 	moduleConfig: Record<string, unknown>;
 }
 
-export interface registerBLSKeyData {
+export interface registerKeysData {
 	blsKey: Buffer;
 	proofOfPossession: Buffer;
 	generatorKey: Buffer;

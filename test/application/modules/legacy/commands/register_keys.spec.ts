@@ -19,8 +19,8 @@ import {
 	COMMAND_NAME_REGISTER_KEYS,
 } from '../../../../../src/application/modules/legacy/constants';
 
-import { RegisterBLSKeyCommand } from '../../../../../src/application/modules/legacy/commands/register_bls_key';
-import { registerBLSKeyParamsSchema } from '../../../../../src/application/modules/legacy/schemas';
+import { RegisterKeysCommand } from '../../../../../src/application/modules/legacy/commands/register_keys';
+import { registerKeysParamsSchema } from '../../../../../src/application/modules/legacy/schemas';
 
 const { getRandomBytes } = cryptography;
 
@@ -36,7 +36,7 @@ const getContext = (params, publicKey, getAPIContext): any => {
 };
 
 describe('Register BLS Keys command', () => {
-	let registerBLSKeyCommand: RegisterBLSKeyCommand;
+	let registerBLSKeyCommand: RegisterKeysCommand;
 
 	const getStore: any = () => ({
 		getWithSchema: jest.fn(),
@@ -49,11 +49,11 @@ describe('Register BLS Keys command', () => {
 	});
 
 	beforeEach(() => {
-		registerBLSKeyCommand = new RegisterBLSKeyCommand(COMMAND_ID_REGISTER_KEYS);
+		registerBLSKeyCommand = new RegisterKeysCommand(COMMAND_ID_REGISTER_KEYS);
 	});
 
 	it('should inherit from BaseCommand', () => {
-		expect(RegisterBLSKeyCommand.prototype).toBeInstanceOf(BaseCommand);
+		expect(RegisterKeysCommand.prototype).toBeInstanceOf(BaseCommand);
 	});
 
 	describe('constructor', () => {
@@ -66,7 +66,7 @@ describe('Register BLS Keys command', () => {
 		});
 
 		it('should have valid schema', () => {
-			expect(registerBLSKeyCommand.schema).toEqual(registerBLSKeyParamsSchema);
+			expect(registerBLSKeyCommand.schema).toEqual(registerKeysParamsSchema);
 		});
 	});
 

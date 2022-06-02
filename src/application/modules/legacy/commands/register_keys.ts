@@ -31,18 +31,18 @@ import {
 	MODULE_ID_LEGACY,
 } from '../constants';
 import {
-	registerBLSKeyParamsSchema,
+	registerKeysParamsSchema,
 	// keysRegisteredEventDataSchema,
 } from '../schemas';
-import { registerBLSKeyData } from '../types';
+import { registerKeysData } from '../types';
 
 const { getAddressFromPublicKey } = cryptography;
 const { LiskValidationError, validator } = liskValidator;
 
-export class RegisterBLSKeyCommand extends BaseCommand {
+export class RegisterKeysCommand extends BaseCommand {
 	public id = COMMAND_ID_REGISTER_KEYS;
 	public name = COMMAND_NAME_REGISTER_KEYS;
-	public schema = registerBLSKeyParamsSchema;
+	public schema = registerKeysParamsSchema;
 	public moduleID = MODULE_ID_LEGACY;
 	public invalidBlsKey = INVALID_BLS_KEY;
 	public typeID = TYPE_ID_KEYS_REGISTERED;
@@ -79,8 +79,8 @@ export class RegisterBLSKeyCommand extends BaseCommand {
 	}
 
 	public async execute(ctx: CommandExecuteContext): Promise<void> {
-		const params = (ctx.params as unknown) as registerBLSKeyData;
-		const reqErrors = validator.validate(registerBLSKeyParamsSchema, params);
+		const params = (ctx.params as unknown) as registerKeysData;
+		const reqErrors = validator.validate(registerKeysParamsSchema, params);
 		if (reqErrors.length) {
 			throw new LiskValidationError(reqErrors);
 		}

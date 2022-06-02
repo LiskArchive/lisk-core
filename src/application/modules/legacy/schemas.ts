@@ -36,8 +36,8 @@ export const reclaimParamsSchema = {
 	},
 };
 
-export const registerBLSKeyParamsSchema = {
-	$id: 'lisk/legacy/registerBLSKey',
+export const registerKeysParamsSchema = {
+	$id: 'lisk/legacy/registerKeys',
 	type: 'object',
 	required: ['blsKey', 'proofOfPossession', 'generatorKey'],
 	properties: {
