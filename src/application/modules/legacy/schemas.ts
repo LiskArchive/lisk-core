@@ -43,14 +43,20 @@ export const registerKeysParamsSchema = {
 	properties: {
 		blsKey: {
 			dataType: 'bytes',
+			minLength: 48,
+			maxLength: 48,
 			fieldNumber: 1,
 		},
 		proofOfPossession: {
 			dataType: 'bytes',
+			minLength: 96,
+			maxLength: 96,
 			fieldNumber: 2,
 		},
 		generatorKey: {
 			dataType: 'bytes',
+			minLength: 32,
+			maxLength: 32,
 			fieldNumber: 3,
 		},
 	},
