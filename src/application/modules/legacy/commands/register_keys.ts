@@ -53,7 +53,6 @@ export class RegisterKeysCommand extends BaseCommand {
 	}
 
 	public async verify(ctx: CommandVerifyContext): Promise<VerificationResult> {
-		const params = (ctx.params as unknown) as registerKeysData;
 		const validatorAddress = getAddressFromPublicKey(ctx.transaction.senderPublicKey);
 		const validatorAccount = await this._validatorsAPI.getValidatorAccount(
 			ctx.getAPIContext(),
@@ -63,27 +62,6 @@ export class RegisterKeysCommand extends BaseCommand {
 			return {
 				status: VerifyStatus.FAIL,
 				error: new Error('Public key does not correspond to a registered validator.'),
-			};
-		}
-
-		if (!params.blsKey || params.blsKey.length !== 48) {
-			return {
-				status: VerifyStatus.FAIL,
-				error: new Error("Require valid 'blsKey'."),
-			};
-		}
-
-		if (!params.proofOfPossession || params.proofOfPossession.length !== 96) {
-			return {
-				status: VerifyStatus.FAIL,
-				error: new Error("Require valid 'proofOfPossession'."),
-			};
-		}
-
-		if (!params.generatorKey || params.generatorKey.length !== 32) {
-			return {
-				status: VerifyStatus.FAIL,
-				error: new Error("Require valid 'generatorKey'."),
 			};
 		}
 

@@ -121,105 +121,6 @@ describe('Register keys command', () => {
 				VerifyStatus.FAIL,
 			);
 		});
-
-		it('should throw error when transaction params has no BLS key', async () => {
-			const txParams = {
-				proofOfPossession: getRandomBytes(96),
-				generatorKey: getRandomBytes(32),
-			};
-			const commandVerifyContextInput = getContext(txParams, publicKey, getAPIContext);
-			const getValidatorAccount = jest
-				.fn()
-				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
-			registerKeysCommand.addDependencies({ getValidatorAccount } as any);
-			await expect(registerKeysCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
-				'status',
-				VerifyStatus.FAIL,
-			);
-		});
-
-		it('should throw error when transaction params has invalid BLS key', async () => {
-			const txParams = {
-				blsKey: getRandomBytes(40),
-				proofOfPossession: getRandomBytes(96),
-				generatorKey: getRandomBytes(32),
-			};
-			const commandVerifyContextInput = getContext(txParams, publicKey, getAPIContext);
-			const getValidatorAccount = jest
-				.fn()
-				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
-			registerKeysCommand.addDependencies({ getValidatorAccount } as any);
-			await expect(registerKeysCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
-				'status',
-				VerifyStatus.FAIL,
-			);
-		});
-
-		it('should throw error when transaction params has no proofOfPossession key', async () => {
-			const txParams = {
-				blsKey: getRandomBytes(48),
-				generatorKey: getRandomBytes(32),
-			};
-			const commandVerifyContextInput = getContext(txParams, publicKey, getAPIContext);
-			const getValidatorAccount = jest
-				.fn()
-				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
-			registerKeysCommand.addDependencies({ getValidatorAccount } as any);
-			await expect(registerKeysCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
-				'status',
-				VerifyStatus.FAIL,
-			);
-		});
-
-		it('should throw error when transaction params has invalid proofOfPossession key', async () => {
-			const txParams = {
-				blsKey: getRandomBytes(40),
-				proofOfPossession: getRandomBytes(48),
-				generatorKey: getRandomBytes(32),
-			};
-			const commandVerifyContextInput = getContext(txParams, publicKey, getAPIContext);
-			const getValidatorAccount = jest
-				.fn()
-				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
-			registerKeysCommand.addDependencies({ getValidatorAccount } as any);
-			await expect(registerKeysCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
-				'status',
-				VerifyStatus.FAIL,
-			);
-		});
-
-		it('should throw error when transaction params has no generatorKey key', async () => {
-			const txParams = {
-				blsKey: getRandomBytes(48),
-				proofOfPossession: getRandomBytes(48),
-			};
-			const commandVerifyContextInput = getContext(txParams, publicKey, getAPIContext);
-			const getValidatorAccount = jest
-				.fn()
-				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
-			registerKeysCommand.addDependencies({ getValidatorAccount } as any);
-			await expect(registerKeysCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
-				'status',
-				VerifyStatus.FAIL,
-			);
-		});
-
-		it('should throw error when transaction params has invalid generatorKey key', async () => {
-			const txParams = {
-				blsKey: getRandomBytes(40),
-				proofOfPossession: getRandomBytes(48),
-				generatorKey: getRandomBytes(48),
-			};
-			const commandVerifyContextInput = getContext(txParams, publicKey, getAPIContext);
-			const getValidatorAccount = jest
-				.fn()
-				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
-			registerKeysCommand.addDependencies({ getValidatorAccount } as any);
-			await expect(registerKeysCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
-				'status',
-				VerifyStatus.FAIL,
-			);
-		});
 	});
 
 	describe('execute', () => {
@@ -271,6 +172,87 @@ describe('Register keys command', () => {
 			const context = getContext(invalidParams, publicKey, getAPIContext);
 			await expect(registerKeysCommand.execute(context)).rejects.toThrow();
 			expect(setValidatorBLSKey).toHaveBeenCalledTimes(0);
+		});
+
+		it('should throw error when transaction params has no BLS key', async () => {
+			const txParams = {
+				proofOfPossession: getRandomBytes(96),
+				generatorKey: getRandomBytes(32),
+			};
+			const context = getContext(txParams, publicKey, getAPIContext);
+			const getValidatorAccount = jest
+				.fn()
+				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
+			registerKeysCommand.addDependencies({ getValidatorAccount } as any);
+			await expect(registerKeysCommand.execute(context)).rejects.toThrow();
+		});
+
+		it('should throw error when transaction params has invalid BLS key', async () => {
+			const txParams = {
+				blsKey: getRandomBytes(40),
+				proofOfPossession: getRandomBytes(96),
+				generatorKey: getRandomBytes(32),
+			};
+			const context = getContext(txParams, publicKey, getAPIContext);
+			const getValidatorAccount = jest
+				.fn()
+				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
+			registerKeysCommand.addDependencies({ getValidatorAccount } as any);
+			await expect(registerKeysCommand.execute(context)).rejects.toThrow();
+		});
+
+		it('should throw error when transaction params has no proofOfPossession key', async () => {
+			const txParams = {
+				blsKey: getRandomBytes(48),
+				generatorKey: getRandomBytes(32),
+			};
+			const context = getContext(txParams, publicKey, getAPIContext);
+			const getValidatorAccount = jest
+				.fn()
+				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
+			registerKeysCommand.addDependencies({ getValidatorAccount } as any);
+			await expect(registerKeysCommand.execute(context)).rejects.toThrow();
+		});
+
+		it('should throw error when transaction params has invalid proofOfPossession key', async () => {
+			const txParams = {
+				blsKey: getRandomBytes(40),
+				proofOfPossession: getRandomBytes(48),
+				generatorKey: getRandomBytes(32),
+			};
+			const context = getContext(txParams, publicKey, getAPIContext);
+			const getValidatorAccount = jest
+				.fn()
+				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
+			registerKeysCommand.addDependencies({ getValidatorAccount } as any);
+			await expect(registerKeysCommand.execute(context)).rejects.toThrow();
+		});
+
+		it('should throw error when transaction params has no generatorKey key', async () => {
+			const txParams = {
+				blsKey: getRandomBytes(48),
+				proofOfPossession: getRandomBytes(48),
+			};
+			const context = getContext(txParams, publicKey, getAPIContext);
+			const getValidatorAccount = jest
+				.fn()
+				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
+			registerKeysCommand.addDependencies({ getValidatorAccount } as any);
+			await expect(registerKeysCommand.execute(context)).rejects.toThrow();
+		});
+
+		it('should throw error when transaction params has invalid generatorKey key', async () => {
+			const txParams = {
+				blsKey: getRandomBytes(40),
+				proofOfPossession: getRandomBytes(48),
+				generatorKey: getRandomBytes(48),
+			};
+			const context = getContext(txParams, publicKey, getAPIContext);
+			const getValidatorAccount = jest
+				.fn()
+				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
+			registerKeysCommand.addDependencies({ getValidatorAccount } as any);
+			await expect(registerKeysCommand.execute(context)).rejects.toThrow();
 		});
 	});
 });
