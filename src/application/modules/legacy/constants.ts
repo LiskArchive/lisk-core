@@ -22,8 +22,11 @@ export const LEGACY_ACC_MAX_TOTAL_BAL_NON_INC = 2 ** 64;
 // Commands
 export const COMMAND_NAME_RECLAIM = 'reclaimLSK';
 export const COMMAND_ID_RECLAIM = 0;
-export const COMMAND_ID_REGISTER_BLS_KEY = 1;
-export const COMMAND_NAME_REGISTER_BLS_KEY = 'registerblskey';
+export const COMMAND_ID_REGISTER_KEYS = 1;
+export const COMMAND_NAME_REGISTER_KEYS = 'registerkeys';
+export const TYPE_ID_KEYS_REGISTERED = 0x0001;
+
+export const INVALID_BLS_KEY = Buffer.alloc(48);
 
 export const defaultConfig = {
 	tokenIDReclaim: {

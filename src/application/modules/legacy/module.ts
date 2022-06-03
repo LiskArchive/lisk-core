@@ -36,7 +36,7 @@ import { genesisLegacyStoreSchema, legacyAccountSchema } from './schemas';
 import { ModuleConfig, ModuleInitArgs, genesisLegacyStoreData } from './types';
 
 import { ReclaimCommand } from './commands/reclaim';
-import { RegisterBLSKeyCommand } from './commands/register_bls_key';
+import { RegisterKeysCommand } from './commands/register_keys';
 
 const { LiskValidationError, validator } = liskValidator;
 export class LegacyModule extends BaseModule {
@@ -49,16 +49,16 @@ export class LegacyModule extends BaseModule {
 	private _moduleConfig!: ModuleConfig;
 
 	private readonly _reclaimCommand = new ReclaimCommand(this.id);
-	private readonly _registerBlsKeyCommand = new RegisterBLSKeyCommand(this.id);
+	private readonly _registerKeysCommand = new RegisterKeysCommand(this.id);
 
 	// eslint-disable-next-line @typescript-eslint/member-ordering
-	public commands = [this._reclaimCommand, this._registerBlsKeyCommand];
+	public commands = [this._reclaimCommand, this._registerKeysCommand];
 
 	public addDependencies(tokenAPI: TokenAPI, validatorsAPI: ValidatorsAPI) {
 		this._tokenAPI = tokenAPI;
 		this._validatorsAPI = validatorsAPI;
 		this._reclaimCommand.addDependencies(this._tokenAPI);
-		this._registerBlsKeyCommand.addDependencies(this._validatorsAPI);
+		this._registerKeysCommand.addDependencies(this._validatorsAPI);
 	}
 
 	// eslint-disable-next-line @typescript-eslint/require-await

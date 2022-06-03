@@ -36,18 +36,28 @@ export const reclaimParamsSchema = {
 	},
 };
 
-export const registerBLSKeyParamsSchema = {
-	$id: 'lisk/legacy/registerBLSKey',
+export const registerKeysParamsSchema = {
+	$id: 'lisk/legacy/registerKeys',
 	type: 'object',
-	required: ['blsKey', 'proofOfPossession'],
+	required: ['blsKey', 'proofOfPossession', 'generatorKey'],
 	properties: {
 		blsKey: {
 			dataType: 'bytes',
+			minLength: 48,
+			maxLength: 48,
 			fieldNumber: 1,
 		},
 		proofOfPossession: {
 			dataType: 'bytes',
+			minLength: 96,
+			maxLength: 96,
 			fieldNumber: 2,
+		},
+		generatorKey: {
+			dataType: 'bytes',
+			minLength: 32,
+			maxLength: 32,
+			fieldNumber: 3,
 		},
 	},
 };
@@ -86,6 +96,26 @@ export const getLegacyAccountRequestSchema = {
 		publicKey: {
 			type: 'string',
 			format: 'hex',
+		},
+	},
+};
+
+export const keysRegisteredEventDataSchema = {
+	$id: 'lisk/legacy/keysRegisteredEventData',
+	type: 'object',
+	required: ['address', 'generatorKey', 'blsKey'],
+	properties: {
+		address: {
+			dataType: 'bytes',
+			fieldNumber: 1,
+		},
+		generatorKey: {
+			dataType: 'bytes',
+			fieldNumber: 2,
+		},
+		blsKey: {
+			dataType: 'bytes',
+			fieldNumber: 3,
 		},
 	},
 };
