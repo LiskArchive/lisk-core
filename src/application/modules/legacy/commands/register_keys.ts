@@ -21,7 +21,7 @@ import {
 	VerifyStatus,
 	validator as liskValidator,
 	cryptography,
-	// codec,
+	codec,
 } from 'lisk-sdk';
 import {
 	COMMAND_ID_REGISTER_KEYS,
@@ -30,10 +30,7 @@ import {
 	TYPE_ID_KEYS_REGISTERED,
 	MODULE_ID_LEGACY,
 } from '../constants';
-import {
-	registerKeysParamsSchema,
-	// keysRegisteredEventDataSchema,
-} from '../schemas';
+import { registerKeysParamsSchema, keysRegisteredEventDataSchema } from '../schemas';
 import { registerKeysData } from '../types';
 
 const { getAddressFromPublicKey } = cryptography;
@@ -104,19 +101,14 @@ export class RegisterKeysCommand extends BaseCommand {
 			params.blsKey,
 		);
 
-		// TODO: Enable with the issue https://github.com/LiskHQ/lisk-core/issues/632
-		// const topics = [
-		// 	validatorAddress,
-		// 	params.generatorKey,
-		// 	params.blsKey
-		// ];
+		const topics = [validatorAddress, params.generatorKey, params.blsKey];
 
-		// const data = codec.encode(keysRegisteredEventDataSchema, {
-		// 	address: validatorAddress,
-		// 	generatorKey: params.generatorKey,
-		// 	blsKey: params.blsKey
-		// })
+		const data = codec.encode(keysRegisteredEventDataSchema, {
+			address: validatorAddress,
+			generatorKey: params.generatorKey,
+			blsKey: params.blsKey,
+		});
 
-		// ctx.eventQueue.add(this.moduleID, this.typeID, data, topics)
+		ctx.eventQueue.add(this.moduleID, Buffer.from([this.typeID]), data, topics);
 	}
 }

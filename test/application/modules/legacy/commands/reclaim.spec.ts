@@ -22,7 +22,7 @@ import {
 import { ReclaimCommand } from '../../../../../src/application/modules/legacy/commands/reclaim';
 import {
 	reclaimParamsSchema,
-	legacyAccountSchema,
+	legacyAccountResponseSchema,
 } from '../../../../../src/application/modules/legacy/schemas';
 
 const { getLegacyAddressFromPublicKey } = cryptography;
@@ -100,7 +100,7 @@ describe('Reclaim command', () => {
 
 			when(mockStoreHas).calledWith(legacyAddress).mockReturnValue(true);
 			when(mockGetWithSchema)
-				.calledWith(legacyAddress, legacyAccountSchema)
+				.calledWith(legacyAddress, legacyAccountResponseSchema)
 				.mockReturnValue({ balance: reclaimBalance });
 
 			await expect(reclaimCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
@@ -119,7 +119,7 @@ describe('Reclaim command', () => {
 
 			when(mockStoreHas).calledWith(legacyAddress).mockReturnValue(true);
 			when(mockGetWithSchema)
-				.calledWith(legacyAddress, legacyAccountSchema)
+				.calledWith(legacyAddress, legacyAccountResponseSchema)
 				.mockReturnValue({ balance: reclaimBalance });
 
 			await expect(reclaimCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
@@ -173,7 +173,7 @@ describe('Reclaim command', () => {
 
 			when(mockStoreHas).calledWith(legacyAddress).mockReturnValue(true);
 			when(mockGetWithSchema)
-				.calledWith(legacyAddress, legacyAccountSchema)
+				.calledWith(legacyAddress, legacyAccountResponseSchema)
 				.mockReturnValue({ balance: reclaimBalance });
 			await reclaimCommand.execute(commandExecuteContextInput);
 			expect(mint).toHaveBeenCalledTimes(1);

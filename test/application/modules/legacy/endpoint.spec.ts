@@ -17,7 +17,7 @@ import { when } from 'jest-when';
 
 import { LegacyModule } from '../../../../src/application/modules';
 import { LegacyEndpoint } from '../../../../src/application/modules/legacy/endpoint';
-import { legacyAccountSchema } from '../../../../src/application/modules/legacy/schemas';
+import { legacyAccountResponseSchema } from '../../../../src/application/modules/legacy/schemas';
 
 const {
 	getAddressAndPublicKeyFromPassphrase,
@@ -98,7 +98,10 @@ describe('LegacyEndpoint', () => {
 
 			when(mockStoreHas).calledWith(existingPublicKey).mockReturnValue(true);
 			when(mockGetWithSchema)
-				.calledWith(Buffer.from(expectedLegacyAccount.legacyAddress, 'hex'), legacyAccountSchema)
+				.calledWith(
+					Buffer.from(expectedLegacyAccount.legacyAddress, 'hex'),
+					legacyAccountResponseSchema,
+				)
 				.mockReturnValue(expectedLegacyAccount);
 
 			const legacyAccount = await legacyEndpoint.getLegacyAccount(context);
@@ -117,8 +120,8 @@ describe('LegacyEndpoint', () => {
 
 			when(mockStoreHas).calledWith(nonExistingPublicKey).mockReturnValue(false);
 			when(mockGetWithSchema)
-				.calledWith(nonExistingPublicKey, legacyAccountSchema)
-				.mockRejectedValue(new NotFoundError(Buffer.alloc(0)));
+				.calledWith(nonExistingPublicKey, legacyAccountResponseSchema)
+				.mockRejectedValue(new NotFoundError(Buffer.alloc(0).toString('hex')));
 
 			const legacyAccount = await legacyEndpoint.getLegacyAccount(context);
 			expect(legacyAccount).toBeUndefined();

@@ -21,10 +21,8 @@ export interface ReclaimParamsData {
 	amount: bigint;
 }
 
-export interface TokenIDReclaim {
-	chainID: number;
-	localID: number;
-}
+export type TokenIDReclaim = Buffer;
+
 export interface ModuleConfig {
 	tokenIDReclaim: TokenIDReclaim;
 }

@@ -20,6 +20,7 @@ import {
 	GenesisBlockExecuteContext,
 	validator as liskValidator,
 	utils,
+	ModuleMetadata,
 } from 'lisk-sdk';
 
 import { LegacyAPI } from './api';
@@ -32,7 +33,12 @@ import {
 	LEGACY_ACC_MAX_TOTAL_BAL_NON_INC,
 	defaultConfig,
 } from './constants';
-import { genesisLegacyStoreSchema, legacyAccountSchema } from './schemas';
+import {
+	legacyAccountRequestSchema,
+	genesisLegacyStoreSchema,
+	legacyAccountResponseSchema,
+} from './schemas';
+
 import { ModuleConfig, ModuleInitArgs, genesisLegacyStoreData } from './types';
 
 import { ReclaimCommand } from './commands/reclaim';
@@ -59,6 +65,27 @@ export class LegacyModule extends BaseModule {
 		this._validatorsAPI = validatorsAPI;
 		this._reclaimCommand.addDependencies(this._tokenAPI);
 		this._registerKeysCommand.addDependencies(this._validatorsAPI);
+	}
+
+	public metadata(): ModuleMetadata {
+		return {
+			id: this.id,
+			name: this.name,
+			endpoints: [
+				{
+					name: this.endpoint.getLegacyAccount.name,
+					request: legacyAccountRequestSchema,
+					response: legacyAccountResponseSchema,
+				},
+			],
+			commands: this.commands.map(command => ({
+				id: command.id,
+				name: command.name,
+				params: command.schema,
+			})),
+			events: [],
+			assets: [],
+		};
 	}
 
 	// eslint-disable-next-line @typescript-eslint/require-await
@@ -112,7 +139,7 @@ export class LegacyModule extends BaseModule {
 				legacyStore.setWithSchema(
 					account.address,
 					{ balance: account.balance },
-					legacyAccountSchema,
+					legacyAccountResponseSchema,
 				),
 			),
 		);

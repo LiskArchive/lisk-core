@@ -10,7 +10,7 @@ Create a "lisk-core" container for betanet:
 
 ```
 docker run --volume lisk-data:/home/lisk/.lisk \
-           --publish 5001:5001 \
+           --publish 7668:7668 \
            --name lisk-core \
            lisk/core:3.0.3 \
              start --network=betanet
@@ -22,8 +22,8 @@ Further parameters can be passed after `--network`, e.g.:
 
 ```
 docker run --volume lisk-data:/home/lisk/.lisk \
-           --publish 5001:5001 \
-           --publish 127.0.0.1:5000:5000 \
+           --publish 7668:7668 \
+           --publish 127.0.0.1:7667:7667 \
            --name lisk-core \
            lisk/core:3.0.3 \
              start --network=betanet --enable-http-api-plugin
@@ -33,7 +33,7 @@ Environment variables can be set with `--env`:
 
 ```
 docker run --volume lisk-data:/home/lisk/.lisk \
-           --publish 5001:5001 \
+           --publish 7668:7668 \
            --env LISK_CONSOLE_LOG_LEVEL=debug \
            --name lisk-core \
            lisk/core:3.0.3 \
