@@ -116,7 +116,7 @@ With custom config file `./custom-config.json` below
 ```
 {
   "network": {
-    "port": 5000,
+    "port": 7667,
   },
   "transactionPool": {
     "maxTransactions": 8096,
