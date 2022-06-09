@@ -101,6 +101,10 @@
 		}
 	},
 	"dependencies": {
+		"@liskhq/lisk-framework-faucet-plugin": "0.2.0-alpha.0",
+		"@liskhq/lisk-framework-forger-plugin": "0.3.0-alpha.0",
+		"@liskhq/lisk-framework-report-misbehavior-plugin": "0.3.0-alpha.0",
+		"@liskhq/lisk-framework-monitor-plugin": "0.3.0-alpha.0",
 		"@oclif/command": "1.8.0",
 		"@oclif/config": "1.17.0",
 		"@oclif/plugin-autocomplete": "0.3.0",
@@ -108,12 +112,8 @@
 		"axios": "0.25.0",
 		"fs-extra": "9.0.1",
 		"inquirer": "7.3.2",
-		"lisk-sdk": "5.2.2-alpha.31220",
-		"lisk-commander": "5.1.10-alpha.31220",
-		"@liskhq/lisk-framework-faucet-plugin": "0.1.7-alpha.31220",
-		"@liskhq/lisk-framework-forger-plugin": "0.2.7-alpha.31220",
-		"@liskhq/lisk-framework-report-misbehavior-plugin": "0.2.7-alpha.31220",
-		"@liskhq/lisk-framework-monitor-plugin": "0.2.7-alpha.31220",
+		"lisk-sdk": "6.0.0-alpha.0",
+		"lisk-commander": "6.0.0-alpha.0",
 		"tar": "6.1.11",
 		"tslib": "1.13.0"
 	},
@@ -142,3 +142,12 @@
 		"typescript": "4.2.3"
 	}
 }
+
+
+
+
+
+
+
+
+
