@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-export const legacyAccountSchema = {
+export const legacyAccountResponseSchema = {
 	$id: 'lisk/legacy/legacyAccount',
 	type: 'object',
 	required: ['balance'],
@@ -88,7 +88,7 @@ export const genesisLegacyStoreSchema = {
 	},
 };
 
-export const getLegacyAccountRequestSchema = {
+export const legacyAccountRequestSchema = {
 	$id: 'lisk/legacy/endpoint/getLegacyAccount',
 	type: 'object',
 	required: ['publicKey'],

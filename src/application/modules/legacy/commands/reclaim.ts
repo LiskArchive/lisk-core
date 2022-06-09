@@ -29,7 +29,7 @@ import {
 	STORE_PREFIX_LEGACY_ACCOUNTS,
 } from '../constants';
 
-import { reclaimParamsSchema, legacyAccountSchema } from '../schemas';
+import { reclaimParamsSchema, legacyAccountResponseSchema } from '../schemas';
 import { ReclaimParamsData, LegacyStoreData, TokenIDReclaim } from '../types';
 
 const { LiskValidationError, validator } = liskValidator;
@@ -79,7 +79,7 @@ export class ReclaimCommand extends BaseCommand {
 
 		const legacyAccount = await legacyStore.getWithSchema<LegacyStoreData>(
 			legacyAddress,
-			legacyAccountSchema,
+			legacyAccountResponseSchema,
 		);
 
 		if (legacyAccount.balance !== params.amount) {

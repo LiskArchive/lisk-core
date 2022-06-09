@@ -22,7 +22,7 @@ import {
 } from 'lisk-sdk';
 
 import { STORE_PREFIX_LEGACY_ACCOUNTS } from './constants';
-import { getLegacyAccountRequestSchema, legacyAccountSchema } from './schemas';
+import { legacyAccountRequestSchema, legacyAccountResponseSchema } from './schemas';
 import { LegacyStoreData } from './types';
 
 const { LiskValidationError, validator } = liskValidator;
@@ -33,7 +33,7 @@ export class LegacyEndpoint extends BaseEndpoint {
 	public async getLegacyAccount(
 		ctx: ModuleEndpointContext,
 	): Promise<JSONObject<LegacyStoreData> | undefined> {
-		const reqErrors = validator.validate(getLegacyAccountRequestSchema, ctx.params);
+		const reqErrors = validator.validate(legacyAccountRequestSchema, ctx.params);
 		if (reqErrors.length) {
 			throw new LiskValidationError(reqErrors);
 		}
@@ -43,12 +43,12 @@ export class LegacyEndpoint extends BaseEndpoint {
 
 		try {
 			const isLegacyAddressExists = await legacyStore.has(publicKey);
-			if (!isLegacyAddressExists) throw new NotFoundError(publicKey);
+			if (!isLegacyAddressExists) throw new NotFoundError(publicKey.toString('hex'));
 
 			const legacyAddress = getLegacyAddressFromPublicKey(publicKey);
 			const legacyAccount = await legacyStore.getWithSchema<LegacyStoreData>(
 				Buffer.from(legacyAddress, 'hex'),
-				legacyAccountSchema,
+				legacyAccountResponseSchema,
 			);
 			return {
 				legacyAddress,
