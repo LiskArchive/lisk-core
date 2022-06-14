@@ -1,0 +1,114 @@
+@Library('lisk-jenkins') _
+
+properties([
+	parameters([
+		string(name: 'COMMITISH_CORE', description: 'Commit-ish of LiskHQ/lisk-core to use', defaultValue: 'development' ),
+	])
+])
+
+pipeline {
+	agent { node { label 'lisk-publish' } }
+	options {
+		skipDefaultCheckout()
+		timeout(time: 15, unit: 'MINUTES')
+	}
+	stages {
+		stage('Checkout SCM') {
+			steps {
+				cleanWs()
+				dir('dev-cli') {
+					checkout([$class: 'GitSCM', branches: [[name: "master" ]], userRemoteConfigs: [[url: 'https://github.com/LiskHQ/dev-cli']]])
+				}
+				dir('lisk-core') {
+					checkout scm
+				}
+			}
+		}
+		stage('Build dev-cli') {
+			steps {
+				dir('dev-cli') {
+					nvm(readFile("../lisk-core/.nvmrc").trim()) {
+						sh '''
+						npm install --global yarn
+						yarn
+						yarn build
+						yarn global add link:$PWD
+						'''
+					}
+				}
+			}
+		}
+		stage('Build Core') {
+			steps {
+				dir('lisk-core') {
+					nvm(getNodejsVersion()) {
+						sh '''
+						npm install --registry https://npm.lisk.com/
+						npm install --global yarn
+						for package in $( cat ../packages ); do
+						  yarn link "$package"
+						done
+						npm run build
+						'''
+					}
+				}
+			}
+		}
+		stage('Lint') {
+			steps {
+				dir('lisk-core') {
+					nvm(getNodejsVersion()) {
+						sh 'npm run lint'
+					}
+				}
+			}
+		}
+		stage('Format') {
+			steps {
+				dir('lisk-core') {
+					nvm(getNodejsVersion()) {
+						sh '''
+						npm run format
+						if [ -z "$(git status --untracked-files=no --porcelain)" ]; then
+							echo "All files formatted"
+						else
+							echo "Running format is required"
+							exit 1
+						fi
+						'''
+					}
+				}
+			}
+		}
+		stage('Pack Core build') {
+			steps {
+				dir('lisk-core') {
+					nvm(getNodejsVersion()) {
+						sh 'oclif-dev pack --targets=linux-x64,darwin-x64'
+					}
+				}
+			}
+		}
+		stage('Publish') {
+			steps {
+				withCredentials([string(credentialsId: 'npm-lisk-io-auth-token-jenkins', variable: 'REGISTRY_AUTH_TOKEN')]) {
+					sh '''
+					echo "registry=https://npm.lisk.com/\n//npm.lisk.com/:_authToken=$REGISTRY_AUTH_TOKEN" >~/.npmrc
+					'''
+				}
+				nvm(getNodejsVersion()) {
+					sh '''
+					npm publish --canary --registry https://npm.lisk.com --yes
+					'''
+				}
+			}
+		}
+	}
+	post {
+		cleanup {
+			sh 'rm -f ~/.npmrc'
+			cleanWs()
+		}
+	}
+}
+// vim: filetype=groovy
