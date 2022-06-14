@@ -1,5 +1,3 @@
-@Library('lisk-jenkins') _
-
 properties([
 	parameters([
 		string(name: 'COMMITISH_CORE', description: 'Commit-ish of LiskHQ/lisk-core to use', defaultValue: 'development' ),
@@ -41,7 +39,7 @@ pipeline {
 		stage('Build Core') {
 			steps {
 				dir('lisk-core') {
-					nvm(getNodejsVersion()) {
+					nvm(readFile(".nvmrc").trim()) {
 						sh '''
 						npm install --registry https://npm.lisk.com/
 						npm install --global yarn
@@ -57,7 +55,7 @@ pipeline {
 		stage('Lint') {
 			steps {
 				dir('lisk-core') {
-					nvm(getNodejsVersion()) {
+					nvm(readFile(".nvmrc").trim()) {
 						sh 'npm run lint'
 					}
 				}
@@ -66,7 +64,7 @@ pipeline {
 		stage('Format') {
 			steps {
 				dir('lisk-core') {
-					nvm(getNodejsVersion()) {
+					nvm(readFile(".nvmrc").trim()) {
 						sh '''
 						npm run format
 						if [ -z "$(git status --untracked-files=no --porcelain)" ]; then
@@ -83,7 +81,7 @@ pipeline {
 		stage('Pack Core build') {
 			steps {
 				dir('lisk-core') {
-					nvm(getNodejsVersion()) {
+					nvm(readFile(".nvmrc").trim()) {
 						sh 'oclif-dev pack --targets=linux-x64,darwin-x64'
 					}
 				}
@@ -96,7 +94,7 @@ pipeline {
 					echo "registry=https://npm.lisk.com/\n//npm.lisk.com/:_authToken=$REGISTRY_AUTH_TOKEN" >~/.npmrc
 					'''
 				}
-				nvm(getNodejsVersion()) {
+				nvm(readFile(".nvmrc").trim()) {
 					sh '''
 					npm publish --canary --registry https://npm.lisk.com --yes
 					'''
