@@ -89,15 +89,17 @@ pipeline {
 		}
 		stage('Publish') {
 			steps {
-				withCredentials([string(credentialsId: 'npm-lisk-io-auth-token-jenkins', variable: 'REGISTRY_AUTH_TOKEN')]) {
-					sh '''
-					echo "registry=https://npm.lisk.com/\n//npm.lisk.com/:_authToken=$REGISTRY_AUTH_TOKEN" >~/.npmrc
-					'''
-				}
-				nvm(readFile(".nvmrc").trim()) {
-					sh '''
-					npm publish --canary --registry https://npm.lisk.com --yes
-					'''
+				dir('lisk-core') {
+					withCredentials([string(credentialsId: 'npm-lisk-io-auth-token-jenkins', variable: 'REGISTRY_AUTH_TOKEN')]) {
+						sh '''
+						echo "registry=https://npm.lisk.com/\n//npm.lisk.com/:_authToken=$REGISTRY_AUTH_TOKEN" >~/.npmrc
+						'''
+					}
+					nvm(readFile(".nvmrc").trim()) {
+						sh '''
+						npm publish --canary --registry https://npm.lisk.com --yes
+						'''
+					}
 				}
 			}
 		}
