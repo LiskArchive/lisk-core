@@ -14,25 +14,8 @@ pipeline {
 		stage('Checkout SCM') {
 			steps {
 				cleanWs()
-				dir('dev-cli') {
-					checkout([$class: 'GitSCM', branches: [[name: "master" ]], userRemoteConfigs: [[url: 'https://github.com/LiskHQ/dev-cli']]])
-				}
 				dir('lisk-core') {
 					checkout scm
-				}
-			}
-		}
-		stage('Build dev-cli') {
-			steps {
-				dir('dev-cli') {
-					nvm(readFile("../lisk-core/.nvmrc").trim()) {
-						sh '''
-						npm install --global yarn
-						yarn
-						yarn build
-						yarn global add link:$PWD
-						'''
-					}
 				}
 			}
 		}
@@ -42,10 +25,6 @@ pipeline {
 					nvm(readFile(".nvmrc").trim()) {
 						sh '''
 						npm install --registry https://npm.lisk.com/
-						npm install --global yarn
-						for package in $( cat ../packages ); do
-						  yarn link "$package"
-						done
 						npm run build
 						'''
 					}
@@ -74,15 +53,6 @@ pipeline {
 							exit 1
 						fi
 						'''
-					}
-				}
-			}
-		}
-		stage('Pack Core build') {
-			steps {
-				dir('lisk-core') {
-					nvm(readFile(".nvmrc").trim()) {
-						sh 'oclif-dev pack --targets=linux-x64,darwin-x64'
 					}
 				}
 			}
