@@ -1,0 +1,84 @@
+properties([
+	parameters([
+		string(name: 'COMMITISH_CORE', description: 'Commit-ish of LiskHQ/lisk-core to use', defaultValue: 'development' ),
+	])
+])
+
+pipeline {
+	agent { node { label 'lisk-publish' } }
+	options {
+		skipDefaultCheckout()
+		timeout(time: 15, unit: 'MINUTES')
+	}
+	stages {
+		stage('Checkout SCM') {
+			steps {
+				cleanWs()
+				dir('lisk-core') {
+					checkout scm
+				}
+			}
+		}
+		stage('Build Core') {
+			steps {
+				dir('lisk-core') {
+					nvm(readFile(".nvmrc").trim()) {
+						sh '''
+						npm install --registry https://npm.lisk.com/
+						npm run build
+						'''
+					}
+				}
+			}
+		}
+		stage('Lint') {
+			steps {
+				dir('lisk-core') {
+					nvm(readFile(".nvmrc").trim()) {
+						sh 'npm run lint'
+					}
+				}
+			}
+		}
+		stage('Format') {
+			steps {
+				dir('lisk-core') {
+					nvm(readFile(".nvmrc").trim()) {
+						sh '''
+						npm run format
+						if [ -z "$(git status --untracked-files=no --porcelain)" ]; then
+							echo "All files formatted"
+						else
+							echo "Running format is required"
+							exit 1
+						fi
+						'''
+					}
+				}
+			}
+		}
+		stage('Publish') {
+			steps {
+				dir('lisk-core') {
+					withCredentials([string(credentialsId: 'npm-lisk-io-auth-token-jenkins', variable: 'REGISTRY_AUTH_TOKEN')]) {
+						sh '''
+						echo "registry=https://npm.lisk.com/\n//npm.lisk.com/:_authToken=$REGISTRY_AUTH_TOKEN" >~/.npmrc
+						'''
+					}
+					nvm(readFile(".nvmrc").trim()) {
+						sh '''
+						npm publish --canary --registry https://npm.lisk.com --yes
+						'''
+					}
+				}
+			}
+		}
+	}
+	post {
+		cleanup {
+			sh 'rm -f ~/.npmrc'
+			cleanWs()
+		}
+	}
+}
+// vim: filetype=groovy
