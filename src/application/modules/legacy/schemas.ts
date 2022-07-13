@@ -76,6 +76,8 @@ export const genesisLegacyStoreSchema = {
 				properties: {
 					address: {
 						dataType: 'bytes',
+						minLength: 8,
+						maxLength: 8,
 						fieldNumber: 1,
 					},
 					balance: {

@@ -30,6 +30,8 @@ import {
 	STORE_PREFIX_LEGACY_ACCOUNTS,
 	LEGACY_ACCOUNT_LENGTH,
 	LEGACY_ACC_MAX_TOTAL_BAL_NON_INC,
+	ADDRESS_LEGACY_RESERVE,
+	TOKEN_ID_LSK_MAINCHAIN,
 } from './constants';
 import {
 	legacyAccountRequestSchema,
@@ -48,6 +50,8 @@ export class LegacyModule extends BaseModule {
 	public id = MODULE_ID_LEGACY;
 	public endpoint = new LegacyEndpoint(this.id);
 	public api = new LegacyAPI(this.id);
+	public legacyReserveAddress = ADDRESS_LEGACY_RESERVE;
+	public tokenID = TOKEN_ID_LSK_MAINCHAIN;
 	private _tokenAPI!: TokenAPI;
 	private _validatorsAPI!: ValidatorsAPI;
 
@@ -119,8 +123,20 @@ export class LegacyModule extends BaseModule {
 			throw new Error('Legacy address entries are not pair-wise distinct');
 		}
 
-		if (totalBalance >= LEGACY_ACC_MAX_TOTAL_BAL_NON_INC)
+		if (totalBalance >= LEGACY_ACC_MAX_TOTAL_BAL_NON_INC) {
 			throw new Error('Total balance for all legacy accounts cannot exceed 2^64');
+		}
+
+		const lockedAmount = await this._tokenAPI.getLockedAmount(
+			ctx.getAPIContext(),
+			this.legacyReserveAddress,
+			this.tokenID,
+			this.id,
+		);
+
+		if (totalBalance !== lockedAmount) {
+			throw new Error('Total balance for all legacy accounts is not equal to locked amount');
+		}
 
 		const legacyStore = ctx.getStore(this.id, STORE_PREFIX_LEGACY_ACCOUNTS);
 
