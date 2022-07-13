@@ -19,7 +19,6 @@ import {
 	codec,
 	GenesisBlockExecuteContext,
 	validator as liskValidator,
-	utils,
 	ModuleMetadata,
 } from 'lisk-sdk';
 
@@ -31,7 +30,6 @@ import {
 	STORE_PREFIX_LEGACY_ACCOUNTS,
 	LEGACY_ACCOUNT_LENGTH,
 	LEGACY_ACC_MAX_TOTAL_BAL_NON_INC,
-	defaultConfig,
 } from './constants';
 import {
 	legacyAccountRequestSchema,
@@ -39,7 +37,7 @@ import {
 	legacyAccountResponseSchema,
 } from './schemas';
 
-import { ModuleConfig, ModuleInitArgs, genesisLegacyStoreData } from './types';
+import { genesisLegacyStoreData } from './types';
 
 import { ReclaimCommand } from './commands/reclaim';
 import { RegisterKeysCommand } from './commands/register_keys';
@@ -52,7 +50,6 @@ export class LegacyModule extends BaseModule {
 	public api = new LegacyAPI(this.id);
 	private _tokenAPI!: TokenAPI;
 	private _validatorsAPI!: ValidatorsAPI;
-	private _moduleConfig!: ModuleConfig;
 
 	private readonly _reclaimCommand = new ReclaimCommand(this.id);
 	private readonly _registerKeysCommand = new RegisterKeysCommand(this.id);
@@ -86,13 +83,6 @@ export class LegacyModule extends BaseModule {
 			events: [],
 			assets: [],
 		};
-	}
-
-	// eslint-disable-next-line @typescript-eslint/require-await
-	public async init(args: ModuleInitArgs) {
-		const { moduleConfig } = args;
-		this._moduleConfig = utils.objects.mergeDeep({}, defaultConfig, moduleConfig) as ModuleConfig;
-		this._reclaimCommand.init({ tokenIDReclaim: this._moduleConfig.tokenIDReclaim });
 	}
 
 	public async initGenesisState(ctx: GenesisBlockExecuteContext): Promise<void> {
