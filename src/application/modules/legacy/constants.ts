@@ -12,6 +12,9 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
+import { cryptography } from 'lisk-sdk';
+
+const { hash } = cryptography;
 
 export const MODULE_ID_LEGACY = 32768;
 export const MODULE_NAME_LEGACY = 'legacy';
@@ -24,7 +27,10 @@ export const COMMAND_NAME_RECLAIM = 'reclaimLSK';
 export const COMMAND_ID_RECLAIM = 0;
 export const COMMAND_ID_REGISTER_KEYS = 1;
 export const COMMAND_NAME_REGISTER_KEYS = 'registerkeys';
-export const TYPE_ID_KEYS_REGISTERED = 0x0001;
+export const TYPE_ID_KEYS_REGISTERED = 0x0002;
+export const TYPE_ID_ACCOUNT_RECLAIM = 0x0001;
+export const ADDRESS_LEGACY_RESERVE = hash(Buffer.from('legacyReserve')).slice(0, 20);
+export const TOKEN_ID_LSK_MAINCHAIN = Buffer.alloc(8);
 
 export const INVALID_BLS_KEY = Buffer.alloc(48);
 
