@@ -54,7 +54,6 @@ export class ReclaimCommand extends BaseCommand {
 	public legacyReserveAddress = ADDRESS_LEGACY_RESERVE;
 	public typeID = TYPE_ID_ACCOUNT_RECLAIM;
 	public tokenID = TOKEN_ID_LSK_MAINCHAIN;
-	public eventSchema = accountReclaimedEventDataSchema;
 	private _tokenAPI!: TokenAPI;
 
 	public addDependencies(tokenAPI: TokenAPI) {
