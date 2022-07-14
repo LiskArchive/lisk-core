@@ -76,6 +76,8 @@ export const genesisLegacyStoreSchema = {
 				properties: {
 					address: {
 						dataType: 'bytes',
+						minLength: 8,
+						maxLength: 8,
 						fieldNumber: 1,
 					},
 					balance: {
@@ -115,6 +117,28 @@ export const keysRegisteredEventDataSchema = {
 		},
 		blsKey: {
 			dataType: 'bytes',
+			fieldNumber: 3,
+		},
+	},
+};
+
+export const accountReclaimedEventDataSchema = {
+	$id: 'lisk/legacy/accountReclaimedEventData',
+	type: 'object',
+	required: ['legacyAddress', 'address', 'amount'],
+	properties: {
+		legacyAddress: {
+			dataType: 'bytes',
+			maxLength: 8,
+			fieldNumber: 1,
+		},
+		address: {
+			dataType: 'bytes',
+			maxLength: 20,
+			fieldNumber: 2,
+		},
+		amount: {
+			dataType: 'uint64',
 			fieldNumber: 3,
 		},
 	},

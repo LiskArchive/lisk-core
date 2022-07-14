@@ -31,13 +31,14 @@ const getLegacyBytesFromPassphrase = (passphrase: string): Buffer => {
 	return cryptography.getFirstEightBytesReversed(cryptography.hash(publicKey));
 };
 
-const getContext = (legacySubstore: genesisLegacyStoreData, getStore: any): any => {
+const getContext = (legacySubstore: genesisLegacyStoreData, getStore: any, getAPIContext): any => {
 	const mockAssets = codec.encode(genesisLegacyStoreSchema, legacySubstore);
 	return {
 		assets: {
 			getAsset: () => mockAssets,
 		},
 		getStore,
+		getAPIContext,
 	} as any;
 };
 
@@ -91,7 +92,7 @@ describe('LegacyModule', () => {
 
 	describe('init', () => {
 		it('should initialize config with defaultConfig', async () => {
-			const moduleConfig = { tokenIDReclaim: { chainID: 0, localID: 0 } } as any;
+			const moduleConfig = { tokenIDReclaim: Buffer.alloc(8) } as any;
 			await expect(legacyModule.init({ moduleConfig: {} })).resolves.toBeUndefined();
 			expect(legacyModule['_moduleConfig']).toEqual(moduleConfig);
 		});
@@ -107,6 +108,10 @@ describe('LegacyModule', () => {
 			has: mockStoreHas,
 		});
 
+		const getAPIContext: any = () => ({
+			getStore,
+		});
+
 		beforeEach(() => {
 			storeData = { legacySubstore: [] };
 			for (const account of Object.values(testAccounts)) {
@@ -118,7 +123,18 @@ describe('LegacyModule', () => {
 		});
 
 		it('should save legacy accounts to state store if accounts are valid', async () => {
-			const genesisBlockExecuteContextInput = getContext(storeData, getStore);
+			const currentTotalBalance = storeData.legacySubstore.reduce(
+				(total, account) => total + account.balance,
+				BigInt('0'),
+			);
+
+			const genesisBlockExecuteContextInput = getContext(storeData, getStore, getAPIContext);
+
+			const tokenAPI = {
+				getLockedAmount: jest.fn().mockResolvedValue(BigInt(currentTotalBalance)),
+			};
+			legacyModule.addDependencies(tokenAPI as any, { setValidatorBLSKey: jest.fn() } as any);
+
 			await legacyModule.initGenesisState(genesisBlockExecuteContextInput);
 
 			for (const account of storeData.legacySubstore) {
@@ -134,6 +150,7 @@ describe('LegacyModule', () => {
 			const genesisBlockExecuteContextInput = getContext(
 				{ legacySubstore: [...storeData.legacySubstore, ...storeData.legacySubstore] },
 				getStore,
+				getAPIContext,
 			);
 
 			await expect(
@@ -153,7 +170,19 @@ describe('LegacyModule', () => {
 				),
 				balance: BigInt(LEGACY_ACC_MAX_TOTAL_BAL_NON_INC) - currentTotalBalance - BigInt('1'),
 			});
-			const genesisBlockExecuteContextInput = getContext(storeData, getStore);
+
+			const UpdatedTotalBalance = storeData.legacySubstore.reduce(
+				(total, account) => total + account.balance,
+				BigInt('0'),
+			);
+
+			const genesisBlockExecuteContextInput = getContext(storeData, getStore, getAPIContext);
+
+			const tokenAPI = {
+				getLockedAmount: jest.fn().mockResolvedValue(BigInt(UpdatedTotalBalance)),
+			};
+			legacyModule.addDependencies(tokenAPI as any, { setValidatorBLSKey: jest.fn() } as any);
+
 			await legacyModule.initGenesisState(genesisBlockExecuteContextInput);
 
 			for (const account of storeData.legacySubstore) {
@@ -177,7 +206,7 @@ describe('LegacyModule', () => {
 				),
 				balance: BigInt(LEGACY_ACC_MAX_TOTAL_BAL_NON_INC) - currentTotalBalance,
 			});
-			const genesisBlockExecuteContextInput = getContext(storeData, getStore);
+			const genesisBlockExecuteContextInput = getContext(storeData, getStore, getAPIContext);
 
 			await expect(
 				legacyModule.initGenesisState(genesisBlockExecuteContextInput),
@@ -191,7 +220,7 @@ describe('LegacyModule', () => {
 				),
 				balance: BigInt(LEGACY_ACC_MAX_TOTAL_BAL_NON_INC),
 			});
-			const genesisBlockExecuteContextInput = getContext(storeData, getStore);
+			const genesisBlockExecuteContextInput = getContext(storeData, getStore, getAPIContext);
 
 			await expect(
 				legacyModule.initGenesisState(genesisBlockExecuteContextInput),
@@ -206,12 +235,28 @@ describe('LegacyModule', () => {
 					address: Buffer.from(invalidLegacyAddress),
 					balance: BigInt(Math.floor(Math.random()) * 1000),
 				});
-				const genesisBlockExecuteContextInput = getContext(updatedStoreData as any, getStore);
+				const genesisBlockExecuteContextInput = getContext(
+					updatedStoreData as any,
+					getStore,
+					getAPIContext,
+				);
 
 				await expect(
 					legacyModule.initGenesisState(genesisBlockExecuteContextInput),
 				).rejects.toThrow();
 			}
+		});
+
+		it('should reject the block when total balance for all legacy accounts is not equal to lockedAmount', async () => {
+			const genesisBlockExecuteContextInput = getContext(storeData, getStore, getAPIContext);
+			const tokenAPI = {
+				getLockedAmount: jest.fn().mockResolvedValue(BigInt(10000100000)),
+			};
+			legacyModule.addDependencies(tokenAPI as any, { setValidatorBLSKey: jest.fn() } as any);
+
+			await expect(
+				legacyModule.initGenesisState(genesisBlockExecuteContextInput),
+			).rejects.toThrow();
 		});
 	});
 });

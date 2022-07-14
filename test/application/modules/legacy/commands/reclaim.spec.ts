@@ -31,7 +31,7 @@ const getLegacyAddress = (publicKey): any => {
 	return Buffer.from(getLegacyAddressFromPublicKey(Buffer.from(publicKey, 'hex')), 'hex');
 };
 
-const getContext = (amount, publicKey, getAPIContext, getStore): any => {
+const getContext = (amount, publicKey, getAPIContext, getStore, eventQueue): any => {
 	const params = { amount: BigInt(amount) };
 	const senderPublicKey = Buffer.from(publicKey, 'hex');
 
@@ -42,6 +42,7 @@ const getContext = (amount, publicKey, getAPIContext, getStore): any => {
 		},
 		getStore,
 		getAPIContext,
+		eventQueue,
 	} as any;
 };
 
@@ -64,6 +65,10 @@ describe('Reclaim command', () => {
 	const getAPIContext: any = () => ({
 		getStore,
 	});
+
+	const eventQueue: any = {
+		add: jest.fn(),
+	};
 
 	beforeEach(() => {
 		mint = jest.fn();
@@ -96,6 +101,7 @@ describe('Reclaim command', () => {
 				senderPublicKey,
 				getAPIContext,
 				getStore,
+				eventQueue,
 			);
 
 			when(mockStoreHas).calledWith(legacyAddress).mockReturnValue(true);
@@ -115,6 +121,7 @@ describe('Reclaim command', () => {
 				senderPublicKey,
 				getAPIContext,
 				getStore,
+				eventQueue,
 			);
 
 			when(mockStoreHas).calledWith(legacyAddress).mockReturnValue(true);
@@ -134,6 +141,7 @@ describe('Reclaim command', () => {
 				senderPublicKey,
 				getAPIContext,
 				getStore,
+				eventQueue,
 			);
 
 			when(mockStoreHas).calledWith(legacyAddress).mockReturnValue(false);
@@ -163,20 +171,31 @@ describe('Reclaim command', () => {
 	});
 
 	describe('execute', () => {
-		it(`should call mint for a valid reclaim transaction`, async () => {
+		it(`should add event to eventQueue on valid reclaim transaction`, async () => {
+			const unlock = jest.fn().mockReturnValue(true);
+			const transfer = jest.fn().mockReturnValue(true);
+
 			const commandExecuteContextInput = getContext(
 				reclaimBalance,
 				senderPublicKey,
 				getAPIContext,
 				getStore,
+				eventQueue,
 			);
 
 			when(mockStoreHas).calledWith(legacyAddress).mockReturnValue(true);
 			when(mockGetWithSchema)
 				.calledWith(legacyAddress, legacyAccountResponseSchema)
 				.mockReturnValue({ balance: reclaimBalance });
+			reclaimCommand.addDependencies({
+				unlock,
+				transfer,
+			} as any);
+
 			await reclaimCommand.execute(commandExecuteContextInput);
-			expect(mint).toHaveBeenCalledTimes(1);
+			expect(unlock).toHaveBeenCalledTimes(1);
+			expect(transfer).toHaveBeenCalledTimes(1);
+			expect(eventQueue.add).toHaveBeenCalledTimes(1);
 		});
 	});
 });

@@ -21,15 +21,23 @@ import {
 	validator as liskValidator,
 	cryptography,
 	TokenAPI,
+	codec,
 } from 'lisk-sdk';
 
 import {
+	ADDRESS_LEGACY_RESERVE,
 	COMMAND_ID_RECLAIM,
 	COMMAND_NAME_RECLAIM,
+	MODULE_ID_LEGACY,
 	STORE_PREFIX_LEGACY_ACCOUNTS,
+	TYPE_ID_ACCOUNT_RECLAIM,
 } from '../constants';
 
-import { reclaimParamsSchema, legacyAccountResponseSchema } from '../schemas';
+import {
+	reclaimParamsSchema,
+	legacyAccountResponseSchema,
+	accountReclaimedEventDataSchema,
+} from '../schemas';
 import { ReclaimParamsData, LegacyStoreData, TokenIDReclaim } from '../types';
 
 const { LiskValidationError, validator } = liskValidator;
@@ -40,7 +48,10 @@ const getLegacyAddress = (publicKey): Buffer =>
 export class ReclaimCommand extends BaseCommand {
 	public name = COMMAND_NAME_RECLAIM;
 	public id = COMMAND_ID_RECLAIM;
+	public moduleID = MODULE_ID_LEGACY;
 	public schema = reclaimParamsSchema;
+	public legacyReserveAddress = ADDRESS_LEGACY_RESERVE;
+	public typeID = TYPE_ID_ACCOUNT_RECLAIM;
 	private _tokenAPI!: TokenAPI;
 	private _tokenIDReclaim!: TokenIDReclaim;
 
@@ -69,11 +80,7 @@ export class ReclaimCommand extends BaseCommand {
 		if (!isLegacyAddressExists) {
 			return {
 				status: VerifyStatus.FAIL,
-				error: new Error(
-					`Legacy address corresponding to sender publickey ${ctx.transaction.senderPublicKey.toString(
-						'hex',
-					)} was not found`,
-				),
+				error: new Error('Public key does not correspond to a reclaimable account.'),
 			};
 		}
 
@@ -85,9 +92,7 @@ export class ReclaimCommand extends BaseCommand {
 		if (legacyAccount.balance !== params.amount) {
 			return {
 				status: VerifyStatus.FAIL,
-				error: new Error(
-					`Invalid amount:${params.amount} claimed by the sender: ${legacyAddress.toString('hex')}`,
-				),
+				error: new Error('Input amount does not equal the balance of the legacy account.'),
 			};
 		}
 
@@ -100,11 +105,32 @@ export class ReclaimCommand extends BaseCommand {
 		const legacyStore = ctx.getStore(this.moduleID, STORE_PREFIX_LEGACY_ACCOUNTS);
 		await legacyStore.del(legacyAddress);
 
-		await this._tokenAPI.mint(
+		const address = getAddressFromPublicKey(ctx.transaction.senderPublicKey);
+
+		await this._tokenAPI.unlock(
 			ctx.getAPIContext(),
-			getAddressFromPublicKey(ctx.transaction.senderPublicKey),
+			this.legacyReserveAddress,
+			this.moduleID,
 			this._tokenIDReclaim,
 			params.amount,
 		);
+
+		await this._tokenAPI.transfer(
+			ctx.getAPIContext(),
+			this.legacyReserveAddress,
+			address,
+			this._tokenIDReclaim,
+			params.amount,
+		);
+
+		const topics = [legacyAddress, address];
+
+		const data = codec.encode(accountReclaimedEventDataSchema, {
+			legacyAddress,
+			address,
+			amount: params.amount,
+		});
+
+		ctx.eventQueue.add(this.moduleID, Buffer.from([this.typeID]), data, topics);
 	}
 }
