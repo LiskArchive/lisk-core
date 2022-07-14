@@ -25,13 +25,12 @@ import {
 } from 'lisk-sdk';
 
 import {
+	ADDRESS_LEGACY_RESERVE,
 	COMMAND_ID_RECLAIM,
 	COMMAND_NAME_RECLAIM,
-	STORE_PREFIX_LEGACY_ACCOUNTS,
 	MODULE_ID_LEGACY,
+	STORE_PREFIX_LEGACY_ACCOUNTS,
 	TYPE_ID_ACCOUNT_RECLAIM,
-	ADDRESS_LEGACY_RESERVE,
-	TOKEN_ID_LSK_MAINCHAIN,
 } from '../constants';
 
 import {
@@ -39,7 +38,7 @@ import {
 	legacyAccountResponseSchema,
 	accountReclaimedEventDataSchema,
 } from '../schemas';
-import { ReclaimParamsData, LegacyStoreData } from '../types';
+import { ReclaimParamsData, LegacyStoreData, TokenIDReclaim } from '../types';
 
 const { LiskValidationError, validator } = liskValidator;
 const { getLegacyAddressFromPublicKey, getAddressFromPublicKey } = cryptography;
@@ -53,11 +52,15 @@ export class ReclaimCommand extends BaseCommand {
 	public schema = reclaimParamsSchema;
 	public legacyReserveAddress = ADDRESS_LEGACY_RESERVE;
 	public typeID = TYPE_ID_ACCOUNT_RECLAIM;
-	public tokenID = TOKEN_ID_LSK_MAINCHAIN;
 	private _tokenAPI!: TokenAPI;
+	private _tokenIDReclaim!: TokenIDReclaim;
 
 	public addDependencies(tokenAPI: TokenAPI) {
 		this._tokenAPI = tokenAPI;
+	}
+
+	public init(args: { tokenIDReclaim: TokenIDReclaim }) {
+		this._tokenIDReclaim = args.tokenIDReclaim;
 	}
 
 	public async verify(ctx: CommandVerifyContext): Promise<VerificationResult> {
@@ -108,7 +111,7 @@ export class ReclaimCommand extends BaseCommand {
 			ctx.getAPIContext(),
 			this.legacyReserveAddress,
 			this.moduleID,
-			this.tokenID,
+			this._tokenIDReclaim,
 			params.amount,
 		);
 
@@ -116,7 +119,7 @@ export class ReclaimCommand extends BaseCommand {
 			ctx.getAPIContext(),
 			this.legacyReserveAddress,
 			address,
-			this.tokenID,
+			this._tokenIDReclaim,
 			params.amount,
 		);
 

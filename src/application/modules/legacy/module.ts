@@ -19,6 +19,7 @@ import {
 	codec,
 	GenesisBlockExecuteContext,
 	validator as liskValidator,
+	utils,
 	ModuleMetadata,
 } from 'lisk-sdk';
 
@@ -31,7 +32,7 @@ import {
 	LEGACY_ACCOUNT_LENGTH,
 	LEGACY_ACC_MAX_TOTAL_BAL_NON_INC,
 	ADDRESS_LEGACY_RESERVE,
-	TOKEN_ID_LSK_MAINCHAIN,
+	defaultConfig,
 } from './constants';
 import {
 	legacyAccountRequestSchema,
@@ -39,7 +40,7 @@ import {
 	legacyAccountResponseSchema,
 } from './schemas';
 
-import { genesisLegacyStoreData } from './types';
+import { ModuleConfig, ModuleInitArgs, genesisLegacyStoreData } from './types';
 
 import { ReclaimCommand } from './commands/reclaim';
 import { RegisterKeysCommand } from './commands/register_keys';
@@ -51,9 +52,9 @@ export class LegacyModule extends BaseModule {
 	public endpoint = new LegacyEndpoint(this.id);
 	public api = new LegacyAPI(this.id);
 	public legacyReserveAddress = ADDRESS_LEGACY_RESERVE;
-	public tokenID = TOKEN_ID_LSK_MAINCHAIN;
 	private _tokenAPI!: TokenAPI;
 	private _validatorsAPI!: ValidatorsAPI;
+	private _moduleConfig!: ModuleConfig;
 
 	private readonly _reclaimCommand = new ReclaimCommand(this.id);
 	private readonly _registerKeysCommand = new RegisterKeysCommand(this.id);
@@ -66,6 +67,13 @@ export class LegacyModule extends BaseModule {
 		this._validatorsAPI = validatorsAPI;
 		this._reclaimCommand.addDependencies(this._tokenAPI);
 		this._registerKeysCommand.addDependencies(this._validatorsAPI);
+	}
+
+	// eslint-disable-next-line @typescript-eslint/require-await
+	public async init(args: ModuleInitArgs) {
+		const { moduleConfig } = args;
+		this._moduleConfig = utils.objects.mergeDeep({}, defaultConfig, moduleConfig) as ModuleConfig;
+		this._reclaimCommand.init({ tokenIDReclaim: this._moduleConfig.tokenIDReclaim });
 	}
 
 	public metadata(): ModuleMetadata {
@@ -127,16 +135,16 @@ export class LegacyModule extends BaseModule {
 			throw new Error('Total balance for all legacy accounts cannot exceed 2^64');
 		}
 
-		// const lockedAmount = await this._tokenAPI.getLockedAmount(
-		// 	ctx.getAPIContext(),
-		// 	this.legacyReserveAddress,
-		// 	this.tokenID,
-		// 	this.id,
-		// );
+		const lockedAmount = await this._tokenAPI.getLockedAmount(
+			ctx.getAPIContext(),
+			this.legacyReserveAddress,
+			this._moduleConfig.tokenIDReclaim,
+			this.id,
+		);
 
-		// if (totalBalance !== lockedAmount) {
-		// 	throw new Error('Total balance for all legacy accounts is not equal to locked amount');
-		// }
+		if (totalBalance !== lockedAmount) {
+			throw new Error('Total balance for all legacy accounts is not equal to locked amount');
+		}
 
 		const legacyStore = ctx.getStore(this.id, STORE_PREFIX_LEGACY_ACCOUNTS);
 

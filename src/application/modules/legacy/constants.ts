@@ -35,8 +35,5 @@ export const TOKEN_ID_LSK_MAINCHAIN = Buffer.alloc(8);
 export const INVALID_BLS_KEY = Buffer.alloc(48);
 
 export const defaultConfig = {
-	tokenIDReclaim: {
-		chainID: 0,
-		localID: 0,
-	},
+	tokenIDReclaim: TOKEN_ID_LSK_MAINCHAIN,
 };
