@@ -129,10 +129,12 @@ describe('LegacyModule', () => {
 			);
 
 			const genesisBlockExecuteContextInput = getContext(storeData, getStore, getAPIContext);
+
 			const tokenAPI = {
 				getLockedAmount: jest.fn().mockResolvedValue(BigInt(currentTotalBalance)),
 			};
 			legacyModule.addDependencies(tokenAPI as any, { setValidatorBLSKey: jest.fn() } as any);
+
 			await legacyModule.initGenesisState(genesisBlockExecuteContextInput);
 
 			for (const account of storeData.legacySubstore) {
@@ -175,10 +177,12 @@ describe('LegacyModule', () => {
 			);
 
 			const genesisBlockExecuteContextInput = getContext(storeData, getStore, getAPIContext);
+
 			const tokenAPI = {
 				getLockedAmount: jest.fn().mockResolvedValue(BigInt(UpdatedTotalBalance)),
 			};
 			legacyModule.addDependencies(tokenAPI as any, { setValidatorBLSKey: jest.fn() } as any);
+
 			await legacyModule.initGenesisState(genesisBlockExecuteContextInput);
 
 			for (const account of storeData.legacySubstore) {
