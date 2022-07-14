@@ -69,13 +69,6 @@ export class LegacyModule extends BaseModule {
 		this._registerKeysCommand.addDependencies(this._validatorsAPI);
 	}
 
-	// eslint-disable-next-line @typescript-eslint/require-await
-	public async init(args: ModuleInitArgs) {
-		const { moduleConfig } = args;
-		this._moduleConfig = utils.objects.mergeDeep({}, defaultConfig, moduleConfig) as ModuleConfig;
-		this._reclaimCommand.init({ tokenIDReclaim: this._moduleConfig.tokenIDReclaim });
-	}
-
 	public metadata(): ModuleMetadata {
 		return {
 			id: this.id,
@@ -95,6 +88,13 @@ export class LegacyModule extends BaseModule {
 			events: [],
 			assets: [],
 		};
+	}
+
+	// eslint-disable-next-line @typescript-eslint/require-await
+	public async init(args: ModuleInitArgs) {
+		const { moduleConfig } = args;
+		this._moduleConfig = utils.objects.mergeDeep({}, defaultConfig, moduleConfig) as ModuleConfig;
+		this._reclaimCommand.init({ tokenIDReclaim: this._moduleConfig.tokenIDReclaim });
 	}
 
 	public async initGenesisState(ctx: GenesisBlockExecuteContext): Promise<void> {
