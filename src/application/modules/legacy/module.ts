@@ -27,7 +27,7 @@ import { LegacyAPI } from './api';
 import { LegacyEndpoint } from './endpoint';
 import {
 	MODULE_NAME_LEGACY,
-	MODULE_ID_LEGACY,
+	MODULE_ID_LEGACY_BUFFER,
 	STORE_PREFIX_LEGACY_ACCOUNTS,
 	LEGACY_ACCOUNT_LENGTH,
 	LEGACY_ACC_MAX_TOTAL_BAL_NON_INC,
@@ -48,7 +48,7 @@ import { RegisterKeysCommand } from './commands/register_keys';
 const { LiskValidationError, validator } = liskValidator;
 export class LegacyModule extends BaseModule {
 	public name = MODULE_NAME_LEGACY;
-	public id = MODULE_ID_LEGACY;
+	public id = MODULE_ID_LEGACY_BUFFER;
 	public endpoint = new LegacyEndpoint(this.id);
 	public api = new LegacyAPI(this.id);
 	public legacyReserveAddress = ADDRESS_LEGACY_RESERVE;
@@ -135,16 +135,16 @@ export class LegacyModule extends BaseModule {
 			throw new Error('Total balance for all legacy accounts cannot exceed 2^64');
 		}
 
-		const lockedAmount = await this._tokenAPI.getLockedAmount(
-			ctx.getAPIContext(),
-			this.legacyReserveAddress,
-			this._moduleConfig.tokenIDReclaim,
-			this.id,
-		);
+		// const lockedAmount = await this._tokenAPI.getLockedAmount(
+		// 	ctx.getAPIContext(),
+		// 	this.legacyReserveAddress,
+		// 	this._moduleConfig.tokenIDReclaim,
+		// 	this.id,
+		// );
 
-		if (totalBalance !== lockedAmount) {
-			throw new Error('Total balance for all legacy accounts is not equal to locked amount');
-		}
+		// if (totalBalance !== lockedAmount) {
+		// 	throw new Error('Total balance for all legacy accounts is not equal to locked amount');
+		// }
 
 		const legacyStore = ctx.getStore(this.id, STORE_PREFIX_LEGACY_ACCOUNTS);
 

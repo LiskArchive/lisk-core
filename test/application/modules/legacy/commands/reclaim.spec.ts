@@ -17,7 +17,7 @@ import { when } from 'jest-when';
 
 import {
 	COMMAND_NAME_RECLAIM,
-	COMMAND_ID_RECLAIM,
+	COMMAND_ID_RECLAIM_BUFFER,
 } from '../../../../../src/application/modules/legacy/constants';
 import { ReclaimCommand } from '../../../../../src/application/modules/legacy/commands/reclaim';
 import {
@@ -72,7 +72,7 @@ describe('Reclaim command', () => {
 
 	beforeEach(() => {
 		mint = jest.fn();
-		reclaimCommand = new ReclaimCommand(COMMAND_ID_RECLAIM);
+		reclaimCommand = new ReclaimCommand(COMMAND_ID_RECLAIM_BUFFER);
 		reclaimCommand.addDependencies({ mint } as any);
 	});
 
@@ -82,7 +82,7 @@ describe('Reclaim command', () => {
 
 	describe('constructor', () => {
 		it('should have valid id', () => {
-			expect(reclaimCommand.id).toBe(COMMAND_ID_RECLAIM);
+			expect(reclaimCommand.id).toBe(COMMAND_ID_RECLAIM_BUFFER);
 		});
 
 		it('should have valid name', () => {

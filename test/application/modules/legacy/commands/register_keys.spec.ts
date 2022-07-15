@@ -15,7 +15,7 @@
 import { BaseCommand, cryptography, VerifyStatus } from 'lisk-sdk';
 
 import {
-	COMMAND_ID_REGISTER_KEYS,
+	COMMAND_ID_REGISTER_KEYS_BUFFER,
 	COMMAND_NAME_REGISTER_KEYS,
 } from '../../../../../src/application/modules/legacy/constants';
 
@@ -54,7 +54,7 @@ describe('Register keys command', () => {
 	};
 
 	beforeEach(() => {
-		registerKeysCommand = new RegisterKeysCommand(COMMAND_ID_REGISTER_KEYS);
+		registerKeysCommand = new RegisterKeysCommand(COMMAND_ID_REGISTER_KEYS_BUFFER);
 	});
 
 	it('should inherit from BaseCommand', () => {
@@ -63,7 +63,7 @@ describe('Register keys command', () => {
 
 	describe('constructor', () => {
 		it('should have valid id', () => {
-			expect(registerKeysCommand.id).toBe(COMMAND_ID_REGISTER_KEYS);
+			expect(registerKeysCommand.id).toBe(COMMAND_ID_REGISTER_KEYS_BUFFER);
 		});
 
 		it('should have valid name', () => {
