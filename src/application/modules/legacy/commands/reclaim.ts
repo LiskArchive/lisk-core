@@ -26,9 +26,9 @@ import {
 
 import {
 	ADDRESS_LEGACY_RESERVE,
-	COMMAND_ID_RECLAIM,
+	COMMAND_ID_RECLAIM_BUFFER,
 	COMMAND_NAME_RECLAIM,
-	MODULE_ID_LEGACY,
+	MODULE_ID_LEGACY_BUFFER,
 	STORE_PREFIX_LEGACY_ACCOUNTS,
 	TYPE_ID_ACCOUNT_RECLAIM,
 } from '../constants';
@@ -47,8 +47,8 @@ const getLegacyAddress = (publicKey): Buffer =>
 	Buffer.from(getLegacyAddressFromPublicKey(publicKey), 'hex');
 export class ReclaimCommand extends BaseCommand {
 	public name = COMMAND_NAME_RECLAIM;
-	public id = COMMAND_ID_RECLAIM;
-	public moduleID = MODULE_ID_LEGACY;
+	public id = COMMAND_ID_RECLAIM_BUFFER;
+	public moduleID = MODULE_ID_LEGACY_BUFFER;
 	public schema = reclaimParamsSchema;
 	public legacyReserveAddress = ADDRESS_LEGACY_RESERVE;
 	public typeID = TYPE_ID_ACCOUNT_RECLAIM;

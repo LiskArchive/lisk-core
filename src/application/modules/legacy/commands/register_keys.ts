@@ -24,11 +24,11 @@ import {
 	codec,
 } from 'lisk-sdk';
 import {
-	COMMAND_ID_REGISTER_KEYS,
 	COMMAND_NAME_REGISTER_KEYS,
+	COMMAND_ID_REGISTER_KEYS_BUFFER,
 	INVALID_BLS_KEY,
 	TYPE_ID_KEYS_REGISTERED,
-	MODULE_ID_LEGACY,
+	MODULE_ID_LEGACY_BUFFER,
 } from '../constants';
 import { registerKeysParamsSchema, keysRegisteredEventDataSchema } from '../schemas';
 import { registerKeysData } from '../types';
@@ -37,10 +37,10 @@ const { getAddressFromPublicKey } = cryptography;
 const { LiskValidationError, validator } = liskValidator;
 
 export class RegisterKeysCommand extends BaseCommand {
-	public id = COMMAND_ID_REGISTER_KEYS;
+	public id = COMMAND_ID_REGISTER_KEYS_BUFFER;
 	public name = COMMAND_NAME_REGISTER_KEYS;
 	public schema = registerKeysParamsSchema;
-	public moduleID = MODULE_ID_LEGACY;
+	public moduleID = MODULE_ID_LEGACY_BUFFER;
 	public typeID = TYPE_ID_KEYS_REGISTERED;
 	private readonly invalidBlsKey = INVALID_BLS_KEY;
 	private _validatorsAPI!: ValidatorsAPI;

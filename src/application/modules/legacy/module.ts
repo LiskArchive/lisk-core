@@ -27,7 +27,7 @@ import { LegacyAPI } from './api';
 import { LegacyEndpoint } from './endpoint';
 import {
 	MODULE_NAME_LEGACY,
-	MODULE_ID_LEGACY,
+	MODULE_ID_LEGACY_BUFFER,
 	STORE_PREFIX_LEGACY_ACCOUNTS,
 	LEGACY_ACCOUNT_LENGTH,
 	LEGACY_ACC_MAX_TOTAL_BAL_NON_INC,
@@ -48,7 +48,7 @@ import { RegisterKeysCommand } from './commands/register_keys';
 const { LiskValidationError, validator } = liskValidator;
 export class LegacyModule extends BaseModule {
 	public name = MODULE_NAME_LEGACY;
-	public id = MODULE_ID_LEGACY;
+	public id = MODULE_ID_LEGACY_BUFFER;
 	public endpoint = new LegacyEndpoint(this.id);
 	public api = new LegacyAPI(this.id);
 	public legacyReserveAddress = ADDRESS_LEGACY_RESERVE;

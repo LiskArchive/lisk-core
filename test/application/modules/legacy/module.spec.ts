@@ -20,8 +20,8 @@ import { LegacyAPI } from '../../../../src/application/modules/legacy/api';
 import { LegacyEndpoint } from '../../../../src/application/modules/legacy/endpoint';
 import {
 	MODULE_NAME_LEGACY,
-	MODULE_ID_LEGACY,
 	LEGACY_ACC_MAX_TOTAL_BAL_NON_INC,
+	MODULE_ID_LEGACY_BUFFER,
 } from '../../../../src/application/modules/legacy/constants';
 import { genesisLegacyStoreSchema } from '../../../../src/application/modules/legacy/schemas';
 import { genesisLegacyStoreData } from '../../../../src/application/modules/legacy/types';
@@ -72,7 +72,7 @@ describe('LegacyModule', () => {
 
 	describe('constructor', () => {
 		it('should have valid id', () => {
-			expect(legacyModule.id).toBe(MODULE_ID_LEGACY);
+			expect(legacyModule.id).toBe(MODULE_ID_LEGACY_BUFFER);
 		});
 
 		it('should have valid name', () => {
