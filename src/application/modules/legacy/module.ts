@@ -135,16 +135,16 @@ export class LegacyModule extends BaseModule {
 			throw new Error('Total balance for all legacy accounts cannot exceed 2^64');
 		}
 
-		// const lockedAmount = await this._tokenAPI.getLockedAmount(
-		// 	ctx.getAPIContext(),
-		// 	this.legacyReserveAddress,
-		// 	this._moduleConfig.tokenIDReclaim,
-		// 	this.id,
-		// );
+		const lockedAmount = await this._tokenAPI.getLockedAmount(
+			ctx.getAPIContext(),
+			this.legacyReserveAddress,
+			this._moduleConfig.tokenIDReclaim,
+			this.id,
+		);
 
-		// if (totalBalance !== lockedAmount) {
-		// 	throw new Error('Total balance for all legacy accounts is not equal to locked amount');
-		// }
+		if (totalBalance !== lockedAmount) {
+			throw new Error('Total balance for all legacy accounts is not equal to locked amount');
+		}
 
 		const legacyStore = ctx.getStore(this.id, STORE_PREFIX_LEGACY_ACCOUNTS);
 
