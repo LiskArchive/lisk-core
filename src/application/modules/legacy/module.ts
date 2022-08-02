@@ -45,7 +45,9 @@ import { ModuleConfig, ModuleInitArgs, genesisLegacyStoreData } from './types';
 import { ReclaimCommand } from './commands/reclaim';
 import { RegisterKeysCommand } from './commands/register_keys';
 
-const { LiskValidationError, validator } = liskValidator;
+// eslint-disable-next-line prefer-destructuring
+const validator: liskValidator.LiskValidator = liskValidator.validator;
+
 export class LegacyModule extends BaseModule {
 	public name = MODULE_NAME_LEGACY;
 	public id = MODULE_ID_LEGACY_BUFFER;
@@ -109,10 +111,7 @@ export class LegacyModule extends BaseModule {
 			legacyAssetsBuffer,
 		);
 
-		const reqErrors = validator.validate(genesisLegacyStoreSchema, { legacySubstore });
-		if (reqErrors.length) {
-			throw new LiskValidationError(reqErrors);
-		}
+		validator.validate(genesisLegacyStoreSchema, { legacySubstore });
 
 		const uniqueLegacyAccounts = new Set();
 		let totalBalance = BigInt('0');

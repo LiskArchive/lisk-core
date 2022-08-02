@@ -25,18 +25,19 @@ import { STORE_PREFIX_LEGACY_ACCOUNTS } from './constants';
 import { legacyAccountRequestSchema, legacyAccountResponseSchema } from './schemas';
 import { LegacyStoreData } from './types';
 
-const { LiskValidationError, validator } = liskValidator;
-const { getLegacyAddressFromPublicKey } = cryptography;
+// eslint-disable-next-line prefer-destructuring
+const validator: liskValidator.LiskValidator = liskValidator.validator;
+
+const {
+	legacyAddress: { getLegacyAddressFromPublicKey },
+} = cryptography;
 const { NotFoundError } = chain;
 
 export class LegacyEndpoint extends BaseEndpoint {
 	public async getLegacyAccount(
 		ctx: ModuleEndpointContext,
 	): Promise<JSONObject<LegacyStoreData> | undefined> {
-		const reqErrors = validator.validate(legacyAccountRequestSchema, ctx.params);
-		if (reqErrors.length) {
-			throw new LiskValidationError(reqErrors);
-		}
+		validator.validate(legacyAccountRequestSchema, ctx.params);
 
 		const publicKey = Buffer.from(ctx.params.publicKey as string, 'hex');
 		const legacyStore = ctx.getStore(this.moduleID, STORE_PREFIX_LEGACY_ACCOUNTS);

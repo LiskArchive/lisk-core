@@ -14,7 +14,7 @@
  */
 import { cryptography } from 'lisk-sdk';
 
-const { hash, intToBuffer } = cryptography;
+const { utils: { intToBuffer, hash } } = cryptography;
 
 export const MODULE_ID_LEGACY = 32768;
 export const MODULE_ID_LEGACY_BUFFER = intToBuffer(MODULE_ID_LEGACY, 4);

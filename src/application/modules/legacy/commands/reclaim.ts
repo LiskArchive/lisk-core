@@ -40,8 +40,12 @@ import {
 } from '../schemas';
 import { ReclaimParamsData, LegacyStoreData, TokenIDReclaim } from '../types';
 
-const { LiskValidationError, validator } = liskValidator;
-const { getLegacyAddressFromPublicKey, getAddressFromPublicKey } = cryptography;
+// eslint-disable-next-line prefer-destructuring
+const validator: liskValidator.LiskValidator = liskValidator.validator;
+const {
+	address: { getAddressFromPublicKey },
+	legacyAddress: { getLegacyAddressFromPublicKey },
+} = cryptography;
 
 const getLegacyAddress = (publicKey): Buffer =>
 	Buffer.from(getLegacyAddressFromPublicKey(publicKey), 'hex');
@@ -65,11 +69,13 @@ export class ReclaimCommand extends BaseCommand {
 
 	public async verify(ctx: CommandVerifyContext): Promise<VerificationResult> {
 		const params = (ctx.params as unknown) as ReclaimParamsData;
-		const reqErrors = validator.validate(reclaimParamsSchema, params);
-		if (reqErrors.length) {
+
+		try {
+			validator.validate(reclaimParamsSchema, params);
+		} catch (err) {
 			return {
 				status: VerifyStatus.FAIL,
-				error: new LiskValidationError(reqErrors),
+				error: err as Error,
 			};
 		}
 
@@ -78,9 +84,10 @@ export class ReclaimCommand extends BaseCommand {
 		const isLegacyAddressExists = await legacyStore.has(legacyAddress);
 
 		if (!isLegacyAddressExists) {
+			const senderPublicKey = ctx.transaction.senderPublicKey.toString('hex');
 			return {
 				status: VerifyStatus.FAIL,
-				error: new Error('Public key does not correspond to a reclaimable account.'),
+				error: new Error(`Legacy address corresponding to sender publickey ${senderPublicKey} was not found`),
 			};
 		}
 
