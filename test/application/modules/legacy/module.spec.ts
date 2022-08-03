@@ -27,8 +27,8 @@ import { genesisLegacyStoreSchema } from '../../../../src/application/modules/le
 import { genesisLegacyStoreData } from '../../../../src/application/modules/legacy/types';
 
 const getLegacyBytesFromPassphrase = (passphrase: string): Buffer => {
-	const { publicKey } = cryptography.getAddressAndPublicKeyFromPassphrase(passphrase);
-	return cryptography.getFirstEightBytesReversed(cryptography.hash(publicKey));
+	const { publicKey } = cryptography.address.getAddressAndPublicKeyFromPassphrase(passphrase);
+	return cryptography.legacyAddress.getFirstEightBytesReversed(cryptography.utils.hash(publicKey));
 };
 
 const getContext = (legacySubstore: genesisLegacyStoreData, getStore: any, getAPIContext): any => {

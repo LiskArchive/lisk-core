@@ -20,9 +20,9 @@ import { LegacyEndpoint } from '../../../../src/application/modules/legacy/endpo
 import { legacyAccountResponseSchema } from '../../../../src/application/modules/legacy/schemas';
 
 const {
-	getAddressAndPublicKeyFromPassphrase,
-	getLegacyAddressFromPassphrase,
-	getRandomBytes,
+	address: { getAddressAndPublicKeyFromPassphrase },
+	legacyAddress: { getLegacyAddressFromPassphrase },
+	utils: { getRandomBytes },
 } = cryptography;
 const { NotFoundError } = chain;
 
