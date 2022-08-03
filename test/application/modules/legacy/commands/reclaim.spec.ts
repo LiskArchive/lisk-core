@@ -25,7 +25,9 @@ import {
 	legacyAccountResponseSchema,
 } from '../../../../../src/application/modules/legacy/schemas';
 
-const { getLegacyAddressFromPublicKey } = cryptography;
+const {
+	legacyAddress: { getLegacyAddressFromPublicKey },
+} = cryptography;
 
 const getLegacyAddress = (publicKey): any => {
 	return Buffer.from(getLegacyAddressFromPublicKey(Buffer.from(publicKey, 'hex')), 'hex');

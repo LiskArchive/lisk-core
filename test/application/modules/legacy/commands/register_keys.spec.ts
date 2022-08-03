@@ -22,7 +22,9 @@ import {
 import { RegisterKeysCommand } from '../../../../../src/application/modules/legacy/commands/register_keys';
 import { registerKeysParamsSchema } from '../../../../../src/application/modules/legacy/schemas';
 
-const { getRandomBytes } = cryptography;
+const {
+	utils: { getRandomBytes },
+} = cryptography;
 
 const getContext = (params, publicKey, getAPIContext, eventQueue): any => {
 	const senderPublicKey = Buffer.from(publicKey, 'hex');

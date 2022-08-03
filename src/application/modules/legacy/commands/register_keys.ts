@@ -33,8 +33,12 @@ import {
 import { registerKeysParamsSchema, keysRegisteredEventDataSchema } from '../schemas';
 import { registerKeysData } from '../types';
 
-const { getAddressFromPublicKey } = cryptography;
-const { LiskValidationError, validator } = liskValidator;
+const {
+	address: { getAddressFromPublicKey },
+} = cryptography;
+
+// eslint-disable-next-line prefer-destructuring
+const validator: liskValidator.LiskValidator = liskValidator.validator;
 
 export class RegisterKeysCommand extends BaseCommand {
 	public id = COMMAND_ID_REGISTER_KEYS_BUFFER;
@@ -81,10 +85,7 @@ export class RegisterKeysCommand extends BaseCommand {
 
 	public async execute(ctx: CommandExecuteContext): Promise<void> {
 		const params = (ctx.params as unknown) as registerKeysData;
-		const reqErrors = validator.validate(registerKeysParamsSchema, params);
-		if (reqErrors.length) {
-			throw new LiskValidationError(reqErrors);
-		}
+		validator.validate(registerKeysParamsSchema, params);
 
 		const validatorAddress = getAddressFromPublicKey(ctx.transaction.senderPublicKey);
 

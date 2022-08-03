@@ -101,10 +101,10 @@
 		}
 	},
 	"dependencies": {
-		"@liskhq/lisk-framework-faucet-plugin": "0.2.0-alpha.31866",
-		"@liskhq/lisk-framework-forger-plugin": "0.3.0-alpha.31866",
-		"@liskhq/lisk-framework-monitor-plugin": "0.3.0-alpha.31866",
-		"@liskhq/lisk-framework-report-misbehavior-plugin": "0.3.0-alpha.31866",
+		"@liskhq/lisk-framework-faucet-plugin": "0.2.0-alpha.2",
+		"@liskhq/lisk-framework-forger-plugin": "0.3.0-alpha.2",
+		"@liskhq/lisk-framework-monitor-plugin": "0.3.0-alpha.2",
+		"@liskhq/lisk-framework-report-misbehavior-plugin": "0.3.0-alpha.2",
 		"@oclif/command": "1.8.0",
 		"@oclif/config": "1.17.0",
 		"@oclif/plugin-autocomplete": "0.3.0",
@@ -112,9 +112,9 @@
 		"axios": "0.25.0",
 		"fs-extra": "9.0.1",
 		"inquirer": "7.3.2",
-		"lisk-commander": "6.0.0-alpha.31866",
-		"lisk-sdk": "6.0.0-alpha.31866",
-		"tar": "6.1.9",
+		"lisk-commander": "6.0.0-alpha.2",
+		"lisk-sdk": "6.0.0-alpha.2",
+		"tar": "6.1.11",
 		"tslib": "1.13.0"
 	},
 	"devDependencies": {
@@ -123,7 +123,7 @@
 		"@types/jest": "27.0.2",
 		"@types/jest-when": "2.7.3",
 		"@types/node": "12.20.6",
-		"@types/tar": "4.0.3",
+		"@types/tar": "6.1.2",
 		"@typescript-eslint/eslint-plugin": "4.19.0",
 		"@typescript-eslint/parser": "4.19.0",
 		"eslint": "7.23.0",

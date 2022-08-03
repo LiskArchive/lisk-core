@@ -41,16 +41,18 @@ export const encryptPassphrase = async (
 	password: string,
 	outputPublicKey: boolean,
 ): Promise<Record<string, unknown>> => {
-	const encryptedPassphraseObject = await cryptography.encryptPassphraseWithPassword(
+	const encryptedPassphraseObject = await cryptography.encrypt.encryptMessageWithPassword(
 		passphrase,
 		password,
 	);
-	const encryptedPassphrase = cryptography.stringifyEncryptedPassphrase(encryptedPassphraseObject);
+	const encryptedPassphrase = cryptography.encrypt.stringifyEncryptedMessage(
+		encryptedPassphraseObject,
+	);
 
 	return outputPublicKey
 		? {
 				encryptedPassphrase,
-				publicKey: cryptography.getKeys(passphrase).publicKey.toString('hex'),
+				publicKey: cryptography.ed.getKeys(passphrase).publicKey.toString('hex'),
 		  }
 		: { encryptedPassphrase };
 };
