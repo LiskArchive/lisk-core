@@ -26,9 +26,7 @@ import {
 import { LegacyAPI } from './api';
 import { LegacyEndpoint } from './endpoint';
 import {
-	MODULE_NAME_LEGACY,
 	MODULE_ID_LEGACY_BUFFER,
-	STORE_PREFIX_LEGACY_ACCOUNTS,
 	LEGACY_ACCOUNT_LENGTH,
 	LEGACY_ACC_MAX_TOTAL_BAL_NON_INC,
 	ADDRESS_LEGACY_RESERVE,
@@ -41,7 +39,7 @@ import {
 } from './schemas';
 
 import { ModuleConfig, ModuleInitArgs, genesisLegacyStoreData } from './types';
-
+import { LegacyAccountStore } from './stores/legacyAccountStore';
 import { ReclaimCommand } from './commands/reclaim';
 import { RegisterKeysCommand } from './commands/register_keys';
 
@@ -49,17 +47,21 @@ import { RegisterKeysCommand } from './commands/register_keys';
 const validator: liskValidator.LiskValidator = liskValidator.validator;
 
 export class LegacyModule extends BaseModule {
-	public name = MODULE_NAME_LEGACY;
 	public id = MODULE_ID_LEGACY_BUFFER;
-	public endpoint = new LegacyEndpoint(this.id);
-	public api = new LegacyAPI(this.id);
+	public endpoint = new LegacyEndpoint(this.name, this.stores, this.offchainStores);
+	public api = new LegacyAPI(this.stores, this.events);
 	public legacyReserveAddress = ADDRESS_LEGACY_RESERVE;
 	private _tokenAPI!: TokenAPI;
 	private _validatorsAPI!: ValidatorsAPI;
 	private _moduleConfig!: ModuleConfig;
 
-	private readonly _reclaimCommand = new ReclaimCommand(this.id);
-	private readonly _registerKeysCommand = new RegisterKeysCommand(this.id);
+	private readonly _reclaimCommand = new ReclaimCommand(this.stores, this.events);
+	private readonly _registerKeysCommand = new RegisterKeysCommand(this.stores, this.events);
+
+	public constructor() {
+		super();
+		this.stores.register(LegacyAccountStore, new LegacyAccountStore(this.name));
+	}
 
 	// eslint-disable-next-line @typescript-eslint/member-ordering
 	public commands = [this._reclaimCommand, this._registerKeysCommand];
@@ -100,7 +102,7 @@ export class LegacyModule extends BaseModule {
 	}
 
 	public async initGenesisState(ctx: GenesisBlockExecuteContext): Promise<void> {
-		const legacyAssetsBuffer = ctx.assets.getAsset(this.id);
+		const legacyAssetsBuffer = ctx.assets.getAsset(this.name);
 
 		if (!legacyAssetsBuffer) {
 			return;
@@ -112,7 +114,7 @@ export class LegacyModule extends BaseModule {
 		);
 
 		validator.validate(genesisLegacyStoreSchema, { legacySubstore });
-
+		const store = this.stores.get(LegacyAccountStore);
 		const uniqueLegacyAccounts = new Set();
 		let totalBalance = BigInt('0');
 
@@ -138,22 +140,16 @@ export class LegacyModule extends BaseModule {
 			ctx.getAPIContext(),
 			this.legacyReserveAddress,
 			this._moduleConfig.tokenIDReclaim,
-			this.id,
+			this.name,
 		);
 
 		if (totalBalance !== lockedAmount) {
 			throw new Error('Total balance for all legacy accounts is not equal to locked amount');
 		}
 
-		const legacyStore = ctx.getStore(this.id, STORE_PREFIX_LEGACY_ACCOUNTS);
-
 		await Promise.all(
 			legacySubstore.map(async account =>
-				legacyStore.setWithSchema(
-					account.address,
-					{ balance: account.balance },
-					legacyAccountResponseSchema,
-				),
+				store.set(ctx, account.address, { balance: account.balance }),
 			),
 		);
 	}

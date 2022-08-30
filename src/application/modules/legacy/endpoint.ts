@@ -11,7 +11,6 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-
 import {
 	BaseEndpoint,
 	JSONObject,
@@ -19,10 +18,12 @@ import {
 	chain,
 	cryptography,
 	validator as liskValidator,
+	NamedRegistry,
 } from 'lisk-sdk';
 
-import { STORE_PREFIX_LEGACY_ACCOUNTS } from './constants';
-import { legacyAccountRequestSchema, legacyAccountResponseSchema } from './schemas';
+import { MODULE_ID_LEGACY_BUFFER } from './constants';
+import { legacyAccountRequestSchema } from './schemas';
+import { LegacyAccountStore } from './stores/legacyAccountStore';
 import { LegacyStoreData } from './types';
 
 // eslint-disable-next-line prefer-destructuring
@@ -34,23 +35,27 @@ const {
 const { NotFoundError } = chain;
 
 export class LegacyEndpoint extends BaseEndpoint {
+	public id = MODULE_ID_LEGACY_BUFFER;
+
+	public constructor(moduleName: string, stores: NamedRegistry, offchainStores: NamedRegistry) {
+		super(stores, offchainStores);
+		this._moduleName = moduleName;
+	}
+
 	public async getLegacyAccount(
 		ctx: ModuleEndpointContext,
 	): Promise<JSONObject<LegacyStoreData> | undefined> {
 		validator.validate(legacyAccountRequestSchema, ctx.params);
 
 		const publicKey = Buffer.from(ctx.params.publicKey as string, 'hex');
-		const legacyStore = ctx.getStore(this.moduleID, STORE_PREFIX_LEGACY_ACCOUNTS);
+		const legacyStore = this.stores.get(LegacyAccountStore);
 
 		try {
-			const isLegacyAddressExists = await legacyStore.has(publicKey);
+			const isLegacyAddressExists = await legacyStore.has(ctx, publicKey);
 			if (!isLegacyAddressExists) throw new NotFoundError(publicKey.toString('hex'));
 
 			const legacyAddress = getLegacyAddressFromPublicKey(publicKey);
-			const legacyAccount = await legacyStore.getWithSchema<LegacyStoreData>(
-				Buffer.from(legacyAddress, 'hex'),
-				legacyAccountResponseSchema,
-			);
+			const legacyAccount = await legacyStore.get(ctx, Buffer.from(legacyAddress, 'hex'));
 			return {
 				legacyAddress,
 				balance: legacyAccount.balance.toString(),

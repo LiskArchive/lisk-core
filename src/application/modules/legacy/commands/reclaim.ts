@@ -27,18 +27,13 @@ import {
 import {
 	ADDRESS_LEGACY_RESERVE,
 	COMMAND_ID_RECLAIM_BUFFER,
-	COMMAND_NAME_RECLAIM,
 	MODULE_ID_LEGACY_BUFFER,
-	STORE_PREFIX_LEGACY_ACCOUNTS,
 	TYPE_ID_ACCOUNT_RECLAIM,
 } from '../constants';
 
-import {
-	reclaimParamsSchema,
-	legacyAccountResponseSchema,
-	accountReclaimedEventDataSchema,
-} from '../schemas';
-import { ReclaimParamsData, LegacyStoreData, TokenIDReclaim } from '../types';
+import { reclaimParamsSchema, accountReclaimedEventDataSchema } from '../schemas';
+import { ReclaimParamsData, TokenIDReclaim } from '../types';
+import { LegacyAccountStore } from '../stores/legacyAccountStore';
 
 // eslint-disable-next-line prefer-destructuring
 const validator: liskValidator.LiskValidator = liskValidator.validator;
@@ -50,7 +45,6 @@ const {
 const getLegacyAddress = (publicKey): Buffer =>
 	Buffer.from(getLegacyAddressFromPublicKey(publicKey), 'hex');
 export class ReclaimCommand extends BaseCommand {
-	public name = COMMAND_NAME_RECLAIM;
 	public id = COMMAND_ID_RECLAIM_BUFFER;
 	public moduleID = MODULE_ID_LEGACY_BUFFER;
 	public schema = reclaimParamsSchema;
@@ -80,8 +74,9 @@ export class ReclaimCommand extends BaseCommand {
 		}
 
 		const legacyAddress = getLegacyAddress(ctx.transaction.senderPublicKey);
-		const legacyStore = ctx.getStore(this.moduleID, STORE_PREFIX_LEGACY_ACCOUNTS);
-		const isLegacyAddressExists = await legacyStore.has(legacyAddress);
+		const legacyStore = this.stores.get(LegacyAccountStore);
+
+		const isLegacyAddressExists = await legacyStore.has(ctx, legacyAddress);
 
 		if (!isLegacyAddressExists) {
 			const senderPublicKey = ctx.transaction.senderPublicKey.toString('hex');
@@ -93,10 +88,7 @@ export class ReclaimCommand extends BaseCommand {
 			};
 		}
 
-		const legacyAccount = await legacyStore.getWithSchema<LegacyStoreData>(
-			legacyAddress,
-			legacyAccountResponseSchema,
-		);
+		const legacyAccount = await legacyStore.get(ctx, legacyAddress);
 
 		if (legacyAccount.balance !== params.amount) {
 			return {
@@ -111,15 +103,15 @@ export class ReclaimCommand extends BaseCommand {
 	public async execute(ctx: CommandExecuteContext): Promise<void> {
 		const params = (ctx.params as unknown) as ReclaimParamsData;
 		const legacyAddress = getLegacyAddress(ctx.transaction.senderPublicKey);
-		const legacyStore = ctx.getStore(this.moduleID, STORE_PREFIX_LEGACY_ACCOUNTS);
-		await legacyStore.del(legacyAddress);
+		const legacyStore = this.stores.get(LegacyAccountStore);
+		await legacyStore.del(ctx, legacyAddress);
 
 		const address = getAddressFromPublicKey(ctx.transaction.senderPublicKey);
 
 		await this._tokenAPI.unlock(
 			ctx.getAPIContext(),
 			this.legacyReserveAddress,
-			this.moduleID,
+			this.name,
 			this._tokenIDReclaim,
 			params.amount,
 		);
@@ -140,6 +132,6 @@ export class ReclaimCommand extends BaseCommand {
 			amount: params.amount,
 		});
 
-		ctx.eventQueue.add(this.moduleID, Buffer.from([this.typeID]), data, topics);
+		ctx.eventQueue.add(this.name, Buffer.from([this.typeID]), data, topics);
 	}
 }

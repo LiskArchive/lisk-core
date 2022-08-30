@@ -24,7 +24,6 @@ import {
 	codec,
 } from 'lisk-sdk';
 import {
-	COMMAND_NAME_REGISTER_KEYS,
 	COMMAND_ID_REGISTER_KEYS_BUFFER,
 	INVALID_BLS_KEY,
 	TYPE_ID_KEYS_REGISTERED,
@@ -42,7 +41,6 @@ const validator: liskValidator.LiskValidator = liskValidator.validator;
 
 export class RegisterKeysCommand extends BaseCommand {
 	public id = COMMAND_ID_REGISTER_KEYS_BUFFER;
-	public name = COMMAND_NAME_REGISTER_KEYS;
 	public schema = registerKeysParamsSchema;
 	public moduleID = MODULE_ID_LEGACY_BUFFER;
 	public typeID = TYPE_ID_KEYS_REGISTERED;
@@ -110,6 +108,6 @@ export class RegisterKeysCommand extends BaseCommand {
 			blsKey: params.blsKey,
 		});
 
-		ctx.eventQueue.add(this.moduleID, Buffer.from([this.typeID]), data, topics);
+		ctx.eventQueue.add(this.name, Buffer.from([this.typeID]), data, topics);
 	}
 }
