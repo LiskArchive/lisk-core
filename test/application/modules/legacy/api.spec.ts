@@ -15,13 +15,14 @@
 import { BaseAPI } from 'lisk-sdk';
 
 import { LegacyAPI } from '../../../../src/application/modules/legacy/api';
-import { MODULE_ID_LEGACY_BUFFER } from '../../../../src/application/modules/legacy/constants';
+import { LegacyModule } from '../../../../src/application/modules/legacy/module';
 
 describe('LegacyAPI', () => {
 	let legacyAPI: LegacyAPI;
 
 	beforeAll(() => {
-		legacyAPI = new LegacyAPI(MODULE_ID_LEGACY_BUFFER);
+		const module = new LegacyModule();
+		legacyAPI = new LegacyAPI(module.stores, module.events);
 	});
 
 	it('should inherit from BaseAPI', () => {

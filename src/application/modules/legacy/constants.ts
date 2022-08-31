@@ -26,12 +26,12 @@ export const LEGACY_ACCOUNT_LENGTH = 8;
 export const LEGACY_ACC_MAX_TOTAL_BAL_NON_INC = 2 ** 64;
 
 // Commands
-export const COMMAND_NAME_RECLAIM = 'reclaimLSK';
+export const COMMAND_NAME_RECLAIM = 'reclaim';
 export const COMMAND_ID_RECLAIM = 0;
 export const COMMAND_ID_RECLAIM_BUFFER = intToBuffer(COMMAND_ID_RECLAIM, 4);
 export const COMMAND_ID_REGISTER_KEYS = 1;
 export const COMMAND_ID_REGISTER_KEYS_BUFFER = intToBuffer(COMMAND_ID_REGISTER_KEYS, 4);
-export const COMMAND_NAME_REGISTER_KEYS = 'registerkeys';
+export const COMMAND_NAME_REGISTER_KEYS = 'registerKeys';
 export const TYPE_ID_KEYS_REGISTERED = 0x0002;
 export const TYPE_ID_ACCOUNT_RECLAIM = 0x0001;
 export const ADDRESS_LEGACY_RESERVE = hash(Buffer.from('legacyReserve')).slice(0, 20);

@@ -19,6 +19,7 @@ import {
 	COMMAND_NAME_RECLAIM,
 	COMMAND_ID_RECLAIM_BUFFER,
 } from '../../../../../src/application/modules/legacy/constants';
+import { LegacyModule } from '../../../../../src/application/modules/legacy/module';
 import { ReclaimCommand } from '../../../../../src/application/modules/legacy/commands/reclaim';
 import {
 	reclaimParamsSchema,
@@ -74,7 +75,8 @@ describe('Reclaim command', () => {
 
 	beforeEach(() => {
 		mint = jest.fn();
-		reclaimCommand = new ReclaimCommand(COMMAND_ID_RECLAIM_BUFFER);
+		const module = new LegacyModule();
+		reclaimCommand = new ReclaimCommand(module.stores, module.events);
 		reclaimCommand.addDependencies({ mint } as any);
 	});
 
