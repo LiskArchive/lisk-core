@@ -48,7 +48,7 @@ const validator: liskValidator.LiskValidator = liskValidator.validator;
 
 export class LegacyModule extends BaseModule {
 	public id = MODULE_ID_LEGACY_BUFFER;
-	public endpoint = new LegacyEndpoint(this.name, this.stores, this.offchainStores);
+	public endpoint = new LegacyEndpoint(this.stores, this.offchainStores);
 	public api = new LegacyAPI(this.stores, this.events);
 	public legacyReserveAddress = ADDRESS_LEGACY_RESERVE;
 	private _tokenAPI!: TokenAPI;
@@ -85,7 +85,6 @@ export class LegacyModule extends BaseModule {
 				},
 			],
 			commands: this.commands.map(command => ({
-				id: command.id,
 				name: command.name,
 				params: command.schema,
 			})),

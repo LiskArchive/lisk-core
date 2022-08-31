@@ -24,12 +24,7 @@ import {
 	codec,
 } from 'lisk-sdk';
 
-import {
-	ADDRESS_LEGACY_RESERVE,
-	COMMAND_ID_RECLAIM_BUFFER,
-	MODULE_ID_LEGACY_BUFFER,
-	TYPE_ID_ACCOUNT_RECLAIM,
-} from '../constants';
+import { ADDRESS_LEGACY_RESERVE, TYPE_ID_ACCOUNT_RECLAIM } from '../constants';
 
 import { reclaimParamsSchema, accountReclaimedEventDataSchema } from '../schemas';
 import { ReclaimParamsData, TokenIDReclaim } from '../types';
@@ -44,9 +39,8 @@ const {
 
 const getLegacyAddress = (publicKey): Buffer =>
 	Buffer.from(getLegacyAddressFromPublicKey(publicKey), 'hex');
+
 export class ReclaimCommand extends BaseCommand {
-	public id = COMMAND_ID_RECLAIM_BUFFER;
-	public moduleID = MODULE_ID_LEGACY_BUFFER;
 	public schema = reclaimParamsSchema;
 	public legacyReserveAddress = ADDRESS_LEGACY_RESERVE;
 	public typeID = TYPE_ID_ACCOUNT_RECLAIM;

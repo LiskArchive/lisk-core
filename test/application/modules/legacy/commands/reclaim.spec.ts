@@ -15,10 +15,7 @@
 import { BaseCommand, cryptography, VerifyStatus } from 'lisk-sdk';
 import { when } from 'jest-when';
 
-import {
-	COMMAND_NAME_RECLAIM,
-	COMMAND_ID_RECLAIM_BUFFER,
-} from '../../../../../src/application/modules/legacy/constants';
+import { COMMAND_NAME_RECLAIM } from '../../../../../src/application/modules/legacy/constants';
 import { LegacyModule } from '../../../../../src/application/modules/legacy/module';
 import { ReclaimCommand } from '../../../../../src/application/modules/legacy/commands/reclaim';
 import {
@@ -85,10 +82,6 @@ describe('Reclaim command', () => {
 	});
 
 	describe('constructor', () => {
-		it('should have valid id', () => {
-			expect(reclaimCommand.id).toBe(COMMAND_ID_RECLAIM_BUFFER);
-		});
-
 		it('should have valid name', () => {
 			expect(reclaimCommand.name).toBe(COMMAND_NAME_RECLAIM);
 		});

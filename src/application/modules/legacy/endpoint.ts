@@ -19,9 +19,6 @@ import {
 	cryptography,
 	validator as liskValidator,
 } from 'lisk-sdk';
-import { NamedRegistry } from '../../../../node_modules/lisk-framework/dist-node/modules/named_registry.js';
-
-import { MODULE_ID_LEGACY_BUFFER } from './constants';
 import { legacyAccountRequestSchema } from './schemas';
 import { LegacyAccountStore } from './stores/legacyAccountStore';
 import { LegacyStoreData } from './types';
@@ -35,13 +32,6 @@ const {
 const { NotFoundError } = chain;
 
 export class LegacyEndpoint extends BaseEndpoint {
-	public id = MODULE_ID_LEGACY_BUFFER;
-
-	public constructor(moduleName: string, stores: NamedRegistry, offchainStores: NamedRegistry) {
-		super(stores, offchainStores);
-		this._moduleName = moduleName;
-	}
-
 	public async getLegacyAccount(
 		ctx: ModuleEndpointContext,
 	): Promise<JSONObject<LegacyStoreData> | undefined> {
