@@ -18,8 +18,8 @@ import {
 	chain,
 	cryptography,
 	validator as liskValidator,
-	NamedRegistry,
 } from 'lisk-sdk';
+import { NamedRegistry } from '../../../../node_modules/lisk-framework/dist-node/modules/named_registry.js';
 
 import { MODULE_ID_LEGACY_BUFFER } from './constants';
 import { legacyAccountRequestSchema } from './schemas';
