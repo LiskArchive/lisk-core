@@ -20,13 +20,13 @@ import {
 	GenesisBlockExecuteContext,
 	validator as liskValidator,
 	utils,
-	ModuleMetadata,
 } from 'lisk-sdk';
 
+// TODO: Export 'ModuleMetadata' directly from SDK once available
+import { ModuleMetadata } from '../../../../node_modules/lisk-framework/dist-node/modules/base_module';
 import { LegacyAPI } from './api';
 import { LegacyEndpoint } from './endpoint';
 import {
-	MODULE_ID_LEGACY_BUFFER,
 	LEGACY_ACCOUNT_LENGTH,
 	LEGACY_ACC_MAX_TOTAL_BAL_NON_INC,
 	ADDRESS_LEGACY_RESERVE,
@@ -47,7 +47,6 @@ import { RegisterKeysCommand } from './commands/register_keys';
 const validator: liskValidator.LiskValidator = liskValidator.validator;
 
 export class LegacyModule extends BaseModule {
-	public id = MODULE_ID_LEGACY_BUFFER;
 	public endpoint = new LegacyEndpoint(this.stores, this.offchainStores);
 	public api = new LegacyAPI(this.stores, this.events);
 	public legacyReserveAddress = ADDRESS_LEGACY_RESERVE;
@@ -75,8 +74,6 @@ export class LegacyModule extends BaseModule {
 
 	public metadata(): ModuleMetadata {
 		return {
-			id: this.id,
-			name: this.name,
 			endpoints: [
 				{
 					name: this.endpoint.getLegacyAccount.name,
@@ -113,7 +110,6 @@ export class LegacyModule extends BaseModule {
 		);
 
 		validator.validate(genesisLegacyStoreSchema, { legacySubstore });
-		const store = this.stores.get(LegacyAccountStore);
 		const uniqueLegacyAccounts = new Set();
 		let totalBalance = BigInt('0');
 
@@ -146,9 +142,10 @@ export class LegacyModule extends BaseModule {
 			throw new Error('Total balance for all legacy accounts is not equal to locked amount');
 		}
 
+		const legacyStore = this.stores.get(LegacyAccountStore);
 		await Promise.all(
 			legacySubstore.map(async account =>
-				store.set(ctx, account.address, { balance: account.balance }),
+				legacyStore.set(ctx, account.address, { balance: account.balance }),
 			),
 		);
 	}
