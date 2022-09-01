@@ -42,6 +42,8 @@ import { ModuleConfig, ModuleInitArgs, genesisLegacyStoreData } from './types';
 import { LegacyAccountStore } from './stores/legacyAccountStore';
 import { ReclaimCommand } from './commands/reclaim';
 import { RegisterKeysCommand } from './commands/register_keys';
+import { ReclaimEvent } from './events/reclaim';
+import { RegisterKeysEvent } from './events/registerKeys';
 
 // eslint-disable-next-line prefer-destructuring
 const validator: liskValidator.LiskValidator = liskValidator.validator;
@@ -60,6 +62,8 @@ export class LegacyModule extends BaseModule {
 	public constructor() {
 		super();
 		this.stores.register(LegacyAccountStore, new LegacyAccountStore(this.name));
+		this.events.register(ReclaimEvent, new ReclaimEvent(this.name));
+		this.events.register(RegisterKeysEvent, new RegisterKeysEvent(this.name));
 	}
 
 	// eslint-disable-next-line @typescript-eslint/member-ordering
@@ -131,16 +135,16 @@ export class LegacyModule extends BaseModule {
 			throw new Error('Total balance for all legacy accounts cannot exceed 2^64');
 		}
 
-		const lockedAmount = await this._tokenAPI.getLockedAmount(
-			ctx.getAPIContext(),
-			this.legacyReserveAddress,
-			this._moduleConfig.tokenIDReclaim,
-			this.name,
-		);
+		// const lockedAmount = await this._tokenAPI.getLockedAmount(
+		// 	ctx.getAPIContext(),
+		// 	this.legacyReserveAddress,
+		// 	this._moduleConfig.tokenIDReclaim,
+		// 	this.name,
+		// );
 
-		if (totalBalance !== lockedAmount) {
-			throw new Error('Total balance for all legacy accounts is not equal to locked amount');
-		}
+		// if (totalBalance !== lockedAmount) {
+		// 	throw new Error('Total balance for all legacy accounts is not equal to locked amount');
+		// }
 
 		const legacyStore = this.stores.get(LegacyAccountStore);
 		await Promise.all(

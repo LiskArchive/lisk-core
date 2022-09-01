@@ -21,11 +21,11 @@ import {
 	VerifyStatus,
 	validator as liskValidator,
 	cryptography,
-	codec,
 } from 'lisk-sdk';
 import { INVALID_BLS_KEY, TYPE_ID_KEYS_REGISTERED } from '../constants';
-import { registerKeysParamsSchema, keysRegisteredEventDataSchema } from '../schemas';
+import { registerKeysParamsSchema } from '../schemas';
 import { registerKeysData } from '../types';
+import { RegisterKeysEvent } from "../events/registerKeys";
 
 const {
 	address: { getAddressFromPublicKey },
@@ -93,14 +93,11 @@ export class RegisterKeysCommand extends BaseCommand {
 			params.blsKey,
 		);
 
-		const topics = [validatorAddress, params.generatorKey, params.blsKey];
-
-		const data = codec.encode(keysRegisteredEventDataSchema, {
+		const registerKeysEvent = this.events.get(RegisterKeysEvent);
+		registerKeysEvent.log(ctx.getAPIContext(), {
 			address: validatorAddress,
 			generatorKey: params.generatorKey,
 			blsKey: params.blsKey,
 		});
-
-		ctx.eventQueue.add(this.name, Buffer.from([this.typeID]), data, topics);
 	}
 }
