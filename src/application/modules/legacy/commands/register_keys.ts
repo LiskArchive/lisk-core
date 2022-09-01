@@ -25,7 +25,7 @@ import {
 import { INVALID_BLS_KEY, TYPE_ID_KEYS_REGISTERED } from '../constants';
 import { registerKeysParamsSchema } from '../schemas';
 import { registerKeysData } from '../types';
-import { RegisterKeysEvent } from "../events/registerKeys";
+import { RegisterKeysEvent } from '../events/registerKeys';
 
 const {
 	address: { getAddressFromPublicKey },

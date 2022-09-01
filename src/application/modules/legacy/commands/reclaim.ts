@@ -28,7 +28,7 @@ import { ADDRESS_LEGACY_RESERVE, TYPE_ID_ACCOUNT_RECLAIM } from '../constants';
 import { reclaimParamsSchema } from '../schemas';
 import { ReclaimParamsData, TokenIDReclaim } from '../types';
 import { LegacyAccountStore } from '../stores/legacyAccountStore';
-import { ReclaimEvent } from "../events/reclaim";
+import { ReclaimEvent } from '../events/reclaim';
 
 // eslint-disable-next-line prefer-destructuring
 const validator: liskValidator.LiskValidator = liskValidator.validator;
