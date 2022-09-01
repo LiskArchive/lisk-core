@@ -21,13 +21,12 @@ import { LegacyEndpoint } from '../../../../src/application/modules/legacy/endpo
 import {
 	MODULE_NAME_LEGACY,
 	LEGACY_ACC_MAX_TOTAL_BAL_NON_INC,
-	MODULE_ID_LEGACY_BUFFER,
 } from '../../../../src/application/modules/legacy/constants';
 import { genesisLegacyStoreSchema } from '../../../../src/application/modules/legacy/schemas';
 import { genesisLegacyStoreData } from '../../../../src/application/modules/legacy/types';
 
 const getLegacyBytesFromPassphrase = (passphrase: string): Buffer => {
-	const { publicKey } = cryptography.address.getAddressAndPublicKeyFromPassphrase(passphrase);
+	const { publicKey } = cryptography.legacy.getKeys(passphrase);
 	return cryptography.legacyAddress.getFirstEightBytesReversed(cryptography.utils.hash(publicKey));
 };
 
@@ -71,10 +70,6 @@ describe('LegacyModule', () => {
 	});
 
 	describe('constructor', () => {
-		it('should have valid id', () => {
-			expect(legacyModule.id).toBe(MODULE_ID_LEGACY_BUFFER);
-		});
-
 		it('should have valid name', () => {
 			expect(legacyModule.name).toBe(MODULE_NAME_LEGACY);
 		});

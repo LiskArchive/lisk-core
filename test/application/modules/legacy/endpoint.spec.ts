@@ -20,7 +20,8 @@ import { LegacyEndpoint } from '../../../../src/application/modules/legacy/endpo
 import { legacyAccountResponseSchema } from '../../../../src/application/modules/legacy/schemas';
 
 const {
-	address: { getAddressAndPublicKeyFromPassphrase },
+	address: { getAddressFromPublicKey },
+	legacy: { getKeys },
 	legacyAddress: { getLegacyAddressFromPassphrase },
 	utils: { getRandomBytes },
 } = cryptography;
@@ -55,8 +56,8 @@ describe('LegacyEndpoint', () => {
 	};
 
 	for (const account of Object.values(accounts)) {
-		const { address, publicKey } = getAddressAndPublicKeyFromPassphrase(account.passphrase);
-		account.address = address;
+		const { publicKey } = getKeys(account.passphrase);
+		account.address = getAddressFromPublicKey(publicKey);
 		account.publicKey = publicKey;
 	}
 

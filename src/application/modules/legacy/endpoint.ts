@@ -11,7 +11,6 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-
 import {
 	BaseEndpoint,
 	JSONObject,
@@ -20,9 +19,8 @@ import {
 	cryptography,
 	validator as liskValidator,
 } from 'lisk-sdk';
-
-import { STORE_PREFIX_LEGACY_ACCOUNTS } from './constants';
-import { legacyAccountRequestSchema, legacyAccountResponseSchema } from './schemas';
+import { legacyAccountRequestSchema } from './schemas';
+import { LegacyAccountStore } from './stores/legacyAccountStore';
 import { LegacyStoreData } from './types';
 
 // eslint-disable-next-line prefer-destructuring
@@ -40,17 +38,14 @@ export class LegacyEndpoint extends BaseEndpoint {
 		validator.validate(legacyAccountRequestSchema, ctx.params);
 
 		const publicKey = Buffer.from(ctx.params.publicKey as string, 'hex');
-		const legacyStore = ctx.getStore(this.moduleID, STORE_PREFIX_LEGACY_ACCOUNTS);
+		const legacyStore = this.stores.get(LegacyAccountStore);
 
 		try {
-			const isLegacyAddressExists = await legacyStore.has(publicKey);
+			const isLegacyAddressExists = await legacyStore.has(ctx, publicKey);
 			if (!isLegacyAddressExists) throw new NotFoundError(publicKey.toString('hex'));
 
 			const legacyAddress = getLegacyAddressFromPublicKey(publicKey);
-			const legacyAccount = await legacyStore.getWithSchema<LegacyStoreData>(
-				Buffer.from(legacyAddress, 'hex'),
-				legacyAccountResponseSchema,
-			);
+			const legacyAccount = await legacyStore.get(ctx, Buffer.from(legacyAddress, 'hex'));
 			return {
 				legacyAddress,
 				balance: legacyAccount.balance.toString(),
