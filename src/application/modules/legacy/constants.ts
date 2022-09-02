@@ -23,8 +23,8 @@ export const LEGACY_ACCOUNT_LENGTH = 8;
 export const LEGACY_ACC_MAX_TOTAL_BAL_NON_INC = 2 ** 64;
 
 // Commands
-export const COMMAND_NAME_RECLAIM = 'reclaim';
-export const COMMAND_NAME_REGISTER_KEYS = 'registerKeys';
+export const COMMAND_RECLAIM = 'reclaim';
+export const COMMAND_REGISTER_KEYS = 'registerKeys';
 export const TYPE_ID_KEYS_REGISTERED = 0x0002;
 export const TYPE_ID_ACCOUNT_RECLAIM = 0x0001;
 export const ADDRESS_LEGACY_RESERVE = hash(Buffer.from('legacyReserve')).slice(0, 20);
@@ -35,3 +35,10 @@ export const INVALID_BLS_KEY = Buffer.alloc(48);
 export const defaultConfig = {
 	tokenIDReclaim: TOKEN_ID_LSK_MAINCHAIN,
 };
+
+export const NUM_BYTES_LEGACY_ADDRESS = 8;
+export const NUM_BYTES_ADDRESS = 20;
+
+export const LENGTH_GENERATOR_KEY = 32;
+export const LENGTH_PROOF_OF_POSSESSION = 96;
+export const LENGTH_BLS_KEY = 48;

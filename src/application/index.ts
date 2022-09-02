@@ -22,9 +22,7 @@ export const getApplication = (config: PartialApplicationConfig): Application =>
 	const validatorModule = new ValidatorsModule();
 
 	legacyModule.addDependencies(tokenModule.api, validatorModule.api);
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
 	app.registerModule(legacyModule);
 
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 	return app;
 };

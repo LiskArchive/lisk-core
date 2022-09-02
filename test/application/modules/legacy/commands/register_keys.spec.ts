@@ -14,7 +14,7 @@
 
 import { BaseCommand, cryptography, VerifyStatus } from 'lisk-sdk';
 
-import { COMMAND_NAME_REGISTER_KEYS } from '../../../../../src/application/modules/legacy/constants';
+import { COMMAND_REGISTER_KEYS } from '../../../../../src/application/modules/legacy/constants';
 import { LegacyModule } from '../../../../../src/application/modules/legacy/module';
 
 import { RegisterKeysCommand } from '../../../../../src/application/modules/legacy/commands/register_keys';
@@ -64,7 +64,7 @@ describe('Register keys command', () => {
 
 	describe('constructor', () => {
 		it('should have valid name', () => {
-			expect(registerKeysCommand.name).toBe(COMMAND_NAME_REGISTER_KEYS);
+			expect(registerKeysCommand.name).toBe(COMMAND_REGISTER_KEYS);
 		});
 
 		it('should have valid schema', () => {

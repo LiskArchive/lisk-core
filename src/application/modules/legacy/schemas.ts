@@ -11,6 +11,12 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import {
+	LENGTH_GENERATOR_KEY,
+	LENGTH_PROOF_OF_POSSESSION,
+	LENGTH_BLS_KEY,
+	NUM_BYTES_LEGACY_ADDRESS
+} from './constants';
 
 export const legacyAccountResponseSchema = {
 	$id: 'lisk/legacy/legacyAccount',
@@ -43,20 +49,20 @@ export const registerKeysParamsSchema = {
 	properties: {
 		blsKey: {
 			dataType: 'bytes',
-			minLength: 48,
-			maxLength: 48,
+			minLength: LENGTH_BLS_KEY,
+			maxLength: LENGTH_BLS_KEY,
 			fieldNumber: 1,
 		},
 		proofOfPossession: {
 			dataType: 'bytes',
-			minLength: 96,
-			maxLength: 96,
+			minLength: LENGTH_PROOF_OF_POSSESSION,
+			maxLength: LENGTH_PROOF_OF_POSSESSION,
 			fieldNumber: 2,
 		},
 		generatorKey: {
 			dataType: 'bytes',
-			minLength: 32,
-			maxLength: 32,
+			minLength: LENGTH_GENERATOR_KEY,
+			maxLength: LENGTH_GENERATOR_KEY,
 			fieldNumber: 3,
 		},
 	},
@@ -76,8 +82,8 @@ export const genesisLegacyStoreSchema = {
 				properties: {
 					address: {
 						dataType: 'bytes',
-						minLength: 8,
-						maxLength: 8,
+						minLength: NUM_BYTES_LEGACY_ADDRESS,
+						maxLength: NUM_BYTES_LEGACY_ADDRESS,
 						fieldNumber: 1,
 					},
 					balance: {
