@@ -129,7 +129,7 @@ describe('LegacyEndpoint', () => {
 			const legacyAccount = await legacyEndpoint.getLegacyAccount(context);
 			expect(legacyAccount).toBeDefined();
 			expect(legacyAccount).toHaveProperty('legacyAddress', legacyAddress);
-			expect(legacyAccount).toHaveProperty('balance', "0");
+			expect(legacyAccount).toHaveProperty('balance', '0');
 		});
 	});
 });
