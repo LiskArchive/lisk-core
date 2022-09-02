@@ -48,13 +48,12 @@ export class LegacyEndpoint extends BaseEndpoint {
 					legacyAddress,
 					balance: '0',
 				};
-			} 
-				const legacyAccount = await legacyStore.get(ctx, Buffer.from(legacyAddress, 'hex'));
-				return {
-					legacyAddress,
-					balance: legacyAccount.balance.toString(),
-				};
-			
+			}
+			const legacyAccount = await legacyStore.get(ctx, Buffer.from(legacyAddress, 'hex'));
+			return {
+				legacyAddress,
+				balance: legacyAccount.balance.toString(),
+			};
 		} catch (err) {
 			if (err instanceof NotFoundError) {
 				return undefined;

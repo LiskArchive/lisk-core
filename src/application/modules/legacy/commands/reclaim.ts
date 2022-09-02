@@ -23,12 +23,17 @@ import {
 	TokenAPI,
 } from 'lisk-sdk';
 
-import { ADDRESS_LEGACY_RESERVE, TYPE_ID_ACCOUNT_RECLAIM } from '../constants';
+import {
+	ADDRESS_LEGACY_RESERVE,
+	TYPE_ID_ACCOUNT_RECLAIM,
+	// ReclaimFailedReasons,
+} from '../constants';
 
 import { reclaimParamsSchema } from '../schemas';
 import { ReclaimParamsData, TokenIDReclaim } from '../types';
 import { LegacyAccountStore } from '../stores/legacyAccountStore';
 import { ReclaimEvent } from '../events/reclaim';
+// import { ReclaimFailedEvent } from '../events/reclaimFailed';
 
 // eslint-disable-next-line prefer-destructuring
 const validator: liskValidator.LiskValidator = liskValidator.validator;
@@ -74,6 +79,14 @@ export class ReclaimCommand extends BaseCommand {
 
 		if (!isLegacyAddressExists) {
 			const senderPublicKey = ctx.transaction.senderPublicKey.toString('hex');
+			// const reclaimFailedEvent = this.events.get(ReclaimFailedEvent);
+			// const address = getAddressFromPublicKey(ctx.transaction.senderPublicKey);
+			// reclaimFailedEvent.log(ctx.getAPIContext(), {
+			// 	legacyAddress,
+			// 	address,
+			// 	reason: ReclaimFailedReasons.RECLAIM_FAILED_NO_LEGACY_ACCOUNT,
+			// });
+
 			return {
 				status: VerifyStatus.FAIL,
 				error: new Error(
@@ -85,6 +98,13 @@ export class ReclaimCommand extends BaseCommand {
 		const legacyAccount = await legacyStore.get(ctx, legacyAddress);
 
 		if (legacyAccount.balance !== params.amount) {
+			// const reclaimFailedEvent = this.events.get(ReclaimFailedEvent);
+			// const address = getAddressFromPublicKey(ctx.transaction.senderPublicKey);
+			// reclaimFailedEvent.log(ctx.getAPIContext(), {
+			// 	legacyAddress,
+			// 	address,
+			// 	reason: ReclaimFailedReasons.RECLAIM_FAILED_INVALID_AMOUNT,
+			// });
 			return {
 				status: VerifyStatus.FAIL,
 				error: new Error('Input amount does not equal the balance of the legacy account.'),
