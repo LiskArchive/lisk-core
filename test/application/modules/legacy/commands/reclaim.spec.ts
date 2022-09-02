@@ -13,6 +13,7 @@
  */
 
 import { BaseCommand, cryptography, VerifyStatus } from 'lisk-sdk';
+
 import { when } from 'jest-when';
 
 import { COMMAND_RECLAIM } from '../../../../../src/application/modules/legacy/constants';
@@ -62,13 +63,14 @@ describe('Reclaim command', () => {
 		del: mockStoreDel,
 	});
 
-	const getAPIContext: any = () => ({
-		getStore,
-	});
-
 	const eventQueue: any = {
 		add: jest.fn(),
 	};
+
+	const getAPIContext: any = () => ({
+		getStore,
+		eventQueue,
+	});
 
 	beforeEach(() => {
 		mint = jest.fn();
@@ -192,7 +194,6 @@ describe('Reclaim command', () => {
 			await reclaimCommand.execute(commandExecuteContextInput);
 			expect(unlock).toHaveBeenCalledTimes(1);
 			expect(transfer).toHaveBeenCalledTimes(1);
-			expect(eventQueue.add).toHaveBeenCalledTimes(1);
 		});
 	});
 });
