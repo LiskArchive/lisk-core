@@ -11,16 +11,14 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { BaseEvent, EventQueuer } from '../../../../../node_modules/lisk-framework/dist-node/modules/base_event';
+import {
+	BaseEvent,
+	EventQueuer,
+} from '../../../../../node_modules/lisk-framework/dist-node/modules/base_event';
 
-import { NUM_BYTES_ADDRESS } from '../constants';
+import { NUM_BYTES_ADDRESS, RegisterKeysFailedReasons } from '../constants';
 
-export const enum RegisterKeysFailedReasons {
-	KEY_REGISTRATION_FAILED_NO_VALIDATOR_ACCOUNT = 2,
-	KEY_REGISTRATION_FAILED_KEYS_REGISTERED = 3,
-}
-
-export interface registerKeysEventData {
+export interface registerKeysFailedEventData {
 	address: Buffer;
 	reason: RegisterKeysFailedReasons;
 }
@@ -33,19 +31,19 @@ export const keyRegistrationFailedEventDataSchema = {
 		address: {
 			dataType: 'bytes',
 			length: NUM_BYTES_ADDRESS,
-			fieldNumber: 1
+			fieldNumber: 1,
 		},
 		reason: {
 			dataType: 'uint32',
-			fieldNumber: 2
-		}
-	}
-}
+			fieldNumber: 2,
+		},
+	},
+};
 
-export class RegisterKeysEvent extends BaseEvent<registerKeysEventData> {
+export class RegisterKeysFailedEvent extends BaseEvent<registerKeysFailedEventData> {
 	public schema = keyRegistrationFailedEventDataSchema;
 
-	public log(ctx: EventQueuer, data: registerKeysEventData): void {
+	public log(ctx: EventQueuer, data: registerKeysFailedEventData): void {
 		this.add(ctx, data, [data.address]);
 	}
 }

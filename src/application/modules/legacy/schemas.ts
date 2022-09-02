@@ -15,7 +15,7 @@ import {
 	LENGTH_GENERATOR_KEY,
 	LENGTH_PROOF_OF_POSSESSION,
 	LENGTH_BLS_KEY,
-	NUM_BYTES_LEGACY_ADDRESS
+	NUM_BYTES_LEGACY_ADDRESS,
 } from './constants';
 
 export const legacyAccountResponseSchema = {

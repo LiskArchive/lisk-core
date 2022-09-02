@@ -11,14 +11,12 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { BaseEvent, EventQueuer } from '../../../../../node_modules/lisk-framework/dist-node/modules/base_event';
+import {
+	BaseEvent,
+	EventQueuer,
+} from '../../../../../node_modules/lisk-framework/dist-node/modules/base_event';
 
-import { NUM_BYTES_LEGACY_ADDRESS, NUM_BYTES_ADDRESS } from '../constants';
-
-export const enum ReclaimFailedReasons {
-	RECLAIM_FAILED_NO_LEGACY_ACCOUNT = 0,
-	RECLAIM_FAILED_INVALID_AMOUNT = 1,
-}
+import { NUM_BYTES_LEGACY_ADDRESS, NUM_BYTES_ADDRESS, ReclaimFailedReasons } from '../constants';
 
 export interface reclaimFailedEventData {
 	legacyAddress: Buffer;
@@ -34,19 +32,19 @@ export const reclaimFailedEventDataSchema = {
 		legacyAddress: {
 			dataType: 'bytes',
 			length: NUM_BYTES_LEGACY_ADDRESS,
-			fieldNumber: 1
+			fieldNumber: 1,
 		},
 		address: {
 			dataType: 'bytes',
 			length: NUM_BYTES_ADDRESS,
-			fieldNumber: 2
+			fieldNumber: 2,
 		},
 		reason: {
 			dataType: 'uint32',
-			fieldNumber: 3
-		}
-	}
-}
+			fieldNumber: 3,
+		},
+	},
+};
 
 export class ReclaimFailedEvent extends BaseEvent<reclaimFailedEventData> {
 	public schema = reclaimFailedEventDataSchema;
