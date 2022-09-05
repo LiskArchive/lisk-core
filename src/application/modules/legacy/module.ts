@@ -38,7 +38,8 @@ import {
 	legacyAccountResponseSchema,
 } from './schemas';
 
-import { ModuleConfig, ModuleInitArgs, genesisLegacyStoreData } from './types';
+import { ModuleConfig, ModuleConfigJSON, ModuleInitArgs, genesisLegacyStoreData } from './types';
+import { getModuleConfig } from './utils';
 import { LegacyAccountStore } from './stores/legacyAccountStore';
 import { ReclaimCommand } from './commands/reclaim';
 import { RegisterKeysCommand } from './commands/register_keys';
@@ -97,7 +98,8 @@ export class LegacyModule extends BaseModule {
 	// eslint-disable-next-line @typescript-eslint/require-await
 	public async init(args: ModuleInitArgs) {
 		const { moduleConfig } = args;
-		this._moduleConfig = utils.objects.mergeDeep({}, defaultConfig, moduleConfig) as ModuleConfig;
+		const config = utils.objects.mergeDeep({}, defaultConfig, moduleConfig) as ModuleConfigJSON;
+		this._moduleConfig = getModuleConfig(config);
 		this._reclaimCommand.init({ tokenIDReclaim: this._moduleConfig.tokenIDReclaim });
 	}
 

@@ -28,7 +28,7 @@ export const COMMAND_REGISTER_KEYS = 'registerKeys';
 export const TYPE_ID_KEYS_REGISTERED = 0x0002;
 export const TYPE_ID_ACCOUNT_RECLAIM = 0x0001;
 export const ADDRESS_LEGACY_RESERVE = hash(Buffer.from('legacyReserve')).slice(0, 20);
-export const TOKEN_ID_LSK = 0x0000000000000000;
+export const TOKEN_ID_LSK = '0000000000000000';
 
 export const INVALID_BLS_KEY = Buffer.alloc(48);
 
@@ -42,13 +42,3 @@ export const NUM_BYTES_ADDRESS = 20;
 export const LENGTH_GENERATOR_KEY = 32;
 export const LENGTH_PROOF_OF_POSSESSION = 96;
 export const LENGTH_BLS_KEY = 48;
-
-export const enum ReclaimFailedReasons {
-	RECLAIM_FAILED_NO_LEGACY_ACCOUNT = 0,
-	RECLAIM_FAILED_INVALID_AMOUNT = 1,
-}
-
-export const enum RegisterKeysFailedReasons {
-	KEY_REGISTRATION_FAILED_NO_VALIDATOR_ACCOUNT = 2,
-	KEY_REGISTRATION_FAILED_KEYS_REGISTERED = 3,
-}

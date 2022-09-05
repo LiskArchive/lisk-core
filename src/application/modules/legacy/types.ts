@@ -11,6 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import { JSONObject } from 'lisk-sdk';
 
 export interface LegacyStoreData {
 	legacyAddress: string;
@@ -26,6 +27,8 @@ export type TokenIDReclaim = Buffer;
 export interface ModuleConfig {
 	tokenIDReclaim: TokenIDReclaim;
 }
+
+export type ModuleConfigJSON = JSONObject<ModuleConfig>;
 
 export interface ModuleInitArgs {
 	moduleConfig: Record<string, unknown>;

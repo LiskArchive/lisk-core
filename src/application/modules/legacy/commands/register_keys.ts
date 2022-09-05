@@ -22,15 +22,10 @@ import {
 	validator as liskValidator,
 	cryptography,
 } from 'lisk-sdk';
-import {
-	INVALID_BLS_KEY,
-	TYPE_ID_KEYS_REGISTERED,
-	// RegisterKeysFailedReasons,
-} from '../constants';
+import { INVALID_BLS_KEY, TYPE_ID_KEYS_REGISTERED } from '../constants';
 import { registerKeysParamsSchema } from '../schemas';
 import { registerKeysData } from '../types';
 import { RegisterKeysEvent } from '../events/registerKeys';
-// import { RegisterKeysFailedEvent } from '../events/registerKeysFailed';
 
 const {
 	address: { getAddressFromPublicKey },
@@ -56,25 +51,20 @@ export class RegisterKeysCommand extends BaseCommand {
 			validatorAddress,
 		);
 		if (!validatorAccount) {
-			// const registerKeysFailedEvent = this.events.get(RegisterKeysFailedEvent);
-			// const address = getAddressFromPublicKey(ctx.transaction.senderPublicKey);
-			// registerKeysFailedEvent.log(ctx.getAPIContext(), {
-			// 	address,
-			// 	reason: RegisterKeysFailedReasons.KEY_REGISTRATION_FAILED_NO_VALIDATOR_ACCOUNT,
-			// });
 			return {
 				status: VerifyStatus.FAIL,
 				error: new Error('Public key does not correspond to a registered validator.'),
 			};
 		}
 
+		if (!validatorAccount.blsKey) {
+			return {
+				status: VerifyStatus.FAIL,
+				error: new Error('Validator has no BLS key.'),
+			};
+		}
+
 		if (Buffer.compare(validatorAccount.blsKey, this.invalidBlsKey) !== 0) {
-			// const registerKeysFailedEvent = this.events.get(RegisterKeysFailedEvent);
-			// const address = getAddressFromPublicKey(ctx.transaction.senderPublicKey);
-			// registerKeysFailedEvent.log(ctx.getAPIContext(), {
-			// 	address,
-			// 	reason: RegisterKeysFailedReasons.KEY_REGISTRATION_FAILED_KEYS_REGISTERED,
-			// });
 			return {
 				status: VerifyStatus.FAIL,
 				error: new Error('Validator already has a registered BLS key.'),

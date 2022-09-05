@@ -11,6 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+// TODO: Export 'BaseEvent' and 'EventQueuer' directly from SDK once available
 import {
 	BaseEvent,
 	EventQueuer,
