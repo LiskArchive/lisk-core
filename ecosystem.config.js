@@ -31,16 +31,6 @@ module.exports = {
 		},
 	],
 	deploy: {
-		server: {
-			user: 'root', // User name of host
-			host: '8.8.8.8', // IP address of host server
-			ref: 'origin/release/4.0.0', // Deployment branch - should be set to the latest release branch
-			repo: 'https://github.com/LiskHQ/lisk-core.git', // Git repository url
-			path: '/root/home/temp_deploy', // Deployment directory in server
-			'pre-setup': 'rm -r /root/home/temp_deploy', // Executed before repo cloning
-			'post-setup': 'source ~/.bashrc && nvm install && npm ci && npm run build', // Executed after repo cloning
-			'post-deploy': 'source ~/.bashrc && pm2 start ecosystem.config.js', // Executed on end of deploy command procedures
-		},
 		local: {
 			user: 'root',
 			host: '127.0.0.1',
@@ -50,6 +40,16 @@ module.exports = {
 			'pre-setup': 'rm -r /Users/{USER_NAME}/temp_deploy',
 			'post-setup': 'source ~/.bashrc && source ~/.zshrc && nvm install && npm ci && npm run build',
 			'post-deploy': 'source ~/.bashrc && source ~/.zshrc && pm2 start ecosystem.config.js',
+		},
+        remote: {
+			user: 'root', // User name of host
+			host: '8.8.8.8', // IP address of host server
+			ref: 'origin/release/4.0.0', // Deployment branch - should be set to the latest release branch
+			repo: 'https://github.com/LiskHQ/lisk-core.git', // Git repository url
+			path: '/root/home/temp_deploy', // Deployment directory in server
+			'pre-setup': 'rm -r /root/home/temp_deploy', // Executed before repo cloning
+			'post-setup': 'source ~/.bashrc && nvm install && npm ci && npm run build', // Executed after repo cloning
+			'post-deploy': 'source ~/.bashrc && pm2 start ecosystem.config.js', // Executed on end of deploy command procedures
 		},
 	},
 };
