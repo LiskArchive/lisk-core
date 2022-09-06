@@ -21,7 +21,11 @@ module.exports = {
 			args: 'start',
 			env: {
 				LISK_NETWORK: 'mainnet',
-				LISK_API_IPC: 'true',
+				LISK_API_IPC: true,
+				LISK_ENABLE_FORGER_PLUGIN: true,
+				LISK_API_WS: true,
+				LISK_API_WS_PORT: 7887,
+				LISK_CONSOLE_LOG_LEVEL: 'warn',
 			},
 			pid_file: './pids/lisk-core.pid',
 			out_file: './logs/lisk-core.log',
@@ -36,11 +40,10 @@ module.exports = {
 			ref: 'origin/main',
 			repo: 'https://github.com/LiskHQ/lisk-core.git',
 			path: '/Users/{USER_NAME}/temp_deploy',
-			'pre-setup': 'rm -r /Users/{USER_NAME}/temp_deploy',
-			'post-setup':
-				'source ~/.bashrc || true && source ~/.zshrc || true && nvm install && npm ci && npm run build',
-			'post-deploy':
-				'source ~/.bashrc || true && source ~/.zshrc || true && pm2 start ecosystem.config.js',
+			'pre-setup': 'rm -r /Users/{USER_NAME}/temp_deploy;:',
+			'post-setup': 'source ~/.bashrc; source ~/.zshrc; nvm install && npm ci && npm run build',
+			'pre-deploy': 'source ~/.bashrc; source ~/.zshrc; pm2 del lisk-core;:',
+			'post-deploy': 'source ~/.bashrc; source ~/.zshrc; pm2 start ecosystem.config.js',
 		},
 		remote: {
 			user: 'root',
@@ -49,8 +52,9 @@ module.exports = {
 			repo: 'https://github.com/LiskHQ/lisk-core.git',
 			path: '/root/home/temp_deploy',
 			'pre-setup': 'rm -r /root/home/temp_deploy',
-			'post-setup': 'source ~/.bashrc || true && nvm install && npm ci && npm run build',
-			'post-deploy': 'source ~/.bashrc || true && pm2 start ecosystem.config.js',
+			'post-setup': 'source ~/.bashrc; nvm install && npm ci && npm run build',
+			'pre-deploy': 'source ~/.bashrc; pm2 del lisk-core;:',
+			'post-deploy': 'source ~/.bashrc; pm2 start ecosystem.config.js',
 		},
 	},
 };
