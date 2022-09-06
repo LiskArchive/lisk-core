@@ -113,6 +113,21 @@ describe('Register keys command', () => {
 			);
 		});
 
+		it('should throw error when validator has a no BLS keys', async () => {
+			const commandVerifyContextInput = getContext(
+				transactionParams,
+				publicKey,
+				getAPIContext,
+				eventQueue,
+			);
+			const getValidatorAccount = jest.fn().mockReturnValue({ generatorKey: getRandomBytes(32) });
+			registerKeysCommand.addDependencies({ getValidatorAccount } as any);
+			await expect(registerKeysCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
+				'status',
+				VerifyStatus.FAIL,
+			);
+		});
+
 		it('should throw error when validator has a already registered BLS keys', async () => {
 			const commandVerifyContextInput = getContext(
 				transactionParams,

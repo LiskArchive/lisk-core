@@ -42,8 +42,8 @@ export class LegacyEndpoint extends BaseEndpoint {
 
 		try {
 			const legacyAddress = getLegacyAddressFromPublicKey(publicKey);
-			const isLegacyAddressExists = await legacyStore.has(ctx, publicKey);
-			if (!isLegacyAddressExists) {
+			const hasLegacyAddress = await legacyStore.has(ctx, publicKey);
+			if (!hasLegacyAddress) {
 				return {
 					legacyAddress,
 					balance: '0',
