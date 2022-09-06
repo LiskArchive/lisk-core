@@ -47,7 +47,7 @@ module.exports = {
 		remote: {
 			host: ['8.8.8.8'],
 			user: '{USER_NAME}',
-			// key: '$HOME/.ssh',
+			// key: '$HOME/.ssh/id_rsa.pub',
 			ref: 'origin/main',
 			repo: 'https://github.com/LiskHQ/lisk-core.git',
 			path: '/tmp/lisk-core',
