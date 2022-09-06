@@ -51,7 +51,7 @@ module.exports = {
 			ref: 'origin/main',
 			repo: 'https://github.com/LiskHQ/lisk-core.git',
 			path: '/root/home/temp_deploy',
-			'pre-setup': 'rm -r /root/home/temp_deploy',
+			'pre-setup': 'rm -r /root/home/temp_deploy;:',
 			'post-setup': 'source ~/.bashrc; nvm install && npm ci && npm run build',
 			'pre-deploy': 'source ~/.bashrc; pm2 del lisk-core;:',
 			'post-deploy': 'source ~/.bashrc; pm2 start ecosystem.config.js',
