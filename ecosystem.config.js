@@ -36,6 +36,7 @@ module.exports = {
 	deploy: {
 		local: {
 			host: '127.0.0.1',
+			key: process.env.HOME + '/.ssh/id_rsa',
 			ref: 'origin/main',
 			repo: 'https://github.com/LiskHQ/lisk-core.git',
 			path: '/tmp/lisk-core',
