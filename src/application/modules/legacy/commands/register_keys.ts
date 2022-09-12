@@ -22,7 +22,7 @@ import {
 	validator as liskValidator,
 	cryptography,
 } from 'lisk-sdk';
-import { INVALID_BLS_KEY, TYPE_ID_KEYS_REGISTERED } from '../constants';
+import { INVALID_BLS_KEY } from '../constants';
 import { registerKeysParamsSchema } from '../schemas';
 import { registerKeysData } from '../types';
 import { RegisterKeysEvent } from '../events/registerKeys';
@@ -36,7 +36,6 @@ const validator: liskValidator.LiskValidator = liskValidator.validator;
 
 export class RegisterKeysCommand extends BaseCommand {
 	public schema = registerKeysParamsSchema;
-	public typeID = TYPE_ID_KEYS_REGISTERED;
 	private readonly invalidBlsKey = INVALID_BLS_KEY;
 	private _validatorsAPI!: ValidatorsAPI;
 

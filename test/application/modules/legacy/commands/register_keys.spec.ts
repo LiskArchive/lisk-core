@@ -113,7 +113,7 @@ describe('Register keys command', () => {
 			);
 		});
 
-		it('should throw error when validator has a no BLS keys', async () => {
+		it('should throw an error when a validator has no BLS key', async () => {
 			const commandVerifyContextInput = getContext(
 				transactionParams,
 				publicKey,

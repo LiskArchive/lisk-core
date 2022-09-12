@@ -23,7 +23,7 @@ import {
 	TokenAPI,
 } from 'lisk-sdk';
 
-import { ADDRESS_LEGACY_RESERVE, TYPE_ID_ACCOUNT_RECLAIM } from '../constants';
+import { ADDRESS_LEGACY_RESERVE } from '../constants';
 
 import { reclaimParamsSchema } from '../schemas';
 import { ReclaimParamsData, TokenIDReclaim } from '../types';
@@ -43,7 +43,6 @@ const getLegacyAddress = (publicKey): Buffer =>
 export class ReclaimCommand extends BaseCommand {
 	public schema = reclaimParamsSchema;
 	public legacyReserveAddress = ADDRESS_LEGACY_RESERVE;
-	public typeID = TYPE_ID_ACCOUNT_RECLAIM;
 	private _tokenAPI!: TokenAPI;
 	private _tokenIDReclaim!: TokenIDReclaim;
 
