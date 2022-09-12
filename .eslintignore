@@ -11,3 +11,4 @@ qa
 scripts
 config
 .eslintrc.js
+ecosystem.config.js
