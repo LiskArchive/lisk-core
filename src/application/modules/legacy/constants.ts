@@ -34,8 +34,8 @@ export const defaultConfig = {
 	tokenIDReclaim: TOKEN_ID_LSK,
 };
 
-export const NUM_BYTES_LEGACY_ADDRESS = 8;
-export const NUM_BYTES_ADDRESS = 20;
+export const LENGTH_LEGACY_ADDRESS = 8;
+export const LENGTH_ADDRESS = 20;
 
 export const LENGTH_GENERATOR_KEY = 32;
 export const LENGTH_PROOF_OF_POSSESSION = 96;

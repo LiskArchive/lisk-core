@@ -49,19 +49,6 @@ export class RegisterKeysCommand extends BaseCommand {
 			ctx.getAPIContext(),
 			validatorAddress,
 		);
-		if (!validatorAccount) {
-			return {
-				status: VerifyStatus.FAIL,
-				error: new Error('Public key does not correspond to a registered validator.'),
-			};
-		}
-
-		if (!validatorAccount.blsKey) {
-			return {
-				status: VerifyStatus.FAIL,
-				error: new Error('Validator has no BLS key.'),
-			};
-		}
 
 		if (Buffer.compare(validatorAccount.blsKey, this.invalidBlsKey) !== 0) {
 			return {

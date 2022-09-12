@@ -17,6 +17,8 @@ import {
 	EventQueuer,
 } from '../../../../../node_modules/lisk-framework/dist-node/modules/base_event';
 
+import { LENGTH_ADDRESS, LENGTH_GENERATOR_KEY, LENGTH_BLS_KEY } from '../constants';
+
 export interface registerKeysEventData {
 	address: Buffer;
 	generatorKey: Buffer;
@@ -30,14 +32,17 @@ export const keysRegisteredEventDataSchema = {
 	properties: {
 		address: {
 			dataType: 'bytes',
+			maxLength: LENGTH_ADDRESS,
 			fieldNumber: 1,
 		},
 		generatorKey: {
 			dataType: 'bytes',
+			maxLength: LENGTH_GENERATOR_KEY,
 			fieldNumber: 2,
 		},
 		blsKey: {
 			dataType: 'bytes',
+			maxLength: LENGTH_BLS_KEY,
 			fieldNumber: 3,
 		},
 	},

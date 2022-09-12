@@ -15,7 +15,7 @@ import {
 	LENGTH_GENERATOR_KEY,
 	LENGTH_PROOF_OF_POSSESSION,
 	LENGTH_BLS_KEY,
-	NUM_BYTES_LEGACY_ADDRESS,
+	LENGTH_LEGACY_ADDRESS,
 } from './constants';
 
 export const legacyAccountResponseSchema = {
@@ -82,8 +82,8 @@ export const genesisLegacyStoreSchema = {
 				properties: {
 					address: {
 						dataType: 'bytes',
-						minLength: NUM_BYTES_LEGACY_ADDRESS,
-						maxLength: NUM_BYTES_LEGACY_ADDRESS,
+						minLength: LENGTH_LEGACY_ADDRESS,
+						maxLength: LENGTH_LEGACY_ADDRESS,
 						fieldNumber: 1,
 					},
 					balance: {

@@ -17,7 +17,7 @@ import {
 	EventQueuer,
 } from '../../../../../node_modules/lisk-framework/dist-node/modules/base_event';
 
-import { NUM_BYTES_LEGACY_ADDRESS, NUM_BYTES_ADDRESS } from '../constants';
+import { LENGTH_LEGACY_ADDRESS, LENGTH_ADDRESS } from '../constants';
 
 export interface reclaimEventData {
 	legacyAddress: Buffer;
@@ -32,12 +32,12 @@ export const accountReclaimedEventDataSchema = {
 	properties: {
 		legacyAddress: {
 			dataType: 'bytes',
-			maxLength: NUM_BYTES_LEGACY_ADDRESS,
+			maxLength: LENGTH_LEGACY_ADDRESS,
 			fieldNumber: 1,
 		},
 		address: {
 			dataType: 'bytes',
-			maxLength: NUM_BYTES_ADDRESS,
+			maxLength: LENGTH_ADDRESS,
 			fieldNumber: 2,
 		},
 		amount: {
