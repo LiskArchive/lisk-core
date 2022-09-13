@@ -11,6 +11,12 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import {
+	LENGTH_GENERATOR_KEY,
+	LENGTH_PROOF_OF_POSSESSION,
+	LENGTH_BLS_KEY,
+	LENGTH_LEGACY_ADDRESS,
+} from './constants';
 
 export const legacyAccountResponseSchema = {
 	$id: 'lisk/legacy/legacyAccount',
@@ -43,20 +49,20 @@ export const registerKeysParamsSchema = {
 	properties: {
 		blsKey: {
 			dataType: 'bytes',
-			minLength: 48,
-			maxLength: 48,
+			minLength: LENGTH_BLS_KEY,
+			maxLength: LENGTH_BLS_KEY,
 			fieldNumber: 1,
 		},
 		proofOfPossession: {
 			dataType: 'bytes',
-			minLength: 96,
-			maxLength: 96,
+			minLength: LENGTH_PROOF_OF_POSSESSION,
+			maxLength: LENGTH_PROOF_OF_POSSESSION,
 			fieldNumber: 2,
 		},
 		generatorKey: {
 			dataType: 'bytes',
-			minLength: 32,
-			maxLength: 32,
+			minLength: LENGTH_GENERATOR_KEY,
+			maxLength: LENGTH_GENERATOR_KEY,
 			fieldNumber: 3,
 		},
 	},
@@ -76,8 +82,8 @@ export const genesisLegacyStoreSchema = {
 				properties: {
 					address: {
 						dataType: 'bytes',
-						minLength: 8,
-						maxLength: 8,
+						minLength: LENGTH_LEGACY_ADDRESS,
+						maxLength: LENGTH_LEGACY_ADDRESS,
 						fieldNumber: 1,
 					},
 					balance: {
@@ -98,48 +104,6 @@ export const legacyAccountRequestSchema = {
 		publicKey: {
 			type: 'string',
 			format: 'hex',
-		},
-	},
-};
-
-export const keysRegisteredEventDataSchema = {
-	$id: 'lisk/legacy/keysRegisteredEventData',
-	type: 'object',
-	required: ['address', 'generatorKey', 'blsKey'],
-	properties: {
-		address: {
-			dataType: 'bytes',
-			fieldNumber: 1,
-		},
-		generatorKey: {
-			dataType: 'bytes',
-			fieldNumber: 2,
-		},
-		blsKey: {
-			dataType: 'bytes',
-			fieldNumber: 3,
-		},
-	},
-};
-
-export const accountReclaimedEventDataSchema = {
-	$id: 'lisk/legacy/accountReclaimedEventData',
-	type: 'object',
-	required: ['legacyAddress', 'address', 'amount'],
-	properties: {
-		legacyAddress: {
-			dataType: 'bytes',
-			maxLength: 8,
-			fieldNumber: 1,
-		},
-		address: {
-			dataType: 'bytes',
-			maxLength: 20,
-			fieldNumber: 2,
-		},
-		amount: {
-			dataType: 'uint64',
-			fieldNumber: 3,
 		},
 	},
 };

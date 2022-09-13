@@ -21,11 +21,11 @@ import {
 	VerifyStatus,
 	validator as liskValidator,
 	cryptography,
-	codec,
 } from 'lisk-sdk';
-import { INVALID_BLS_KEY, TYPE_ID_KEYS_REGISTERED } from '../constants';
-import { registerKeysParamsSchema, keysRegisteredEventDataSchema } from '../schemas';
+import { INVALID_BLS_KEY } from '../constants';
+import { registerKeysParamsSchema } from '../schemas';
 import { registerKeysData } from '../types';
+import { RegisterKeysEvent } from '../events/registerKeys';
 
 const {
 	address: { getAddressFromPublicKey },
@@ -36,7 +36,6 @@ const validator: liskValidator.LiskValidator = liskValidator.validator;
 
 export class RegisterKeysCommand extends BaseCommand {
 	public schema = registerKeysParamsSchema;
-	public typeID = TYPE_ID_KEYS_REGISTERED;
 	private readonly invalidBlsKey = INVALID_BLS_KEY;
 	private _validatorsAPI!: ValidatorsAPI;
 
@@ -50,19 +49,6 @@ export class RegisterKeysCommand extends BaseCommand {
 			ctx.getAPIContext(),
 			validatorAddress,
 		);
-		if (!validatorAccount) {
-			return {
-				status: VerifyStatus.FAIL,
-				error: new Error('Public key does not correspond to a registered validator.'),
-			};
-		}
-
-		if (!validatorAccount.blsKey) {
-			return {
-				status: VerifyStatus.FAIL,
-				error: new Error('Validator has no BLS key.'),
-			};
-		}
 
 		if (Buffer.compare(validatorAccount.blsKey, this.invalidBlsKey) !== 0) {
 			return {
@@ -93,14 +79,11 @@ export class RegisterKeysCommand extends BaseCommand {
 			params.blsKey,
 		);
 
-		const topics = [validatorAddress, params.generatorKey, params.blsKey];
-
-		const data = codec.encode(keysRegisteredEventDataSchema, {
+		const registerKeysEvent = this.events.get(RegisterKeysEvent);
+		registerKeysEvent.log(ctx.getAPIContext(), {
 			address: validatorAddress,
 			generatorKey: params.generatorKey,
 			blsKey: params.blsKey,
 		});
-
-		ctx.eventQueue.add(this.name, Buffer.from([this.typeID]), data, topics);
 	}
 }

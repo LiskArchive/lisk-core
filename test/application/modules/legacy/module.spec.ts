@@ -21,6 +21,7 @@ import { LegacyEndpoint } from '../../../../src/application/modules/legacy/endpo
 import {
 	MODULE_NAME_LEGACY,
 	LEGACY_ACC_MAX_TOTAL_BAL_NON_INC,
+	defaultConfig,
 } from '../../../../src/application/modules/legacy/constants';
 import { genesisLegacyStoreSchema } from '../../../../src/application/modules/legacy/schemas';
 import { genesisLegacyStoreData } from '../../../../src/application/modules/legacy/types';
@@ -87,7 +88,9 @@ describe('LegacyModule', () => {
 
 	describe('init', () => {
 		it('should initialize config with defaultConfig', async () => {
-			const moduleConfig = { tokenIDReclaim: Buffer.alloc(8) } as any;
+			const moduleConfig = {
+				tokenIDReclaim: Buffer.from(defaultConfig.tokenIDReclaim, 'hex'),
+			} as any;
 			await expect(legacyModule.init({ moduleConfig: {} })).resolves.toBeUndefined();
 			expect(legacyModule['_moduleConfig']).toEqual(moduleConfig);
 		});

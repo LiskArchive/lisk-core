@@ -38,10 +38,13 @@ import {
 	legacyAccountResponseSchema,
 } from './schemas';
 
-import { ModuleConfig, ModuleInitArgs, genesisLegacyStoreData } from './types';
+import { ModuleConfig, ModuleConfigJSON, ModuleInitArgs, genesisLegacyStoreData } from './types';
+import { getModuleConfig } from './utils';
 import { LegacyAccountStore } from './stores/legacyAccountStore';
 import { ReclaimCommand } from './commands/reclaim';
 import { RegisterKeysCommand } from './commands/register_keys';
+import { ReclaimEvent } from './events/reclaim';
+import { RegisterKeysEvent } from './events/registerKeys';
 
 // eslint-disable-next-line prefer-destructuring
 const validator: liskValidator.LiskValidator = liskValidator.validator;
@@ -60,6 +63,8 @@ export class LegacyModule extends BaseModule {
 	public constructor() {
 		super();
 		this.stores.register(LegacyAccountStore, new LegacyAccountStore(this.name));
+		this.events.register(ReclaimEvent, new ReclaimEvent(this.name));
+		this.events.register(RegisterKeysEvent, new RegisterKeysEvent(this.name));
 	}
 
 	// eslint-disable-next-line @typescript-eslint/member-ordering
@@ -93,7 +98,8 @@ export class LegacyModule extends BaseModule {
 	// eslint-disable-next-line @typescript-eslint/require-await
 	public async init(args: ModuleInitArgs) {
 		const { moduleConfig } = args;
-		this._moduleConfig = utils.objects.mergeDeep({}, defaultConfig, moduleConfig) as ModuleConfig;
+		const config = utils.objects.mergeDeep({}, defaultConfig, moduleConfig) as ModuleConfigJSON;
+		this._moduleConfig = getModuleConfig(config);
 		this._reclaimCommand.init({ tokenIDReclaim: this._moduleConfig.tokenIDReclaim });
 	}
 

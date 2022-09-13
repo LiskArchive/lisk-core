@@ -22,7 +22,7 @@ import { legacyAccountResponseSchema } from '../../../../src/application/modules
 const {
 	address: { getAddressFromPublicKey },
 	legacy: { getKeys },
-	legacyAddress: { getLegacyAddressFromPassphrase },
+	legacyAddress: { getLegacyAddressFromPassphrase, getLegacyAddressFromPublicKey },
 	utils: { getRandomBytes },
 } = cryptography;
 const { NotFoundError } = chain;
@@ -111,7 +111,7 @@ describe('LegacyEndpoint', () => {
 			expect(legacyAccount).toHaveProperty('balance', expectedLegacyAccount.balance);
 		});
 
-		it('should get undefined for a non-existing legacy account', async () => {
+		it('should get balance 0 for a non-existing legacy account', async () => {
 			const context = testing.createTransientModuleEndpointContext({
 				stateStore,
 				params: {
@@ -119,13 +119,17 @@ describe('LegacyEndpoint', () => {
 				},
 			});
 
+			const legacyAddress = getLegacyAddressFromPublicKey(nonExistingPublicKey);
+
 			when(mockStoreHas).calledWith(nonExistingPublicKey).mockReturnValue(false);
 			when(mockGetWithSchema)
 				.calledWith(nonExistingPublicKey, legacyAccountResponseSchema)
 				.mockRejectedValue(new NotFoundError(Buffer.alloc(0).toString('hex')));
 
 			const legacyAccount = await legacyEndpoint.getLegacyAccount(context);
-			expect(legacyAccount).toBeUndefined();
+			expect(legacyAccount).toBeDefined();
+			expect(legacyAccount).toHaveProperty('legacyAddress', legacyAddress);
+			expect(legacyAccount).toHaveProperty('balance', '0');
 		});
 	});
 });

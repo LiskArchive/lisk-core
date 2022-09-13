@@ -21,14 +21,14 @@ import {
 	validator as liskValidator,
 	cryptography,
 	TokenAPI,
-	codec,
 } from 'lisk-sdk';
 
-import { ADDRESS_LEGACY_RESERVE, TYPE_ID_ACCOUNT_RECLAIM } from '../constants';
+import { ADDRESS_LEGACY_RESERVE } from '../constants';
 
-import { reclaimParamsSchema, accountReclaimedEventDataSchema } from '../schemas';
+import { reclaimParamsSchema } from '../schemas';
 import { ReclaimParamsData, TokenIDReclaim } from '../types';
 import { LegacyAccountStore } from '../stores/legacyAccountStore';
+import { ReclaimEvent } from '../events/reclaim';
 
 // eslint-disable-next-line prefer-destructuring
 const validator: liskValidator.LiskValidator = liskValidator.validator;
@@ -43,7 +43,6 @@ const getLegacyAddress = (publicKey): Buffer =>
 export class ReclaimCommand extends BaseCommand {
 	public schema = reclaimParamsSchema;
 	public legacyReserveAddress = ADDRESS_LEGACY_RESERVE;
-	public typeID = TYPE_ID_ACCOUNT_RECLAIM;
 	private _tokenAPI!: TokenAPI;
 	private _tokenIDReclaim!: TokenIDReclaim;
 
@@ -73,12 +72,9 @@ export class ReclaimCommand extends BaseCommand {
 		const isLegacyAddressExists = await legacyStore.has(ctx, legacyAddress);
 
 		if (!isLegacyAddressExists) {
-			const senderPublicKey = ctx.transaction.senderPublicKey.toString('hex');
 			return {
 				status: VerifyStatus.FAIL,
-				error: new Error(
-					`Legacy address corresponding to sender publickey ${senderPublicKey} was not found`,
-				),
+				error: new Error(`Public key does not correspond to a reclaimable account.`),
 			};
 		}
 
@@ -118,14 +114,11 @@ export class ReclaimCommand extends BaseCommand {
 			params.amount,
 		);
 
-		const topics = [legacyAddress, address];
-
-		const data = codec.encode(accountReclaimedEventDataSchema, {
+		const reclaimEvent = this.events.get(ReclaimEvent);
+		reclaimEvent.log(ctx.getAPIContext(), {
 			legacyAddress,
 			address,
 			amount: params.amount,
 		});
-
-		ctx.eventQueue.add(this.name, Buffer.from([this.typeID]), data, topics);
 	}
 }

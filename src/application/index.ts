@@ -11,15 +11,18 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { Application, PartialApplicationConfig } from 'lisk-sdk';
+import { Application, PartialApplicationConfig, TokenModule, ValidatorsModule } from 'lisk-sdk';
 
 import { LegacyModule } from './modules';
 
 export const getApplication = (config: PartialApplicationConfig): Application => {
 	const { app } = Application.defaultApplication(config);
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-	app.registerModule(new LegacyModule());
+	const legacyModule = new LegacyModule();
+	const tokenModule = new TokenModule();
+	const validatorModule = new ValidatorsModule();
 
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+	legacyModule.addDependencies(tokenModule.api, validatorModule.api);
+	app.registerModule(legacyModule);
+
 	return app;
 };

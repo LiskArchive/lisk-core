@@ -14,7 +14,7 @@
 
 import { BaseCommand, cryptography, VerifyStatus } from 'lisk-sdk';
 
-import { COMMAND_NAME_REGISTER_KEYS } from '../../../../../src/application/modules/legacy/constants';
+import { COMMAND_REGISTER_KEYS } from '../../../../../src/application/modules/legacy/constants';
 import { LegacyModule } from '../../../../../src/application/modules/legacy/module';
 
 import { RegisterKeysCommand } from '../../../../../src/application/modules/legacy/commands/register_keys';
@@ -45,13 +45,14 @@ describe('Register keys command', () => {
 		del: jest.fn(),
 	});
 
-	const getAPIContext: any = () => ({
-		getStore,
-	});
-
 	const eventQueue: any = {
 		add: jest.fn(),
 	};
+
+	const getAPIContext: any = () => ({
+		getStore,
+		eventQueue,
+	});
 
 	beforeEach(() => {
 		const module = new LegacyModule();
@@ -64,7 +65,7 @@ describe('Register keys command', () => {
 
 	describe('constructor', () => {
 		it('should have valid name', () => {
-			expect(registerKeysCommand.name).toBe(COMMAND_NAME_REGISTER_KEYS);
+			expect(registerKeysCommand.name).toBe(COMMAND_REGISTER_KEYS);
 		});
 
 		it('should have valid schema', () => {
@@ -94,36 +95,6 @@ describe('Register keys command', () => {
 			await expect(registerKeysCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
 				'status',
 				VerifyStatus.OK,
-			);
-		});
-
-		it('should throw error when validator does not exists', async () => {
-			const commandVerifyContextInput = getContext(
-				transactionParams,
-				publicKey,
-				getAPIContext,
-				eventQueue,
-			);
-			const getValidatorAccount = jest.fn().mockReturnValue(undefined);
-			registerKeysCommand.addDependencies({ getValidatorAccount } as any);
-			await expect(registerKeysCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
-				'status',
-				VerifyStatus.FAIL,
-			);
-		});
-
-		it('should throw error when validator has a no BLS keys', async () => {
-			const commandVerifyContextInput = getContext(
-				transactionParams,
-				publicKey,
-				getAPIContext,
-				eventQueue,
-			);
-			const getValidatorAccount = jest.fn().mockReturnValue({ generatorKey: getRandomBytes(32) });
-			registerKeysCommand.addDependencies({ getValidatorAccount } as any);
-			await expect(registerKeysCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
-				'status',
-				VerifyStatus.FAIL,
 			);
 		});
 
