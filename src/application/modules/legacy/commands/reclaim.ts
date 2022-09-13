@@ -72,12 +72,9 @@ export class ReclaimCommand extends BaseCommand {
 		const isLegacyAddressExists = await legacyStore.has(ctx, legacyAddress);
 
 		if (!isLegacyAddressExists) {
-			const senderPublicKey = ctx.transaction.senderPublicKey.toString('hex');
 			return {
 				status: VerifyStatus.FAIL,
-				error: new Error(
-					`Legacy address corresponding to sender publickey ${senderPublicKey} was not found`,
-				),
+				error: new Error(`Public key does not correspond to a reclaimable account.`),
 			};
 		}
 
