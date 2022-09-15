@@ -11,11 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-// TODO: Export 'BaseEvent' and 'EventQueuer' directly from SDK once available
-import {
-	BaseEvent,
-	EventQueuer,
-} from '../../../../../node_modules/lisk-framework/dist-node/modules/base_event';
+import { BaseEvent, EventQueuer } from 'lisk-sdk';
 
 import { LENGTH_ADDRESS, LENGTH_GENERATOR_KEY, LENGTH_BLS_KEY } from '../constants';
 
