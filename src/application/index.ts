@@ -21,7 +21,7 @@ export const getApplication = (config: PartialApplicationConfig): Application =>
 	const tokenModule = new TokenModule();
 	const validatorModule = new ValidatorsModule();
 
-	legacyModule.addDependencies(tokenModule.api, validatorModule.api);
+	legacyModule.addDependencies(tokenModule.method, validatorModule.method);
 	app.registerModule(legacyModule);
 
 	return app;

@@ -32,7 +32,7 @@ const getLegacyAddress = (publicKey): any => {
 	return Buffer.from(getLegacyAddressFromPublicKey(Buffer.from(publicKey, 'hex')), 'hex');
 };
 
-const getContext = (amount, publicKey, getAPIContext, getStore, eventQueue): any => {
+const getContext = (amount, publicKey, getMethodContext, getStore, eventQueue): any => {
 	const params = { amount: BigInt(amount) };
 	const senderPublicKey = Buffer.from(publicKey, 'hex');
 
@@ -42,7 +42,7 @@ const getContext = (amount, publicKey, getAPIContext, getStore, eventQueue): any
 			senderPublicKey,
 		},
 		getStore,
-		getAPIContext,
+		getMethodContext,
 		eventQueue,
 	} as any;
 };
@@ -67,7 +67,7 @@ describe('Reclaim command', () => {
 		add: jest.fn(),
 	};
 
-	const getAPIContext: any = () => ({
+	const getMethodContext: any = () => ({
 		getStore,
 		eventQueue,
 	});
@@ -98,7 +98,7 @@ describe('Reclaim command', () => {
 			const commandVerifyContextInput = getContext(
 				reclaimBalance,
 				senderPublicKey,
-				getAPIContext,
+				getMethodContext,
 				getStore,
 				eventQueue,
 			);
@@ -118,7 +118,7 @@ describe('Reclaim command', () => {
 			const commandVerifyContextInput = getContext(
 				reclaimBalance + BigInt(10000),
 				senderPublicKey,
-				getAPIContext,
+				getMethodContext,
 				getStore,
 				eventQueue,
 			);
@@ -138,7 +138,7 @@ describe('Reclaim command', () => {
 			const commandVerifyContextInput = getContext(
 				reclaimBalance,
 				senderPublicKey,
-				getAPIContext,
+				getMethodContext,
 				getStore,
 				eventQueue,
 			);
@@ -159,7 +159,7 @@ describe('Reclaim command', () => {
 					senderPublicKey: Buffer.from(senderPublicKey, 'hex'),
 				},
 				getStore,
-				getAPIContext,
+				getMethodContext,
 			} as any;
 
 			await expect(reclaimCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
@@ -177,7 +177,7 @@ describe('Reclaim command', () => {
 			const commandExecuteContextInput = getContext(
 				reclaimBalance,
 				senderPublicKey,
-				getAPIContext,
+				getMethodContext,
 				getStore,
 				eventQueue,
 			);

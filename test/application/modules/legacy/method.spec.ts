@@ -12,26 +12,26 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-import { BaseAPI } from 'lisk-sdk';
+import { BaseMethod } from 'lisk-sdk';
 
-import { LegacyAPI } from '../../../../src/application/modules/legacy/api';
+import { LegacyMethod } from '../../../../src/application/modules/legacy/method';
 import { LegacyModule } from '../../../../src/application/modules/legacy/module';
 
-describe('LegacyAPI', () => {
-	let legacyAPI: LegacyAPI;
+describe('LegacyMethod', () => {
+	let legacyMethod: LegacyMethod;
 
 	beforeAll(() => {
 		const module = new LegacyModule();
-		legacyAPI = new LegacyAPI(module.stores, module.events);
+		legacyMethod = new LegacyMethod(module.stores, module.events);
 	});
 
 	it('should inherit from BaseAPI', () => {
-		expect(LegacyAPI.prototype).toBeInstanceOf(BaseAPI);
+		expect(LegacyMethod.prototype).toBeInstanceOf(BaseMethod);
 	});
 
 	describe('constructor', () => {
 		it('should be of the correct type', () => {
-			expect(legacyAPI).toBeInstanceOf(LegacyAPI);
+			expect(legacyMethod).toBeInstanceOf(LegacyMethod);
 		});
 	});
 });
