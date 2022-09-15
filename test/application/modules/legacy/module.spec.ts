@@ -31,8 +31,8 @@ const getLegacyBytesFromPassphrase = (passphrase: string): Buffer => {
 	return cryptography.legacyAddress.getFirstEightBytesReversed(cryptography.utils.hash(publicKey));
 };
 
-const getContext = (legacySubstore: genesisLegacyStoreData, getStore: any, getMethodContext): any => {
-	const mockAssets = codec.encode(genesisLegacyStoreSchema, legacySubstore);
+const getContext = (accounts: genesisLegacyStoreData, getStore: any, getMethodContext): any => {
+	const mockAssets = codec.encode(genesisLegacyStoreSchema, accounts);
 	return {
 		assets: {
 			getAsset: () => mockAssets,
@@ -228,8 +228,8 @@ describe('LegacyModule', () => {
 		it('should reject the block when address property of accounts is invalid', async () => {
 			const invalidLegacyAccountAddresses = ['02089ca', '0208930ca', '4644873072065426945L'];
 			for (const invalidLegacyAddress of invalidLegacyAccountAddresses) {
-				const updatedStoreData = { legacySubstore: [...storeData.accounts] };
-				updatedStoreData.legacySubstore.push({
+				const updatedStoreData = { accounts: [...storeData.accounts] };
+				updatedStoreData.accounts.push({
 					address: Buffer.from(invalidLegacyAddress),
 					balance: BigInt(Math.floor(Math.random()) * 1000),
 				});
