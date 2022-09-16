@@ -12,6 +12,6 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-import { BaseAPI } from 'lisk-sdk';
+import { BaseMethod } from 'lisk-sdk';
 
-export class LegacyAPI extends BaseAPI {}
+export class LegacyMethod extends BaseMethod {}

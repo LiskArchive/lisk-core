@@ -16,7 +16,7 @@ import { BaseModule, codec, cryptography } from 'lisk-sdk';
 import { when } from 'jest-when';
 
 import { LegacyModule } from '../../../../src/application/modules';
-import { LegacyAPI } from '../../../../src/application/modules/legacy/api';
+import { LegacyMethod } from '../../../../src/application/modules/legacy/method';
 import { LegacyEndpoint } from '../../../../src/application/modules/legacy/endpoint';
 import {
 	MODULE_NAME_LEGACY,
@@ -31,14 +31,14 @@ const getLegacyBytesFromPassphrase = (passphrase: string): Buffer => {
 	return cryptography.legacyAddress.getFirstEightBytesReversed(cryptography.utils.hash(publicKey));
 };
 
-const getContext = (legacySubstore: genesisLegacyStoreData, getStore: any, getAPIContext): any => {
-	const mockAssets = codec.encode(genesisLegacyStoreSchema, legacySubstore);
+const getContext = (accounts: genesisLegacyStoreData, getStore: any, getMethodContext): any => {
+	const mockAssets = codec.encode(genesisLegacyStoreSchema, accounts);
 	return {
 		assets: {
 			getAsset: () => mockAssets,
 		},
 		getStore,
-		getAPIContext,
+		getMethodContext,
 	} as any;
 };
 
@@ -80,9 +80,9 @@ describe('LegacyModule', () => {
 			expect(legacyModule.endpoint).toBeInstanceOf(LegacyEndpoint);
 		});
 
-		it('should expose api', () => {
-			expect(legacyModule).toHaveProperty('api');
-			expect(legacyModule.api).toBeInstanceOf(LegacyAPI);
+		it('should expose Method', () => {
+			expect(legacyModule).toHaveProperty('method');
+			expect(legacyModule.method).toBeInstanceOf(LegacyMethod);
 		});
 	});
 
@@ -106,14 +106,14 @@ describe('LegacyModule', () => {
 			has: mockStoreHas,
 		});
 
-		const getAPIContext: any = () => ({
+		const getMethodContext: any = () => ({
 			getStore,
 		});
 
 		beforeEach(() => {
-			storeData = { legacySubstore: [] };
+			storeData = { accounts: [] };
 			for (const account of Object.values(testAccounts)) {
-				storeData.legacySubstore.push({
+				storeData.accounts.push({
 					address: getLegacyBytesFromPassphrase(account.passphrase),
 					balance: BigInt(Math.floor(Math.random() * 1000)),
 				});
@@ -121,12 +121,12 @@ describe('LegacyModule', () => {
 		});
 
 		it('should save legacy accounts to state store if accounts are valid', async () => {
-			const currentTotalBalance = storeData.legacySubstore.reduce(
+			const currentTotalBalance = storeData.accounts.reduce(
 				(total, account) => total + account.balance,
 				BigInt('0'),
 			);
 
-			const genesisBlockExecuteContextInput = getContext(storeData, getStore, getAPIContext);
+			const genesisBlockExecuteContextInput = getContext(storeData, getStore, getMethodContext);
 
 			const tokenAPI = {
 				getLockedAmount: jest.fn().mockResolvedValue(BigInt(currentTotalBalance)),
@@ -135,7 +135,7 @@ describe('LegacyModule', () => {
 
 			await legacyModule.initGenesisState(genesisBlockExecuteContextInput);
 
-			for (const account of storeData.legacySubstore) {
+			for (const account of storeData.accounts) {
 				when(mockStoreHas).calledWith(account.address).mockReturnValue(true);
 				const isAccountInStore = await genesisBlockExecuteContextInput
 					.getStore()
@@ -146,9 +146,9 @@ describe('LegacyModule', () => {
 
 		it('should reject the block when address entries are not pair-wise distinct', async () => {
 			const genesisBlockExecuteContextInput = getContext(
-				{ legacySubstore: [...storeData.legacySubstore, ...storeData.legacySubstore] },
+				{ accounts: [...storeData.accounts, ...storeData.accounts] },
 				getStore,
-				getAPIContext,
+				getMethodContext,
 			);
 
 			await expect(
@@ -157,24 +157,24 @@ describe('LegacyModule', () => {
 		});
 
 		it('should save legacy accounts to state store when total balance for all legacy accounts is less than 2^64', async () => {
-			const currentTotalBalance = storeData.legacySubstore.reduce(
+			const currentTotalBalance = storeData.accounts.reduce(
 				(total, account) => total + account.balance,
 				BigInt('0'),
 			);
 
-			storeData.legacySubstore.push({
+			storeData.accounts.push({
 				address: getLegacyBytesFromPassphrase(
 					'dolphin curious because horror unfold smoke write type badge ecology say pet',
 				),
 				balance: BigInt(LEGACY_ACC_MAX_TOTAL_BAL_NON_INC) - currentTotalBalance - BigInt('1'),
 			});
 
-			const UpdatedTotalBalance = storeData.legacySubstore.reduce(
+			const UpdatedTotalBalance = storeData.accounts.reduce(
 				(total, account) => total + account.balance,
 				BigInt('0'),
 			);
 
-			const genesisBlockExecuteContextInput = getContext(storeData, getStore, getAPIContext);
+			const genesisBlockExecuteContextInput = getContext(storeData, getStore, getMethodContext);
 
 			const tokenAPI = {
 				getLockedAmount: jest.fn().mockResolvedValue(BigInt(UpdatedTotalBalance)),
@@ -183,7 +183,7 @@ describe('LegacyModule', () => {
 
 			await legacyModule.initGenesisState(genesisBlockExecuteContextInput);
 
-			for (const account of storeData.legacySubstore) {
+			for (const account of storeData.accounts) {
 				when(mockStoreHas).calledWith(account.address).mockReturnValue(true);
 				const isAccountInStore = await genesisBlockExecuteContextInput
 					.getStore()
@@ -193,18 +193,18 @@ describe('LegacyModule', () => {
 		});
 
 		it('should reject the block when total balance for all legacy accounts equals 2^64', async () => {
-			const currentTotalBalance = storeData.legacySubstore.reduce(
+			const currentTotalBalance = storeData.accounts.reduce(
 				(total, account) => total + account.balance,
 				BigInt('0'),
 			);
 
-			storeData.legacySubstore.push({
+			storeData.accounts.push({
 				address: getLegacyBytesFromPassphrase(
 					'strategy phone follow wait moon figure cart primary comic recall silver donate',
 				),
 				balance: BigInt(LEGACY_ACC_MAX_TOTAL_BAL_NON_INC) - currentTotalBalance,
 			});
-			const genesisBlockExecuteContextInput = getContext(storeData, getStore, getAPIContext);
+			const genesisBlockExecuteContextInput = getContext(storeData, getStore, getMethodContext);
 
 			await expect(
 				legacyModule.initGenesisState(genesisBlockExecuteContextInput),
@@ -212,13 +212,13 @@ describe('LegacyModule', () => {
 		});
 
 		it('should reject the block when total balance for all legacy accounts is greater than 2^64', async () => {
-			storeData.legacySubstore.push({
+			storeData.accounts.push({
 				address: getLegacyBytesFromPassphrase(
 					'elephant version solar amused enhance fuel black armor vendor regular tortoise tank',
 				),
 				balance: BigInt(LEGACY_ACC_MAX_TOTAL_BAL_NON_INC),
 			});
-			const genesisBlockExecuteContextInput = getContext(storeData, getStore, getAPIContext);
+			const genesisBlockExecuteContextInput = getContext(storeData, getStore, getMethodContext);
 
 			await expect(
 				legacyModule.initGenesisState(genesisBlockExecuteContextInput),
@@ -228,15 +228,15 @@ describe('LegacyModule', () => {
 		it('should reject the block when address property of accounts is invalid', async () => {
 			const invalidLegacyAccountAddresses = ['02089ca', '0208930ca', '4644873072065426945L'];
 			for (const invalidLegacyAddress of invalidLegacyAccountAddresses) {
-				const updatedStoreData = { legacySubstore: [...storeData.legacySubstore] };
-				updatedStoreData.legacySubstore.push({
+				const updatedStoreData = { accounts: [...storeData.accounts] };
+				updatedStoreData.accounts.push({
 					address: Buffer.from(invalidLegacyAddress),
 					balance: BigInt(Math.floor(Math.random()) * 1000),
 				});
 				const genesisBlockExecuteContextInput = getContext(
 					updatedStoreData as any,
 					getStore,
-					getAPIContext,
+					getMethodContext,
 				);
 
 				await expect(
@@ -246,7 +246,7 @@ describe('LegacyModule', () => {
 		});
 
 		it('should reject the block when total balance for all legacy accounts is not equal to lockedAmount', async () => {
-			const genesisBlockExecuteContextInput = getContext(storeData, getStore, getAPIContext);
+			const genesisBlockExecuteContextInput = getContext(storeData, getStore, getMethodContext);
 			const tokenAPI = {
 				getLockedAmount: jest.fn().mockResolvedValue(BigInt(10000100000)),
 			};

@@ -11,8 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-// TODO: Export 'BaseStore' directly from SDK once available
-import { BaseStore } from '../../../../../node_modules/lisk-framework/dist-node/modules/base_store.js';
+import { BaseStore } from 'lisk-sdk';
 
 export interface legacyAccount {
 	balance: bigint;

@@ -14,8 +14,8 @@
 
 import {
 	BaseModule,
-	TokenAPI,
-	ValidatorsAPI,
+	TokenMethod,
+	ValidatorsMethod,
 	codec,
 	GenesisBlockExecuteContext,
 	validator as liskValidator,
@@ -24,7 +24,7 @@ import {
 
 // TODO: Export 'ModuleMetadata' directly from SDK once available
 import { ModuleMetadata } from '../../../../node_modules/lisk-framework/dist-node/modules/base_module';
-import { LegacyAPI } from './api';
+import { LegacyMethod } from './method';
 import { LegacyEndpoint } from './endpoint';
 import {
 	LEGACY_ACCOUNT_LENGTH,
@@ -51,10 +51,10 @@ const validator: liskValidator.LiskValidator = liskValidator.validator;
 
 export class LegacyModule extends BaseModule {
 	public endpoint = new LegacyEndpoint(this.stores, this.offchainStores);
-	public api = new LegacyAPI(this.stores, this.events);
+	public method = new LegacyMethod(this.stores, this.events);
 	public legacyReserveAddress = ADDRESS_LEGACY_RESERVE;
-	private _tokenAPI!: TokenAPI;
-	private _validatorsAPI!: ValidatorsAPI;
+	private _tokenMethod!: TokenMethod;
+	private _validatorsMethod!: ValidatorsMethod;
 	private _moduleConfig!: ModuleConfig;
 
 	private readonly _reclaimCommand = new ReclaimCommand(this.stores, this.events);
@@ -70,11 +70,11 @@ export class LegacyModule extends BaseModule {
 	// eslint-disable-next-line @typescript-eslint/member-ordering
 	public commands = [this._reclaimCommand, this._registerKeysCommand];
 
-	public addDependencies(tokenAPI: TokenAPI, validatorsAPI: ValidatorsAPI) {
-		this._tokenAPI = tokenAPI;
-		this._validatorsAPI = validatorsAPI;
-		this._reclaimCommand.addDependencies(this._tokenAPI);
-		this._registerKeysCommand.addDependencies(this._validatorsAPI);
+	public addDependencies(tokenAPI: TokenMethod, validatorsMethod: ValidatorsMethod) {
+		this._tokenMethod = tokenAPI;
+		this._validatorsMethod = validatorsMethod;
+		this._reclaimCommand.addDependencies(this._tokenMethod);
+		this._registerKeysCommand.addDependencies(this._validatorsMethod);
 	}
 
 	public metadata(): ModuleMetadata {
@@ -110,16 +110,16 @@ export class LegacyModule extends BaseModule {
 			return;
 		}
 
-		const { legacySubstore } = codec.decode<genesisLegacyStoreData>(
+		const { accounts } = codec.decode<genesisLegacyStoreData>(
 			genesisLegacyStoreSchema,
 			legacyAssetsBuffer,
 		);
 
-		validator.validate(genesisLegacyStoreSchema, { legacySubstore });
+		validator.validate(genesisLegacyStoreSchema, { accounts });
 		const uniqueLegacyAccounts = new Set();
 		let totalBalance = BigInt('0');
 
-		for (const account of legacySubstore) {
+		for (const account of accounts) {
 			if (account.address.length !== LEGACY_ACCOUNT_LENGTH)
 				throw new Error(
 					`legacy address length is invalid, expected ${LEGACY_ACCOUNT_LENGTH}, actual ${account.address.length}`,
@@ -129,7 +129,7 @@ export class LegacyModule extends BaseModule {
 			totalBalance += account.balance;
 		}
 
-		if (uniqueLegacyAccounts.size !== legacySubstore.length) {
+		if (uniqueLegacyAccounts.size !== accounts.length) {
 			throw new Error('Legacy address entries are not pair-wise distinct');
 		}
 
@@ -137,8 +137,8 @@ export class LegacyModule extends BaseModule {
 			throw new Error('Total balance for all legacy accounts cannot exceed 2^64');
 		}
 
-		const lockedAmount = await this._tokenAPI.getLockedAmount(
-			ctx.getAPIContext(),
+		const lockedAmount = await this._tokenMethod.getLockedAmount(
+			ctx.getMethodContext(),
 			this.legacyReserveAddress,
 			this._moduleConfig.tokenIDReclaim,
 			this.name,
@@ -150,7 +150,7 @@ export class LegacyModule extends BaseModule {
 
 		const legacyStore = this.stores.get(LegacyAccountStore);
 		await Promise.all(
-			legacySubstore.map(async account =>
+			accounts.map(async account =>
 				legacyStore.set(ctx, account.address, { balance: account.balance }),
 			),
 		);

@@ -14,7 +14,7 @@
 
 import {
 	BaseCommand,
-	ValidatorsAPI,
+	ValidatorsMethod,
 	CommandExecuteContext,
 	CommandVerifyContext,
 	VerificationResult,
@@ -37,16 +37,16 @@ const validator: liskValidator.LiskValidator = liskValidator.validator;
 export class RegisterKeysCommand extends BaseCommand {
 	public schema = registerKeysParamsSchema;
 	private readonly invalidBlsKey = INVALID_BLS_KEY;
-	private _validatorsAPI!: ValidatorsAPI;
+	private _validatorsMethod!: ValidatorsMethod;
 
-	public addDependencies(validatorsAPI: ValidatorsAPI) {
-		this._validatorsAPI = validatorsAPI;
+	public addDependencies(validatorsMethod: ValidatorsMethod) {
+		this._validatorsMethod = validatorsMethod;
 	}
 
 	public async verify(ctx: CommandVerifyContext): Promise<VerificationResult> {
 		const validatorAddress = getAddressFromPublicKey(ctx.transaction.senderPublicKey);
-		const validatorAccount = await this._validatorsAPI.getValidatorAccount(
-			ctx.getAPIContext(),
+		const validatorAccount = await this._validatorsMethod.getValidatorAccount(
+			ctx.getMethodContext(),
 			validatorAddress,
 		);
 
@@ -66,21 +66,21 @@ export class RegisterKeysCommand extends BaseCommand {
 
 		const validatorAddress = getAddressFromPublicKey(ctx.transaction.senderPublicKey);
 
-		await this._validatorsAPI.setValidatorGeneratorKey(
-			ctx.getAPIContext(),
+		await this._validatorsMethod.setValidatorGeneratorKey(
+			ctx.getMethodContext(),
 			validatorAddress,
 			params.generatorKey,
 		);
 
-		await this._validatorsAPI.setValidatorBLSKey(
-			ctx.getAPIContext(),
+		await this._validatorsMethod.setValidatorBLSKey(
+			ctx.getMethodContext(),
 			validatorAddress,
 			params.proofOfPossession,
 			params.blsKey,
 		);
 
 		const registerKeysEvent = this.events.get(RegisterKeysEvent);
-		registerKeysEvent.log(ctx.getAPIContext(), {
+		registerKeysEvent.log(ctx.getMethodContext(), {
 			address: validatorAddress,
 			generatorKey: params.generatorKey,
 			blsKey: params.blsKey,

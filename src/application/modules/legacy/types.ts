@@ -41,7 +41,7 @@ export interface registerKeysData {
 }
 
 export interface genesisLegacyStoreData {
-	legacySubstore: {
+	accounts: {
 		address: Buffer;
 		balance: bigint;
 	}[];

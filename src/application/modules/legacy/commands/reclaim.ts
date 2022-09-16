@@ -20,7 +20,7 @@ import {
 	VerifyStatus,
 	validator as liskValidator,
 	cryptography,
-	TokenAPI,
+	TokenMethod,
 } from 'lisk-sdk';
 
 import { ADDRESS_LEGACY_RESERVE } from '../constants';
@@ -43,11 +43,11 @@ const getLegacyAddress = (publicKey): Buffer =>
 export class ReclaimCommand extends BaseCommand {
 	public schema = reclaimParamsSchema;
 	public legacyReserveAddress = ADDRESS_LEGACY_RESERVE;
-	private _tokenAPI!: TokenAPI;
+	private _tokenMethod!: TokenMethod;
 	private _tokenIDReclaim!: TokenIDReclaim;
 
-	public addDependencies(tokenAPI: TokenAPI) {
-		this._tokenAPI = tokenAPI;
+	public addDependencies(tokenMethod: TokenMethod) {
+		this._tokenMethod = tokenMethod;
 	}
 
 	public init(args: { tokenIDReclaim: TokenIDReclaim }) {
@@ -98,16 +98,16 @@ export class ReclaimCommand extends BaseCommand {
 
 		const address = getAddressFromPublicKey(ctx.transaction.senderPublicKey);
 
-		await this._tokenAPI.unlock(
-			ctx.getAPIContext(),
+		await this._tokenMethod.unlock(
+			ctx.getMethodContext(),
 			this.legacyReserveAddress,
 			this.name,
 			this._tokenIDReclaim,
 			params.amount,
 		);
 
-		await this._tokenAPI.transfer(
-			ctx.getAPIContext(),
+		await this._tokenMethod.transfer(
+			ctx.getMethodContext(),
 			this.legacyReserveAddress,
 			address,
 			this._tokenIDReclaim,
@@ -115,7 +115,7 @@ export class ReclaimCommand extends BaseCommand {
 		);
 
 		const reclaimEvent = this.events.get(ReclaimEvent);
-		reclaimEvent.log(ctx.getAPIContext(), {
+		reclaimEvent.log(ctx.getMethodContext(), {
 			legacyAddress,
 			address,
 			amount: params.amount,

@@ -24,14 +24,14 @@ const {
 	utils: { getRandomBytes },
 } = cryptography;
 
-const getContext = (params, publicKey, getAPIContext, eventQueue): any => {
+const getContext = (params, publicKey, getMethodContext, eventQueue): any => {
 	const senderPublicKey = Buffer.from(publicKey, 'hex');
 	return {
 		params,
 		transaction: {
 			senderPublicKey,
 		},
-		getAPIContext,
+		getMethodContext,
 		eventQueue,
 	} as any;
 };
@@ -49,7 +49,7 @@ describe('Register keys command', () => {
 		add: jest.fn(),
 	};
 
-	const getAPIContext: any = () => ({
+	const getMethodContext: any = () => ({
 		getStore,
 		eventQueue,
 	});
@@ -85,7 +85,7 @@ describe('Register keys command', () => {
 			const commandVerifyContextInput = getContext(
 				transactionParams,
 				publicKey,
-				getAPIContext,
+				getMethodContext,
 				eventQueue,
 			);
 			const getValidatorAccount = jest
@@ -102,7 +102,7 @@ describe('Register keys command', () => {
 			const commandVerifyContextInput = getContext(
 				transactionParams,
 				publicKey,
-				getAPIContext,
+				getMethodContext,
 				eventQueue,
 			);
 			const getValidatorAccount = jest
@@ -135,7 +135,7 @@ describe('Register keys command', () => {
 				setValidatorGeneratorKey,
 				getValidatorAccount,
 			} as any);
-			const context = getContext(transactionParams, publicKey, getAPIContext, eventQueue);
+			const context = getContext(transactionParams, publicKey, getMethodContext, eventQueue);
 			await expect(registerKeysCommand.execute(context)).resolves.toBeUndefined();
 			expect(setValidatorGeneratorKey).toHaveBeenCalledTimes(1);
 		});
@@ -149,7 +149,7 @@ describe('Register keys command', () => {
 				getValidatorAccount,
 				setValidatorGeneratorKey,
 			} as any);
-			const context = getContext(transactionParams, publicKey, getAPIContext, eventQueue);
+			const context = getContext(transactionParams, publicKey, getMethodContext, eventQueue);
 			await expect(registerKeysCommand.execute(context)).resolves.toBeUndefined();
 			expect(setValidatorBLSKey).toHaveBeenCalledTimes(1);
 		});
@@ -162,7 +162,7 @@ describe('Register keys command', () => {
 				blsKey: getRandomBytes(48),
 				proofOfPossession: getRandomBytes(64).toString('hex'),
 			};
-			const context = getContext(invalidParams, publicKey, getAPIContext, eventQueue);
+			const context = getContext(invalidParams, publicKey, getMethodContext, eventQueue);
 			await expect(registerKeysCommand.execute(context)).rejects.toThrow();
 			expect(setValidatorBLSKey).toHaveBeenCalledTimes(0);
 		});
@@ -172,7 +172,7 @@ describe('Register keys command', () => {
 				proofOfPossession: getRandomBytes(96),
 				generatorKey: getRandomBytes(32),
 			};
-			const context = getContext(txParams, publicKey, getAPIContext, eventQueue);
+			const context = getContext(txParams, publicKey, getMethodContext, eventQueue);
 			const getValidatorAccount = jest
 				.fn()
 				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
@@ -186,7 +186,7 @@ describe('Register keys command', () => {
 				proofOfPossession: getRandomBytes(96),
 				generatorKey: getRandomBytes(32),
 			};
-			const context = getContext(txParams, publicKey, getAPIContext, eventQueue);
+			const context = getContext(txParams, publicKey, getMethodContext, eventQueue);
 			const getValidatorAccount = jest
 				.fn()
 				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
@@ -199,7 +199,7 @@ describe('Register keys command', () => {
 				blsKey: getRandomBytes(48),
 				generatorKey: getRandomBytes(32),
 			};
-			const context = getContext(txParams, publicKey, getAPIContext, eventQueue);
+			const context = getContext(txParams, publicKey, getMethodContext, eventQueue);
 			const getValidatorAccount = jest
 				.fn()
 				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
@@ -213,7 +213,7 @@ describe('Register keys command', () => {
 				proofOfPossession: getRandomBytes(48),
 				generatorKey: getRandomBytes(32),
 			};
-			const context = getContext(txParams, publicKey, getAPIContext, eventQueue);
+			const context = getContext(txParams, publicKey, getMethodContext, eventQueue);
 			const getValidatorAccount = jest
 				.fn()
 				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
@@ -226,7 +226,7 @@ describe('Register keys command', () => {
 				blsKey: getRandomBytes(48),
 				proofOfPossession: getRandomBytes(48),
 			};
-			const context = getContext(txParams, publicKey, getAPIContext, eventQueue);
+			const context = getContext(txParams, publicKey, getMethodContext, eventQueue);
 			const getValidatorAccount = jest
 				.fn()
 				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
@@ -240,7 +240,7 @@ describe('Register keys command', () => {
 				proofOfPossession: getRandomBytes(48),
 				generatorKey: getRandomBytes(48),
 			};
-			const context = getContext(txParams, publicKey, getAPIContext, eventQueue);
+			const context = getContext(txParams, publicKey, getMethodContext, eventQueue);
 			const getValidatorAccount = jest
 				.fn()
 				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });

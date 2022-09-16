@@ -19,6 +19,7 @@ mocha.opts
 # Ignore extensions
 *.png
 *.sql
+*.blob
 ## jest snapshot
 *.snap
 *.tsbuildinfo

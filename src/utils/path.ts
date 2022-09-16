@@ -105,8 +105,8 @@ export interface SocketPaths {
 	readonly root: string;
 }
 
-export const getSocketsPath = (dataPath: string, network = defaultFolder): SocketPaths => {
-	const dirs = systemDirs(network, dataPath);
+export const getSocketsPath = (dataPath: string): SocketPaths => {
+	const dirs = systemDirs(dataPath);
 	return {
 		root: `unix://${dirs.sockets}`,
 		pub: `unix://${dirs.sockets}/lisk_pub.sock`,
