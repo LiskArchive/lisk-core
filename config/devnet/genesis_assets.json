@@ -11,6 +11,12 @@
 						"lockedBalances": []
 					},
 					{
+						"address": "lskz5kn2akhood3cgpaf6a95ra85xfa9fhokvx4du",
+						"tokenID": "0000000000000000",
+						"availableBalance": "0",
+						"lockedBalances": [{ "module": "legacy", "amount": "329000000000" }]
+					},
+					{
 						"address": "lskzot8pzdcvjhpjwrhq3dkkbf499ok7mhwkrvsq3",
 						"tokenID": "0000000000000000",
 						"availableBalance": "100000000000000",
@@ -626,7 +632,7 @@
 				"supplySubstore": [
 					{
 						"localID": "00000000",
-						"totalSupply": "10300000000000000"
+						"totalSupply": "10300329000000000"
 					}
 				],
 				"escrowSubstore": [],
