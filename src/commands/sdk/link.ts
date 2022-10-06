@@ -14,7 +14,7 @@
  */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Command } from '@oclif/command';
+import { Command } from '@oclif/core';
 import { symlink, pathExistsSync, removeSync } from 'fs-extra';
 import { join, isAbsolute } from 'path';
 
@@ -31,7 +31,7 @@ export default class LinkCommand extends Command {
 	async run(): Promise<void> {
 		const {
 			args: { targetSDKFolder },
-		} = this.parse(LinkCommand);
+		} = await this.parse(LinkCommand);
 
 		if (!pathExistsSync(targetSDKFolder)) {
 			throw new Error(`Path '${targetSDKFolder as string}' does not exist or access denied.`);

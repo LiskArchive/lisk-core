@@ -13,7 +13,6 @@
  *
  */
 /* eslint-disable no-param-reassign */
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Flags as flagParser } from '@oclif/core';
 import { BaseStartCommand } from 'lisk-commander';
 import { Application, ApplicationConfig, PartialApplicationConfig } from 'lisk-sdk';
@@ -108,7 +107,6 @@ export class StartCommand extends BaseStartCommand {
 	};
 
 	public async getApplication(config: PartialApplicationConfig): Promise<Application> {
-		// eslint-disable-next-line @typescript-eslint/await-thenable
 		const { flags } = await this.parse(StartCommand);
 		// Set Plugins Config
 		setPluginConfig(config as ApplicationConfig, flags);
