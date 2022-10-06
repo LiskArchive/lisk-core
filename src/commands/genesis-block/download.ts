@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import { Command, flags as flagParser } from '@oclif/command';
+import { Command, Flags as flagParser } from '@oclif/core';
 import * as fs from 'fs-extra';
 import { dirname, join } from 'path';
 import { DEFAULT_NETWORK, NETWORK, DOWNLOAD_URL } from '../../constants';
@@ -50,11 +50,11 @@ export default class DownloadCommand extends Command {
 			char: 'f',
 			description: 'Delete and overwrite existing blockchain data',
 			default: false,
-		}) as flagParser.IFlag<boolean>,
+		}),
 	};
 
 	async run(): Promise<void> {
-		const { flags } = this.parse(DownloadCommand);
+		const { flags } = await this.parse(DownloadCommand);
 		const { url, network, 'data-path': dataPath, force } = flags;
 
 		if (!url && !network) {
