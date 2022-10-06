@@ -13,10 +13,8 @@
  *
  */
 /* eslint-disable no-param-reassign */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/explicit-member-accessibility */
-import { flags as flagParser } from '@oclif/command';
+/* eslint-disable @typescript-eslint/no-misused-promises */
+import { Flags as flagParser } from '@oclif/core';
 import { BaseStartCommand } from 'lisk-commander';
 import { Application, ApplicationConfig, PartialApplicationConfig } from 'lisk-sdk';
 import { MonitorPlugin } from '@liskhq/lisk-framework-monitor-plugin';
@@ -27,7 +25,7 @@ import { join } from 'path';
 import { getApplication } from '../application';
 
 interface Flags {
-	[key: string]: string | number | boolean;
+	[key: string]: string | number | boolean | undefined;
 }
 
 const setPluginConfig = (config: ApplicationConfig, flags: Flags): void => {
@@ -50,11 +48,8 @@ const setPluginConfig = (config: ApplicationConfig, flags: Flags): void => {
 	}
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type StartFlags = typeof BaseStartCommand.flags & flagParser.Input<any>;
-
 export class StartCommand extends BaseStartCommand {
-	static flags: StartFlags = {
+	static flags = {
 		...BaseStartCommand.flags,
 		'enable-forger-plugin': flagParser.boolean({
 			description:
@@ -112,9 +107,9 @@ export class StartCommand extends BaseStartCommand {
 		}),
 	};
 
-	public getApplication(config: PartialApplicationConfig): Application {
-		/* eslint-disable @typescript-eslint/no-unsafe-call */
-		const { flags } = this.parse(StartCommand);
+	public async getApplication(config: PartialApplicationConfig): Promise<Application> {
+		// eslint-disable-next-line @typescript-eslint/await-thenable
+		const { flags } = await this.parse(StartCommand);
 		// Set Plugins Config
 		setPluginConfig(config as ApplicationConfig, flags);
 		const app = getApplication(config);

@@ -1,1 +1,1 @@
-export { BlsKeyCreateCommand } from 'lisk-commander';
+export { KeysCreateCommand } from 'lisk-commander';
