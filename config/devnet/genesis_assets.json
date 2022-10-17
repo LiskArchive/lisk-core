@@ -14,7 +14,12 @@
 						"address": "lskz5kn2akhood3cgpaf6a95ra85xfa9fhokvx4du",
 						"tokenID": "0000000000000000",
 						"availableBalance": "0",
-						"lockedBalances": [{ "module": "legacy", "amount": "329000000000" }]
+						"lockedBalances": [
+							{
+								"module": "legacy",
+								"amount": "329000000000"
+							}
+						]
 					},
 					{
 						"address": "lskzot8pzdcvjhpjwrhq3dkkbf499ok7mhwkrvsq3",
@@ -2210,123 +2215,123 @@
 			"data": {
 				"accounts": [
 					{
-						"address": "0208930cab3923a1",
+						"address": "04d4b4adbfc9ce02",
 						"balance": "6800000000"
 					},
 					{
-						"address": "090c30628cc4c0ad",
+						"address": "4a073ccb23ad53c1",
 						"balance": "15100000000"
 					},
 					{
-						"address": "1e7033c220c81e5c",
+						"address": "129e3002e1734acb",
 						"balance": "9300000000"
 					},
 					{
-						"address": "1ef0c7caacf3e069",
+						"address": "1a3fd493d9833256",
 						"balance": "10600000000"
 					},
 					{
-						"address": "2aa649ea1670855b",
+						"address": "b2ee4a997a732135",
 						"balance": "16900000000"
 					},
 					{
-						"address": "2fcf0ece0d226fbe",
+						"address": "ff770e1914a44e72",
 						"balance": "18600000000"
 					},
 					{
-						"address": "36885d86628cf38a",
+						"address": "3e296a8d8087c28d",
 						"balance": "12100000000"
 					},
 					{
-						"address": "38fce28142d33e68",
+						"address": "2b4c818fff665d4c",
 						"balance": "4400000000"
 					},
 					{
-						"address": "3b4f0ff8600dd0ae",
+						"address": "911e1493e5d0f358",
 						"balance": "8500000000"
 					},
 					{
-						"address": "3f398b44b4622565",
+						"address": "d72a5388be8760b9",
 						"balance": "3000000000"
 					},
 					{
-						"address": "3f9e2202d042adb1",
+						"address": "f3bfd4c0e122d8ff",
 						"balance": "7600000000"
 					},
 					{
-						"address": "50ba82ea51e9d02e",
+						"address": "02447e34bc7b61b7",
 						"balance": "1900000000"
 					},
 					{
-						"address": "525415ae073f4ab7",
+						"address": "b8b76b2b93727728",
 						"balance": "15400000000"
 					},
 					{
-						"address": "53091e5b7b65225a",
+						"address": "33fb5723fadd590f",
 						"balance": "900000000"
 					},
 					{
-						"address": "54ce33ddb1329b17",
+						"address": "c0d38e70fae5bb26",
 						"balance": "5800000000"
 					},
 					{
-						"address": "5bc40c474aa79b72",
+						"address": "582ba6bd931c5b67",
 						"balance": "12300000000"
 					},
 					{
-						"address": "5c3321c48dbc0b6a",
+						"address": "81c6247c8dcfe448",
 						"balance": "12000000000"
 					},
 					{
-						"address": "5e0776399f8feb84",
+						"address": "d19c45da91169f4a",
 						"balance": "18500000000"
 					},
 					{
-						"address": "6216e459f9d973d5",
+						"address": "5cbb98510667bb54",
 						"balance": "3500000000"
 					},
 					{
-						"address": "63834251e6f389ef",
+						"address": "f2f28d3eb8b2e4dd",
 						"balance": "14500000000"
 					},
 					{
-						"address": "6b58a2ba6ec4adf6",
+						"address": "ad6b1e1dff868d3e",
 						"balance": "18900000000"
 					},
 					{
-						"address": "6ea0701fc79f1920",
+						"address": "d440449d0c4d96cc",
 						"balance": "7000000000"
 					},
 					{
-						"address": "7371fba71da455b2",
+						"address": "5b5ac38529e3d6e5",
 						"balance": "16700000000"
 					},
 					{
-						"address": "7bd8426d38e63245",
+						"address": "5022ec7b5662892a",
 						"balance": "2600000000"
 					},
 					{
-						"address": "8bd18f3f9b5be36a",
+						"address": "fa6a1cca67afc800",
 						"balance": "12700000000"
 					},
 					{
-						"address": "8c16d7ddd32e4eef",
+						"address": "28092c87e32614d0",
 						"balance": "12000000000"
 					},
 					{
-						"address": "9065926bfdd393dd",
+						"address": "81bc77a76dafce62",
 						"balance": "14200000000"
 					},
 					{
-						"address": "92f9e84b1557d2b3",
+						"address": "9153147f7cac7707",
 						"balance": "11000000000"
 					},
 					{
-						"address": "9c7345150b7c70e8",
+						"address": "1eceb015737081d6",
 						"balance": "19900000000"
 					},
 					{
-						"address": "a0f3cb0f5220379c",
+						"address": "d974f5f98eb2d7e3",
 						"balance": "16300000000"
 					}
 				]
