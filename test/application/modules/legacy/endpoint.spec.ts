@@ -126,10 +126,9 @@ describe('LegacyEndpoint', () => {
 				balance: '0',
 			};
 
-			getFirstEightBytesReversed(hash(nonExistingPublicKey)).toString('hex'),
-				when(mockStoreHas)
-					.calledWith(Buffer.from(expectedLegacyAccount.legacyAddress, 'hex'))
-					.mockReturnValue(false);
+			when(mockStoreHas)
+				.calledWith(Buffer.from(expectedLegacyAccount.legacyAddress, 'hex'))
+				.mockReturnValue(false);
 			when(mockGetWithSchema)
 				.calledWith(nonExistingPublicKey, legacyAccountResponseSchema)
 				.mockRejectedValue(new NotFoundError(Buffer.alloc(0).toString('hex')));
