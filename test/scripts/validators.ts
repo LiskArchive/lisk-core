@@ -14,48 +14,23 @@
  */
 
 const fs = require('fs');
-import { passphrase as liskPassphrase, cryptography, codec } from 'lisk-sdk';
+import { passphrase as liskPassphrase, cryptography } from 'lisk-sdk';
 const { Mnemonic } = liskPassphrase;
-
-exports.plainGeneratorKeysSchema = {
-	$id: '/commander/plainGeneratorKeys',
-	type: 'object',
-	properties: {
-		generatorKey: {
-			dataType: 'bytes',
-			fieldNumber: 1,
-		},
-		generatorPrivateKey: {
-			dataType: 'bytes',
-			fieldNumber: 2,
-		},
-		blsKey: {
-			dataType: 'bytes',
-			fieldNumber: 3,
-		},
-		blsPrivateKey: {
-			dataType: 'bytes',
-			fieldNumber: 4,
-		},
-	},
-};
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const createValidators = async (count = 103) => {
 	const offset = 0;
-	const chainid = 0;
-	const noEncrypt = true;
 	const keys: any = [];
-	let password = '';
 	const passphrases: any = [];
+	const encryptedMessageObject = {};
 
 	for (let i = 0; i < count; i += 1) {
 		const passphrase = Mnemonic.generateMnemonic(256);
 		passphrases.push(passphrase);
 
 		const accountKeyPath = `m/44'/134'/${offset}'`;
-		const generatorKeyPath = `m/25519'/134'/${chainid}'/${offset}'`;
-		const blsKeyPath = `m/12381/134/${chainid}/${offset}`;
+		const generatorKeyPath = `m/25519'/134'/${offset}'/${offset}'`;
+		const blsKeyPath = `m/12381/134/${offset}/${offset}`;
 		const accountPrivateKey = await cryptography.ed.getKeyPairFromPhraseAndPath(
 			passphrase,
 			accountKeyPath,
@@ -72,23 +47,7 @@ const createValidators = async (count = 103) => {
 			blsKeyPath,
 		);
 		const blsPublicKey = cryptography.bls.getPublicKeyFromPrivateKey(blsPrivateKey);
-		let encryptedMessageObject = {};
-		if (!noEncrypt) {
-			const plainGeneratorKeyData = {
-				generatorKey: generatorPublicKey,
-				generatorPrivateKey,
-				blsKey: blsPublicKey,
-				blsPrivateKey,
-			};
-			const encodedGeneratorKeys = codec.encode(
-				exports.plainGeneratorKeysSchema,
-				plainGeneratorKeyData,
-			);
-			encryptedMessageObject = await cryptography.encrypt.encryptMessageWithPassword(
-				encodedGeneratorKeys,
-				password,
-			);
-		}
+
 		keys.push({
 			address: cryptography.address.getLisk32AddressFromAddress(address),
 			keyPath: accountKeyPath,
@@ -106,6 +65,7 @@ const createValidators = async (count = 103) => {
 			encrypted: encryptedMessageObject,
 		});
 	}
+
 	fs.writeFileSync('./dev-validators.json', JSON.stringify(keys));
 	fs.writeFileSync('./passphrases.json', JSON.stringify(passphrases));
 };
