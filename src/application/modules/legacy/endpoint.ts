@@ -28,6 +28,7 @@ const validator: liskValidator.LiskValidator = liskValidator.validator;
 
 const {
 	legacyAddress: { getFirstEightBytesReversed },
+	utils: { hash },
 } = cryptography;
 const { NotFoundError } = chain;
 
@@ -41,9 +42,7 @@ export class LegacyEndpoint extends BaseEndpoint {
 		const legacyStore = this.stores.get(LegacyAccountStore);
 
 		try {
-			const legacyAddress = getFirstEightBytesReversed(cryptography.utils.hash(publicKey)).toString(
-				'hex',
-			);
+			const legacyAddress = getFirstEightBytesReversed(hash(publicKey)).toString('hex');
 			const hasLegacyAddress = await legacyStore.has(ctx, Buffer.from(legacyAddress, 'hex'));
 			if (!hasLegacyAddress) {
 				return {
