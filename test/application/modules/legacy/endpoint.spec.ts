@@ -22,8 +22,8 @@ import { legacyAccountResponseSchema } from '../../../../src/application/modules
 const {
 	address: { getAddressFromPublicKey },
 	legacy: { getKeys },
-	legacyAddress: { getLegacyAddressFromPassphrase, getLegacyAddressFromPublicKey },
-	utils: { getRandomBytes },
+	legacyAddress: { getFirstEightBytesReversed },
+	utils: { getRandomBytes, hash },
 } = cryptography;
 const { NotFoundError } = chain;
 
@@ -93,11 +93,13 @@ describe('LegacyEndpoint', () => {
 			});
 
 			const expectedLegacyAccount = {
-				legacyAddress: getLegacyAddressFromPassphrase(accounts.existingAccount.passphrase),
+				legacyAddress: getFirstEightBytesReversed(hash(existingPublicKey)).toString('hex'),
 				balance: '1000',
 			};
 
-			when(mockStoreHas).calledWith(existingPublicKey).mockReturnValue(true);
+			when(mockStoreHas)
+				.calledWith(Buffer.from(expectedLegacyAccount.legacyAddress, 'hex'))
+				.mockReturnValue(true);
 			when(mockGetWithSchema)
 				.calledWith(
 					Buffer.from(expectedLegacyAccount.legacyAddress, 'hex'),
@@ -119,17 +121,23 @@ describe('LegacyEndpoint', () => {
 				},
 			});
 
-			const legacyAddress = getLegacyAddressFromPublicKey(nonExistingPublicKey);
+			const expectedLegacyAccount = {
+				legacyAddress: getFirstEightBytesReversed(hash(nonExistingPublicKey)).toString('hex'),
+				balance: '0',
+			};
 
-			when(mockStoreHas).calledWith(nonExistingPublicKey).mockReturnValue(false);
+			getFirstEightBytesReversed(hash(nonExistingPublicKey)).toString('hex'),
+				when(mockStoreHas)
+					.calledWith(Buffer.from(expectedLegacyAccount.legacyAddress, 'hex'))
+					.mockReturnValue(false);
 			when(mockGetWithSchema)
 				.calledWith(nonExistingPublicKey, legacyAccountResponseSchema)
 				.mockRejectedValue(new NotFoundError(Buffer.alloc(0).toString('hex')));
 
 			const legacyAccount = await legacyEndpoint.getLegacyAccount(context);
 			expect(legacyAccount).toBeDefined();
-			expect(legacyAccount).toHaveProperty('legacyAddress', legacyAddress);
-			expect(legacyAccount).toHaveProperty('balance', '0');
+			expect(legacyAccount).toHaveProperty('legacyAddress', expectedLegacyAccount.legacyAddress);
+			expect(legacyAccount).toHaveProperty('balance', expectedLegacyAccount.balance);
 		});
 	});
 });
