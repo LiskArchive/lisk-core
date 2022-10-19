@@ -117,15 +117,15 @@ describe('LegacyEndpoint', () => {
 				},
 			});
 
-			const legacyAddressBuffer = getLegacyAddress(nonExistingPublicKey);
+			const nonExistinglegacyAddressBuffer = getLegacyAddress(nonExistingPublicKey);
 			const expectedLegacyAccount = {
-				legacyAddress: legacyAddressBuffer.toString('hex'),
+				legacyAddress: nonExistinglegacyAddressBuffer.toString('hex'),
 				balance: '0',
 			};
 
-			when(mockStoreHas).calledWith(legacyAddressBuffer).mockReturnValue(false);
+			when(mockStoreHas).calledWith(nonExistinglegacyAddressBuffer).mockReturnValue(false);
 			when(mockGetWithSchema)
-				.calledWith(legacyAddressBuffer, legacyAccountResponseSchema)
+				.calledWith(nonExistinglegacyAddressBuffer, legacyAccountResponseSchema)
 				.mockRejectedValue(new NotFoundError(Buffer.alloc(0).toString('hex')));
 
 			const legacyAccount = await legacyEndpoint.getLegacyAccount(context);

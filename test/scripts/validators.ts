@@ -16,14 +16,26 @@ const fs = require('fs');
 import { passphrase as liskPassphrase, cryptography } from 'lisk-sdk';
 const { Mnemonic } = liskPassphrase;
 
+const MNEMONIC_LENGTH = 256;
+
+const write = (filePath, content) =>
+	new Promise<void>((resolve, reject) => {
+		fs.writeFile(filePath, content, err => {
+			if (err) {
+				return reject(err);
+			}
+			return resolve();
+		});
+	});
+
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const createValidators = async (count = 103) => {
 	const keys: any = [];
 	const passphrases: any = [];
 	const encryptedMessageObject = {};
 
-	for (let i = 0; i < count; i += 1) {
-		const passphrase = Mnemonic.generateMnemonic(256);
+	for (let i = 0; i < count; i++) {
+		const passphrase = Mnemonic.generateMnemonic(MNEMONIC_LENGTH);
 		passphrases.push(passphrase);
 
 		const accountKeyPath = `m/44'/134'/0'`;
@@ -64,8 +76,10 @@ const createValidators = async (count = 103) => {
 		});
 	}
 
-	fs.writeFileSync('./dev-validators.json', JSON.stringify(keys));
-	fs.writeFileSync('./passphrases.json', JSON.stringify(passphrases));
+	await write('./dev-validators.json', JSON.stringify(keys));
+	await write('./passphrases.json', JSON.stringify(passphrases));
 };
 
-createValidators(103);
+createValidators(103).then(() => {
+	console.log('Validators created successfully');
+});

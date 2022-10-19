@@ -12,7 +12,6 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-
 import { passphrase as liskPassphrase, cryptography } from 'lisk-sdk';
 const { Mnemonic } = liskPassphrase;
 
