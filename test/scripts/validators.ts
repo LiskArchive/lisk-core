@@ -12,14 +12,12 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-
 const fs = require('fs');
 import { passphrase as liskPassphrase, cryptography } from 'lisk-sdk';
 const { Mnemonic } = liskPassphrase;
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const createValidators = async (count = 103) => {
-	const offset = 0;
 	const keys: any = [];
 	const passphrases: any = [];
 	const encryptedMessageObject = {};
@@ -28,9 +26,9 @@ const createValidators = async (count = 103) => {
 		const passphrase = Mnemonic.generateMnemonic(256);
 		passphrases.push(passphrase);
 
-		const accountKeyPath = `m/44'/134'/${offset}'`;
-		const generatorKeyPath = `m/25519'/134'/${offset}'/${offset}'`;
-		const blsKeyPath = `m/12381/134/${offset}/${offset}`;
+		const accountKeyPath = `m/44'/134'/0'`;
+		const generatorKeyPath = `m/25519'/134'/0'/0'`;
+		const blsKeyPath = `m/12381/134/0/0`;
 		const accountPrivateKey = await cryptography.ed.getKeyPairFromPhraseAndPath(
 			passphrase,
 			accountKeyPath,

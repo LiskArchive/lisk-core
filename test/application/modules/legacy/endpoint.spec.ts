@@ -18,12 +18,12 @@ import { when } from 'jest-when';
 import { LegacyModule } from '../../../../src/application/modules';
 import { LegacyEndpoint } from '../../../../src/application/modules/legacy/endpoint';
 import { legacyAccountResponseSchema } from '../../../../src/application/modules/legacy/schemas';
+import { getLegacyAddress } from '../../../../src/application/modules/legacy/utils';
 
 const {
 	address: { getAddressFromPublicKey },
 	legacy: { getKeys },
-	legacyAddress: { getFirstEightBytesReversed },
-	utils: { getRandomBytes, hash },
+	utils: { getRandomBytes },
 } = cryptography;
 const { NotFoundError } = chain;
 
@@ -92,19 +92,15 @@ describe('LegacyEndpoint', () => {
 				},
 			});
 
+			const legacyAddressBuffer = getLegacyAddress(existingPublicKey);
 			const expectedLegacyAccount = {
-				legacyAddress: getFirstEightBytesReversed(hash(existingPublicKey)).toString('hex'),
+				legacyAddress: legacyAddressBuffer.toString('hex'),
 				balance: '1000',
 			};
 
-			when(mockStoreHas)
-				.calledWith(Buffer.from(expectedLegacyAccount.legacyAddress, 'hex'))
-				.mockReturnValue(true);
+			when(mockStoreHas).calledWith(legacyAddressBuffer).mockReturnValue(true);
 			when(mockGetWithSchema)
-				.calledWith(
-					Buffer.from(expectedLegacyAccount.legacyAddress, 'hex'),
-					legacyAccountResponseSchema,
-				)
+				.calledWith(legacyAddressBuffer, legacyAccountResponseSchema)
 				.mockReturnValue(expectedLegacyAccount);
 
 			const legacyAccount = await legacyEndpoint.getLegacyAccount(context);
@@ -121,16 +117,15 @@ describe('LegacyEndpoint', () => {
 				},
 			});
 
+			const legacyAddressBuffer = getLegacyAddress(nonExistingPublicKey);
 			const expectedLegacyAccount = {
-				legacyAddress: getFirstEightBytesReversed(hash(nonExistingPublicKey)).toString('hex'),
+				legacyAddress: legacyAddressBuffer.toString('hex'),
 				balance: '0',
 			};
 
-			when(mockStoreHas)
-				.calledWith(Buffer.from(expectedLegacyAccount.legacyAddress, 'hex'))
-				.mockReturnValue(false);
+			when(mockStoreHas).calledWith(legacyAddressBuffer).mockReturnValue(false);
 			when(mockGetWithSchema)
-				.calledWith(nonExistingPublicKey, legacyAccountResponseSchema)
+				.calledWith(legacyAddressBuffer, legacyAccountResponseSchema)
 				.mockRejectedValue(new NotFoundError(Buffer.alloc(0).toString('hex')));
 
 			const legacyAccount = await legacyEndpoint.getLegacyAccount(context);

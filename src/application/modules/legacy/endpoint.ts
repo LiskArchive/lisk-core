@@ -38,15 +38,16 @@ export class LegacyEndpoint extends BaseEndpoint {
 		const legacyStore = this.stores.get(LegacyAccountStore);
 
 		try {
-			const legacyAddress = getLegacyAddress(publicKey).toString('hex');
-			const hasLegacyAddress = await legacyStore.has(ctx, Buffer.from(legacyAddress, 'hex'));
+			const legacyAddressBuffer = getLegacyAddress(publicKey);
+			const legacyAddress = legacyAddressBuffer.toString('hex');
+			const hasLegacyAddress = await legacyStore.has(ctx, legacyAddressBuffer);
 			if (!hasLegacyAddress) {
 				return {
 					legacyAddress,
 					balance: '0',
 				};
 			}
-			const legacyAccount = await legacyStore.get(ctx, Buffer.from(legacyAddress, 'hex'));
+			const legacyAccount = await legacyStore.get(ctx, legacyAddressBuffer);
 			return {
 				legacyAddress,
 				balance: legacyAccount.balance.toString(),

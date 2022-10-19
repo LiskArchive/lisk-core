@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-import { BaseCommand, cryptography, VerifyStatus } from 'lisk-sdk';
+import { BaseCommand, VerifyStatus } from 'lisk-sdk';
 
 import { when } from 'jest-when';
 
@@ -23,15 +23,7 @@ import {
 	reclaimParamsSchema,
 	legacyAccountResponseSchema,
 } from '../../../../../src/application/modules/legacy/schemas';
-
-const {
-	legacyAddress: { getFirstEightBytesReversed },
-	utils: { hash },
-} = cryptography;
-
-const getLegacyAddress = (publicKey): any => {
-	return getFirstEightBytesReversed(hash(Buffer.from(publicKey, 'hex')));
-};
+import { getLegacyAddress } from '../../../../../src/application/modules/legacy/utils';
 
 const getContext = (amount, publicKey, getMethodContext, getStore, eventQueue): any => {
 	const params = { amount: BigInt(amount) };
@@ -52,7 +44,7 @@ describe('Reclaim command', () => {
 	let reclaimCommand: ReclaimCommand;
 	let mint: any;
 	const senderPublicKey = '275ce55f7b42fab1a12f718a14eb886f59631d172e236be46255c33506a64c6c';
-	const legacyAddress = getLegacyAddress(senderPublicKey);
+	const legacyAddress = getLegacyAddress(Buffer.from(senderPublicKey, 'hex'));
 	const reclaimBalance = BigInt(10000);
 	const mockGetWithSchema = jest.fn();
 	const mockStoreHas = jest.fn();

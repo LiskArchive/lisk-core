@@ -27,10 +27,10 @@ export const createAccountWithLegacyInfo = () => {
 	);
 	return {
 		passphrase,
+		legacyAddress,
 		privateKey: privateKey.toString('hex'),
 		publicKey: publicKey.toString('hex'),
 		address: address.toString('hex'),
-		legacyAddress: legacyAddress.toString(),
 		firstEightBytesReversed: firstEightBytesReversed.toString('hex'),
 	};
 };
