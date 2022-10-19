@@ -16,20 +16,16 @@ import {
 	JSONObject,
 	ModuleEndpointContext,
 	chain,
-	cryptography,
 	validator as liskValidator,
 } from 'lisk-sdk';
 import { legacyAccountRequestSchema } from './schemas';
 import { LegacyAccountStore } from './stores/legacyAccountStore';
 import { LegacyStoreData } from './types';
+import { getLegacyAddress } from './utils';
 
 // eslint-disable-next-line prefer-destructuring
 const validator: liskValidator.LiskValidator = liskValidator.validator;
 
-const {
-	legacyAddress: { getFirstEightBytesReversed },
-	utils: { hash },
-} = cryptography;
 const { NotFoundError } = chain;
 
 export class LegacyEndpoint extends BaseEndpoint {
@@ -42,7 +38,7 @@ export class LegacyEndpoint extends BaseEndpoint {
 		const legacyStore = this.stores.get(LegacyAccountStore);
 
 		try {
-			const legacyAddress = getFirstEightBytesReversed(hash(publicKey)).toString('hex');
+			const legacyAddress = getLegacyAddress(publicKey).toString('hex');
 			const hasLegacyAddress = await legacyStore.has(ctx, Buffer.from(legacyAddress, 'hex'));
 			if (!hasLegacyAddress) {
 				return {

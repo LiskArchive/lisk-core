@@ -25,11 +25,12 @@ import {
 } from '../../../../../src/application/modules/legacy/schemas';
 
 const {
-	legacyAddress: { getLegacyAddressFromPublicKey },
+	legacyAddress: { getFirstEightBytesReversed },
+	utils: { hash },
 } = cryptography;
 
 const getLegacyAddress = (publicKey): any => {
-	return Buffer.from(getLegacyAddressFromPublicKey(Buffer.from(publicKey, 'hex')), 'hex');
+	return getFirstEightBytesReversed(hash(Buffer.from(publicKey, 'hex')));
 };
 
 const getContext = (amount, publicKey, getMethodContext, getStore, eventQueue): any => {

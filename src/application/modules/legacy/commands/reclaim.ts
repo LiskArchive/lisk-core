@@ -27,6 +27,7 @@ import { ADDRESS_LEGACY_RESERVE } from '../constants';
 
 import { reclaimParamsSchema } from '../schemas';
 import { ReclaimParamsData, TokenIDReclaim } from '../types';
+import { getLegacyAddress } from '../utils';
 import { LegacyAccountStore } from '../stores/legacyAccountStore';
 import { ReclaimEvent } from '../events/reclaim';
 
@@ -34,11 +35,7 @@ import { ReclaimEvent } from '../events/reclaim';
 const validator: liskValidator.LiskValidator = liskValidator.validator;
 const {
 	address: { getAddressFromPublicKey },
-	legacyAddress: { getLegacyAddressFromPublicKey },
 } = cryptography;
-
-const getLegacyAddress = (publicKey): Buffer =>
-	Buffer.from(getLegacyAddressFromPublicKey(publicKey), 'hex');
 
 export class ReclaimCommand extends BaseCommand {
 	public schema = reclaimParamsSchema;
