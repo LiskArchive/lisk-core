@@ -41,7 +41,7 @@ import {
 import { ModuleConfig, ModuleConfigJSON, ModuleInitArgs, genesisLegacyStoreData } from './types';
 import { getModuleConfig } from './utils';
 import { LegacyAccountStore } from './stores/legacyAccountStore';
-import { ReclaimCommand } from './commands/reclaim';
+import { ReclaimLSKCommand } from './commands/reclaim';
 import { RegisterKeysCommand } from './commands/register_keys';
 import { ReclaimEvent } from './events/reclaim';
 import { RegisterKeysEvent } from './events/registerKeys';
@@ -57,7 +57,7 @@ export class LegacyModule extends BaseModule {
 	private _validatorsMethod!: ValidatorsMethod;
 	private _moduleConfig!: ModuleConfig;
 
-	private readonly _reclaimCommand = new ReclaimCommand(this.stores, this.events);
+	private readonly _reclaimLSKCommand = new ReclaimLSKCommand(this.stores, this.events);
 	private readonly _registerKeysCommand = new RegisterKeysCommand(this.stores, this.events);
 
 	public constructor() {
@@ -68,12 +68,12 @@ export class LegacyModule extends BaseModule {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/member-ordering
-	public commands = [this._reclaimCommand, this._registerKeysCommand];
+	public commands = [this._reclaimLSKCommand, this._registerKeysCommand];
 
 	public addDependencies(tokenAPI: TokenMethod, validatorsMethod: ValidatorsMethod) {
 		this._tokenMethod = tokenAPI;
 		this._validatorsMethod = validatorsMethod;
-		this._reclaimCommand.addDependencies(this._tokenMethod);
+		this._reclaimLSKCommand.addDependencies(this._tokenMethod);
 		this._registerKeysCommand.addDependencies(this._validatorsMethod);
 	}
 
@@ -100,7 +100,7 @@ export class LegacyModule extends BaseModule {
 		const { moduleConfig } = args;
 		const config = utils.objects.mergeDeep({}, defaultConfig, moduleConfig) as ModuleConfigJSON;
 		this._moduleConfig = getModuleConfig(config);
-		this._reclaimCommand.init({ tokenIDReclaim: this._moduleConfig.tokenIDReclaim });
+		this._reclaimLSKCommand.init({ tokenIDReclaim: this._moduleConfig.tokenIDReclaim });
 	}
 
 	public async initGenesisState(ctx: GenesisBlockExecuteContext): Promise<void> {

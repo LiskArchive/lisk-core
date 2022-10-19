@@ -37,7 +37,7 @@ const {
 	address: { getAddressFromPublicKey },
 } = cryptography;
 
-export class ReclaimCommand extends BaseCommand {
+export class ReclaimLSKCommand extends BaseCommand {
 	public schema = reclaimParamsSchema;
 	public legacyReserveAddress = ADDRESS_LEGACY_RESERVE;
 	private _tokenMethod!: TokenMethod;
