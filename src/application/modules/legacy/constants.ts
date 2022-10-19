@@ -23,7 +23,7 @@ export const LEGACY_ACCOUNT_LENGTH = 8;
 export const LEGACY_ACC_MAX_TOTAL_BAL_NON_INC = 2 ** 64;
 
 // Commands
-export const COMMAND_RECLAIM = 'reclaim';
+export const COMMAND_RECLAIM = 'reclaimLSK';
 export const COMMAND_REGISTER_KEYS = 'registerKeys';
 export const ADDRESS_LEGACY_RESERVE = hash(Buffer.from('legacyReserve', 'utf8')).slice(0, 20);
 export const TOKEN_ID_LSK = '0000000000000000';

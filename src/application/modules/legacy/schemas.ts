@@ -30,8 +30,8 @@ export const legacyAccountResponseSchema = {
 	},
 };
 
-export const reclaimParamsSchema = {
-	$id: 'lisk/legacy/reclaim',
+export const reclaimLSKParamsSchema = {
+	$id: 'lisk/legacy/reclaimLSK',
 	type: 'object',
 	required: ['amount'],
 	properties: {

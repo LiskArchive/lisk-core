@@ -25,23 +25,20 @@ import {
 
 import { ADDRESS_LEGACY_RESERVE } from '../constants';
 
-import { reclaimParamsSchema } from '../schemas';
-import { ReclaimParamsData, TokenIDReclaim } from '../types';
+import { reclaimLSKParamsSchema } from '../schemas';
+import { ReclaimLSKParamsData, TokenIDReclaim } from '../types';
+import { getLegacyAddress } from '../utils';
 import { LegacyAccountStore } from '../stores/legacyAccountStore';
-import { ReclaimEvent } from '../events/reclaim';
+import { ReclaimLSKEvent } from '../events/reclaim';
 
 // eslint-disable-next-line prefer-destructuring
 const validator: liskValidator.LiskValidator = liskValidator.validator;
 const {
 	address: { getAddressFromPublicKey },
-	legacyAddress: { getLegacyAddressFromPublicKey },
 } = cryptography;
 
-const getLegacyAddress = (publicKey): Buffer =>
-	Buffer.from(getLegacyAddressFromPublicKey(publicKey), 'hex');
-
-export class ReclaimCommand extends BaseCommand {
-	public schema = reclaimParamsSchema;
+export class ReclaimLSKCommand extends BaseCommand {
+	public schema = reclaimLSKParamsSchema;
 	public legacyReserveAddress = ADDRESS_LEGACY_RESERVE;
 	private _tokenMethod!: TokenMethod;
 	private _tokenIDReclaim!: TokenIDReclaim;
@@ -55,10 +52,10 @@ export class ReclaimCommand extends BaseCommand {
 	}
 
 	public async verify(ctx: CommandVerifyContext): Promise<VerificationResult> {
-		const params = (ctx.params as unknown) as ReclaimParamsData;
+		const params = (ctx.params as unknown) as ReclaimLSKParamsData;
 
 		try {
-			validator.validate(reclaimParamsSchema, params);
+			validator.validate(reclaimLSKParamsSchema, params);
 		} catch (err) {
 			return {
 				status: VerifyStatus.FAIL,
@@ -91,7 +88,7 @@ export class ReclaimCommand extends BaseCommand {
 	}
 
 	public async execute(ctx: CommandExecuteContext): Promise<void> {
-		const params = (ctx.params as unknown) as ReclaimParamsData;
+		const params = (ctx.params as unknown) as ReclaimLSKParamsData;
 		const legacyAddress = getLegacyAddress(ctx.transaction.senderPublicKey);
 		const legacyStore = this.stores.get(LegacyAccountStore);
 		await legacyStore.del(ctx, legacyAddress);
@@ -114,8 +111,8 @@ export class ReclaimCommand extends BaseCommand {
 			params.amount,
 		);
 
-		const reclaimEvent = this.events.get(ReclaimEvent);
-		reclaimEvent.log(ctx.getMethodContext(), {
+		const reclaimLSKEvent = this.events.get(ReclaimLSKEvent);
+		reclaimLSKEvent.log(ctx.getMethodContext(), {
 			legacyAddress,
 			address,
 			amount: params.amount,
