@@ -43,7 +43,7 @@ import { getModuleConfig } from './utils';
 import { LegacyAccountStore } from './stores/legacyAccountStore';
 import { ReclaimLSKCommand } from './commands/reclaim';
 import { RegisterKeysCommand } from './commands/register_keys';
-import { ReclaimEvent } from './events/reclaim';
+import { ReclaimLSKEvent } from './events/reclaim';
 import { RegisterKeysEvent } from './events/registerKeys';
 
 // eslint-disable-next-line prefer-destructuring
@@ -63,7 +63,7 @@ export class LegacyModule extends BaseModule {
 	public constructor() {
 		super();
 		this.stores.register(LegacyAccountStore, new LegacyAccountStore(this.name));
-		this.events.register(ReclaimEvent, new ReclaimEvent(this.name));
+		this.events.register(ReclaimLSKEvent, new ReclaimLSKEvent(this.name));
 		this.events.register(RegisterKeysEvent, new RegisterKeysEvent(this.name));
 	}
 

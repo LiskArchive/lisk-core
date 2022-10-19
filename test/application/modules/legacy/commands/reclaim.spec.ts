@@ -20,7 +20,7 @@ import { COMMAND_RECLAIM } from '../../../../../src/application/modules/legacy/c
 import { LegacyModule } from '../../../../../src/application/modules/legacy/module';
 import { ReclaimLSKCommand } from '../../../../../src/application/modules/legacy/commands/reclaim';
 import {
-	reclaimParamsSchema,
+	reclaimLSKParamsSchema,
 	legacyAccountResponseSchema,
 } from '../../../../../src/application/modules/legacy/schemas';
 import { getLegacyAddress } from '../../../../../src/application/modules/legacy/utils';
@@ -82,7 +82,7 @@ describe('Reclaim command', () => {
 		});
 
 		it('should have valid schema', () => {
-			expect(reclaimLSKCommand.schema).toEqual(reclaimParamsSchema);
+			expect(reclaimLSKCommand.schema).toEqual(reclaimLSKParamsSchema);
 		});
 	});
 
@@ -143,7 +143,7 @@ describe('Reclaim command', () => {
 			);
 		});
 
-		it('should throw error when transaction params does not follow reclaimParamsSchema', async () => {
+		it('should throw error when transaction params does not follow reclaimLSKParamsSchema', async () => {
 			const params = { balance: reclaimBalance };
 
 			const commandVerifyContextInput = {
