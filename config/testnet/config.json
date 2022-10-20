@@ -1,38 +1,25 @@
 {
-	"networkVersion": "3.1",
-	"label": "testnet",
-	"genesisConfig": {
-		"blockTime": 10,
-		"communityIdentifier": "Lisk",
-		"maxPayloadLength": 15360,
-		"bftThreshold": 68,
-		"minFeePerByte": 1000,
-		"baseFees": [
-			{
-				"moduleID": 5,
-				"assetID": 0,
-				"baseFee": "1000000000"
-			}
-		],
-		"rewards": {
-			"milestones": ["500000000", "400000000", "300000000", "200000000", "100000000"],
-			"offset": 2160,
-			"distance": 3000000
-		},
-		"minRemainingBalance": "5000000",
-		"activeDelegates": 101,
-		"standbyDelegates": 2,
-		"delegateListRoundOffset": 2,
-		"unlockFixHeight": 14867989,
-		"transferFixHeight": 15466999,
-		"serializationFixHeight": 15466999
+	"system": {
+		"dataPath": "~/.lisk",
+		"keepEventsForHeights": 300,
+		"logLevel": "info"
 	},
-	"logger": {
-		"fileLogLevel": "error",
-		"consoleLogLevel": "info"
+	"genesis": {
+		"block": {
+			"fromFile": "./config/genesis_block.blob"
+		},
+		"blockTime": 10,
+		"bftBatchSize": 103,
+		"chainID": "01000000",
+		"maxTransactionsSize": 15360
+	},
+	"generator": {
+		"keys": {
+			"fromFile": "./config/dev-validators.json"
+		}
 	},
 	"network": {
-		"port": 7001,
+		"version": "4.0",
 		"seedPeers": [
 			{
 				"ip": "testnet-seed-01.lisk.com",
@@ -54,11 +41,16 @@
 				"ip": "testnet-seed-05.lisk.com",
 				"port": 7001
 			}
-		]
+		],
+		"port": 7001
 	},
-	"forging": {
-		"waitThreshold": 2,
-		"delegates": []
+	"transactionPool": {
+		"maxTransactions": 4096,
+		"maxTransactionsPerAccount": 64,
+		"transactionExpiryTime": 10800000,
+		"minEntranceFeePriority": "0",
+		"minReplacementFeeDifference": "10"
 	},
+	"modules": {},
 	"plugins": {}
 }
