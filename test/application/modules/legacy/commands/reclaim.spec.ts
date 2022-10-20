@@ -12,25 +12,18 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-import { BaseCommand, cryptography, VerifyStatus } from 'lisk-sdk';
+import { BaseCommand, VerifyStatus } from 'lisk-sdk';
 
 import { when } from 'jest-when';
 
 import { COMMAND_RECLAIM } from '../../../../../src/application/modules/legacy/constants';
 import { LegacyModule } from '../../../../../src/application/modules/legacy/module';
-import { ReclaimCommand } from '../../../../../src/application/modules/legacy/commands/reclaim';
+import { ReclaimLSKCommand } from '../../../../../src/application/modules/legacy/commands/reclaim';
 import {
-	reclaimParamsSchema,
+	reclaimLSKParamsSchema,
 	legacyAccountResponseSchema,
 } from '../../../../../src/application/modules/legacy/schemas';
-
-const {
-	legacyAddress: { getLegacyAddressFromPublicKey },
-} = cryptography;
-
-const getLegacyAddress = (publicKey): any => {
-	return Buffer.from(getLegacyAddressFromPublicKey(Buffer.from(publicKey, 'hex')), 'hex');
-};
+import { getLegacyAddress } from '../../../../../src/application/modules/legacy/utils';
 
 const getContext = (amount, publicKey, getMethodContext, getStore, eventQueue): any => {
 	const params = { amount: BigInt(amount) };
@@ -48,10 +41,10 @@ const getContext = (amount, publicKey, getMethodContext, getStore, eventQueue): 
 };
 
 describe('Reclaim command', () => {
-	let reclaimCommand: ReclaimCommand;
+	let reclaimLSKCommand: ReclaimLSKCommand;
 	let mint: any;
 	const senderPublicKey = '275ce55f7b42fab1a12f718a14eb886f59631d172e236be46255c33506a64c6c';
-	const legacyAddress = getLegacyAddress(senderPublicKey);
+	const legacyAddress = getLegacyAddress(Buffer.from(senderPublicKey, 'hex'));
 	const reclaimBalance = BigInt(10000);
 	const mockGetWithSchema = jest.fn();
 	const mockStoreHas = jest.fn();
@@ -75,21 +68,21 @@ describe('Reclaim command', () => {
 	beforeEach(() => {
 		mint = jest.fn();
 		const module = new LegacyModule();
-		reclaimCommand = new ReclaimCommand(module.stores, module.events);
-		reclaimCommand.addDependencies({ mint } as any);
+		reclaimLSKCommand = new ReclaimLSKCommand(module.stores, module.events);
+		reclaimLSKCommand.addDependencies({ mint } as any);
 	});
 
 	it('should inherit from BaseCommand', () => {
-		expect(ReclaimCommand.prototype).toBeInstanceOf(BaseCommand);
+		expect(ReclaimLSKCommand.prototype).toBeInstanceOf(BaseCommand);
 	});
 
 	describe('constructor', () => {
 		it('should have valid name', () => {
-			expect(reclaimCommand.name).toBe(COMMAND_RECLAIM);
+			expect(reclaimLSKCommand.name).toBe(COMMAND_RECLAIM);
 		});
 
 		it('should have valid schema', () => {
-			expect(reclaimCommand.schema).toEqual(reclaimParamsSchema);
+			expect(reclaimLSKCommand.schema).toEqual(reclaimLSKParamsSchema);
 		});
 	});
 
@@ -108,7 +101,7 @@ describe('Reclaim command', () => {
 				.calledWith(legacyAddress, legacyAccountResponseSchema)
 				.mockReturnValue({ balance: reclaimBalance });
 
-			await expect(reclaimCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
+			await expect(reclaimLSKCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
 				'status',
 				VerifyStatus.OK,
 			);
@@ -128,7 +121,7 @@ describe('Reclaim command', () => {
 				.calledWith(legacyAddress, legacyAccountResponseSchema)
 				.mockReturnValue({ balance: reclaimBalance });
 
-			await expect(reclaimCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
+			await expect(reclaimLSKCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
 				'status',
 				VerifyStatus.FAIL,
 			);
@@ -144,13 +137,13 @@ describe('Reclaim command', () => {
 			);
 
 			when(mockStoreHas).calledWith(legacyAddress).mockReturnValue(false);
-			await expect(reclaimCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
+			await expect(reclaimLSKCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
 				'status',
 				VerifyStatus.FAIL,
 			);
 		});
 
-		it('should throw error when transaction params does not follow reclaimParamsSchema', async () => {
+		it('should throw error when transaction params does not follow reclaimLSKParamsSchema', async () => {
 			const params = { balance: reclaimBalance };
 
 			const commandVerifyContextInput = {
@@ -162,7 +155,7 @@ describe('Reclaim command', () => {
 				getMethodContext,
 			} as any;
 
-			await expect(reclaimCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
+			await expect(reclaimLSKCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
 				'status',
 				VerifyStatus.FAIL,
 			);
@@ -186,12 +179,12 @@ describe('Reclaim command', () => {
 			when(mockGetWithSchema)
 				.calledWith(legacyAddress, legacyAccountResponseSchema)
 				.mockReturnValue({ balance: reclaimBalance });
-			reclaimCommand.addDependencies({
+			reclaimLSKCommand.addDependencies({
 				unlock,
 				transfer,
 			} as any);
 
-			await reclaimCommand.execute(commandExecuteContextInput);
+			await reclaimLSKCommand.execute(commandExecuteContextInput);
 			expect(unlock).toHaveBeenCalledTimes(1);
 			expect(transfer).toHaveBeenCalledTimes(1);
 		});
