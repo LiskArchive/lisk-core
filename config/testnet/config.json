@@ -19,7 +19,7 @@
 		}
 	},
 	"network": {
-		"version": "1.0",
+		"version": "4.0",
 		"seedPeers": [
 			{
 				"ip": "testnet-seed-01.lisk.com",
