@@ -30,9 +30,10 @@ If you have satisfied the requirements from the Pre-Installation section, you ca
 
 The following dependencies need to be installed in order to run applications created with the Lisk SDK:
 
-| Dependencies | Version |
-| ------------ | ------- |
-| NodeJS       | 16.14.2 |
+| Dependencies             | Version |
+| ------------------------ | ------- |
+| NodeJS                   | 16.14.2 |
+| Python (for development) | 2.7.18  |
 
 You can find further details on installing these dependencies in our [pre-installation setup guide](https://lisk.com/documentation/lisk-core/setup/source.html#source-pre-install).
 Clone the Lisk Core repository using Git and initialize the modules.
@@ -42,7 +43,8 @@ Clone the Lisk Core repository using Git and initialize the modules.
 ```bash
 git clone https://github.com/LiskHQ/lisk-core.git
 cd lisk-core
-git checkout master
+git checkout main
+nvm install
 npm ci
 npm run build
 ./bin/run --help
@@ -53,11 +55,12 @@ npm run build
 <!-- usage -->
 
 ```sh-session
+$ nvm install v16.14.2
 $ npm install -g lisk-core
 $ lisk-core COMMAND
 running command...
 $ lisk-core (-v|--version|version)
-lisk-core/3.0.0 darwin-x64 node-v16.14.2
+lisk-core/4.0.0 darwin-x64 node-v16.14.2
 $ lisk-core --help [COMMAND]
 USAGE
   $ lisk-core COMMAND
@@ -71,7 +74,7 @@ USAGE
 # Command Topics
 
 - [`lisk-core account`](docs/commands/account.md) - Commands relating to Lisk Core accounts.
-- [`lisk-core autocomplete`](docs/commands/autocomplete.md) - display autocomplete installation instructions
+- [`lisk-core autocomplete`](docs/commands/autocomplete.md) - Display autocomplete installation instructions.
 - [`lisk-core block`](docs/commands/block.md) - Commands relating to Lisk Core blocks.
 - [`lisk-core blockchain`](docs/commands/blockchain.md) - Commands relating to Lisk Core blockchain data.
 - [`lisk-core config`](docs/commands/config.md) - Commands relating to Lisk Core node configuration.
@@ -79,7 +82,7 @@ USAGE
 - [`lisk-core forging`](docs/commands/forging.md) - Commands relating to Lisk Core forging.
 - [`lisk-core genesis-block`](docs/commands/genesis-block.md) - Download genesis block.
 - [`lisk-core hash-onion`](docs/commands/hash-onion.md) - Create hash onions to be used by the forger.
-- [`lisk-core help`](docs/commands/help.md) - display help for lisk-core
+- [`lisk-core help`](docs/commands/help.md) - display help for lisk-core.
 - [`lisk-core node`](docs/commands/node.md) - Commands relating to Lisk Core node.
 - [`lisk-core passphrase`](docs/commands/passphrase.md) - Commands relating to Lisk Core passphrases.
 - [`lisk-core sdk`](docs/commands/sdk.md) - Commands relating to Lisk SDK development.
@@ -95,6 +98,7 @@ To start a Lisk Core node as a background process, we recommend using a process 
 ### Example using PM2
 
 ```
+nvm install v16.14.2
 npm i -g pm2
 pm2 start "lisk-core start" --name lisk-mainnet
 pm2 status
@@ -111,7 +115,7 @@ Also, custom configuration through JSON file is available through the `--config,
 
 ### Example
 
-With custom config file `./custom-config.json` below
+With custom config file `./custom-config.json` below:
 
 ```
 {
@@ -176,7 +180,7 @@ npm test
 In order to run a node for a local test, in a root folder of lisk-core, run below command.
 
 ```
-./bin/run start -n devnet --data-path ./devnet-data --port 3333 --api-ws --enable-forger-plugin
+./bin/run start -n devnet --data-path ./devnet-data --port 3333 --api-ipc --enable-forger-plugin
 ```
 
 This command will start a lisk-core node using data path `./devnet-data` with HTTPAPI and Forger Plugins.
