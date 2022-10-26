@@ -43,7 +43,7 @@ const createAndSignTransaction = async (
 
 export const createTransferTransaction = async (
 	input: {
-		nonce: bigint,
+		nonce: bigint;
 		recipientAddress: string;
 		amount?: bigint;
 		fromAccount: any;
@@ -82,7 +82,9 @@ export const createDelegateRegisterTransaction = async (
 	},
 	client: apiClient.APIClient,
 ): Promise<Record<string, unknown>> => {
-	const { publicKey, privateKey } = cryptography.legacy.getPrivateAndPublicKeyFromPassphrase(input.account.passphrase);
+	const { publicKey, privateKey } = cryptography.legacy.getPrivateAndPublicKeyFromPassphrase(
+		input.account.passphrase,
+	);
 	const params = {
 		name: input.name,
 		blsKey: input.account.blsKey,

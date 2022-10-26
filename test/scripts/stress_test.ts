@@ -41,7 +41,7 @@ const wait = async (ms = 10000) => new Promise<void>(resolve => setTimeout(() =>
 const start = async (count = STRESS_COUNT) => {
 	// const URL = process.env.WS_SERVER_URL || 'ws://localhost:7887/rpc-ws';
 	const client = await apiClient.createIPCClient('~/.lisk/lisk-core');
-	const accounts:any = await Promise.all([...Array(count)].map(async () => await createAccount()));
+	const accounts: any = await Promise.all([...Array(count)].map(async () => await createAccount()));
 
 	const accountsLen = accounts.length;
 	// Due to TPool limit of 64 trx/account, fund initial accounts

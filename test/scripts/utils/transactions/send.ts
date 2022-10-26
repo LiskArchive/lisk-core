@@ -124,8 +124,8 @@ export const sendDelegateRegistrationTransaction = async (
 		},
 		client,
 	);
-	console.log(transaction)
-	console.log(account.address)
+	console.log(transaction);
+	console.log(account.address);
 
 	await handleTransaction(transaction, 'delegate registration', client);
 };

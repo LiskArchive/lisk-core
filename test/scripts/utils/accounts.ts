@@ -29,10 +29,7 @@ export const createAccount = async () => {
 	const generatorKeyPath = `m/25519'/134'/0'/0'`;
 	const blsKeyPath = `m/12381/134/0/0`;
 
-	const privateKey = await cryptography.ed.getKeyPairFromPhraseAndPath(
-		passphrase,
-		accountKeyPath,
-	);
+	const privateKey = await cryptography.ed.getKeyPairFromPhraseAndPath(passphrase, accountKeyPath);
 	const publicKey = cryptography.ed.getPublicKeyFromPrivateKey(privateKey);
 	const address = cryptography.address.getAddressFromPublicKey(publicKey);
 	const generatorPrivateKey = await cryptography.ed.getKeyPairFromPhraseAndPath(
