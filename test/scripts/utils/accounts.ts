@@ -20,27 +20,57 @@ export interface PassphraseAndKeys {
 	passphrase: string;
 	privateKey?: Buffer;
 	publicKey: Buffer;
-	address: Buffer;
+	address: string;
 }
 
-export const createAccount = () => {
+export const createAccount = async () => {
 	const passphrase = Mnemonic.generateMnemonic();
-	const { privateKey, publicKey } = cryptography.getKeys(passphrase);
-	const address = cryptography.getAddressFromPublicKey(publicKey);
+	const accountKeyPath = `m/44'/134'/0'`;
+	const generatorKeyPath = `m/25519'/134'/0'/0'`;
+	const blsKeyPath = `m/12381/134/0/0`;
+
+	const privateKey = await cryptography.ed.getKeyPairFromPhraseAndPath(
+		passphrase,
+		accountKeyPath,
+	);
+	const publicKey = cryptography.ed.getPublicKeyFromPrivateKey(privateKey);
+	const address = cryptography.address.getAddressFromPublicKey(publicKey);
+	const generatorPrivateKey = await cryptography.ed.getKeyPairFromPhraseAndPath(
+		passphrase,
+		generatorKeyPath,
+	);
+	const generatorPublicKey = cryptography.ed.getPublicKeyFromPrivateKey(generatorPrivateKey);
+	const blsPrivateKey = await cryptography.bls.getPrivateKeyFromPhraseAndPath(
+		passphrase,
+		blsKeyPath,
+	);
+	const blsPublicKey = cryptography.bls.getPublicKeyFromPrivateKey(blsPrivateKey);
 
 	return {
 		passphrase,
 		privateKey,
 		publicKey,
-		address,
+		blsKey: blsPublicKey,
+		generatorKey: generatorPublicKey,
+		proofOfPossession: cryptography.bls.popProve(blsPrivateKey),
+		address: cryptography.address.getLisk32AddressFromAddress(address),
 	};
 };
 
-const passphrase = 'peanut hundred pen hawk invite exclude brain chunk gadget wait wrong ready';
+const passphrase =
+	'economy cliff diamond van multiply general visa picture actor teach cruel tree adjust quit maid hurry fence peace glare library curve soap cube must';
+const accountKeyPath = "m/44'/134'/0'";
 
-export const genesisAccount = {
-	address: cryptography.getAddressFromPassphrase(passphrase),
-	...cryptography.getKeys(passphrase),
-	passphrase,
-	password: 'elephant tree paris dragon chair galaxy',
+export const genesisAccount = async () => {
+	const privateKey = await cryptography.ed.getKeyPairFromPhraseAndPath(passphrase, accountKeyPath);
+	const publicKey = cryptography.ed.getPublicKeyFromPrivateKey(privateKey);
+
+	return {
+		address: cryptography.address.getLisk32AddressFromPublicKey(publicKey),
+		...cryptography.legacy.getKeys(passphrase),
+		passphrase,
+		password: 'elephant tree paris dragon chair galaxy',
+		publicKey,
+		privateKey,
+	};
 };
