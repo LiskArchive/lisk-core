@@ -14,18 +14,19 @@
 /* eslint-disable no-console */
 
 import { apiClient } from 'lisk-sdk';
-import { PassphraseAndKeys, createAccount, genesisAccount } from './utils/accounts';
+import { PassphraseAndKeys, createAccount, genesisAccount, Account } from './utils/accounts';
 import {
 	sendTokenTransferTransactions,
 	sendDelegateRegistrationTransaction,
-	// sendVoteTransaction,
-	// getBeddows,
+	sendVoteTransaction,
+	getBeddows,
 	// sendMultiSigRegistrationTransaction,
 	// sendTransferTransactionFromMultiSigAccount,
 } from './utils/transactions/send';
+
 import { wait } from './utils/wait';
 
-const TRANSACTIONS_PER_ACCOUNT = 64;
+const TRANSACTIONS_PER_ACCOUNT = 1;
 const ITERATIONS = process.env.ITERATIONS ?? '1';
 const STRESS_COUNT = TRANSACTIONS_PER_ACCOUNT * parseInt(ITERATIONS, 10);
 
@@ -40,11 +41,13 @@ const chunkArray = (myArray: PassphraseAndKeys[], chunkSize = TRANSACTIONS_PER_A
 const start = async (count = STRESS_COUNT) => {
 	// const URL = process.env.WS_SERVER_URL || 'ws://localhost:7887/rpc-ws';
 	const client = await apiClient.createIPCClient('~/.lisk/lisk-core');
-	const accounts: any = await Promise.all([...Array(count)].map(async () => await createAccount()));
+	const accounts: Account[] = await Promise.all(
+		[...Array(count)].map(async () => await createAccount()),
+	);
 
 	const accountsLen = accounts.length;
 	// Due to TPool limit of 64 trx/account, fund initial accounts
-	const fundInitialAccount: any[] = accounts.slice(0, TRANSACTIONS_PER_ACCOUNT);
+	const fundInitialAccount: Account[] = accounts.slice(0, TRANSACTIONS_PER_ACCOUNT);
 	await sendTokenTransferTransactions(fundInitialAccount, await genesisAccount(), true, client);
 
 	// Wait for 2 blocks
@@ -62,28 +65,28 @@ const start = async (count = STRESS_COUNT) => {
 		await sendDelegateRegistrationTransaction(accounts[i], client);
 	}
 
-	// console.log('\n');
-	// await wait(20000);
-	// // Vote
-	// for (let i = 0; i < accountsLen; i += 1) {
-	// 	const votes = [
-	// 		{ delegateAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('20') },
-	// 		{
-	// 			delegateAddress: Buffer.from('5ade564399e670bd1d429583059067f3a6ca2b7f', 'hex'),
-	// 			amount: getBeddows('10'),
-	// 		},
-	// 	];
-	// 	await sendVoteTransaction(nodeInfo, accounts[i], votes, client);
-	// }
+	console.log('\n');
+	await wait(20000);
+	// Vote
+	for (let i = 0; i < accountsLen; i += 1) {
+		const votes: any = [
+			// { delegateAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('20') },
+			{
+				delegateAddress: 'lskrs9n229jt6ke5xrgc5nbffc9k5ww7arv5xhzwr',
+				amount: getBeddows('10'),
+			},
+		];
+		await sendVoteTransaction(accounts[i], votes, client);
+	}
 
-	// console.log('\n');
-	// await wait(20000);
-	// // Unvote
+	console.log('\n');
+	await wait(20000);
+	// Unvote
 	// for (let i = 0; i < accountsLen; i += 1) {
-	// 	const unVotes = [
+	// 	const unVotes: any = [
 	// 		{ delegateAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('-10') },
 	// 	];
-	// 	await sendVoteTransaction(nodeInfo, accounts[i], unVotes, client);
+	// 	await sendVoteTransaction(accounts[i], unVotes, client);
 	// }
 
 	// console.log('\n');

@@ -14,6 +14,7 @@
  */
 
 import { apiClient, cryptography } from 'lisk-sdk';
+import { Account } from '../accounts';
 
 export interface Vote {
 	delegateAddress: Buffer;
@@ -76,9 +77,10 @@ export const createTransferTransaction = async (
 
 export const createDelegateRegisterTransaction = async (
 	input: {
-		account: any;
+		account: Account;
 		name: string;
 		fee?: bigint;
+		nonce: bigint,
 	},
 	client: apiClient.APIClient,
 ): Promise<Record<string, unknown>> => {
@@ -94,6 +96,7 @@ export const createDelegateRegisterTransaction = async (
 
 	const tx = await createAndSignTransaction(
 		{
+			nonce:input.nonce,
 			module: 'dpos',
 			command: 'registerDelegate',
 			senderPublicKey: publicKey.toString('hex'),
@@ -108,38 +111,39 @@ export const createDelegateRegisterTransaction = async (
 	return tx;
 };
 
-// export const createDelegateVoteTransaction = async (
-// 	input: {
-// 		nonce: bigint;
-// 		networkIdentifier: Buffer;
-// 		passphrase: string;
-// 		votes: Vote[];
-// 		fee?: bigint;
-// 	},
-// 	client: apiClient.APIClient,
-// ): Promise<Record<string, unknown>> => {
-// 	const asset = {
-// 		votes: input.votes,
-// 	};
+export const createDelegateVoteTransaction = async (
+	input: {
+		nonce: bigint;
+		account: Account;
+		votes: Vote[];
+		fee?: bigint;
+	},
+	client: apiClient.APIClient,
+): Promise<Record<string, unknown>> => {
+	const params = {
+		votes: input.votes,
+	};
 
-// 	const { publicKey } = cryptography.getAddressAndPublicKeyFromPassphrase(input.passphrase);
+	const { publicKey, privateKey } = cryptography.legacy.getPrivateAndPublicKeyFromPassphrase(
+		input.account.passphrase,
+	);
 
-// 	const tx = await createAndSignTransaction(
-// 		{
-// 			moduleID: 5,
-// 			commandID: 1,
-// 			nonce: input.nonce,
-// 			senderPublicKey: publicKey,
-// 			fee: input.fee ?? BigInt('100000000'),
-// 			asset,
-// 			signatures: [],
-// 		},
-// 		[input.passphrase],
-// 		client,
-// 	);
+	const tx = await createAndSignTransaction(
+		{
+			module: 'dpos',
+			command: 'voteDelegate',
+			nonce: input.nonce,
+			senderPublicKey: publicKey.toString('hex'),
+			fee: input.fee ?? BigInt('100000000'),
+			params,
+			signatures: [],
+		},
+		privateKey.toString('hex'),
+		client,
+	);
 
-// 	return tx;
-// };
+	return tx;
+};
 
 // export const createMultiSignRegisterTransaction = async (
 // 	input: {

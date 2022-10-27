@@ -20,16 +20,17 @@ import {
 	transactions,
 	// RegisteredSchema
 } from 'lisk-sdk';
-import { PassphraseAndKeys } from '../accounts';
+
+import { Account, PassphraseAndKeys } from '../accounts';
 import {
 	createTransferTransaction,
 	createDelegateRegisterTransaction,
-	// createDelegateVoteTransaction,
-	// Vote,
+	createDelegateVoteTransaction,
+	Vote,
 	// createMultiSignRegisterTransaction,
 	// createMultisignatureTransferTransaction,
 } from './create';
-import { wait } from '../wait';
+// import { wait } from '../wait';
 
 export const getBeddows = (lskAmount: string) =>
 	BigInt(transactions.convertLSKToBeddows(lskAmount));
@@ -42,7 +43,7 @@ const generateRandomUserName = () => {
 	return [...Array(20)].map(() => base[(Math.random() * base.length) | 0]).join('');
 };
 
-const nonceSequenceItems = (AccountNonce: number, count = 63) => [
+const nonceSequenceItems = (AccountNonce: number, count = 0) => [
 	AccountNonce,
 	...Array.from({ length: count }, (_, k) => AccountNonce + k + 1),
 ];
@@ -112,51 +113,50 @@ export const sendTokenTransferTransactions = async (
 	for (let i = 0; i < transferTransactions.length; i += 1) {
 		await handleTransaction(transferTransactions[i], 'token transfer', client);
 		// TODO: Remove wait
-		await wait(20000);
+		// await wait(20000);
 	}
 };
 
 export const sendDelegateRegistrationTransaction = async (
-	account: PassphraseAndKeys,
+	account: Account,
 	client: apiClient.APIClient,
 ) => {
+	const AccountNonce = await getAccountNonce(account.address, client);
+
 	const name = generateRandomUserName();
 	const transaction = await createDelegateRegisterTransaction(
 		{
 			name,
+			nonce: BigInt(AccountNonce),
 			fee: getBeddows('15'),
 			account,
 		},
 		client,
 	);
 	console.log(transaction);
-	console.log(account.address);
 
 	await handleTransaction(transaction, 'delegate registration', client);
 };
 
-// export const sendVoteTransaction = async (
-// 	nodeInfo: Record<string, unknown>,
-// 	fromAccount: PassphraseAndKeys,
-// 	votes: Vote[],
-// 	client: apiClient.APIClient,
-// ) => {
-// 	const AccountNonce = await getAccountNonce(fromAccount.address.toString('hex'), client);
+export const sendVoteTransaction = async (
+	account: Account,
+	votes: Vote[],
+	client: apiClient.APIClient,
+) => {
+	const AccountNonce = await getAccountNonce(account.address, client);
 
-// 	const { networkIdentifier } = nodeInfo as { networkIdentifier: string };
-// 	const transaction = await createDelegateVoteTransaction(
-// 		{
-// 			nonce: BigInt(AccountNonce),
-// 			votes,
-// 			fee: getBeddows('0.3'),
-// 			networkIdentifier: Buffer.from(networkIdentifier, 'hex'),
-// 			passphrase: fromAccount.passphrase,
-// 		},
-// 		client,
-// 	);
+	const transaction = await createDelegateVoteTransaction(
+		{
+			nonce: BigInt(AccountNonce),
+			votes,
+			fee: BigInt('100000000'),
+			account,
+		},
+		client,
+	);
 
-// 	await handleTransaction(transaction, 'vote', client);
-// };
+	await handleTransaction(transaction, 'vote', client);
+};
 
 // export const sendMultiSigRegistrationTransaction = async (
 // 	nodeInfo: Record<string, unknown>,
