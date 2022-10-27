@@ -29,6 +29,7 @@ import {
 	// createMultiSignRegisterTransaction,
 	// createMultisignatureTransferTransaction,
 } from './create';
+import { wait } from '../wait';
 
 export const getBeddows = (lskAmount: string) =>
 	BigInt(transactions.convertLSKToBeddows(lskAmount));
@@ -106,8 +107,12 @@ export const sendTokenTransferTransactions = async (
 		}),
 	);
 
+	// console.log(transferTransactions);
+
 	for (let i = 0; i < transferTransactions.length; i += 1) {
 		await handleTransaction(transferTransactions[i], 'token transfer', client);
+		// TODO: Remove wait
+		await wait(20000);
 	}
 };
 

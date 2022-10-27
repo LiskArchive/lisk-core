@@ -23,6 +23,7 @@ import {
 	// sendMultiSigRegistrationTransaction,
 	// sendTransferTransactionFromMultiSigAccount,
 } from './utils/transactions/send';
+import { wait } from './utils/wait';
 
 const TRANSACTIONS_PER_ACCOUNT = 64;
 const ITERATIONS = process.env.ITERATIONS ?? '1';
@@ -35,8 +36,6 @@ const chunkArray = (myArray: PassphraseAndKeys[], chunkSize = TRANSACTIONS_PER_A
 
 	return [myArray.slice(0, chunkSize), ...chunkArray(myArray.slice(chunkSize), chunkSize)];
 };
-
-const wait = async (ms = 10000) => new Promise<void>(resolve => setTimeout(() => resolve(), ms));
 
 const start = async (count = STRESS_COUNT) => {
 	// const URL = process.env.WS_SERVER_URL || 'ws://localhost:7887/rpc-ws';
