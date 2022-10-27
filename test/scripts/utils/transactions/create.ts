@@ -13,7 +13,7 @@
  *
  */
 
-import { apiClient, cryptography } from 'lisk-sdk';
+import { apiClient } from 'lisk-sdk';
 import { Account } from '../accounts';
 
 export interface Vote {
@@ -80,13 +80,10 @@ export const createDelegateRegisterTransaction = async (
 		account: Account;
 		name: string;
 		fee?: bigint;
-		nonce: bigint,
+		nonce: bigint;
 	},
 	client: apiClient.APIClient,
 ): Promise<Record<string, unknown>> => {
-	const { publicKey, privateKey } = cryptography.legacy.getPrivateAndPublicKeyFromPassphrase(
-		input.account.passphrase,
-	);
 	const params = {
 		name: input.name,
 		blsKey: input.account.blsKey,
@@ -96,15 +93,15 @@ export const createDelegateRegisterTransaction = async (
 
 	const tx = await createAndSignTransaction(
 		{
-			nonce:input.nonce,
+			nonce: input.nonce,
 			module: 'dpos',
 			command: 'registerDelegate',
-			senderPublicKey: publicKey.toString('hex'),
+			senderPublicKey: input.account.publicKey.toString('hex'),
 			fee: input.fee ?? BigInt('2500000000'),
 			params,
 			signatures: [],
 		},
-		privateKey.toString('hex'),
+		input.account.privateKey.toString('hex'),
 		client,
 	);
 
@@ -124,21 +121,17 @@ export const createDelegateVoteTransaction = async (
 		votes: input.votes,
 	};
 
-	const { publicKey, privateKey } = cryptography.legacy.getPrivateAndPublicKeyFromPassphrase(
-		input.account.passphrase,
-	);
-
 	const tx = await createAndSignTransaction(
 		{
 			module: 'dpos',
 			command: 'voteDelegate',
 			nonce: input.nonce,
-			senderPublicKey: publicKey.toString('hex'),
+			senderPublicKey: input.account.publicKey.toString('hex'),
 			fee: input.fee ?? BigInt('100000000'),
 			params,
 			signatures: [],
 		},
-		privateKey.toString('hex'),
+		input.account.privateKey.toString('hex'),
 		client,
 	);
 

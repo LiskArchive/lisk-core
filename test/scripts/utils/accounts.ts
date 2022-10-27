@@ -25,7 +25,7 @@ export interface PassphraseAndKeys {
 
 export interface Account {
 	passphrase: string;
-	privateKey?: Buffer;
+	privateKey: Buffer;
 	publicKey: Buffer;
 	address: string;
 	blsKey: Buffer;

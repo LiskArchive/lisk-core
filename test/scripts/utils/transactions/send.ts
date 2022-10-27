@@ -30,7 +30,7 @@ import {
 	// createMultiSignRegisterTransaction,
 	// createMultisignatureTransferTransaction,
 } from './create';
-// import { wait } from '../wait';
+import { wait } from '../wait';
 
 export const getBeddows = (lskAmount: string) =>
 	BigInt(transactions.convertLSKToBeddows(lskAmount));
@@ -43,22 +43,10 @@ const generateRandomUserName = () => {
 	return [...Array(20)].map(() => base[(Math.random() * base.length) | 0]).join('');
 };
 
-const nonceSequenceItems = (AccountNonce: number, count = 0) => [
+const nonceSequenceItems = (AccountNonce: number, count = 63) => [
 	AccountNonce,
 	...Array.from({ length: count }, (_, k) => AccountNonce + k + 1),
 ];
-
-// const getAccount = async (
-// 	address: string,
-// 	client: apiClient.APIClient,
-// ): Promise<Record<string, unknown>> => {
-// 	const schema = await client.invoke<RegisteredSchema>('system_getSchema');
-// 	const account = await client.invoke<string>('app:getAccount', {
-// 		address,
-// 	});
-
-// 	return codec.decodeJSON(schema.account, Buffer.from(account, 'hex'));
-// };
 
 const getAccountNonce = async (address: string, client: apiClient.APIClient): Promise<number> => {
 	const account = await client.invoke<any>('auth_getAuthAccount', { address });
@@ -108,12 +96,10 @@ export const sendTokenTransferTransactions = async (
 		}),
 	);
 
-	// console.log(transferTransactions);
-
 	for (let i = 0; i < transferTransactions.length; i += 1) {
 		await handleTransaction(transferTransactions[i], 'token transfer', client);
 		// TODO: Remove wait
-		// await wait(20000);
+		await wait(20000);
 	}
 };
 
@@ -133,7 +119,6 @@ export const sendDelegateRegistrationTransaction = async (
 		},
 		client,
 	);
-	console.log(transaction);
 
 	await handleTransaction(transaction, 'delegate registration', client);
 };

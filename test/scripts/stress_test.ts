@@ -19,14 +19,14 @@ import {
 	sendTokenTransferTransactions,
 	sendDelegateRegistrationTransaction,
 	sendVoteTransaction,
-	getBeddows,
+	// getBeddows,
 	// sendMultiSigRegistrationTransaction,
 	// sendTransferTransactionFromMultiSigAccount,
 } from './utils/transactions/send';
 
 import { wait } from './utils/wait';
 
-const TRANSACTIONS_PER_ACCOUNT = 1;
+const TRANSACTIONS_PER_ACCOUNT = 64;
 const ITERATIONS = process.env.ITERATIONS ?? '1';
 const STRESS_COUNT = TRANSACTIONS_PER_ACCOUNT * parseInt(ITERATIONS, 10);
 
@@ -72,8 +72,8 @@ const start = async (count = STRESS_COUNT) => {
 		const votes: any = [
 			// { delegateAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('20') },
 			{
-				delegateAddress: 'lskrs9n229jt6ke5xrgc5nbffc9k5ww7arv5xhzwr',
-				amount: getBeddows('10'),
+				delegateAddress: 'lskzort5bybu4rchqk6aj7sx2bbsu4azwf3wbutu4',
+				amount: BigInt('1000000000'),
 			},
 		];
 		await sendVoteTransaction(accounts[i], votes, client);
