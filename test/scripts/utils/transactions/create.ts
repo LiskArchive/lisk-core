@@ -138,53 +138,53 @@ export const createDelegateVoteTransaction = async (
 	return tx;
 };
 
-// export const createMultiSignRegisterTransaction = async (
-// 	input: {
-// 		nonce: bigint;
-// 		networkIdentifier: Buffer;
-// 		fee?: bigint;
-// 		mandatoryKeys: Buffer[];
-// 		optionalKeys: Buffer[];
-// 		numberOfSignatures: number;
-// 		senderPassphrase: string;
-// 		passphrases: string[];
-// 	},
-// 	client: apiClient.APIClient,
-// ): Promise<Record<string, unknown>> => {
-// 	const asset = {
-// 		mandatoryKeys: input.mandatoryKeys,
-// 		optionalKeys: input.optionalKeys,
-// 		numberOfSignatures: input.numberOfSignatures,
-// 	};
-// 	const { publicKey } = cryptography.getAddressAndPublicKeyFromPassphrase(input.senderPassphrase);
-// 	const options = {
-// 		multisignatureKeys: {
-// 			mandatoryKeys: input.mandatoryKeys,
-// 			optionalKeys: input.optionalKeys,
-// 			numberOfSignatures: input.numberOfSignatures,
-// 		},
-// 	};
-// 	let trx = await createAndSignTransaction(
-// 		{
-// 			moduleID: 4,
-// 			commandID: 0,
-// 			nonce: input.nonce,
-// 			senderPublicKey: publicKey,
-// 			fee: input.fee ?? BigInt('1100000000'),
-// 			asset,
-// 			signatures: [],
-// 		},
-// 		[input.senderPassphrase],
-// 		client,
-// 		options,
-// 	);
-// 	trx = await client.transaction.sign(trx, input.passphrases, {
-// 		includeSenderSignature: true,
-// 		...options,
-// 	});
+export const createMultiSignRegisterTransaction = async (
+	input: {
+		nonce: bigint;
+		fee?: bigint;
+		mandatoryKeys: Buffer[];
+		optionalKeys: Buffer[];
+		numberOfSignatures: number;
+		senderAccount: Account;
+		multisigKeys: any;
+	},
+	client: apiClient.APIClient,
+): Promise<Record<string, unknown>> => {
+	const params = {
+		mandatoryKeys: input.mandatoryKeys,
+		optionalKeys: input.optionalKeys,
+		numberOfSignatures: input.numberOfSignatures,
+		signatures: [],
+	};
+	const options = {
+		multisignatureKeys: {
+			mandatoryKeys: input.mandatoryKeys.map(mandatoryKey => mandatoryKey.toString('hex')),
+			optionalKeys: input.optionalKeys.map(optionalKey => optionalKey.toString('hex')),
+			numberOfSignatures: input.numberOfSignatures,
+		},
+	};
+	let trx = await createAndSignTransaction(
+		{
+			module: 'auth',
+			command: 'registerMultisignature',
+			nonce: input.nonce,
+			senderPublicKey: input.senderAccount.publicKey.toString('hex'),
+			fee: input.fee ?? BigInt('1100000000'),
+			params,
+			signatures: [],
+		},
+		input.senderAccount.privateKey.toString('hex'),
+		client,
+		options,
+	);
+	trx = await client.transaction.sign(trx, input.multisigKeys, {
+		includeSenderSignature: true,
+		...options,
+	});
 
-// 	return trx;
-// };
+	trx.params.signatures = trx.signatures;
+	return trx;
+};
 
 // export const createMultisignatureTransferTransaction = async (
 // 	input: {

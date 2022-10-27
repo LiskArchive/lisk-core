@@ -19,14 +19,14 @@ import {
 	sendTokenTransferTransactions,
 	sendDelegateRegistrationTransaction,
 	sendVoteTransaction,
-	// getBeddows,
-	// sendMultiSigRegistrationTransaction,
+	getBeddows,
+	sendMultiSigRegistrationTransaction,
 	// sendTransferTransactionFromMultiSigAccount,
 } from './utils/transactions/send';
 
 import { wait } from './utils/wait';
 
-const TRANSACTIONS_PER_ACCOUNT = 64;
+const TRANSACTIONS_PER_ACCOUNT = 5;
 const ITERATIONS = process.env.ITERATIONS ?? '1';
 const STRESS_COUNT = TRANSACTIONS_PER_ACCOUNT * parseInt(ITERATIONS, 10);
 
@@ -70,7 +70,7 @@ const start = async (count = STRESS_COUNT) => {
 	// Vote
 	for (let i = 0; i < accountsLen; i += 1) {
 		const votes: any = [
-			// { delegateAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('20') },
+			{ delegateAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('20') },
 			{
 				delegateAddress: 'lskzort5bybu4rchqk6aj7sx2bbsu4azwf3wbutu4',
 				amount: BigInt('1000000000'),
@@ -82,30 +82,30 @@ const start = async (count = STRESS_COUNT) => {
 	console.log('\n');
 	await wait(20000);
 	// Unvote
-	// for (let i = 0; i < accountsLen; i += 1) {
-	// 	const unVotes: any = [
-	// 		{ delegateAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('-10') },
-	// 	];
-	// 	await sendVoteTransaction(accounts[i], unVotes, client);
-	// }
+	for (let i = 0; i < accountsLen; i += 1) {
+		const unVotes: any = [
+			{ delegateAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('-10') },
+		];
+		await sendVoteTransaction(accounts[i], unVotes, client);
+	}
 
-	// console.log('\n');
-	// await wait(20000);
+	console.log('\n');
+	await wait(20000);
 
-	// for (let i = 0; i < accountsLen; i += 1) {
-	// 	const account1 = accounts[(i + 1) % accountsLen];
-	// 	const account2 = accounts[(i + 2) % accountsLen];
-	// 	const asset = {
-	// 		mandatoryKeys: [account1.publicKey],
-	// 		optionalKeys: [account2.publicKey],
-	// 		numberOfSignatures: 2,
-	// 	};
-	// 	const passphrases = [account1.passphrase, account2.passphrase];
-	// 	await sendMultiSigRegistrationTransaction(nodeInfo, accounts[i], asset, passphrases, client);
-	// }
+	for (let i = 0; i < accountsLen; i += 1) {
+		const account1 = accounts[(i + 1) % accountsLen];
+		const account2 = accounts[(i + 2) % accountsLen];
+		const params = {
+			mandatoryKeys: [account1.publicKey],
+			optionalKeys: [account2.publicKey],
+			numberOfSignatures: 2,
+		};
+		const multisigKeys = [account1.privateKey.toString('hex'), account2.privateKey.toString('hex')];
+		await sendMultiSigRegistrationTransaction(accounts[i], params, multisigKeys, client);
+	}
 
-	// console.log('\n');
-	// await wait(40000);
+	console.log('\n');
+	await wait(40000);
 
 	// for (let i = 0; i < accountsLen; i += 1) {
 	// 	const account1 = accounts[(i + 1) % accountsLen];

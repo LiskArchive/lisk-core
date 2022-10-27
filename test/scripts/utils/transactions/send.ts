@@ -27,7 +27,7 @@ import {
 	createDelegateRegisterTransaction,
 	createDelegateVoteTransaction,
 	Vote,
-	// createMultiSignRegisterTransaction,
+	createMultiSignRegisterTransaction,
 	// createMultisignatureTransferTransaction,
 } from './create';
 import { wait } from '../wait';
@@ -43,7 +43,7 @@ const generateRandomUserName = () => {
 	return [...Array(20)].map(() => base[(Math.random() * base.length) | 0]).join('');
 };
 
-const nonceSequenceItems = (AccountNonce: number, count = 63) => [
+const nonceSequenceItems = (AccountNonce: number, count = 4) => [
 	AccountNonce,
 	...Array.from({ length: count }, (_, k) => AccountNonce + k + 1),
 ];
@@ -143,32 +143,31 @@ export const sendVoteTransaction = async (
 	await handleTransaction(transaction, 'vote', client);
 };
 
-// export const sendMultiSigRegistrationTransaction = async (
-// 	nodeInfo: Record<string, unknown>,
-// 	fromAccount: PassphraseAndKeys,
-// 	asset: { mandatoryKeys: Buffer[]; optionalKeys: Buffer[]; numberOfSignatures: number },
-// 	passphrases: string[],
-// 	client: apiClient.APIClient,
-// ) => {
-// 	const AccountNonce = await getAccountNonce(fromAccount.address.toString('hex'), client);
+export const sendMultiSigRegistrationTransaction = async (
+	account: Account,
+	params: { mandatoryKeys: Buffer[]; optionalKeys: Buffer[]; numberOfSignatures: number },
+	multisigKeys: any,
+	client: apiClient.APIClient,
+) => {
+	const AccountNonce = await getAccountNonce(account.address, client);
 
-// 	const { networkIdentifier } = nodeInfo as { networkIdentifier: string };
-// 	const transaction = await createMultiSignRegisterTransaction(
-// 		{
-// 			nonce: BigInt(AccountNonce),
-// 			mandatoryKeys: asset.mandatoryKeys,
-// 			optionalKeys: asset.optionalKeys,
-// 			numberOfSignatures: asset.numberOfSignatures,
-// 			senderPassphrase: fromAccount.passphrase,
-// 			fee: getBeddows('0.5'),
-// 			networkIdentifier: Buffer.from(networkIdentifier, 'hex'),
-// 			passphrases,
-// 		},
-// 		client,
-// 	);
+	const transaction = await createMultiSignRegisterTransaction(
+		{
+			nonce: BigInt(AccountNonce),
+			mandatoryKeys: params.mandatoryKeys,
+			optionalKeys: params.optionalKeys,
+			numberOfSignatures: params.numberOfSignatures,
+			senderAccount: account,
+			fee: BigInt('100000000'),
+			multisigKeys,
+		},
+		client,
+	);
 
-// 	await handleTransaction(transaction, 'multi signature registration', client);
-// };
+	console.log(transaction);
+
+	await handleTransaction(transaction, 'multi signature registration', client);
+};
 
 // export const sendTransferTransactionFromMultiSigAccount = async (
 // 	nodeInfo: Record<string, unknown>,
