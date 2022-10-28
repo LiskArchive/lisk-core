@@ -50,7 +50,9 @@ export const createAccount = async () => {
 const passphrases = [
 	'economy cliff diamond van multiply general visa picture actor teach cruel tree adjust quit maid hurry fence peace glare library curve soap cube must',
 	'popular spice bitter invite mechanic tape arrive skull elder setup glow badge muscle kiwi crop phone harsh style deal front forward never defy auto',
-	'carry bitter soul sister similar trap lemon buddy auction trigger strong size feed height sport movie else appear state fox flock calm clean spare'
+	'carry bitter soul sister similar trap lemon buddy auction trigger strong size feed height sport movie else appear state fox flock calm clean spare',
+	'myself escape camera slide insect resource face sibling flower moral barely emerge oak utility prison hope wool net image twenty gasp plate matter large',
+	'arm raccoon awful goat ten neither large drive among trim rich nothing hover elder reopen asthma birth section deer pact stool talent upon video',
 ];
 
 const accountKeyPath = "m/44'/134'/0'";

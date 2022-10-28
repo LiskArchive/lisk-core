@@ -128,12 +128,12 @@ const start = async (count = STRESS_COUNT) => {
 	client.disconnect();
 };
 
-const runScript = async () => {
-	for (let i = 0; i < 3; i += 1) {
+const initScript = async () => {
+	for (let i = 0; i < 5; i += 1) {
 		console.log('Creating transactions count', i);
 		await start();
 	}
 	console.info('Finished!!');
 }
 
-runScript().catch(console.error);
+initScript().catch(console.error);
