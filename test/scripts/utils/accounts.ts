@@ -16,23 +16,6 @@ import { passphrase as liskPassphrase, cryptography } from 'lisk-sdk';
 
 const { Mnemonic } = liskPassphrase;
 
-export interface PassphraseAndKeys {
-	passphrase: string;
-	privateKey?: Buffer;
-	publicKey: Buffer;
-	address: string;
-}
-
-export interface Account {
-	passphrase: string;
-	privateKey: Buffer;
-	publicKey: Buffer;
-	address: string;
-	blsKey: Buffer;
-	generatorKey: Buffer;
-	proofOfPossession: Buffer;
-}
-
 export const createAccount = async () => {
 	const passphrase = Mnemonic.generateMnemonic();
 	const accountKeyPath = `m/44'/134'/0'`;

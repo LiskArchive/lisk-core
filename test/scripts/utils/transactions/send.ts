@@ -14,14 +14,10 @@
  */
 /* eslint-disable no-console, @typescript-eslint/restrict-template-expressions */
 
-import {
-	apiClient,
-	// codec,
-	transactions,
-	// RegisteredSchema
-} from 'lisk-sdk';
+import { apiClient, transactions } from 'lisk-sdk';
 
-import { Account, PassphraseAndKeys } from '../accounts';
+import { Account, PassphraseAndKeys } from '../types';
+import { TRANSACTIONS_PER_ACCOUNT } from '../constants';
 import {
 	createTransferTransaction,
 	createDelegateRegisterTransaction,
@@ -43,7 +39,7 @@ const generateRandomUserName = () => {
 	return [...Array(20)].map(() => base[(Math.random() * base.length) | 0]).join('');
 };
 
-const nonceSequenceItems = (AccountNonce: number, count = 4) => [
+const nonceSequenceItems = (AccountNonce: number, count = TRANSACTIONS_PER_ACCOUNT - 1) => [
 	AccountNonce,
 	...Array.from({ length: count }, (_, k) => AccountNonce + k + 1),
 ];
@@ -139,7 +135,7 @@ export const sendVoteTransaction = async (
 		},
 		client,
 	);
-
+	console.log(account.address, AccountNonce);
 	await handleTransaction(transaction, 'vote', client);
 };
 

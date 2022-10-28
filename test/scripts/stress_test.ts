@@ -14,7 +14,8 @@
 /* eslint-disable no-console */
 
 import { apiClient } from 'lisk-sdk';
-import { PassphraseAndKeys, createAccount, genesisAccount, Account } from './utils/accounts';
+import { createAccount, genesisAccount } from './utils/accounts';
+import { PassphraseAndKeys, Account } from './utils/types';
 import {
 	sendTokenTransferTransactions,
 	sendDelegateRegistrationTransaction,
@@ -25,8 +26,8 @@ import {
 } from './utils/transactions/send';
 
 import { wait } from './utils/wait';
+import { TRANSACTIONS_PER_ACCOUNT } from './utils/constants';
 
-const TRANSACTIONS_PER_ACCOUNT = 5;
 const ITERATIONS = process.env.ITERATIONS ?? '1';
 const STRESS_COUNT = TRANSACTIONS_PER_ACCOUNT * parseInt(ITERATIONS, 10);
 
@@ -70,7 +71,7 @@ const start = async (count = STRESS_COUNT) => {
 	// Vote
 	for (let i = 0; i < accountsLen; i += 1) {
 		const votes: any = [
-			{ delegateAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('20') },
+			// { delegateAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('20') },
 			{
 				delegateAddress: 'lskzort5bybu4rchqk6aj7sx2bbsu4azwf3wbutu4',
 				amount: BigInt('1000000000'),

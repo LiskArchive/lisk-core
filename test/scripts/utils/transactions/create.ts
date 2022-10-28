@@ -14,7 +14,7 @@
  */
 
 import { apiClient } from 'lisk-sdk';
-import { Account } from '../accounts';
+import { Account } from '../types';
 
 export interface Vote {
 	delegateAddress: Buffer;
