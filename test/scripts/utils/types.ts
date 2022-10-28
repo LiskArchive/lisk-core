@@ -28,3 +28,22 @@ export interface Account {
 	generatorKey: Buffer;
 	proofOfPossession: Buffer;
 }
+
+export interface Vote {
+	delegateAddress: string;
+	amount: bigint;
+}
+
+export interface TransactionInput {
+	module: string;
+	command: string;
+	fee: bigint;
+	nonce?: bigint;
+	senderPublicKey: string;
+	params: Record<string, unknown>;
+	signatures?: string[];
+}
+
+export interface UpdateGeneratorKeyParams {
+	generatorKey: Buffer;
+}

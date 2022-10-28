@@ -16,6 +16,17 @@ import { passphrase as liskPassphrase, cryptography } from 'lisk-sdk';
 
 const { Mnemonic } = liskPassphrase;
 
+export const createGeneratorKey = async (passphrase: string, generatorKeyPath: string) => {
+	const generatorPrivateKey = await cryptography.ed.getKeyPairFromPhraseAndPath(
+		passphrase,
+		generatorKeyPath,
+	);
+
+	const generatorPublicKey = cryptography.ed.getPublicKeyFromPrivateKey(generatorPrivateKey);
+
+	return generatorPublicKey;
+};
+
 export const createAccount = async () => {
 	const passphrase = Mnemonic.generateMnemonic();
 	const accountKeyPath = `m/44'/134'/0'`;

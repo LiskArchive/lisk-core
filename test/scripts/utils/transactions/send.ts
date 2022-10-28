@@ -16,13 +16,13 @@
 
 import { apiClient, transactions } from 'lisk-sdk';
 
-import { Account, PassphraseAndKeys } from '../types';
-import { TRANSACTIONS_PER_ACCOUNT } from '../constants';
+import { Account, PassphraseAndKeys, Vote, UpdateGeneratorKeyParams } from '../types';
+import { TRANSACTIONS_PER_ACCOUNT, DEFAULT_TX_FEES } from '../constants';
 import {
 	createTransferTransaction,
 	createDelegateRegisterTransaction,
 	createDelegateVoteTransaction,
-	Vote,
+	createUpdateGeneratorKeyTransaction,
 	createMultiSignRegisterTransaction,
 	// createMultisignatureTransferTransaction,
 } from './create';
@@ -82,7 +82,7 @@ export const sendTokenTransferTransactions = async (
 					recipientAddress: accounts[index].address,
 					nonce: BigInt(nonce),
 					amount: getBeddows(fromGenesis ? '2000' : '25'),
-					fee: BigInt('100000000'),
+					fee: DEFAULT_TX_FEES,
 					fromAccount,
 				},
 				client,
@@ -130,7 +130,7 @@ export const sendVoteTransaction = async (
 		{
 			nonce: BigInt(AccountNonce),
 			votes,
-			fee: BigInt('100000000'),
+			fee: DEFAULT_TX_FEES,
 			account,
 		},
 		client,
@@ -139,10 +139,30 @@ export const sendVoteTransaction = async (
 	await handleTransaction(transaction, 'vote', client);
 };
 
+export const sendUpdateGeneratorKeyTransaction = async (
+	account: Account,
+	params: UpdateGeneratorKeyParams,
+	client: apiClient.APIClient,
+) => {
+	const AccountNonce = await getAccountNonce(account.address, client);
+
+	const transaction = await createUpdateGeneratorKeyTransaction(
+		{
+			nonce: BigInt(AccountNonce),
+			fee: getBeddows('15'),
+			account,
+			params,
+		},
+		client,
+	);
+
+	await handleTransaction(transaction, 'update generatorKey', client);
+};
+
 export const sendMultiSigRegistrationTransaction = async (
 	account: Account,
 	params: { mandatoryKeys: Buffer[]; optionalKeys: Buffer[]; numberOfSignatures: number },
-	multisigKeys: any,
+	multisigKeys: string[],
 	client: apiClient.APIClient,
 ) => {
 	const AccountNonce = await getAccountNonce(account.address, client);
@@ -154,7 +174,7 @@ export const sendMultiSigRegistrationTransaction = async (
 			optionalKeys: params.optionalKeys,
 			numberOfSignatures: params.numberOfSignatures,
 			senderAccount: account,
-			fee: BigInt('100000000'),
+			fee: DEFAULT_TX_FEES,
 			multisigKeys,
 		},
 		client,

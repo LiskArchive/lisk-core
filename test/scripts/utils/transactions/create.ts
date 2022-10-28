@@ -14,22 +14,7 @@
  */
 
 import { apiClient } from 'lisk-sdk';
-import { Account } from '../types';
-
-export interface Vote {
-	delegateAddress: Buffer;
-	amount: bigint;
-}
-
-interface TransactionInput {
-	module: string;
-	command: string;
-	fee: bigint;
-	nonce?: bigint;
-	senderPublicKey: string;
-	params: Record<string, unknown>;
-	signatures?: string[];
-}
+import { Account, TransactionInput, Vote } from '../types';
 
 const createAndSignTransaction = async (
 	transaction: TransactionInput,
@@ -138,6 +123,32 @@ export const createDelegateVoteTransaction = async (
 	return tx;
 };
 
+export const createUpdateGeneratorKeyTransaction = async (
+	input: {
+		account: Account;
+		fee?: bigint;
+		nonce: bigint;
+		params: any;
+	},
+	client: apiClient.APIClient,
+): Promise<Record<string, unknown>> => {
+	const tx = await createAndSignTransaction(
+		{
+			nonce: input.nonce,
+			module: 'dpos',
+			command: 'updateGeneratorKey',
+			senderPublicKey: input.account.publicKey.toString('hex'),
+			fee: input.fee ?? BigInt('2500000000'),
+			params: input.params,
+			signatures: [],
+		},
+		input.account.privateKey.toString('hex'),
+		client,
+	);
+
+	return tx;
+};
+
 export const createMultiSignRegisterTransaction = async (
 	input: {
 		nonce: bigint;
@@ -163,6 +174,7 @@ export const createMultiSignRegisterTransaction = async (
 			numberOfSignatures: input.numberOfSignatures,
 		},
 	};
+
 	let trx = await createAndSignTransaction(
 		{
 			module: 'auth',
@@ -177,6 +189,7 @@ export const createMultiSignRegisterTransaction = async (
 		client,
 		options,
 	);
+
 	trx = await client.transaction.sign(trx, input.multisigKeys, {
 		includeSenderSignature: true,
 		...options,

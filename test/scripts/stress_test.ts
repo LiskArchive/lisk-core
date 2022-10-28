@@ -14,14 +14,15 @@
 /* eslint-disable no-console */
 
 import { apiClient } from 'lisk-sdk';
-import { createAccount, genesisAccount } from './utils/accounts';
-import { PassphraseAndKeys, Account } from './utils/types';
+import { createAccount, genesisAccount, createGeneratorKey } from './utils/accounts';
+import { PassphraseAndKeys, Account, Vote } from './utils/types';
 import {
 	sendTokenTransferTransactions,
 	sendDelegateRegistrationTransaction,
 	sendVoteTransaction,
 	getBeddows,
-	// sendMultiSigRegistrationTransaction,
+	sendUpdateGeneratorKeyTransaction,
+	sendMultiSigRegistrationTransaction,
 	// sendTransferTransactionFromMultiSigAccount,
 } from './utils/transactions/send';
 
@@ -70,7 +71,7 @@ const start = async (count = STRESS_COUNT) => {
 	await wait(20000);
 	// Vote
 	for (let i = 0; i < accountsLen; i += 1) {
-		const votes: any = [
+		const votes: Vote[] = [
 			{ delegateAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('20') },
 			{
 				delegateAddress: 'lskzort5bybu4rchqk6aj7sx2bbsu4azwf3wbutu4',
@@ -84,7 +85,7 @@ const start = async (count = STRESS_COUNT) => {
 	await wait(20000);
 	// Unvote
 	for (let i = 0; i < accountsLen; i += 1) {
-		const unVotes: any = [
+		const unVotes: Vote[] = [
 			{ delegateAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('-10') },
 		];
 		await sendVoteTransaction(accounts[i], unVotes, client);
@@ -93,17 +94,29 @@ const start = async (count = STRESS_COUNT) => {
 	console.log('\n');
 	await wait(20000);
 
-	// for (let i = 0; i < accountsLen; i += 1) {
-	// 	const account1 = accounts[(i + 1) % accountsLen];
-	// 	const account2 = accounts[(i + 2) % accountsLen];
-	// 	const params = {
-	// 		mandatoryKeys: [account1.publicKey],
-	// 		optionalKeys: [account2.publicKey],
-	// 		numberOfSignatures: 2,
-	// 	};
-	// 	const multisigKeys = [account1.privateKey.toString('hex'), account2.privateKey.toString('hex')];
-	// 	await sendMultiSigRegistrationTransaction(accounts[i], params, multisigKeys, client);
-	// }
+	// Update generatorKey
+	for (let i = 0; i < accountsLen; i += 1) {
+		const params = {
+			generatorKey: await createGeneratorKey(accounts[i].passphrase, `m/25519'/134'/0'/${i}'`),
+		};
+
+		await sendUpdateGeneratorKeyTransaction(accounts[i], params, client);
+	}
+
+	console.log('\n');
+	await wait(20000);
+
+	for (let i = 0; i < accountsLen; i += 1) {
+		const account1 = accounts[(i + 1) % accountsLen];
+		const account2 = accounts[(i + 2) % accountsLen];
+		const params = {
+			mandatoryKeys: [account1.publicKey],
+			optionalKeys: [account2.publicKey],
+			numberOfSignatures: 2,
+		};
+		const multisigKeys = [account1.privateKey.toString('hex'), account2.privateKey.toString('hex')];
+		await sendMultiSigRegistrationTransaction(accounts[i], params, multisigKeys, client);
+	}
 
 	// console.log('\n');
 	// await wait(40000);
