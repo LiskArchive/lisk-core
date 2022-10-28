@@ -21,7 +21,7 @@ import {
 	sendDelegateRegistrationTransaction,
 	sendVoteTransaction,
 	getBeddows,
-	sendMultiSigRegistrationTransaction,
+	// sendMultiSigRegistrationTransaction,
 	// sendTransferTransactionFromMultiSigAccount,
 } from './utils/transactions/send';
 
@@ -71,7 +71,7 @@ const start = async (count = STRESS_COUNT) => {
 	// Vote
 	for (let i = 0; i < accountsLen; i += 1) {
 		const votes: any = [
-			// { delegateAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('20') },
+			{ delegateAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('20') },
 			{
 				delegateAddress: 'lskzort5bybu4rchqk6aj7sx2bbsu4azwf3wbutu4',
 				amount: BigInt('1000000000'),
@@ -93,20 +93,20 @@ const start = async (count = STRESS_COUNT) => {
 	console.log('\n');
 	await wait(20000);
 
-	for (let i = 0; i < accountsLen; i += 1) {
-		const account1 = accounts[(i + 1) % accountsLen];
-		const account2 = accounts[(i + 2) % accountsLen];
-		const params = {
-			mandatoryKeys: [account1.publicKey],
-			optionalKeys: [account2.publicKey],
-			numberOfSignatures: 2,
-		};
-		const multisigKeys = [account1.privateKey.toString('hex'), account2.privateKey.toString('hex')];
-		await sendMultiSigRegistrationTransaction(accounts[i], params, multisigKeys, client);
-	}
+	// for (let i = 0; i < accountsLen; i += 1) {
+	// 	const account1 = accounts[(i + 1) % accountsLen];
+	// 	const account2 = accounts[(i + 2) % accountsLen];
+	// 	const params = {
+	// 		mandatoryKeys: [account1.publicKey],
+	// 		optionalKeys: [account2.publicKey],
+	// 		numberOfSignatures: 2,
+	// 	};
+	// 	const multisigKeys = [account1.privateKey.toString('hex'), account2.privateKey.toString('hex')];
+	// 	await sendMultiSigRegistrationTransaction(accounts[i], params, multisigKeys, client);
+	// }
 
-	console.log('\n');
-	await wait(40000);
+	// console.log('\n');
+	// await wait(40000);
 
 	// for (let i = 0; i < accountsLen; i += 1) {
 	// 	const account1 = accounts[(i + 1) % accountsLen];
@@ -125,8 +125,15 @@ const start = async (count = STRESS_COUNT) => {
 	// 	);
 	// }
 
-	console.info('Finished!!');
 	client.disconnect();
 };
 
-start().catch(console.error);
+const runScript = async () => {
+	for (let i = 0; i < 3; i += 1) {
+		console.log('Creating transactions count', i);
+		await start();
+	}
+	console.info('Finished!!');
+}
+
+runScript().catch(console.error);

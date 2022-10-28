@@ -47,11 +47,17 @@ export const createAccount = async () => {
 	};
 };
 
-const passphrase =
-	'economy cliff diamond van multiply general visa picture actor teach cruel tree adjust quit maid hurry fence peace glare library curve soap cube must';
+const passphrases = [
+	'economy cliff diamond van multiply general visa picture actor teach cruel tree adjust quit maid hurry fence peace glare library curve soap cube must',
+	'popular spice bitter invite mechanic tape arrive skull elder setup glow badge muscle kiwi crop phone harsh style deal front forward never defy auto',
+	'carry bitter soul sister similar trap lemon buddy auction trigger strong size feed height sport movie else appear state fox flock calm clean spare'
+];
+
 const accountKeyPath = "m/44'/134'/0'";
 
 export const genesisAccount = async () => {
+	const passphraseIndex = Math.floor(Math.random() * passphrases.length);
+	const passphrase = passphrases[passphraseIndex];
 	const privateKey = await cryptography.ed.getKeyPairFromPhraseAndPath(passphrase, accountKeyPath);
 	const publicKey = cryptography.ed.getPublicKeyFromPrivateKey(privateKey);
 

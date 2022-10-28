@@ -127,7 +127,7 @@ export const createDelegateVoteTransaction = async (
 			command: 'voteDelegate',
 			nonce: input.nonce,
 			senderPublicKey: input.account.publicKey.toString('hex'),
-			fee: input.fee ?? BigInt('100000000'),
+			fee: input.fee ?? BigInt('200000000'),
 			params,
 			signatures: [],
 		},
@@ -182,7 +182,6 @@ export const createMultiSignRegisterTransaction = async (
 		...options,
 	});
 
-	trx.params.signatures = trx.signatures;
 	return trx;
 };
 

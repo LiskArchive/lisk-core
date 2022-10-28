@@ -11,4 +11,4 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-export const TRANSACTIONS_PER_ACCOUNT = 64;
+export const TRANSACTIONS_PER_ACCOUNT = 20;
