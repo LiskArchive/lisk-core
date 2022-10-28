@@ -135,7 +135,7 @@ export const sendVoteTransaction = async (
 		},
 		client,
 	);
-	console.log(account.address, AccountNonce);
+
 	await handleTransaction(transaction, 'vote', client);
 };
 

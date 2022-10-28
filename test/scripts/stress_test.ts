@@ -134,6 +134,6 @@ const initScript = async () => {
 		await start();
 	}
 	console.info('Finished!!');
-}
+};
 
 initScript().catch(console.error);
