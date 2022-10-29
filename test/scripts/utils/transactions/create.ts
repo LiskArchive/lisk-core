@@ -13,8 +13,14 @@
  *
  */
 
-import { apiClient } from 'lisk-sdk';
+import { apiClient, codec, cryptography } from 'lisk-sdk';
 import { Account, TransactionInput, Vote } from '../types';
+import { multisigRegMsgSchema } from '../schemas';
+import {
+	createSignatureForMultisignature,
+	createSignatureObject,
+	getSignBytes,
+} from '../multisignature';
 
 const createAndSignTransaction = async (
 	transaction: TransactionInput,
@@ -175,7 +181,7 @@ export const createMultiSignRegisterTransaction = async (
 		},
 	};
 
-	let trx = await createAndSignTransaction(
+	let trx: any = await createAndSignTransaction(
 		{
 			module: 'auth',
 			command: 'registerMultisignature',
@@ -194,6 +200,30 @@ export const createMultiSignRegisterTransaction = async (
 		includeSenderSignature: true,
 		...options,
 	});
+
+	// Members sign in order
+	const messageBytes = codec.encode(multisigRegMsgSchema, {
+		address: cryptography.address.getAddressFromPublicKey(Buffer.from(trx.senderPublicKey, 'hex')),
+		nonce: BigInt(trx.nonce),
+		numberOfSignatures: trx.params.numberOfSignatures,
+		mandatoryKeys: trx.params.mandatoryKeys.map(mandatoryKey => Buffer.from(mandatoryKey, 'hex')),
+		optionalKeys: trx.params.optionalKeys.map(optionalKey => Buffer.from(optionalKey, 'hex')),
+	});
+
+	trx.params.signatures.push(
+		createSignatureForMultisignature(messageBytes, Buffer.from(input.multisigKeys[0], 'hex'))
+			.signature,
+	);
+
+	trx.params.signatures.push(
+		createSignatureForMultisignature(messageBytes, Buffer.from(input.multisigKeys[1], 'hex'))
+			.signature,
+	);
+
+	const txBuffer = getSignBytes(trx);
+
+	trx.signatures = [];
+	trx.signatures.push(createSignatureObject(txBuffer, input.senderAccount.privateKey).signature);
 
 	return trx;
 };

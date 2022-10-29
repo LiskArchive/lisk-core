@@ -92,7 +92,7 @@ export const sendTokenTransferTransactions = async (
 		}),
 	);
 
-	for (let i = 0; i < transferTransactions.length; i += 1) {
+	for (let i = 0; i < transferTransactions.length; i++) {
 		await handleTransaction(transferTransactions[i], 'token transfer', client);
 		// TODO: Remove wait
 		await wait(20000);
@@ -179,8 +179,6 @@ export const sendMultiSigRegistrationTransaction = async (
 		},
 		client,
 	);
-
-	console.log(transaction);
 
 	await handleTransaction(transaction, 'multi signature registration', client);
 };

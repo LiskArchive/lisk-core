@@ -27,7 +27,7 @@ import {
 } from './utils/transactions/send';
 
 import { wait } from './utils/wait';
-import { TRANSACTIONS_PER_ACCOUNT } from './utils/constants';
+import { TRANSACTIONS_PER_ACCOUNT, NUM_OF_ROUNDS } from './utils/constants';
 
 const ITERATIONS = process.env.ITERATIONS ?? '1';
 const STRESS_COUNT = TRANSACTIONS_PER_ACCOUNT * parseInt(ITERATIONS, 10);
@@ -56,21 +56,21 @@ const start = async (count = STRESS_COUNT) => {
 	await wait(20000);
 
 	const chunkedAccounts = chunkArray([...accounts]);
-	for (let i = 0; i < chunkedAccounts.length; i += 1) {
+	for (let i = 0; i < chunkedAccounts.length; i++) {
 		await sendTokenTransferTransactions(chunkedAccounts[i], fundInitialAccount[i], false, client);
 	}
 
 	console.log('\n');
 	await wait(20000);
 
-	for (let i = 0; i < accountsLen; i += 1) {
+	for (let i = 0; i < accountsLen; i++) {
 		await sendDelegateRegistrationTransaction(accounts[i], client);
 	}
 
 	console.log('\n');
 	await wait(20000);
 	// Vote
-	for (let i = 0; i < accountsLen; i += 1) {
+	for (let i = 0; i < accountsLen; i++) {
 		const votes: Vote[] = [
 			{ delegateAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('20') },
 			{
@@ -84,7 +84,7 @@ const start = async (count = STRESS_COUNT) => {
 	console.log('\n');
 	await wait(20000);
 	// Unvote
-	for (let i = 0; i < accountsLen; i += 1) {
+	for (let i = 0; i < accountsLen; i++) {
 		const unVotes: Vote[] = [
 			{ delegateAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('-10') },
 		];
@@ -95,7 +95,7 @@ const start = async (count = STRESS_COUNT) => {
 	await wait(20000);
 
 	// Update generatorKey
-	for (let i = 0; i < accountsLen; i += 1) {
+	for (let i = 0; i < accountsLen; i++) {
 		const params = {
 			generatorKey: await createGeneratorKey(accounts[i].passphrase, `m/25519'/134'/0'/${i}'`),
 		};
@@ -106,7 +106,7 @@ const start = async (count = STRESS_COUNT) => {
 	console.log('\n');
 	await wait(20000);
 
-	for (let i = 0; i < accountsLen; i += 1) {
+	for (let i = 0; i < accountsLen; i++) {
 		const account1 = accounts[(i + 1) % accountsLen];
 		const account2 = accounts[(i + 2) % accountsLen];
 		const params = {
@@ -142,7 +142,7 @@ const start = async (count = STRESS_COUNT) => {
 };
 
 const initScript = async () => {
-	for (let i = 0; i < 5; i += 1) {
+	for (let i = 0; i < NUM_OF_ROUNDS; i++) {
 		console.log('Creating transactions count', i);
 		await start();
 	}
