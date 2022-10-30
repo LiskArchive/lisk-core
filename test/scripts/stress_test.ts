@@ -14,8 +14,9 @@
 /* eslint-disable no-console */
 
 import { apiClient } from 'lisk-sdk';
+
 import { createAccount, genesisAccount, createGeneratorKey } from './utils/accounts';
-import { PassphraseAndKeys, Account, Vote } from './utils/types';
+import { TRANSACTIONS_PER_ACCOUNT, NUM_OF_ROUNDS } from './utils/constants';
 import {
 	sendTokenTransferTransactions,
 	sendDelegateRegistrationTransaction,
@@ -25,9 +26,8 @@ import {
 	sendMultiSigRegistrationTransaction,
 	// sendTransferTransactionFromMultiSigAccount,
 } from './utils/transactions/send';
-
+import { PassphraseAndKeys, Account, Vote } from './utils/types';
 import { wait } from './utils/wait';
-import { TRANSACTIONS_PER_ACCOUNT, NUM_OF_ROUNDS } from './utils/constants';
 
 const ITERATIONS = process.env.ITERATIONS ?? '1';
 const STRESS_COUNT = TRANSACTIONS_PER_ACCOUNT * parseInt(ITERATIONS, 10);
@@ -114,8 +114,11 @@ const start = async (count = STRESS_COUNT) => {
 			optionalKeys: [account2.publicKey],
 			numberOfSignatures: 2,
 		};
-		const multisigKeys = [account1.privateKey.toString('hex'), account2.privateKey.toString('hex')];
-		await sendMultiSigRegistrationTransaction(accounts[i], params, multisigKeys, client);
+		const multisigAccountKeys = [
+			account1.privateKey.toString('hex'),
+			account2.privateKey.toString('hex'),
+		];
+		await sendMultiSigRegistrationTransaction(accounts[i], params, multisigAccountKeys, client);
 	}
 
 	// console.log('\n');
@@ -124,16 +127,15 @@ const start = async (count = STRESS_COUNT) => {
 	// for (let i = 0; i < accountsLen; i += 1) {
 	// 	const account1 = accounts[(i + 1) % accountsLen];
 	// 	const account2 = accounts[(i + 2) % accountsLen];
-	// 	const asset = {
+	// 	const params = {
 	// 		mandatoryKeys: [account1.publicKey],
 	// 		optionalKeys: [account2.publicKey],
 	// 	};
-	// 	const passphrases = [account1.passphrase, account2.passphrase];
+	// 	const multisigAccountKeys = [account1.privateKey.toString('hex'), account2.privateKey.toString('hex')];
 	// 	await sendTransferTransactionFromMultiSigAccount(
-	// 		nodeInfo,
 	// 		accounts[i],
-	// 		asset,
-	// 		passphrases,
+	// 		params,
+	// 		multisigAccountKeys,
 	// 		client,
 	// 	);
 	// }
@@ -141,12 +143,11 @@ const start = async (count = STRESS_COUNT) => {
 	client.disconnect();
 };
 
-const initScript = async () => {
+const createTransactions = async () => {
 	for (let i = 0; i < NUM_OF_ROUNDS; i++) {
-		console.log('Creating transactions count', i);
 		await start();
 	}
 	console.info('Finished!!');
 };
 
-initScript().catch(console.error);
+createTransactions().catch(console.error);

@@ -16,7 +16,6 @@
 
 import { apiClient, transactions } from 'lisk-sdk';
 
-import { Account, PassphraseAndKeys, Vote, UpdateGeneratorKeyParams } from '../types';
 import { TRANSACTIONS_PER_ACCOUNT, DEFAULT_TX_FEES } from '../constants';
 import {
 	createTransferTransaction,
@@ -24,8 +23,9 @@ import {
 	createDelegateVoteTransaction,
 	createUpdateGeneratorKeyTransaction,
 	createMultiSignRegisterTransaction,
-	// createMultisignatureTransferTransaction,
+	createMultisignatureTransferTransaction,
 } from './create';
+import { Account, PassphraseAndKeys, Vote, UpdateGeneratorKeyParams } from '../types';
 import { wait } from '../wait';
 
 export const getBeddows = (lskAmount: string) =>
@@ -162,7 +162,7 @@ export const sendUpdateGeneratorKeyTransaction = async (
 export const sendMultiSigRegistrationTransaction = async (
 	account: Account,
 	params: { mandatoryKeys: Buffer[]; optionalKeys: Buffer[]; numberOfSignatures: number },
-	multisigKeys: string[],
+	multisigAccountKeys: string[],
 	client: apiClient.APIClient,
 ) => {
 	const AccountNonce = await getAccountNonce(account.address, client);
@@ -175,7 +175,7 @@ export const sendMultiSigRegistrationTransaction = async (
 			numberOfSignatures: params.numberOfSignatures,
 			senderAccount: account,
 			fee: DEFAULT_TX_FEES,
-			multisigKeys,
+			multisigAccountKeys,
 		},
 		client,
 	);
@@ -183,30 +183,27 @@ export const sendMultiSigRegistrationTransaction = async (
 	await handleTransaction(transaction, 'multi signature registration', client);
 };
 
-// export const sendTransferTransactionFromMultiSigAccount = async (
-// 	nodeInfo: Record<string, unknown>,
-// 	fromAccount: PassphraseAndKeys,
-// 	asset: { mandatoryKeys: Buffer[]; optionalKeys: Buffer[] },
-// 	passphrases: string[],
-// 	client: apiClient.APIClient,
-// ) => {
-// 	const AccountNonce = await getAccountNonce(fromAccount.address.toString('hex'), client);
+export const sendTransferTransactionFromMultiSigAccount = async (
+	account: Account,
+	params: { mandatoryKeys: Buffer[]; optionalKeys: Buffer[] },
+	multisigAccountKeys: string[],
+	client: apiClient.APIClient,
+) => {
+	const AccountNonce = await getAccountNonce(account.address, client);
 
-// 	const { networkIdentifier } = nodeInfo as { networkIdentifier: string };
-// 	const transaction = await createMultisignatureTransferTransaction(
-// 		{
-// 			senderPublicKey: fromAccount.publicKey,
-// 			recipientAddress: fromAccount.address,
-// 			amount: getBeddows('1'),
-// 			nonce: BigInt(AccountNonce),
-// 			mandatoryKeys: asset.mandatoryKeys,
-// 			optionalKeys: asset.optionalKeys,
-// 			fee: getBeddows('0.5'),
-// 			networkIdentifier: Buffer.from(networkIdentifier, 'hex'),
-// 			passphrases,
-// 		},
-// 		client,
-// 	);
+	const transaction = await createMultisignatureTransferTransaction(
+		{
+			senderPublicKey: account.publicKey,
+			recipientAddress: account.address,
+			amount: getBeddows('1'),
+			nonce: BigInt(AccountNonce),
+			mandatoryKeys: params.mandatoryKeys,
+			optionalKeys: params.optionalKeys,
+			fee: DEFAULT_TX_FEES,
+			multisigAccountKeys,
+		},
+		client,
+	);
 
-// 	await handleTransaction(transaction, 'transfer transaction from multisig account', client);
-// };
+	await handleTransaction(transaction, 'transfer transaction from multisig account', client);
+};

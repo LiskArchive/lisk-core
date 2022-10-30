@@ -14,13 +14,13 @@
  */
 
 import { apiClient, codec, cryptography } from 'lisk-sdk';
-import { Account, TransactionInput, Vote } from '../types';
 import { multisigRegMsgSchema } from '../schemas';
 import {
 	createSignatureForMultisignature,
 	createSignatureObject,
 	getSignBytes,
 } from '../multisignature';
+import { Account, TransactionInput, Vote } from '../types';
 
 const createAndSignTransaction = async (
 	transaction: TransactionInput,
@@ -163,7 +163,7 @@ export const createMultiSignRegisterTransaction = async (
 		optionalKeys: Buffer[];
 		numberOfSignatures: number;
 		senderAccount: Account;
-		multisigKeys: any;
+		multisigAccountKeys: string[];
 	},
 	client: apiClient.APIClient,
 ): Promise<Record<string, unknown>> => {
@@ -196,7 +196,7 @@ export const createMultiSignRegisterTransaction = async (
 		options,
 	);
 
-	trx = await client.transaction.sign(trx, input.multisigKeys, {
+	trx = await client.transaction.sign(trx, input.multisigAccountKeys, {
 		includeSenderSignature: true,
 		...options,
 	});
@@ -211,12 +211,12 @@ export const createMultiSignRegisterTransaction = async (
 	});
 
 	trx.params.signatures.push(
-		createSignatureForMultisignature(messageBytes, Buffer.from(input.multisigKeys[0], 'hex'))
+		createSignatureForMultisignature(messageBytes, Buffer.from(input.multisigAccountKeys[0], 'hex'))
 			.signature,
 	);
 
 	trx.params.signatures.push(
-		createSignatureForMultisignature(messageBytes, Buffer.from(input.multisigKeys[1], 'hex'))
+		createSignatureForMultisignature(messageBytes, Buffer.from(input.multisigAccountKeys[1], 'hex'))
 			.signature,
 	);
 
@@ -228,45 +228,44 @@ export const createMultiSignRegisterTransaction = async (
 	return trx;
 };
 
-// export const createMultisignatureTransferTransaction = async (
-// 	input: {
-// 		nonce: bigint;
-// 		networkIdentifier: Buffer;
-// 		recipientAddress: Buffer;
-// 		amount: bigint;
-// 		fee?: bigint;
-// 		mandatoryKeys: Buffer[];
-// 		optionalKeys: Buffer[];
-// 		senderPublicKey: Buffer;
-// 		passphrases: string[];
-// 	},
-// 	client: apiClient.APIClient,
-// ): Promise<Record<string, unknown>> => {
-// 	const asset = {
-// 		recipientAddress: input.recipientAddress,
-// 		amount: BigInt('10000000000'),
-// 		data: '',
-// 	};
+export const createMultisignatureTransferTransaction = async (
+	input: {
+		nonce: bigint;
+		recipientAddress: string;
+		amount: bigint;
+		fee?: bigint;
+		mandatoryKeys: Buffer[];
+		optionalKeys: Buffer[];
+		senderPublicKey: Buffer;
+		multisigAccountKeys: any;
+	},
+	client: apiClient.APIClient,
+): Promise<Record<string, unknown>> => {
+	const params = {
+		recipientAddress: input.recipientAddress,
+		amount: BigInt('10000000000'),
+		data: '',
+	};
 
-// 	const tx = await createAndSignTransaction(
-// 		{
-// 			moduleID: 2,
-// 			commandID: 0,
-// 			nonce: input.nonce,
-// 			senderPublicKey: input.senderPublicKey,
-// 			fee: input.fee ?? BigInt('200000'),
-// 			asset,
-// 			signatures: [],
-// 		},
-// 		input.passphrases,
-// 		client,
-// 		{
-// 			multisignatureKeys: {
-// 				mandatoryKeys: input.mandatoryKeys,
-// 				optionalKeys: input.optionalKeys,
-// 			},
-// 		},
-// 	);
+	const tx = await createAndSignTransaction(
+		{
+			module: 'token',
+			command: 'transfer',
+			nonce: input.nonce,
+			senderPublicKey: input.senderPublicKey.toString('hex'),
+			fee: input.fee ?? BigInt('200000'),
+			params,
+			signatures: [],
+		},
+		input.multisigAccountKeys,
+		client,
+		{
+			multisignatureKeys: {
+				mandatoryKeys: input.mandatoryKeys,
+				optionalKeys: input.optionalKeys,
+			},
+		},
+	);
 
-// 	return tx;
-// };
+	return tx;
+};
