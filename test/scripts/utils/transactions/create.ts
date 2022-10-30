@@ -14,13 +14,24 @@
  */
 
 import { apiClient, codec, cryptography } from 'lisk-sdk';
-import { multisigRegMsgSchema } from '../schemas';
+
+import {
+	MODULE_TOKEN_TRANSFER,
+	COMMAND_TOKEN_TRANSFER,
+	MODULE_DPOS_MODULEE,
+	COMMAND_DPOS_REGISTER_DELEGATE,
+	COMMAND_DPOS_VOTE_DELEGATE,
+	COMMAND_DPOS_UPDATE_GENERATOR_KEY,
+	MODULE_AUTH_REGISTER_MULTISIGNATURE,
+	COMMAND_AUTH_REGISTER_MULTISIGNATURE,
+} from '../constants';
 import {
 	createSignatureForMultisignature,
 	createSignatureObject,
 	getSignBytes,
 } from '../multisignature';
 import { Account, TransactionInput, Vote } from '../types';
+import { multisigRegMsgSchema } from '../schemas';
 
 const createAndSignTransaction = async (
 	transaction: TransactionInput,
@@ -51,8 +62,8 @@ export const createTransferTransaction = async (
 	};
 	const tx = await createAndSignTransaction(
 		{
-			module: 'token',
-			command: 'transfer',
+			module: MODULE_TOKEN_TRANSFER,
+			command: COMMAND_TOKEN_TRANSFER,
 			nonce: input.nonce,
 			senderPublicKey: input.fromAccount.publicKey.toString('hex'),
 			fee: input.fee ?? BigInt('200000'),
@@ -84,9 +95,9 @@ export const createDelegateRegisterTransaction = async (
 
 	const tx = await createAndSignTransaction(
 		{
+			module: MODULE_DPOS_MODULEE,
+			command: COMMAND_DPOS_REGISTER_DELEGATE,
 			nonce: input.nonce,
-			module: 'dpos',
-			command: 'registerDelegate',
 			senderPublicKey: input.account.publicKey.toString('hex'),
 			fee: input.fee ?? BigInt('2500000000'),
 			params,
@@ -114,8 +125,8 @@ export const createDelegateVoteTransaction = async (
 
 	const tx = await createAndSignTransaction(
 		{
-			module: 'dpos',
-			command: 'voteDelegate',
+			module: MODULE_DPOS_MODULEE,
+			command: COMMAND_DPOS_VOTE_DELEGATE,
 			nonce: input.nonce,
 			senderPublicKey: input.account.publicKey.toString('hex'),
 			fee: input.fee ?? BigInt('200000000'),
@@ -140,9 +151,9 @@ export const createUpdateGeneratorKeyTransaction = async (
 ): Promise<Record<string, unknown>> => {
 	const tx = await createAndSignTransaction(
 		{
+			module: MODULE_DPOS_MODULEE,
+			command: COMMAND_DPOS_UPDATE_GENERATOR_KEY,
 			nonce: input.nonce,
-			module: 'dpos',
-			command: 'updateGeneratorKey',
 			senderPublicKey: input.account.publicKey.toString('hex'),
 			fee: input.fee ?? BigInt('2500000000'),
 			params: input.params,
@@ -183,8 +194,8 @@ export const createMultiSignRegisterTransaction = async (
 
 	let trx: any = await createAndSignTransaction(
 		{
-			module: 'auth',
-			command: 'registerMultisignature',
+			module: MODULE_AUTH_REGISTER_MULTISIGNATURE,
+			command: COMMAND_AUTH_REGISTER_MULTISIGNATURE,
 			nonce: input.nonce,
 			senderPublicKey: input.senderAccount.publicKey.toString('hex'),
 			fee: input.fee ?? BigInt('1100000000'),
@@ -249,8 +260,8 @@ export const createMultisignatureTransferTransaction = async (
 
 	const tx = await createAndSignTransaction(
 		{
-			module: 'token',
-			command: 'transfer',
+			module: MODULE_TOKEN_TRANSFER,
+			command: COMMAND_TOKEN_TRANSFER,
 			nonce: input.nonce,
 			senderPublicKey: input.senderPublicKey.toString('hex'),
 			fee: input.fee ?? BigInt('200000'),

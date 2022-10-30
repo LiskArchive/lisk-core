@@ -17,3 +17,12 @@ export const NUM_OF_ROUNDS = 5;
 export const MESSAGE_TAG_MULTISIG_REG = 'LSK_RMSG_';
 export const TAG_TRANSACTION = 'LSK_TX_';
 export const MNEMONIC_LENGTH = 256;
+
+export const MODULE_TOKEN_TRANSFER = 'token';
+export const COMMAND_TOKEN_TRANSFER = 'transfer';
+export const MODULE_DPOS_MODULEE = 'dpos';
+export const COMMAND_DPOS_REGISTER_DELEGATE = 'registerDelegate';
+export const COMMAND_DPOS_VOTE_DELEGATE = 'voteDelegate';
+export const COMMAND_DPOS_UPDATE_GENERATOR_KEY = 'updateGeneratorKey';
+export const MODULE_AUTH_REGISTER_MULTISIGNATURE = 'auth';
+export const COMMAND_AUTH_REGISTER_MULTISIGNATURE = 'registerMultisignature';
