@@ -16,13 +16,13 @@
 import { apiClient, codec, cryptography } from 'lisk-sdk';
 
 import {
-	MODULE_TOKEN_TRANSFER,
+	MODULE_TOKEN,
 	COMMAND_TOKEN_TRANSFER,
-	MODULE_DPOS_MODULEE,
+	MODULE_DPOS,
 	COMMAND_DPOS_REGISTER_DELEGATE,
 	COMMAND_DPOS_VOTE_DELEGATE,
 	COMMAND_DPOS_UPDATE_GENERATOR_KEY,
-	MODULE_AUTH_REGISTER_MULTISIGNATURE,
+	MODULE_AUTH,
 	COMMAND_AUTH_REGISTER_MULTISIGNATURE,
 } from '../constants';
 import {
@@ -62,7 +62,7 @@ export const createTransferTransaction = async (
 	};
 	const tx = await createAndSignTransaction(
 		{
-			module: MODULE_TOKEN_TRANSFER,
+			module: MODULE_TOKEN,
 			command: COMMAND_TOKEN_TRANSFER,
 			nonce: input.nonce,
 			senderPublicKey: input.fromAccount.publicKey.toString('hex'),
@@ -95,7 +95,7 @@ export const createDelegateRegisterTransaction = async (
 
 	const tx = await createAndSignTransaction(
 		{
-			module: MODULE_DPOS_MODULEE,
+			module: MODULE_DPOS,
 			command: COMMAND_DPOS_REGISTER_DELEGATE,
 			nonce: input.nonce,
 			senderPublicKey: input.account.publicKey.toString('hex'),
@@ -125,7 +125,7 @@ export const createDelegateVoteTransaction = async (
 
 	const tx = await createAndSignTransaction(
 		{
-			module: MODULE_DPOS_MODULEE,
+			module: MODULE_DPOS,
 			command: COMMAND_DPOS_VOTE_DELEGATE,
 			nonce: input.nonce,
 			senderPublicKey: input.account.publicKey.toString('hex'),
@@ -151,7 +151,7 @@ export const createUpdateGeneratorKeyTransaction = async (
 ): Promise<Record<string, unknown>> => {
 	const tx = await createAndSignTransaction(
 		{
-			module: MODULE_DPOS_MODULEE,
+			module: MODULE_DPOS,
 			command: COMMAND_DPOS_UPDATE_GENERATOR_KEY,
 			nonce: input.nonce,
 			senderPublicKey: input.account.publicKey.toString('hex'),
@@ -194,7 +194,7 @@ export const createMultiSignRegisterTransaction = async (
 
 	let trx: any = await createAndSignTransaction(
 		{
-			module: MODULE_AUTH_REGISTER_MULTISIGNATURE,
+			module: MODULE_AUTH,
 			command: COMMAND_AUTH_REGISTER_MULTISIGNATURE,
 			nonce: input.nonce,
 			senderPublicKey: input.senderAccount.publicKey.toString('hex'),
@@ -260,7 +260,7 @@ export const createMultisignatureTransferTransaction = async (
 
 	const tx = await createAndSignTransaction(
 		{
-			module: MODULE_TOKEN_TRANSFER,
+			module: MODULE_TOKEN,
 			command: COMMAND_TOKEN_TRANSFER,
 			nonce: input.nonce,
 			senderPublicKey: input.senderPublicKey.toString('hex'),
