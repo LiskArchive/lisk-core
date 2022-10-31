@@ -25,7 +25,7 @@ import {
 	createMultiSignRegisterTransaction,
 	createMultisignatureTransferTransaction,
 } from './create';
-import { Account, PassphraseAndKeys, Vote, UpdateGeneratorKeyParams } from '../types';
+import { Account, GeneratorAccount, Vote } from '../types';
 import { wait } from '../wait';
 
 export const getBeddows = (lskAmount: string) =>
@@ -68,8 +68,8 @@ const handleTransaction = async (
 };
 
 export const sendTokenTransferTransactions = async (
-	accounts: PassphraseAndKeys[],
-	fromAccount: PassphraseAndKeys,
+	accounts: Account[],
+	fromAccount: Account,
 	fromGenesis = true,
 	client: apiClient.APIClient,
 ) => {
@@ -100,7 +100,7 @@ export const sendTokenTransferTransactions = async (
 };
 
 export const sendDelegateRegistrationTransaction = async (
-	account: Account,
+	account: GeneratorAccount,
 	client: apiClient.APIClient,
 ) => {
 	const AccountNonce = await getAccountNonce(account.address, client);
@@ -120,7 +120,7 @@ export const sendDelegateRegistrationTransaction = async (
 };
 
 export const sendVoteTransaction = async (
-	account: Account,
+	account: GeneratorAccount,
 	votes: Vote[],
 	client: apiClient.APIClient,
 ) => {
@@ -140,8 +140,8 @@ export const sendVoteTransaction = async (
 };
 
 export const sendUpdateGeneratorKeyTransaction = async (
-	account: Account,
-	params: UpdateGeneratorKeyParams,
+	account: GeneratorAccount,
+	params,
 	client: apiClient.APIClient,
 ) => {
 	const AccountNonce = await getAccountNonce(account.address, client);
@@ -160,15 +160,18 @@ export const sendUpdateGeneratorKeyTransaction = async (
 };
 
 export const sendMultiSigRegistrationTransaction = async (
-	account: Account,
+	account: GeneratorAccount,
 	params: { mandatoryKeys: Buffer[]; optionalKeys: Buffer[]; numberOfSignatures: number },
 	multisigAccountKeys: string[],
 	client: apiClient.APIClient,
 ) => {
 	const AccountNonce = await getAccountNonce(account.address, client);
 
+	const nodeInfo = await client.invoke<Record<string, any>>('system_getNodeInfo');
+
 	const transaction = await createMultiSignRegisterTransaction(
 		{
+			chainID: Buffer.from(nodeInfo.chainID, 'hex'),
 			nonce: BigInt(AccountNonce),
 			mandatoryKeys: params.mandatoryKeys,
 			optionalKeys: params.optionalKeys,
@@ -184,7 +187,7 @@ export const sendMultiSigRegistrationTransaction = async (
 };
 
 export const sendTransferTransactionFromMultiSigAccount = async (
-	account: Account,
+	account: GeneratorAccount,
 	params: { mandatoryKeys: Buffer[]; optionalKeys: Buffer[] },
 	multisigAccountKeys: string[],
 	client: apiClient.APIClient,

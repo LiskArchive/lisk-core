@@ -12,5 +12,4 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-export const wait = async (ms = 10000) =>
-	new Promise<void>(resolve => setTimeout(() => resolve(), ms));
+export const wait = async (ms = 10000) => new Promise<void>(resolve => setTimeout(resolve, ms));

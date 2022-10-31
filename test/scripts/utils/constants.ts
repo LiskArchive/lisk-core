@@ -12,17 +12,19 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 export const TRANSACTIONS_PER_ACCOUNT = 20;
-export const DEFAULT_TX_FEES = BigInt('100000000');
+export const DEFAULT_TX_FEES = BigInt('10000000');
 export const NUM_OF_ROUNDS = 3;
-export const MESSAGE_TAG_MULTISIG_REG = 'LSK_RMSG_';
+export const TAG_MULTISIG_REG = 'LSK_RMSG_';
 export const TAG_TRANSACTION = 'LSK_TX_';
 export const MNEMONIC_LENGTH = 256;
 
 export const MODULE_TOKEN = 'token';
 export const COMMAND_TOKEN_TRANSFER = 'transfer';
+
 export const MODULE_DPOS = 'dpos';
 export const COMMAND_DPOS_REGISTER_DELEGATE = 'registerDelegate';
 export const COMMAND_DPOS_VOTE_DELEGATE = 'voteDelegate';
 export const COMMAND_DPOS_UPDATE_GENERATOR_KEY = 'updateGeneratorKey';
+
 export const MODULE_AUTH = 'auth';
 export const COMMAND_AUTH_REGISTER_MULTISIGNATURE = 'registerMultisignature';

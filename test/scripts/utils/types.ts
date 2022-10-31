@@ -12,18 +12,14 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-export interface PassphraseAndKeys {
-	passphrase: string;
-	privateKey?: Buffer;
-	publicKey: Buffer;
-	address: string;
-}
-
 export interface Account {
 	passphrase: string;
 	privateKey: Buffer;
 	publicKey: Buffer;
 	address: string;
+}
+
+export interface GeneratorAccount extends Account {
 	blsKey: Buffer;
 	generatorKey: Buffer;
 	proofOfPossession: Buffer;
@@ -34,7 +30,7 @@ export interface Vote {
 	amount: bigint;
 }
 
-export interface TransactionInput {
+export interface Transaction {
 	module: string;
 	command: string;
 	fee: bigint;
@@ -42,8 +38,4 @@ export interface TransactionInput {
 	senderPublicKey: string;
 	params: Record<string, unknown>;
 	signatures?: string[];
-}
-
-export interface UpdateGeneratorKeyParams {
-	generatorKey: Buffer;
 }

@@ -13,22 +13,37 @@
  *
  */
 import { codec, cryptography } from 'lisk-sdk';
-import { TAG_TRANSACTION, MESSAGE_TAG_MULTISIG_REG } from './constants';
-import { baseTransactionSchema, multisigRegParams } from './schemas';
+import {
+	TAG_TRANSACTION,
+	TAG_MULTISIG_REG,
+	MODULE_AUTH,
+	COMMAND_AUTH_REGISTER_MULTISIGNATURE,
+} from './constants';
+import { getSchemas, getMetadata } from '../stress_test';
 
-export const createSignatureObject = (txBuffer, privateKey) => ({
-	signature: cryptography.ed.signData(
-		TAG_TRANSACTION,
-		Buffer.from('04000000', 'hex'),
-		txBuffer,
-		privateKey,
-	),
+let multisigRegParams;
+let baseTransactionSchema;
+
+export const createSignatureObject = (chainID, txBuffer, privateKey) => ({
+	signature: cryptography.ed.signData(TAG_TRANSACTION, chainID, txBuffer, privateKey),
 });
 
-export const getParamsBytes = params => codec.encode(multisigRegParams, params);
+export const getParamsBytes = (paramsSchema, params) => codec.encode(paramsSchema, params);
 
 export const getSignBytes = tx => {
-	const paramsBytes = getParamsBytes({
+	if (!multisigRegParams) {
+		const metadata = getMetadata();
+		metadata.modules.forEach(module => {
+			if (module.name === MODULE_AUTH) {
+				const result = module.commands.find(
+					command => command.name === COMMAND_AUTH_REGISTER_MULTISIGNATURE,
+				);
+				multisigRegParams = result.params;
+			}
+		});
+	}
+
+	const paramsBytes = getParamsBytes(multisigRegParams, {
 		...tx.params,
 		numberOfSignatures: Number(tx.params.numberOfSignatures),
 		mandatoryKeys: tx.params.mandatoryKeys.map(mandatoryKey => Buffer.from(mandatoryKey, 'hex')),
@@ -42,14 +57,15 @@ export const getSignBytes = tx => {
 		params: paramsBytes,
 		signatures: [],
 	};
+
+	if (!baseTransactionSchema) {
+		const schemas = getSchemas();
+		baseTransactionSchema = schemas.transaction;
+	}
+
 	return codec.encode(baseTransactionSchema, signingTx);
 };
 
-export const createSignatureForMultisignature = (messageBytes, privateKey) => ({
-	signature: cryptography.ed.signData(
-		MESSAGE_TAG_MULTISIG_REG,
-		Buffer.from('04000000', 'hex'),
-		messageBytes,
-		privateKey,
-	),
+export const createSignatureForMultisignature = (chainID, messageBytes, privateKey) => ({
+	signature: cryptography.ed.signData(TAG_MULTISIG_REG, chainID, messageBytes, privateKey),
 });

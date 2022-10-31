@@ -26,13 +26,16 @@ import {
 	sendMultiSigRegistrationTransaction,
 	// sendTransferTransactionFromMultiSigAccount,
 } from './utils/transactions/send';
-import { PassphraseAndKeys, Account, Vote } from './utils/types';
+import { Account, GeneratorAccount, Vote } from './utils/types';
 import { wait } from './utils/wait';
 
 const ITERATIONS = process.env.ITERATIONS ?? '1';
 const STRESS_COUNT = TRANSACTIONS_PER_ACCOUNT * parseInt(ITERATIONS, 10);
 
-const chunkArray = (myArray: PassphraseAndKeys[], chunkSize = TRANSACTIONS_PER_ACCOUNT) => {
+let schemas;
+let metadata;
+
+const chunkArray = (myArray: Account[], chunkSize = TRANSACTIONS_PER_ACCOUNT) => {
 	if (myArray.length <= chunkSize) {
 		return [myArray];
 	}
@@ -40,12 +43,24 @@ const chunkArray = (myArray: PassphraseAndKeys[], chunkSize = TRANSACTIONS_PER_A
 	return [myArray.slice(0, chunkSize), ...chunkArray(myArray.slice(chunkSize), chunkSize)];
 };
 
+export const getSchemas = () => schemas;
+
+export const getMetadata = () => metadata;
+
 const start = async (count = STRESS_COUNT) => {
 	// const URL = process.env.WS_SERVER_URL || 'ws://localhost:7887/rpc-ws';
 	const client = await apiClient.createIPCClient('~/.lisk/lisk-core');
-	const accounts: Account[] = await Promise.all(
+	const accounts: GeneratorAccount[] = await Promise.all(
 		[...Array(count)].map(async () => await createAccount()),
 	);
+
+	if (!schemas) {
+		schemas = await client.invoke<Record<string, any>>('system_getSchema');
+	}
+
+	if (!metadata) {
+		metadata = await client.invoke<Record<string, any>>('system_getMetadata');
+	}
 
 	const accountsLen = accounts.length;
 	// Due to TPool limit of 64 trx/account, fund initial accounts

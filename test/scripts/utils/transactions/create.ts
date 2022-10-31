@@ -30,11 +30,11 @@ import {
 	createSignatureObject,
 	getSignBytes,
 } from '../multisignature';
-import { Account, TransactionInput, Vote } from '../types';
+import { GeneratorAccount, Transaction, Vote } from '../types';
 import { multisigRegMsgSchema } from '../schemas';
 
 const createAndSignTransaction = async (
-	transaction: TransactionInput,
+	transaction: Transaction,
 	privateKey: string,
 	client: apiClient.APIClient,
 	options?: Record<string, unknown>,
@@ -79,7 +79,7 @@ export const createTransferTransaction = async (
 
 export const createDelegateRegisterTransaction = async (
 	input: {
-		account: Account;
+		account: GeneratorAccount;
 		name: string;
 		fee?: bigint;
 		nonce: bigint;
@@ -113,7 +113,7 @@ export const createDelegateRegisterTransaction = async (
 export const createDelegateVoteTransaction = async (
 	input: {
 		nonce: bigint;
-		account: Account;
+		account: GeneratorAccount;
 		votes: Vote[];
 		fee?: bigint;
 	},
@@ -142,7 +142,7 @@ export const createDelegateVoteTransaction = async (
 
 export const createUpdateGeneratorKeyTransaction = async (
 	input: {
-		account: Account;
+		account: GeneratorAccount;
 		fee?: bigint;
 		nonce: bigint;
 		params: any;
@@ -168,12 +168,13 @@ export const createUpdateGeneratorKeyTransaction = async (
 
 export const createMultiSignRegisterTransaction = async (
 	input: {
+		chainID: Buffer;
 		nonce: bigint;
 		fee?: bigint;
 		mandatoryKeys: Buffer[];
 		optionalKeys: Buffer[];
 		numberOfSignatures: number;
-		senderAccount: Account;
+		senderAccount: GeneratorAccount;
 		multisigAccountKeys: string[];
 	},
 	client: apiClient.APIClient,
@@ -222,19 +223,27 @@ export const createMultiSignRegisterTransaction = async (
 	});
 
 	trx.params.signatures.push(
-		createSignatureForMultisignature(messageBytes, Buffer.from(input.multisigAccountKeys[0], 'hex'))
-			.signature,
+		createSignatureForMultisignature(
+			input.chainID,
+			messageBytes,
+			Buffer.from(input.multisigAccountKeys[0], 'hex'),
+		).signature,
 	);
 
 	trx.params.signatures.push(
-		createSignatureForMultisignature(messageBytes, Buffer.from(input.multisigAccountKeys[1], 'hex'))
-			.signature,
+		createSignatureForMultisignature(
+			input.chainID,
+			messageBytes,
+			Buffer.from(input.multisigAccountKeys[1], 'hex'),
+		).signature,
 	);
 
 	const txBuffer = getSignBytes(trx);
 
 	trx.signatures = [];
-	trx.signatures.push(createSignatureObject(txBuffer, input.senderAccount.privateKey).signature);
+	trx.signatures.push(
+		createSignatureObject(input.chainID, txBuffer, input.senderAccount.privateKey).signature,
+	);
 
 	return trx;
 };
