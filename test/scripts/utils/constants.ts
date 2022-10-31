@@ -11,7 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-export const TRANSACTIONS_PER_ACCOUNT = 25;
+export const TRANSACTIONS_PER_ACCOUNT = 20;
 export const DEFAULT_TX_FEES = BigInt('100000000');
 export const NUM_OF_ROUNDS = 3;
 export const MESSAGE_TAG_MULTISIG_REG = 'LSK_RMSG_';
