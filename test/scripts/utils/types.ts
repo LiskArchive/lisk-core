@@ -34,7 +34,7 @@ export interface Transaction {
 	module: string;
 	command: string;
 	fee: bigint;
-	nonce?: bigint;
+	nonce: bigint;
 	senderPublicKey: string;
 	params: Record<string, unknown>;
 	signatures?: string[];
