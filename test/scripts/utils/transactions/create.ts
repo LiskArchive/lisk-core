@@ -24,6 +24,7 @@ import {
 	COMMAND_DPOS_UPDATE_GENERATOR_KEY,
 	MODULE_AUTH,
 	COMMAND_AUTH_REGISTER_MULTISIGNATURE,
+	TOKEN_ID,
 } from '../constants';
 import {
 	createSignatureForMultisignature,
@@ -57,7 +58,7 @@ export const createTransferTransaction = async (
 	const params = {
 		recipientAddress: input.recipientAddress,
 		amount: input.amount ?? BigInt('10000000000'),
-		tokenID: '0000000000000000',
+		tokenID: TOKEN_ID,
 		data: '',
 	};
 	const tx = await createAndSignTransaction(
@@ -222,21 +223,15 @@ export const createMultiSignRegisterTransaction = async (
 		optionalKeys: trx.params.optionalKeys.map(optionalKey => Buffer.from(optionalKey, 'hex')),
 	});
 
-	trx.params.signatures.push(
-		createSignatureForMultisignature(
-			input.chainID,
-			messageBytes,
-			Buffer.from(input.multisigAccountKeys[0], 'hex'),
-		).signature,
-	);
-
-	trx.params.signatures.push(
-		createSignatureForMultisignature(
-			input.chainID,
-			messageBytes,
-			Buffer.from(input.multisigAccountKeys[1], 'hex'),
-		).signature,
-	);
+	input.multisigAccountKeys.forEach(multisigAccountKey => {
+		trx.params.signatures.push(
+			createSignatureForMultisignature(
+				input.chainID,
+				messageBytes,
+				Buffer.from(multisigAccountKey, 'hex'),
+			).signature,
+		);
+	});
 
 	const txBuffer = getSignBytes(trx);
 
@@ -264,6 +259,7 @@ export const createMultisignatureTransferTransaction = async (
 	const params = {
 		recipientAddress: input.recipientAddress,
 		amount: BigInt('10000000000'),
+		tokenID: TOKEN_ID,
 		data: '',
 	};
 

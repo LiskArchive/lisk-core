@@ -17,6 +17,7 @@ export const NUM_OF_ROUNDS = 3;
 export const TAG_MULTISIG_REG = 'LSK_RMSG_';
 export const TAG_TRANSACTION = 'LSK_TX_';
 export const MNEMONIC_LENGTH = 256;
+export const TOKEN_ID = '0000000000000000';
 
 export const MODULE_TOKEN = 'token';
 export const COMMAND_TOKEN_TRANSFER = 'transfer';

@@ -37,5 +37,5 @@ export interface Transaction {
 	nonce: bigint;
 	senderPublicKey: string;
 	params: Record<string, unknown>;
-	signatures?: string[];
+	signatures: string[];
 }
