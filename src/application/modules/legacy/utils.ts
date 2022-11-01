@@ -11,7 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { cryptography } from 'lisk-sdk';
+import { cryptography, GenesisConfig } from 'lisk-sdk';
 
 import { ModuleConfig, ModuleConfigJSON } from './types';
 
@@ -20,10 +20,17 @@ const {
 	utils: { hash },
 } = cryptography;
 
-export function getModuleConfig(config: ModuleConfigJSON): ModuleConfig {
+export function getModuleConfig(
+	genesisConfig: GenesisConfig,
+	moduleConfig: ModuleConfigJSON,
+): ModuleConfig {
+	const { chainID } = genesisConfig;
+	const localIDReclaim = moduleConfig.tokenIDReclaim.slice(8);
+	const tokenIDReclaim = `${chainID}${localIDReclaim}`;
+
 	return {
-		...config,
-		tokenIDReclaim: Buffer.from(config.tokenIDReclaim, 'hex'),
+		...moduleConfig,
+		tokenIDReclaim: Buffer.from(tokenIDReclaim, 'hex'),
 	};
 }
 
