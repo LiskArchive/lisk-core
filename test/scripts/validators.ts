@@ -41,13 +41,13 @@ const createValidators = async (count = 103) => {
 		const accountKeyPath = `m/44'/134'/0'`;
 		const generatorKeyPath = `m/25519'/134'/0'/0'`;
 		const blsKeyPath = `m/12381/134/0/0`;
-		const accountPrivateKey = await cryptography.ed.getKeyPairFromPhraseAndPath(
+		const accountPrivateKey = await cryptography.ed.getPrivateKeyFromPhraseAndPath(
 			passphrase,
 			accountKeyPath,
 		);
 		const accountPublicKey = cryptography.ed.getPublicKeyFromPrivateKey(accountPrivateKey);
 		const address = cryptography.address.getAddressFromPublicKey(accountPublicKey);
-		const generatorPrivateKey = await cryptography.ed.getKeyPairFromPhraseAndPath(
+		const generatorPrivateKey = await cryptography.ed.getPrivateKeyFromPhraseAndPath(
 			passphrase,
 			generatorKeyPath,
 		);

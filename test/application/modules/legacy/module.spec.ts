@@ -15,6 +15,7 @@
 import { BaseModule, codec, cryptography } from 'lisk-sdk';
 import { when } from 'jest-when';
 
+import { genesis as genesisConfig } from '../../../../config/mainnet/config.json';
 import { LegacyModule } from '../../../../src/application/modules';
 import { LegacyMethod } from '../../../../src/application/modules/legacy/method';
 import { LegacyEndpoint } from '../../../../src/application/modules/legacy/endpoint';
@@ -91,7 +92,7 @@ describe('LegacyModule', () => {
 			const moduleConfig = {
 				tokenIDReclaim: Buffer.from(defaultConfig.tokenIDReclaim, 'hex'),
 			} as any;
-			await expect(legacyModule.init({ moduleConfig: {} })).resolves.toBeUndefined();
+			await expect(legacyModule.init({ genesisConfig, moduleConfig: {} })).resolves.toBeUndefined();
 			expect(legacyModule['_moduleConfig']).toEqual(moduleConfig);
 		});
 	});

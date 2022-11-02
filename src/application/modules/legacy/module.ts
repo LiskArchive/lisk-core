@@ -11,7 +11,6 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-
 import {
 	BaseModule,
 	TokenMethod,
@@ -97,9 +96,13 @@ export class LegacyModule extends BaseModule {
 
 	// eslint-disable-next-line @typescript-eslint/require-await
 	public async init(args: ModuleInitArgs) {
-		const { moduleConfig } = args;
-		const config = utils.objects.mergeDeep({}, defaultConfig, moduleConfig) as ModuleConfigJSON;
-		this._moduleConfig = getModuleConfig(config);
+		const { genesisConfig, moduleConfig } = args;
+		const mergedModuleConfig = utils.objects.mergeDeep(
+			{},
+			defaultConfig,
+			moduleConfig,
+		) as ModuleConfigJSON;
+		this._moduleConfig = getModuleConfig(genesisConfig, mergedModuleConfig);
 		this._reclaimLSKCommand.init({ tokenIDReclaim: this._moduleConfig.tokenIDReclaim });
 	}
 
