@@ -11,7 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { JSONObject } from 'lisk-sdk';
+import { GenesisConfig, JSONObject } from 'lisk-sdk';
 
 export interface LegacyStoreData {
 	legacyAddress: string;
@@ -31,6 +31,7 @@ export interface ModuleConfig {
 export type ModuleConfigJSON = JSONObject<ModuleConfig>;
 
 export interface ModuleInitArgs {
+	genesisConfig: GenesisConfig;
 	moduleConfig: Record<string, unknown>;
 }
 
