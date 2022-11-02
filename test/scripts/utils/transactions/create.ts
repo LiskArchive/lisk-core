@@ -24,7 +24,7 @@ import {
 	COMMAND_DPOS_UPDATE_GENERATOR_KEY,
 	MODULE_AUTH,
 	COMMAND_AUTH_REGISTER_MULTISIGNATURE,
-	TOKEN_ID,
+	LOCAL_ID,
 } from '../constants';
 import {
 	createSignatureForMultisignature,
@@ -33,6 +33,8 @@ import {
 } from '../multisignature';
 import { GeneratorAccount, Transaction, Vote } from '../types';
 import { multisigRegMsgSchema } from '../schemas';
+
+let TOKEN_ID;
 
 const createAndSignTransaction = async (
 	transaction: Transaction,
@@ -55,12 +57,18 @@ export const createTransferTransaction = async (
 	},
 	client: apiClient.APIClient,
 ): Promise<Record<string, unknown>> => {
+	if (!TOKEN_ID) {
+		const nodeInfo = await client.invoke<Record<string, any>>('system_getNodeInfo');
+		TOKEN_ID = `${nodeInfo.chainID}${LOCAL_ID}`;
+	}
+
 	const params = {
 		recipientAddress: input.recipientAddress,
 		amount: input.amount ?? BigInt('10000000000'),
 		tokenID: TOKEN_ID,
 		data: '',
 	};
+
 	const tx = await createAndSignTransaction(
 		{
 			module: MODULE_TOKEN,
@@ -256,6 +264,11 @@ export const createMultisignatureTransferTransaction = async (
 	},
 	client: apiClient.APIClient,
 ): Promise<Record<string, unknown>> => {
+	if (!TOKEN_ID) {
+		const nodeInfo = await client.invoke<Record<string, any>>('system_getNodeInfo');
+		TOKEN_ID = `${nodeInfo.chainID}${LOCAL_ID}`;
+	}
+
 	const params = {
 		recipientAddress: input.recipientAddress,
 		amount: BigInt('10000000000'),
