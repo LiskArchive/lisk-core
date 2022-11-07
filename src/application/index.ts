@@ -16,7 +16,7 @@ import { Application, PartialApplicationConfig, TokenModule, ValidatorsModule } 
 import { LegacyModule } from './modules';
 
 export const getApplication = (config: PartialApplicationConfig): Application => {
-	const { app } = Application.defaultApplication(config);
+	const { app } = Application.defaultApplication(config, true);
 	const legacyModule = new LegacyModule();
 	const tokenModule = new TokenModule();
 	const validatorModule = new ValidatorsModule();
