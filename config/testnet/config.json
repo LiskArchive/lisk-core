@@ -5,7 +5,7 @@
 		"logLevel": "info"
 	},
 	"rpc": {
-		"modes": ["ipc"],
+		"modes": ["ipc", "ws"],
 		"port": 7887,
 		"host": "127.0.0.1"
 	},
@@ -57,11 +57,17 @@
 		"minReplacementFeeDifference": "10"
 	},
 	"modules": {
+		"fee": {
+			"feeTokenID": "0100000000000000"
+		},
 		"reward": {
 			"tokenID": "0100000000000000",
 			"offset": 2160,
 			"distance": 3000000,
 			"brackets": ["500000000", "400000000", "300000000", "200000000", "100000000"]
+		},
+		"token": {
+			"feeTokenID": "0100000000000000"
 		}
 	},
 	"plugins": {}

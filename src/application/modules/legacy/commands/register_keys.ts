@@ -45,12 +45,12 @@ export class RegisterKeysCommand extends BaseCommand {
 
 	public async verify(ctx: CommandVerifyContext): Promise<VerificationResult> {
 		const validatorAddress = getAddressFromPublicKey(ctx.transaction.senderPublicKey);
-		const validatorAccount = await this._validatorsMethod.getValidatorAccount(
+		const validatorKeys = await this._validatorsMethod.getValidatorKeys(
 			ctx.getMethodContext(),
 			validatorAddress,
 		);
 
-		if (Buffer.compare(validatorAccount.blsKey, this.invalidBlsKey) !== 0) {
+		if (Buffer.compare(validatorKeys.blsKey, this.invalidBlsKey) !== 0) {
 			return {
 				status: VerifyStatus.FAIL,
 				error: new Error('Validator already has a registered BLS key.'),
