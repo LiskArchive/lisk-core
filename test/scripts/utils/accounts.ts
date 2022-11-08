@@ -19,7 +19,7 @@ const { Mnemonic } = liskPassphrase;
 import { MNEMONIC_LENGTH } from './constants';
 
 export const createGeneratorKey = async (passphrase: string, generatorKeyPath: string) => {
-	const generatorPrivateKey = await cryptography.ed.getKeyPairFromPhraseAndPath(
+	const generatorPrivateKey = await cryptography.ed.getPrivateKeyFromPhraseAndPath(
 		passphrase,
 		generatorKeyPath,
 	);
@@ -35,10 +35,13 @@ export const createAccount = async () => {
 	const generatorKeyPath = `m/25519'/134'/0'/0'`;
 	const blsKeyPath = `m/12381/134/0/0`;
 
-	const privateKey = await cryptography.ed.getKeyPairFromPhraseAndPath(passphrase, accountKeyPath);
+	const privateKey = await cryptography.ed.getPrivateKeyFromPhraseAndPath(
+		passphrase,
+		accountKeyPath,
+	);
 	const publicKey = cryptography.ed.getPublicKeyFromPrivateKey(privateKey);
 	const address = cryptography.address.getAddressFromPublicKey(publicKey);
-	const generatorPrivateKey = await cryptography.ed.getKeyPairFromPhraseAndPath(
+	const generatorPrivateKey = await cryptography.ed.getPrivateKeyFromPhraseAndPath(
 		passphrase,
 		generatorKeyPath,
 	);
@@ -73,7 +76,10 @@ const accountKeyPath = "m/44'/134'/0'";
 export const genesisAccount = async () => {
 	const passphraseIndex = Math.floor(Math.random() * passphrases.length);
 	const passphrase = passphrases[passphraseIndex];
-	const privateKey = await cryptography.ed.getKeyPairFromPhraseAndPath(passphrase, accountKeyPath);
+	const privateKey = await cryptography.ed.getPrivateKeyFromPhraseAndPath(
+		passphrase,
+		accountKeyPath,
+	);
 	const publicKey = cryptography.ed.getPublicKeyFromPrivateKey(privateKey);
 
 	return {

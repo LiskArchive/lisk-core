@@ -25,6 +25,7 @@ import {
 	MODULE_AUTH,
 	COMMAND_AUTH_REGISTER_MULTISIGNATURE,
 	LOCAL_ID,
+	ACCOUNT_INITIALIZATION_FEE,
 } from '../constants';
 import {
 	createSignatureForMultisignature,
@@ -67,6 +68,7 @@ export const createTransferTransaction = async (
 		amount: input.amount ?? BigInt('10000000000'),
 		tokenID: TOKEN_ID,
 		data: '',
+		accountInitializationFee: ACCOUNT_INITIALIZATION_FEE,
 	};
 
 	const tx = await createAndSignTransaction(
