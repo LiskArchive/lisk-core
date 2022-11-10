@@ -64,11 +64,11 @@ export const createAccount = async () => {
 };
 
 const passphrases = [
-	'economy cliff diamond van multiply general visa picture actor teach cruel tree adjust quit maid hurry fence peace glare library curve soap cube must',
-	'popular spice bitter invite mechanic tape arrive skull elder setup glow badge muscle kiwi crop phone harsh style deal front forward never defy auto',
-	'carry bitter soul sister similar trap lemon buddy auction trigger strong size feed height sport movie else appear state fox flock calm clean spare',
-	'myself escape camera slide insect resource face sibling flower moral barely emerge oak utility prison hope wool net image twenty gasp plate matter large',
-	'arm raccoon awful goat ten neither large drive among trim rich nothing hover elder reopen asthma birth section deer pact stool talent upon video',
+	'lion green pretty goat insect dog man other toddler vacant draw general voice engage fringe someone else alter report into large position assist plug',
+	'produce arch service book blouse prosper donate seminar time supply course nation spell awesome special arrow art believe genuine saddle often crater make need',
+	'brass salute ozone corn tape side vast mind voyage rebel document giant stuff affair clay rich key evil organ virtual depart foil fluid make',
+	'sword shy sentence rough brush siege weekend tuna mix allow stool claim agent senior exchange okay you join cupboard solar home boost clean label',
+	'poverty arm parent wing hen inform mechanic already enforce orbit caught improve hungry demise panic board muscle wave wave fine seven hotel stairs trouble',
 ];
 
 const accountKeyPath = "m/44'/134'/0'";
