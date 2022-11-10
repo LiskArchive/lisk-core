@@ -113,5 +113,5 @@ export const createGenesisAssetsData = async () => {
 };
 
 createGenesisAssetsData().then(() => {
-	console.log('Genesis assets data created successfully');
+	console.info('Genesis assets data created successfully.');
 });
