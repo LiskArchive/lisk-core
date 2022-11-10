@@ -16,6 +16,8 @@ const fs = require('fs');
 import { passphrase as liskPassphrase, cryptography } from 'lisk-sdk';
 const { Mnemonic } = liskPassphrase;
 
+import { createTokenSubstoreArray } from './tokenUserSubstore';
+
 const MNEMONIC_LENGTH = 256;
 
 const write = (filePath, content) =>
@@ -29,8 +31,9 @@ const write = (filePath, content) =>
 	});
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-const createValidators = async (count = 103) => {
-	const keys: any = [];
+export const createValidatorsInfo = async (count = 103) => {
+	const devValidators: any = [];
+	const validators: any = [];
 	const passphrases: any = [];
 	const encryptedMessageObject = {};
 
@@ -58,7 +61,7 @@ const createValidators = async (count = 103) => {
 		);
 		const blsPublicKey = cryptography.bls.getPublicKeyFromPrivateKey(blsPrivateKey);
 
-		keys.push({
+		devValidators.push({
 			address: cryptography.address.getLisk32AddressFromAddress(address),
 			keyPath: accountKeyPath,
 			publicKey: accountPublicKey.toString('hex'),
@@ -74,12 +77,41 @@ const createValidators = async (count = 103) => {
 			},
 			encrypted: encryptedMessageObject,
 		});
+
+		validators.push({
+			address: cryptography.address.getLisk32AddressFromAddress(address),
+			name: `genesis_${i}`,
+			blsKey: blsPublicKey.toString('hex'),
+			generatorKey: generatorPublicKey.toString('hex'),
+			proofOfPossession: cryptography.bls.popProve(blsPrivateKey).toString('hex'),
+			lastGeneratedHeight: 0,
+			isBanned: false,
+			pomHeights: [],
+			consecutiveMissedBlocks: 0,
+		});
 	}
 
-	await write('./dev-validators.json', JSON.stringify(keys));
-	await write('./passphrases.json', JSON.stringify(passphrases));
+	const initDelegates = validators.map(validator => validator.address);
+
+	return {
+		devValidators,
+		initDelegates,
+		validators,
+		passphrases,
+	};
 };
 
-createValidators(103).then(() => {
-	console.log('Validators created successfully');
+export const createGenesisAssetsData = async () => {
+	const { devValidators, initDelegates, validators, passphrases } = await createValidatorsInfo(103);
+	const userSubstore = await createTokenSubstoreArray(validators);
+
+	await write('./initDelegates.json', JSON.stringify(initDelegates));
+	await write('./dev-validators.json', JSON.stringify(devValidators));
+	await write('./validators.json', JSON.stringify(validators));
+	await write('./passphrases.json', JSON.stringify(passphrases));
+	await write('./tokenUserStore.json', JSON.stringify(userSubstore));
+};
+
+createGenesisAssetsData().then(() => {
+	console.log('Genesis assets data created successfully');
 });
