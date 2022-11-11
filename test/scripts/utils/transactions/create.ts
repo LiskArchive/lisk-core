@@ -13,65 +13,75 @@
  *
  */
 
-import { cryptography, apiClient } from 'lisk-sdk';
+import { apiClient, codec, cryptography } from 'lisk-sdk';
 
-export interface Vote {
-	delegateAddress: Buffer;
-	amount: bigint;
-}
+import {
+	MODULE_TOKEN,
+	COMMAND_TOKEN_TRANSFER,
+	MODULE_DPOS,
+	COMMAND_DPOS_REGISTER_DELEGATE,
+	COMMAND_DPOS_VOTE_DELEGATE,
+	COMMAND_DPOS_UPDATE_GENERATOR_KEY,
+	MODULE_AUTH,
+	COMMAND_AUTH_REGISTER_MULTISIGNATURE,
+	LOCAL_ID,
+	ACCOUNT_INITIALIZATION_FEE,
+} from '../constants';
+import {
+	createSignatureForMultisignature,
+	createSignatureObject,
+	getSignBytes,
+} from '../multisignature';
+import { GeneratorAccount, Transaction, Vote } from '../types';
+import { multisigRegMsgSchema } from '../schemas';
 
-interface TransactionInput {
-	moduleID?: number;
-	moduleName?: string;
-	commandID?: number;
-	commandName?: string;
-	fee: bigint;
-	nonce?: bigint;
-	senderPublicKey?: Buffer;
-	params: Record<string, unknown>;
-	signatures?: Buffer[];
-}
+let TOKEN_ID;
 
 const createAndSignTransaction = async (
-	transaction: TransactionInput,
-	passphrases: string[],
+	transaction: Transaction,
+	privateKey: string,
 	client: apiClient.APIClient,
 	options?: Record<string, unknown>,
 ) => {
-	const trx = await client.transaction.create(transaction, passphrases[0], options);
+	const trx = await client.transaction.create(transaction, privateKey, options);
 
-	return client.transaction.sign(trx, passphrases, options);
+	return client.transaction.sign(trx, [privateKey], options);
 };
 
 export const createTransferTransaction = async (
 	input: {
-		recipientAddress: Buffer;
-		amount?: bigint;
 		nonce: bigint;
-		networkIdentifier: Buffer;
-		passphrase: string;
+		recipientAddress: string;
+		amount?: bigint;
+		fromAccount: any;
 		fee?: bigint;
 	},
 	client: apiClient.APIClient,
 ): Promise<Record<string, unknown>> => {
-	const asset = {
+	if (!TOKEN_ID) {
+		const nodeInfo = await client.invoke<Record<string, any>>('system_getNodeInfo');
+		TOKEN_ID = `${nodeInfo.chainID}${LOCAL_ID}`;
+	}
+
+	const params = {
 		recipientAddress: input.recipientAddress,
 		amount: input.amount ?? BigInt('10000000000'),
+		tokenID: TOKEN_ID,
 		data: '',
+		accountInitializationFee: ACCOUNT_INITIALIZATION_FEE,
 	};
-	const { publicKey } = cryptography.getAddressAndPublicKeyFromPassphrase(input.passphrase);
 
 	const tx = await createAndSignTransaction(
 		{
-			moduleID: 2,
-			commandID: 0,
+			module: MODULE_TOKEN,
+			command: COMMAND_TOKEN_TRANSFER,
 			nonce: input.nonce,
-			senderPublicKey: publicKey,
+			senderPublicKey: input.fromAccount.publicKey.toString('hex'),
 			fee: input.fee ?? BigInt('200000'),
-			asset,
+			params,
 			signatures: [],
 		},
-		[input.passphrase],
+		input.fromAccount.privateKey.toString('hex'),
 		client,
 	);
 
@@ -80,30 +90,31 @@ export const createTransferTransaction = async (
 
 export const createDelegateRegisterTransaction = async (
 	input: {
-		nonce: bigint;
-		networkIdentifier: Buffer;
-		passphrase: string;
-		username: string;
+		account: GeneratorAccount;
+		name: string;
 		fee?: bigint;
+		nonce: bigint;
 	},
 	client: apiClient.APIClient,
 ): Promise<Record<string, unknown>> => {
-	const asset = {
-		username: input.username,
+	const params = {
+		name: input.name,
+		blsKey: input.account.blsKey,
+		proofOfPossession: input.account.proofOfPossession,
+		generatorKey: input.account.generatorKey,
 	};
-	const { publicKey } = cryptography.getAddressAndPublicKeyFromPassphrase(input.passphrase);
 
 	const tx = await createAndSignTransaction(
 		{
-			moduleID: 5,
-			commandID: 0,
+			module: MODULE_DPOS,
+			command: COMMAND_DPOS_REGISTER_DELEGATE,
 			nonce: input.nonce,
-			senderPublicKey: publicKey,
+			senderPublicKey: input.account.publicKey.toString('hex'),
 			fee: input.fee ?? BigInt('2500000000'),
-			asset,
+			params,
 			signatures: [],
 		},
-		[input.passphrase],
+		input.account.privateKey.toString('hex'),
 		client,
 	);
 
@@ -113,30 +124,53 @@ export const createDelegateRegisterTransaction = async (
 export const createDelegateVoteTransaction = async (
 	input: {
 		nonce: bigint;
-		networkIdentifier: Buffer;
-		passphrase: string;
+		account: GeneratorAccount;
 		votes: Vote[];
 		fee?: bigint;
 	},
 	client: apiClient.APIClient,
 ): Promise<Record<string, unknown>> => {
-	const asset = {
+	const params = {
 		votes: input.votes,
 	};
 
-	const { publicKey } = cryptography.getAddressAndPublicKeyFromPassphrase(input.passphrase);
-
 	const tx = await createAndSignTransaction(
 		{
-			moduleID: 5,
-			commandID: 1,
+			module: MODULE_DPOS,
+			command: COMMAND_DPOS_VOTE_DELEGATE,
 			nonce: input.nonce,
-			senderPublicKey: publicKey,
-			fee: input.fee ?? BigInt('100000000'),
-			asset,
+			senderPublicKey: input.account.publicKey.toString('hex'),
+			fee: input.fee ?? BigInt('200000000'),
+			params,
 			signatures: [],
 		},
-		[input.passphrase],
+		input.account.privateKey.toString('hex'),
+		client,
+	);
+
+	return tx;
+};
+
+export const createUpdateGeneratorKeyTransaction = async (
+	input: {
+		account: GeneratorAccount;
+		fee?: bigint;
+		nonce: bigint;
+		params: any;
+	},
+	client: apiClient.APIClient,
+): Promise<Record<string, unknown>> => {
+	const tx = await createAndSignTransaction(
+		{
+			module: MODULE_DPOS,
+			command: COMMAND_DPOS_UPDATE_GENERATOR_KEY,
+			nonce: input.nonce,
+			senderPublicKey: input.account.publicKey.toString('hex'),
+			fee: input.fee ?? BigInt('2500000000'),
+			params: input.params,
+			signatures: [],
+		},
+		input.account.privateKey.toString('hex'),
 		client,
 	);
 
@@ -145,48 +179,76 @@ export const createDelegateVoteTransaction = async (
 
 export const createMultiSignRegisterTransaction = async (
 	input: {
+		chainID: Buffer;
 		nonce: bigint;
-		networkIdentifier: Buffer;
 		fee?: bigint;
 		mandatoryKeys: Buffer[];
 		optionalKeys: Buffer[];
 		numberOfSignatures: number;
-		senderPassphrase: string;
-		passphrases: string[];
+		senderAccount: GeneratorAccount;
+		multisigAccountKeys: string[];
 	},
 	client: apiClient.APIClient,
 ): Promise<Record<string, unknown>> => {
-	const asset = {
+	const params = {
 		mandatoryKeys: input.mandatoryKeys,
 		optionalKeys: input.optionalKeys,
 		numberOfSignatures: input.numberOfSignatures,
+		signatures: [],
 	};
-	const { publicKey } = cryptography.getAddressAndPublicKeyFromPassphrase(input.senderPassphrase);
 	const options = {
 		multisignatureKeys: {
-			mandatoryKeys: input.mandatoryKeys,
-			optionalKeys: input.optionalKeys,
+			mandatoryKeys: input.mandatoryKeys.map(mandatoryKey => mandatoryKey.toString('hex')),
+			optionalKeys: input.optionalKeys.map(optionalKey => optionalKey.toString('hex')),
 			numberOfSignatures: input.numberOfSignatures,
 		},
 	};
-	let trx = await createAndSignTransaction(
+
+	let trx: any = await createAndSignTransaction(
 		{
-			moduleID: 4,
-			commandID: 0,
+			module: MODULE_AUTH,
+			command: COMMAND_AUTH_REGISTER_MULTISIGNATURE,
 			nonce: input.nonce,
-			senderPublicKey: publicKey,
+			senderPublicKey: input.senderAccount.publicKey.toString('hex'),
 			fee: input.fee ?? BigInt('1100000000'),
-			asset,
+			params,
 			signatures: [],
 		},
-		[input.senderPassphrase],
+		input.senderAccount.privateKey.toString('hex'),
 		client,
 		options,
 	);
-	trx = await client.transaction.sign(trx, input.passphrases, {
+
+	trx = await client.transaction.sign(trx, input.multisigAccountKeys, {
 		includeSenderSignature: true,
 		...options,
 	});
+
+	// Members sign in order
+	const messageBytes = codec.encode(multisigRegMsgSchema, {
+		address: cryptography.address.getAddressFromPublicKey(Buffer.from(trx.senderPublicKey, 'hex')),
+		nonce: BigInt(trx.nonce),
+		numberOfSignatures: trx.params.numberOfSignatures,
+		mandatoryKeys: trx.params.mandatoryKeys.map(mandatoryKey => Buffer.from(mandatoryKey, 'hex')),
+		optionalKeys: trx.params.optionalKeys.map(optionalKey => Buffer.from(optionalKey, 'hex')),
+	});
+
+	input.multisigAccountKeys.forEach(multisigAccountKey => {
+		trx.params.signatures.push(
+			createSignatureForMultisignature(
+				input.chainID,
+				messageBytes,
+				Buffer.from(multisigAccountKey, 'hex'),
+			).signature,
+		);
+	});
+
+	const txBuffer = getSignBytes(trx);
+
+	trx.signatures = [];
+	trx.signatures.push(
+		createSignatureObject(input.chainID, txBuffer, input.senderAccount.privateKey).signature,
+	);
 
 	return trx;
 };
@@ -194,34 +256,39 @@ export const createMultiSignRegisterTransaction = async (
 export const createMultisignatureTransferTransaction = async (
 	input: {
 		nonce: bigint;
-		networkIdentifier: Buffer;
-		recipientAddress: Buffer;
+		recipientAddress: string;
 		amount: bigint;
 		fee?: bigint;
 		mandatoryKeys: Buffer[];
 		optionalKeys: Buffer[];
 		senderPublicKey: Buffer;
-		passphrases: string[];
+		multisigAccountKeys: any;
 	},
 	client: apiClient.APIClient,
 ): Promise<Record<string, unknown>> => {
-	const asset = {
+	if (!TOKEN_ID) {
+		const nodeInfo = await client.invoke<Record<string, any>>('system_getNodeInfo');
+		TOKEN_ID = `${nodeInfo.chainID}${LOCAL_ID}`;
+	}
+
+	const params = {
 		recipientAddress: input.recipientAddress,
 		amount: BigInt('10000000000'),
+		tokenID: TOKEN_ID,
 		data: '',
 	};
 
 	const tx = await createAndSignTransaction(
 		{
-			moduleID: 2,
-			commandID: 0,
+			module: MODULE_TOKEN,
+			command: COMMAND_TOKEN_TRANSFER,
 			nonce: input.nonce,
-			senderPublicKey: input.senderPublicKey,
+			senderPublicKey: input.senderPublicKey.toString('hex'),
 			fee: input.fee ?? BigInt('200000'),
-			asset,
+			params,
 			signatures: [],
 		},
-		input.passphrases,
+		input.multisigAccountKeys,
 		client,
 		{
 			multisignatureKeys: {

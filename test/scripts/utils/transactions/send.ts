@@ -14,16 +14,19 @@
  */
 /* eslint-disable no-console, @typescript-eslint/restrict-template-expressions */
 
-import { apiClient, codec, transactions, RegisteredSchema } from 'lisk-sdk';
-import { PassphraseAndKeys } from '../accounts';
+import { apiClient, transactions } from 'lisk-sdk';
+
+import { TRANSACTIONS_PER_ACCOUNT, DEFAULT_TX_FEES } from '../constants';
 import {
 	createTransferTransaction,
 	createDelegateRegisterTransaction,
 	createDelegateVoteTransaction,
-	Vote,
+	createUpdateGeneratorKeyTransaction,
 	createMultiSignRegisterTransaction,
 	createMultisignatureTransferTransaction,
 } from './create';
+import { Account, GeneratorAccount, Vote } from '../types';
+import { wait } from '../wait';
 
 export const getBeddows = (lskAmount: string) =>
 	BigInt(transactions.convertLSKToBeddows(lskAmount));
@@ -36,31 +39,18 @@ const generateRandomUserName = () => {
 	return [...Array(20)].map(() => base[(Math.random() * base.length) | 0]).join('');
 };
 
-const nonceSequenceItems = (AccountNonce: number, count = 63) => [
+const nonceSequenceItems = (AccountNonce: number, count = TRANSACTIONS_PER_ACCOUNT - 1) => [
 	AccountNonce,
 	...Array.from({ length: count }, (_, k) => AccountNonce + k + 1),
 ];
 
-const getAccount = async (
-	address: string,
-	client: apiClient.APIClient,
-): Promise<Record<string, unknown>> => {
-	const schema = await client.invoke<RegisteredSchema>('app:getSchema');
-	const account = await client.invoke<string>('app:getAccount', {
-		address,
-	});
-
-	return codec.decodeJSON(schema.account, Buffer.from(account, 'hex'));
-};
-
 const getAccountNonce = async (address: string, client: apiClient.APIClient): Promise<number> => {
-	const account = await getAccount(address, client);
-	const { sequence } = account as { sequence: { nonce: string } };
-	return Number(sequence.nonce);
+	const account = await client.invoke<any>('auth_getAuthAccount', { address });
+	return Number(account.nonce);
 };
 
 const handleTransaction = async (
-	transaction: Record<string, unknown>,
+	transaction: any,
 	transactionMessage: string,
 	client: apiClient.APIClient,
 ) => {
@@ -78,27 +68,22 @@ const handleTransaction = async (
 };
 
 export const sendTokenTransferTransactions = async (
-	nodeInfo: Record<string, unknown>,
-	accounts: PassphraseAndKeys[],
-	fromAccount: PassphraseAndKeys,
+	accounts: Account[],
+	fromAccount: Account,
 	fromGenesis = true,
 	client: apiClient.APIClient,
 ) => {
-	const AccountNonce = fromGenesis
-		? await getAccountNonce(fromAccount.address.toString('hex'), client)
-		: 0;
+	const AccountNonce = fromGenesis ? await getAccountNonce(fromAccount.address, client) : 0;
 
-	const { networkIdentifier } = nodeInfo as { networkIdentifier: string };
 	const transferTransactions = await Promise.all(
 		nonceSequenceItems(AccountNonce).map(async (nonce, index) => {
 			const trx = await createTransferTransaction(
 				{
-					nonce: BigInt(nonce),
 					recipientAddress: accounts[index].address,
+					nonce: BigInt(nonce),
 					amount: getBeddows(fromGenesis ? '2000' : '25'),
-					fee: getBeddows('0.1'),
-					networkIdentifier: Buffer.from(networkIdentifier, 'hex'),
-					passphrase: fromAccount.passphrase,
+					fee: DEFAULT_TX_FEES,
+					fromAccount,
 				},
 				client,
 			);
@@ -107,27 +92,26 @@ export const sendTokenTransferTransactions = async (
 		}),
 	);
 
-	for (let i = 0; i < transferTransactions.length; i += 1) {
+	for (let i = 0; i < transferTransactions.length; i++) {
 		await handleTransaction(transferTransactions[i], 'token transfer', client);
+		// TODO: Remove wait
+		await wait(20000);
 	}
 };
 
 export const sendDelegateRegistrationTransaction = async (
-	nodeInfo: Record<string, unknown>,
-	fromAccount: PassphraseAndKeys,
+	account: GeneratorAccount,
 	client: apiClient.APIClient,
 ) => {
-	const AccountNonce = await getAccountNonce(fromAccount.address.toString('hex'), client);
-	const username = generateRandomUserName();
+	const AccountNonce = await getAccountNonce(account.address, client);
 
-	const { networkIdentifier } = nodeInfo as { networkIdentifier: string };
+	const name = generateRandomUserName();
 	const transaction = await createDelegateRegisterTransaction(
 		{
+			name,
 			nonce: BigInt(AccountNonce),
-			username,
 			fee: getBeddows('15'),
-			networkIdentifier: Buffer.from(networkIdentifier, 'hex'),
-			passphrase: fromAccount.passphrase,
+			account,
 		},
 		client,
 	);
@@ -136,21 +120,18 @@ export const sendDelegateRegistrationTransaction = async (
 };
 
 export const sendVoteTransaction = async (
-	nodeInfo: Record<string, unknown>,
-	fromAccount: PassphraseAndKeys,
+	account: GeneratorAccount,
 	votes: Vote[],
 	client: apiClient.APIClient,
 ) => {
-	const AccountNonce = await getAccountNonce(fromAccount.address.toString('hex'), client);
+	const AccountNonce = await getAccountNonce(account.address, client);
 
-	const { networkIdentifier } = nodeInfo as { networkIdentifier: string };
 	const transaction = await createDelegateVoteTransaction(
 		{
 			nonce: BigInt(AccountNonce),
 			votes,
-			fee: getBeddows('0.3'),
-			networkIdentifier: Buffer.from(networkIdentifier, 'hex'),
-			passphrase: fromAccount.passphrase,
+			fee: DEFAULT_TX_FEES,
+			account,
 		},
 		client,
 	);
@@ -158,26 +139,46 @@ export const sendVoteTransaction = async (
 	await handleTransaction(transaction, 'vote', client);
 };
 
-export const sendMultiSigRegistrationTransaction = async (
-	nodeInfo: Record<string, unknown>,
-	fromAccount: PassphraseAndKeys,
-	asset: { mandatoryKeys: Buffer[]; optionalKeys: Buffer[]; numberOfSignatures: number },
-	passphrases: string[],
+export const sendUpdateGeneratorKeyTransaction = async (
+	account: GeneratorAccount,
+	params,
 	client: apiClient.APIClient,
 ) => {
-	const AccountNonce = await getAccountNonce(fromAccount.address.toString('hex'), client);
+	const AccountNonce = await getAccountNonce(account.address, client);
 
-	const { networkIdentifier } = nodeInfo as { networkIdentifier: string };
-	const transaction = await createMultiSignRegisterTransaction(
+	const transaction = await createUpdateGeneratorKeyTransaction(
 		{
 			nonce: BigInt(AccountNonce),
-			mandatoryKeys: asset.mandatoryKeys,
-			optionalKeys: asset.optionalKeys,
-			numberOfSignatures: asset.numberOfSignatures,
-			senderPassphrase: fromAccount.passphrase,
-			fee: getBeddows('0.5'),
-			networkIdentifier: Buffer.from(networkIdentifier, 'hex'),
-			passphrases,
+			fee: getBeddows('15'),
+			account,
+			params,
+		},
+		client,
+	);
+
+	await handleTransaction(transaction, 'update generatorKey', client);
+};
+
+export const sendMultiSigRegistrationTransaction = async (
+	account: GeneratorAccount,
+	params: { mandatoryKeys: Buffer[]; optionalKeys: Buffer[]; numberOfSignatures: number },
+	multisigAccountKeys: string[],
+	client: apiClient.APIClient,
+) => {
+	const AccountNonce = await getAccountNonce(account.address, client);
+
+	const nodeInfo = await client.invoke<Record<string, any>>('system_getNodeInfo');
+
+	const transaction = await createMultiSignRegisterTransaction(
+		{
+			chainID: Buffer.from(nodeInfo.chainID, 'hex'),
+			nonce: BigInt(AccountNonce),
+			mandatoryKeys: params.mandatoryKeys,
+			optionalKeys: params.optionalKeys,
+			numberOfSignatures: params.numberOfSignatures,
+			senderAccount: account,
+			fee: DEFAULT_TX_FEES,
+			multisigAccountKeys,
 		},
 		client,
 	);
@@ -186,26 +187,23 @@ export const sendMultiSigRegistrationTransaction = async (
 };
 
 export const sendTransferTransactionFromMultiSigAccount = async (
-	nodeInfo: Record<string, unknown>,
-	fromAccount: PassphraseAndKeys,
-	asset: { mandatoryKeys: Buffer[]; optionalKeys: Buffer[] },
-	passphrases: string[],
+	account: GeneratorAccount,
+	params: { mandatoryKeys: Buffer[]; optionalKeys: Buffer[] },
+	multisigAccountKeys: string[],
 	client: apiClient.APIClient,
 ) => {
-	const AccountNonce = await getAccountNonce(fromAccount.address.toString('hex'), client);
+	const AccountNonce = await getAccountNonce(account.address, client);
 
-	const { networkIdentifier } = nodeInfo as { networkIdentifier: string };
 	const transaction = await createMultisignatureTransferTransaction(
 		{
-			senderPublicKey: fromAccount.publicKey,
-			recipientAddress: fromAccount.address,
+			senderPublicKey: account.publicKey,
+			recipientAddress: account.address,
 			amount: getBeddows('1'),
 			nonce: BigInt(AccountNonce),
-			mandatoryKeys: asset.mandatoryKeys,
-			optionalKeys: asset.optionalKeys,
-			fee: getBeddows('0.5'),
-			networkIdentifier: Buffer.from(networkIdentifier, 'hex'),
-			passphrases,
+			mandatoryKeys: params.mandatoryKeys,
+			optionalKeys: params.optionalKeys,
+			fee: DEFAULT_TX_FEES,
+			multisigAccountKeys,
 		},
 		client,
 	);

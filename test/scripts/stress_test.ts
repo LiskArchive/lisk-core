@@ -14,21 +14,28 @@
 /* eslint-disable no-console */
 
 import { apiClient } from 'lisk-sdk';
-import { PassphraseAndKeys, createAccount, genesisAccount } from './utils/accounts';
+
+import { createAccount, genesisAccount, createGeneratorKey } from './utils/accounts';
+import { TRANSACTIONS_PER_ACCOUNT, NUM_OF_ROUNDS } from './utils/constants';
 import {
 	sendTokenTransferTransactions,
 	sendDelegateRegistrationTransaction,
 	sendVoteTransaction,
 	getBeddows,
+	sendUpdateGeneratorKeyTransaction,
 	sendMultiSigRegistrationTransaction,
-	sendTransferTransactionFromMultiSigAccount,
+	// sendTransferTransactionFromMultiSigAccount,
 } from './utils/transactions/send';
+import { Account, GeneratorAccount, Vote } from './utils/types';
+import { wait } from './utils/wait';
 
-const TRANSACTIONS_PER_ACCOUNT = 64;
 const ITERATIONS = process.env.ITERATIONS ?? '1';
 const STRESS_COUNT = TRANSACTIONS_PER_ACCOUNT * parseInt(ITERATIONS, 10);
 
-const chunkArray = (myArray: PassphraseAndKeys[], chunkSize = TRANSACTIONS_PER_ACCOUNT) => {
+let schemas;
+let metadata;
+
+const chunkArray = (myArray: Account[], chunkSize = TRANSACTIONS_PER_ACCOUNT) => {
 	if (myArray.length <= chunkSize) {
 		return [myArray];
 	}
@@ -36,101 +43,126 @@ const chunkArray = (myArray: PassphraseAndKeys[], chunkSize = TRANSACTIONS_PER_A
 	return [myArray.slice(0, chunkSize), ...chunkArray(myArray.slice(chunkSize), chunkSize)];
 };
 
-const wait = async (ms = 10000) => new Promise(resolve => setTimeout(() => resolve(), ms));
+export const getSchemas = () => schemas;
+
+export const getMetadata = () => metadata;
 
 const start = async (count = STRESS_COUNT) => {
-	const URL = process.env.WS_SERVER_URL || 'ws://localhost:8080/ws';
-	const client = await apiClient.createWSClient(URL);
-	const nodeInfo = await client.invoke<Record<string, unknown>>('app:getNodeInfo');
+	// const URL = process.env.WS_SERVER_URL || 'ws://localhost:7887/rpc-ws';
+	const client = await apiClient.createIPCClient('~/.lisk/lisk-core');
+	const accounts: GeneratorAccount[] = await Promise.all(
+		[...Array(count)].map(async () => await createAccount()),
+	);
 
-	const accounts = [...Array(count)].map(() => createAccount());
+	if (!schemas) {
+		schemas = await client.invoke<Record<string, any>>('system_getSchema');
+	}
+
+	if (!metadata) {
+		metadata = await client.invoke<Record<string, any>>('system_getMetadata');
+	}
+
 	const accountsLen = accounts.length;
 	// Due to TPool limit of 64 trx/account, fund initial accounts
-	const fundInitialAccount: PassphraseAndKeys[] = accounts.slice(0, TRANSACTIONS_PER_ACCOUNT);
-	await sendTokenTransferTransactions(nodeInfo, fundInitialAccount, genesisAccount, true, client);
+	const fundInitialAccount: Account[] = accounts.slice(0, TRANSACTIONS_PER_ACCOUNT);
+	await sendTokenTransferTransactions(fundInitialAccount, await genesisAccount(), true, client);
 
 	// Wait for 2 blocks
 	await wait(20000);
 
 	const chunkedAccounts = chunkArray([...accounts]);
-	for (let i = 0; i < chunkedAccounts.length; i += 1) {
-		await sendTokenTransferTransactions(
-			nodeInfo,
-			chunkedAccounts[i],
-			fundInitialAccount[i],
-			false,
-			client,
-		);
+	for (let i = 0; i < chunkedAccounts.length; i++) {
+		await sendTokenTransferTransactions(chunkedAccounts[i], fundInitialAccount[i], false, client);
 	}
 
 	console.log('\n');
 	await wait(20000);
 
-	for (let i = 0; i < accountsLen; i += 1) {
-		await sendDelegateRegistrationTransaction(nodeInfo, accounts[i], client);
+	for (let i = 0; i < accountsLen; i++) {
+		await sendDelegateRegistrationTransaction(accounts[i], client);
 	}
 
 	console.log('\n');
 	await wait(20000);
 	// Vote
-	for (let i = 0; i < accountsLen; i += 1) {
-		const votes = [
+	for (let i = 0; i < accountsLen; i++) {
+		const votes: Vote[] = [
 			{ delegateAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('20') },
 			{
-				delegateAddress: Buffer.from('5ade564399e670bd1d429583059067f3a6ca2b7f', 'hex'),
-				amount: getBeddows('10'),
+				delegateAddress: 'lskzort5bybu4rchqk6aj7sx2bbsu4azwf3wbutu4',
+				amount: BigInt('1000000000'),
 			},
 		];
-		await sendVoteTransaction(nodeInfo, accounts[i], votes, client);
+		await sendVoteTransaction(accounts[i], votes, client);
 	}
 
 	console.log('\n');
 	await wait(20000);
 	// Unvote
-	for (let i = 0; i < accountsLen; i += 1) {
-		const unVotes = [
+	for (let i = 0; i < accountsLen; i++) {
+		const unVotes: Vote[] = [
 			{ delegateAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('-10') },
 		];
-		await sendVoteTransaction(nodeInfo, accounts[i], unVotes, client);
+		await sendVoteTransaction(accounts[i], unVotes, client);
 	}
 
 	console.log('\n');
 	await wait(20000);
 
-	for (let i = 0; i < accountsLen; i += 1) {
+	// Update generatorKey
+	for (let i = 0; i < accountsLen; i++) {
+		const params = {
+			generatorKey: await createGeneratorKey(accounts[i].passphrase, `m/25519'/134'/0'/${i}'`),
+		};
+
+		await sendUpdateGeneratorKeyTransaction(accounts[i], params, client);
+	}
+
+	console.log('\n');
+	await wait(20000);
+
+	for (let i = 0; i < accountsLen; i++) {
 		const account1 = accounts[(i + 1) % accountsLen];
 		const account2 = accounts[(i + 2) % accountsLen];
-		const asset = {
+		const params = {
 			mandatoryKeys: [account1.publicKey],
 			optionalKeys: [account2.publicKey],
 			numberOfSignatures: 2,
 		};
-		const passphrases = [account1.passphrase, account2.passphrase];
-		await sendMultiSigRegistrationTransaction(nodeInfo, accounts[i], asset, passphrases, client);
+		const multisigAccountKeys = [
+			account1.privateKey.toString('hex'),
+			account2.privateKey.toString('hex'),
+		];
+		await sendMultiSigRegistrationTransaction(accounts[i], params, multisigAccountKeys, client);
 	}
 
-	console.log('\n');
-	await wait(40000);
+	// console.log('\n');
+	// await wait(40000);
 
-	for (let i = 0; i < accountsLen; i += 1) {
-		const account1 = accounts[(i + 1) % accountsLen];
-		const account2 = accounts[(i + 2) % accountsLen];
-		const asset = {
-			mandatoryKeys: [account1.publicKey],
-			optionalKeys: [account2.publicKey],
-		};
-		const passphrases = [account1.passphrase, account2.passphrase];
-		await sendTransferTransactionFromMultiSigAccount(
-			nodeInfo,
-			accounts[i],
-			asset,
-			passphrases,
-			client,
-		);
-	}
+	// for (let i = 0; i < accountsLen; i += 1) {
+	// 	const account1 = accounts[(i + 1) % accountsLen];
+	// 	const account2 = accounts[(i + 2) % accountsLen];
+	// 	const params = {
+	// 		mandatoryKeys: [account1.publicKey],
+	// 		optionalKeys: [account2.publicKey],
+	// 	};
+	// 	const multisigAccountKeys = [account1.privateKey.toString('hex'), account2.privateKey.toString('hex')];
+	// 	await sendTransferTransactionFromMultiSigAccount(
+	// 		accounts[i],
+	// 		params,
+	// 		multisigAccountKeys,
+	// 		client,
+	// 	);
+	// }
 
-	console.info('Finished!!');
 	client.disconnect();
 };
 
-start().catch(console.error);
+const createTransactions = async () => {
+	for (let i = 0; i < NUM_OF_ROUNDS; i++) {
+		await start();
+	}
+	console.info('Finished!!');
+};
+
+createTransactions().catch(console.error);

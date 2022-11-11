@@ -16,31 +16,78 @@ import { passphrase as liskPassphrase, cryptography } from 'lisk-sdk';
 
 const { Mnemonic } = liskPassphrase;
 
-export interface PassphraseAndKeys {
-	passphrase: string;
-	privateKey?: Buffer;
-	publicKey: Buffer;
-	address: Buffer;
-}
+import { MNEMONIC_LENGTH } from './constants';
 
-export const createAccount = () => {
-	const passphrase = Mnemonic.generateMnemonic();
-	const { privateKey, publicKey } = cryptography.getKeys(passphrase);
-	const address = cryptography.getAddressFromPublicKey(publicKey);
+export const createGeneratorKey = async (passphrase: string, generatorKeyPath: string) => {
+	const generatorPrivateKey = await cryptography.ed.getPrivateKeyFromPhraseAndPath(
+		passphrase,
+		generatorKeyPath,
+	);
+
+	const generatorPublicKey = cryptography.ed.getPublicKeyFromPrivateKey(generatorPrivateKey);
+
+	return generatorPublicKey;
+};
+
+export const createAccount = async () => {
+	const passphrase = Mnemonic.generateMnemonic(MNEMONIC_LENGTH);
+	const accountKeyPath = `m/44'/134'/0'`;
+	const generatorKeyPath = `m/25519'/134'/0'/0'`;
+	const blsKeyPath = `m/12381/134/0/0`;
+
+	const privateKey = await cryptography.ed.getPrivateKeyFromPhraseAndPath(
+		passphrase,
+		accountKeyPath,
+	);
+	const publicKey = cryptography.ed.getPublicKeyFromPrivateKey(privateKey);
+	const address = cryptography.address.getAddressFromPublicKey(publicKey);
+	const generatorPrivateKey = await cryptography.ed.getPrivateKeyFromPhraseAndPath(
+		passphrase,
+		generatorKeyPath,
+	);
+	const generatorPublicKey = cryptography.ed.getPublicKeyFromPrivateKey(generatorPrivateKey);
+	const blsPrivateKey = await cryptography.bls.getPrivateKeyFromPhraseAndPath(
+		passphrase,
+		blsKeyPath,
+	);
+	const blsPublicKey = cryptography.bls.getPublicKeyFromPrivateKey(blsPrivateKey);
 
 	return {
 		passphrase,
 		privateKey,
 		publicKey,
-		address,
+		blsKey: blsPublicKey,
+		generatorKey: generatorPublicKey,
+		proofOfPossession: cryptography.bls.popProve(blsPrivateKey),
+		address: cryptography.address.getLisk32AddressFromAddress(address),
 	};
 };
 
-const passphrase = 'peanut hundred pen hawk invite exclude brain chunk gadget wait wrong ready';
+const passphrases = [
+	'attract squeeze option inflict dynamic end evoke love proof among random blanket table pumpkin general impose access toast undo extend fun employ agree dash',
+	'high cause service problem walnut surface funny happy income mention toy among upgrade suffer such sausage rose lunar share sunny yard rival broom estate',
+	'segment west flavor rice pigeon feature bread wrong happy session daring try bridge country mom laugh web guilt cricket seat step visual pass illness',
+	'just agent maple student exist before hello peace deliver marble short fiscal turtle grab now width cat right praise evidence market pear lounge sausage',
+	'effort skate zebra replace detail vicious marine toddler speed brown basic circle drink fee border about gallery enhance gaze doctor fatal tube boost blanket',
+];
 
-export const genesisAccount = {
-	address: cryptography.getAddressFromPassphrase(passphrase),
-	...cryptography.getKeys(passphrase),
-	passphrase,
-	password: 'elephant tree paris dragon chair galaxy',
+const accountKeyPath = "m/44'/134'/0'";
+
+export const genesisAccount = async () => {
+	const passphraseIndex = Math.floor(Math.random() * passphrases.length);
+	const passphrase = passphrases[passphraseIndex];
+	const privateKey = await cryptography.ed.getPrivateKeyFromPhraseAndPath(
+		passphrase,
+		accountKeyPath,
+	);
+	const publicKey = cryptography.ed.getPublicKeyFromPrivateKey(privateKey);
+
+	return {
+		address: cryptography.address.getLisk32AddressFromPublicKey(publicKey),
+		...cryptography.legacy.getKeys(passphrase),
+		passphrase,
+		password: 'elephant tree paris dragon chair galaxy',
+		publicKey,
+		privateKey,
+	};
 };
