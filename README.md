@@ -93,6 +93,20 @@ USAGE
 
 ## Managing Lisk Node
 
+### System requirements
+
+The following system requirements are recommended for validator nodes:
+
+#### Memory
+
+- Machines with a minimum of 4 GB RAM for the Mainnet.
+- Machines with a minimum of 2 GB RAM for the Testnet.
+
+#### OS
+
+- Ubuntu 20.04
+- Ubuntu 18.04
+
 To start a Lisk Core node as a background process, we recommend using a process management tool, such as [PM2](https://pm2.keymetrics.io/).
 
 ### Example using PM2

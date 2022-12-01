@@ -56,9 +56,9 @@ Lightcurve employees who contribute to Lisk are expected to do so in the same
 way as everyone else. In other words, this document applies equally to all
 contributors.
 
-### `master` is unsafe for production use
+### `main` is unsafe for production use
 
-We will do our best to keep `master` in good shape, with tests passing at all
+We will do our best to keep `main` in good shape, with tests passing at all
 times. But in order to move fast, we will make API changes that your application
 might not be compatible with. We will do our best to communicate these changes
 and always version appropriately so you can lock into a specific, stable
@@ -80,7 +80,7 @@ _Before_ submitting a pull request, please make sure the following is done:
    Most issues will be a part of a project for a specific version, such as
    "Version 1.0.0". If this is the case, create your branch from the relevant
    version branch, e.g. `1.0.0`, and submit your pull request against that
-   branch as a base. Otherwise, create your branch from `master`.
+   branch as a base. Otherwise, create your branch from `main`.
 1. Add tests to the code you have contributed! All new code must come with
    complete test coverage.
 1. End all files with a newline. In general, your code should conform to the
@@ -294,5 +294,5 @@ For examples please have a look in the existing code.
 
 These contribution guidelines were inspired by and are based on Atom’s
 contribution guidelines. They were modified for the purposes of this repository.
-https://github.com/atom/atom/blob/master/CONTRIBUTING.md - Copyright (c)
+https://github.com/atom/atom/blob/main/CONTRIBUTING.md - Copyright (c)
 2011-2017 GitHub Inc. (MIT)
