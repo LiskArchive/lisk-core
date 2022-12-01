@@ -82,7 +82,7 @@ USAGE
 - [`lisk-core forging`](docs/commands/forging.md) - Commands relating to Lisk Core forging.
 - [`lisk-core genesis-block`](docs/commands/genesis-block.md) - Download genesis block.
 - [`lisk-core hash-onion`](docs/commands/hash-onion.md) - Create hash onions to be used by the forger.
-- [`lisk-core help`](docs/commands/help.md) - display help for lisk-core.
+- [`lisk-core help`](docs/commands/help.md) - Display help for lisk-core.
 - [`lisk-core node`](docs/commands/node.md) - Commands relating to Lisk Core node.
 - [`lisk-core passphrase`](docs/commands/passphrase.md) - Commands relating to Lisk Core passphrases.
 - [`lisk-core sdk`](docs/commands/sdk.md) - Commands relating to Lisk SDK development.
@@ -140,32 +140,14 @@ With custom config file `./custom-config.json` below:
     "maxTransactions": 8096,
     "maxTransactionsPerAccount": 1024,
   },
-  "forging": {
-    "delegates": [{
-      "encryptedPassphrase": "iterations=10&cipherText=0dbd21ac5c154dbb72ce90a4e252a64b692203a4f8e25f8bfa1b1993e2ba7a9bd9e1ef1896d8d584a62daf17a8ccf12b99f29521b92cc98b74434ff501374f7e1c6d8371a6ce4e2d083489&iv=98a89678d1ccd054b85e3b3c&salt=c9cb4e7783cacca6c0e1c210cb9252e1&tag=5c66c5e75a6241538695fb16d8f0cdc9&version=1",
-      "hashOnion": {
-        "count": 10000,
-        "distance": 1000,
-        "hashes": [
-          "aaf012545a584890a169cf57d8f7e688",
-          "f7a3fb976e50d882c709edb63bde4d9c",
-          "1bd121882cb1dee1107699001c2676fb",
-          "c4ad7d98da02c94ef8bda2f80d35290a",
-          "096f0e77f963face5e99b9db460ce45f",
-          "de3d0c34bdcbdcfa2b7b1871c99d4948",
-          "5deb5e369a98510932835d74768cf86c",
-          "c0cd6ce3f75256149c8fe5d0bffdc99a",
-          "1a32706893f1523db0c7bb81be5e55ac",
-          "7e8f1ea4aa317993152e1a6b55b16f25",
-          "5e5100bbd2c2d5e00197d4ec19102dd6"
-        ]
-      },
-      "address": "9cabee3d27426676b852ce6b804cb2fdff7cd0b5"
-    }],
-  },
+  "generator": {
+		"keys": {
+			"fromFile": "./config/dev-validators.json"
+		}
+	},
   "plugins": {
-    "httpApi": {
-      "port": 7000,
+    "reportMisbehavior": {
+      "encryptedPassphrase": "iterations=10&cipherText=5dea8b928a3ea2481ebc02499ae77679b7552189181ff189d4aa1f8d89e8d07bf31f7ebd1c66b620769f878629e1b90499506a6f752bf3323799e3a54600f8db02f504c44d&iv=37e0b1753b76a90ed0b8c319&salt=963c5b91d3f7ba02a9d001eed49b5836&tag=c3e30e8f3440ba3f5b6d9fbaccc8918d&version=1"
     },
   },
 }
@@ -197,10 +179,11 @@ In order to run a node for a local test, in a root folder of lisk-core, run belo
 ./bin/run start -n devnet --data-path ./devnet-data --port 3333 --api-ipc --enable-forger-plugin
 ```
 
-This command will start a lisk-core node using data path `./devnet-data` with HTTPAPI and Forger Plugins.
+This command will start a lisk-core node using data path `./devnet-data` with Forger Plugins.
 Data on the node can be obtained by commands like
 
 ```
+./bin/run endpoint invoke system_getNodeInfo --pretty
 ./bin/run node:info --data-path ./devnet-data
 ./bin/run block:get 3 --data-path ./devnet-data
 ```

@@ -56,14 +56,6 @@ Lightcurve employees who contribute to Lisk are expected to do so in the same
 way as everyone else. In other words, this document applies equally to all
 contributors.
 
-### `main` is unsafe for production use
-
-We will do our best to keep `main` in good shape, with tests passing at all
-times. But in order to move fast, we will make API changes that your application
-might not be compatible with. We will do our best to communicate these changes
-and always version appropriately so you can lock into a specific, stable
-version.
-
 ### Pull Requests
 
 In case you’ve never submitted a pull request (PR) via GitHub before, please
@@ -294,5 +286,5 @@ For examples please have a look in the existing code.
 
 These contribution guidelines were inspired by and are based on Atom’s
 contribution guidelines. They were modified for the purposes of this repository.
-https://github.com/atom/atom/blob/main/CONTRIBUTING.md - Copyright (c)
+https://github.com/atom/atom/blob/master/CONTRIBUTING.md - Copyright (c)
 2011-2017 GitHub Inc. (MIT)
