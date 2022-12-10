@@ -90,7 +90,12 @@ export class LegacyModule extends BaseModule {
 				params: command.schema,
 			})),
 			events: [],
-			assets: [],
+			assets: [
+				{
+					version: 0,
+					data: genesisLegacyStoreSchema,
+				},
+			],
 		};
 	}
 
