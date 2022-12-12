@@ -19,13 +19,13 @@ import { apiClient, transactions } from 'lisk-sdk';
 import { TRANSACTIONS_PER_ACCOUNT, DEFAULT_TX_FEES } from '../constants';
 import {
 	createTransferTransaction,
-	createDelegateRegisterTransaction,
-	createDelegateVoteTransaction,
+	createValidatorRegisterTransaction,
+	createStakeTransaction,
 	createUpdateGeneratorKeyTransaction,
 	createMultiSignRegisterTransaction,
 	createMultisignatureTransferTransaction,
 } from './create';
-import { Account, GeneratorAccount, Vote } from '../types';
+import { Account, GeneratorAccount, Stake } from '../types';
 import { wait } from '../wait';
 
 export const getBeddows = (lskAmount: string) =>
@@ -99,14 +99,14 @@ export const sendTokenTransferTransactions = async (
 	}
 };
 
-export const sendDelegateRegistrationTransaction = async (
+export const sendValidatorRegistrationTransaction = async (
 	account: GeneratorAccount,
 	client: apiClient.APIClient,
 ) => {
 	const AccountNonce = await getAccountNonce(account.address, client);
 
 	const name = generateRandomUserName();
-	const transaction = await createDelegateRegisterTransaction(
+	const transaction = await createValidatorRegisterTransaction(
 		{
 			name,
 			nonce: BigInt(AccountNonce),
@@ -116,27 +116,27 @@ export const sendDelegateRegistrationTransaction = async (
 		client,
 	);
 
-	await handleTransaction(transaction, 'delegate registration', client);
+	await handleTransaction(transaction, 'validator registration', client);
 };
 
-export const sendVoteTransaction = async (
+export const sendStakeTransaction = async (
 	account: GeneratorAccount,
-	votes: Vote[],
+	stakes: Stake[],
 	client: apiClient.APIClient,
 ) => {
 	const AccountNonce = await getAccountNonce(account.address, client);
 
-	const transaction = await createDelegateVoteTransaction(
+	const transaction = await createStakeTransaction(
 		{
 			nonce: BigInt(AccountNonce),
-			votes,
+			stakes,
 			fee: DEFAULT_TX_FEES,
 			account,
 		},
 		client,
 	);
 
-	await handleTransaction(transaction, 'vote', client);
+	await handleTransaction(transaction, 'stake', client);
 };
 
 export const sendUpdateGeneratorKeyTransaction = async (

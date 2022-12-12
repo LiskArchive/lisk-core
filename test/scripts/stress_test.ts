@@ -19,14 +19,14 @@ import { createAccount, genesisAccount, createGeneratorKey } from './utils/accou
 import { TRANSACTIONS_PER_ACCOUNT, NUM_OF_ROUNDS } from './utils/constants';
 import {
 	sendTokenTransferTransactions,
-	sendDelegateRegistrationTransaction,
-	sendVoteTransaction,
+	sendValidatorRegistrationTransaction,
+	sendStakeTransaction,
 	getBeddows,
 	sendUpdateGeneratorKeyTransaction,
 	sendMultiSigRegistrationTransaction,
 	// sendTransferTransactionFromMultiSigAccount,
 } from './utils/transactions/send';
-import { Account, GeneratorAccount, Vote } from './utils/types';
+import { Account, GeneratorAccount, Stake } from './utils/types';
 import { wait } from './utils/wait';
 
 const ITERATIONS = process.env.ITERATIONS ?? '1';
@@ -79,31 +79,31 @@ const start = async (count = STRESS_COUNT) => {
 	await wait(20000);
 
 	for (let i = 0; i < accountsLen; i++) {
-		await sendDelegateRegistrationTransaction(accounts[i], client);
+		await sendValidatorRegistrationTransaction(accounts[i], client);
 	}
 
 	console.log('\n');
 	await wait(20000);
-	// Vote
+	// Stake
 	for (let i = 0; i < accountsLen; i++) {
-		const votes: Vote[] = [
-			{ delegateAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('20') },
+		const stakes: Stake[] = [
+			{ validatorAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('20') },
 			{
-				delegateAddress: 'lskzort5bybu4rchqk6aj7sx2bbsu4azwf3wbutu4',
+				validatorAddress: 'lskzort5bybu4rchqk6aj7sx2bbsu4azwf3wbutu4',
 				amount: BigInt('1000000000'),
 			},
 		];
-		await sendVoteTransaction(accounts[i], votes, client);
+		await sendStakeTransaction(accounts[i], stakes, client);
 	}
 
 	console.log('\n');
 	await wait(20000);
-	// Unvote
+	// Unstake
 	for (let i = 0; i < accountsLen; i++) {
-		const unVotes: Vote[] = [
-			{ delegateAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('-10') },
+		const unStakes: Stake[] = [
+			{ validatorAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('-10') },
 		];
-		await sendVoteTransaction(accounts[i], unVotes, client);
+		await sendStakeTransaction(accounts[i], unStakes, client);
 	}
 
 	console.log('\n');
