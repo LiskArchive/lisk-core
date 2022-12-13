@@ -25,8 +25,8 @@ export interface GeneratorAccount extends Account {
 	proofOfPossession: Buffer;
 }
 
-export interface Vote {
-	delegateAddress: string;
+export interface Stake {
+	validatorAddress: string;
 	amount: bigint;
 }
 
