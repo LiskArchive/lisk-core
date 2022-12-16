@@ -56,14 +56,6 @@ Lightcurve employees who contribute to Lisk are expected to do so in the same
 way as everyone else. In other words, this document applies equally to all
 contributors.
 
-### `master` is unsafe for production use
-
-We will do our best to keep `master` in good shape, with tests passing at all
-times. But in order to move fast, we will make API changes that your application
-might not be compatible with. We will do our best to communicate these changes
-and always version appropriately so you can lock into a specific, stable
-version.
-
 ### Pull Requests
 
 In case you’ve never submitted a pull request (PR) via GitHub before, please
@@ -80,7 +72,7 @@ _Before_ submitting a pull request, please make sure the following is done:
    Most issues will be a part of a project for a specific version, such as
    "Version 1.0.0". If this is the case, create your branch from the relevant
    version branch, e.g. `1.0.0`, and submit your pull request against that
-   branch as a base. Otherwise, create your branch from `master`.
+   branch as a base. Otherwise, create your branch from `main`.
 1. Add tests to the code you have contributed! All new code must come with
    complete test coverage.
 1. End all files with a newline. In general, your code should conform to the

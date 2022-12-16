@@ -18,21 +18,20 @@ import { apiClient, codec, cryptography } from 'lisk-sdk';
 import {
 	MODULE_TOKEN,
 	COMMAND_TOKEN_TRANSFER,
-	MODULE_DPOS,
-	COMMAND_DPOS_REGISTER_DELEGATE,
-	COMMAND_DPOS_VOTE_DELEGATE,
-	COMMAND_DPOS_UPDATE_GENERATOR_KEY,
+	MODULE_POS,
+	COMMAND_POS_REGISTER_VALIDATOR,
+	COMMAND_POS_STAKE,
+	COMMAND_POS_UPDATE_GENERATOR_KEY,
 	MODULE_AUTH,
 	COMMAND_AUTH_REGISTER_MULTISIGNATURE,
 	LOCAL_ID,
-	ACCOUNT_INITIALIZATION_FEE,
 } from '../constants';
 import {
 	createSignatureForMultisignature,
 	createSignatureObject,
 	getSignBytes,
 } from '../multisignature';
-import { GeneratorAccount, Transaction, Vote } from '../types';
+import { GeneratorAccount, Transaction, Stake } from '../types';
 import { multisigRegMsgSchema } from '../schemas';
 
 let TOKEN_ID;
@@ -68,7 +67,6 @@ export const createTransferTransaction = async (
 		amount: input.amount ?? BigInt('10000000000'),
 		tokenID: TOKEN_ID,
 		data: '',
-		accountInitializationFee: ACCOUNT_INITIALIZATION_FEE,
 	};
 
 	const tx = await createAndSignTransaction(
@@ -88,7 +86,7 @@ export const createTransferTransaction = async (
 	return tx;
 };
 
-export const createDelegateRegisterTransaction = async (
+export const createValidatorRegisterTransaction = async (
 	input: {
 		account: GeneratorAccount;
 		name: string;
@@ -106,8 +104,8 @@ export const createDelegateRegisterTransaction = async (
 
 	const tx = await createAndSignTransaction(
 		{
-			module: MODULE_DPOS,
-			command: COMMAND_DPOS_REGISTER_DELEGATE,
+			module: MODULE_POS,
+			command: COMMAND_POS_REGISTER_VALIDATOR,
 			nonce: input.nonce,
 			senderPublicKey: input.account.publicKey.toString('hex'),
 			fee: input.fee ?? BigInt('2500000000'),
@@ -121,23 +119,23 @@ export const createDelegateRegisterTransaction = async (
 	return tx;
 };
 
-export const createDelegateVoteTransaction = async (
+export const createStakeTransaction = async (
 	input: {
 		nonce: bigint;
 		account: GeneratorAccount;
-		votes: Vote[];
+		stakes: Stake[];
 		fee?: bigint;
 	},
 	client: apiClient.APIClient,
 ): Promise<Record<string, unknown>> => {
 	const params = {
-		votes: input.votes,
+		stakes: input.stakes,
 	};
 
 	const tx = await createAndSignTransaction(
 		{
-			module: MODULE_DPOS,
-			command: COMMAND_DPOS_VOTE_DELEGATE,
+			module: MODULE_POS,
+			command: COMMAND_POS_STAKE,
 			nonce: input.nonce,
 			senderPublicKey: input.account.publicKey.toString('hex'),
 			fee: input.fee ?? BigInt('200000000'),
@@ -162,8 +160,8 @@ export const createUpdateGeneratorKeyTransaction = async (
 ): Promise<Record<string, unknown>> => {
 	const tx = await createAndSignTransaction(
 		{
-			module: MODULE_DPOS,
-			command: COMMAND_DPOS_UPDATE_GENERATOR_KEY,
+			module: MODULE_POS,
+			command: COMMAND_POS_UPDATE_GENERATOR_KEY,
 			nonce: input.nonce,
 			senderPublicKey: input.account.publicKey.toString('hex'),
 			fee: input.fee ?? BigInt('2500000000'),

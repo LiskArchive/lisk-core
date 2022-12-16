@@ -1,12 +1,12 @@
 # `lisk-core autocomplete`
 
-display autocomplete installation instructions
+Display autocomplete installation instructions.
 
 - [`lisk-core autocomplete [SHELL]`](#lisk-core-autocomplete-shell)
 
 ## `lisk-core autocomplete [SHELL]`
 
-display autocomplete installation instructions
+Display autocomplete installation instructions.
 
 ```
 USAGE
