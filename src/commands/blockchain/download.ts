@@ -58,9 +58,11 @@ export default class DownloadCommand extends Command {
 			this.log(`Downloaded to path: ${dataPath}.`);
 			this.log(`Verified checksum: ${checksum}.`);
 		} catch (errors) {
-			this.error(
-				Array.isArray(errors) ? errors.map(err => (err as Error).message).join(',') : errors,
-			);
+			const errorMessage = Array.isArray(errors)
+				? errors.map(err => (err as Error).message).join(',')
+				: errors;
+
+			this.error(errorMessage as string);
 		}
 	}
 }
