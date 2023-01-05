@@ -42,13 +42,15 @@ export class ReclaimLSKCommand extends BaseCommand {
 	public legacyReserveAddress = ADDRESS_LEGACY_RESERVE;
 	private _tokenMethod!: TokenMethod;
 	private _tokenIDReclaim!: TokenIDReclaim;
+	private _moduleName!: string;
 
 	public addDependencies(tokenMethod: TokenMethod) {
 		this._tokenMethod = tokenMethod;
 	}
 
-	public init(args: { tokenIDReclaim: TokenIDReclaim }) {
+	public init(args: { tokenIDReclaim: TokenIDReclaim; name: string }) {
 		this._tokenIDReclaim = args.tokenIDReclaim;
+		this._moduleName = args.name;
 	}
 
 	public async verify(ctx: CommandVerifyContext): Promise<VerificationResult> {
@@ -98,7 +100,7 @@ export class ReclaimLSKCommand extends BaseCommand {
 		await this._tokenMethod.unlock(
 			ctx.getMethodContext(),
 			this.legacyReserveAddress,
-			this.name,
+			this._moduleName,
 			this._tokenIDReclaim,
 			params.amount,
 		);
