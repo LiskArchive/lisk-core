@@ -48,9 +48,9 @@ export class ReclaimLSKCommand extends BaseCommand {
 		this._tokenMethod = tokenMethod;
 	}
 
-	public init(args: { tokenIDReclaim: TokenIDReclaim; name: ModuleName }) {
+	public init(args: { tokenIDReclaim: TokenIDReclaim; moduleName: ModuleName }) {
 		this._tokenIDReclaim = args.tokenIDReclaim;
-		this._moduleName = args.name;
+		this._moduleName = args.moduleName;
 	}
 
 	public async verify(ctx: CommandVerifyContext): Promise<VerificationResult> {

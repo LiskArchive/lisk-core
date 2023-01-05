@@ -16,11 +16,11 @@ import { Application, PartialApplicationConfig } from 'lisk-sdk';
 import { LegacyModule } from './modules';
 
 export const getApplication = (config: PartialApplicationConfig): Application => {
-	const defaultApp = Application.defaultApplication(config, true);
+	const { app, method } = Application.defaultApplication(config, true);
 	const legacyModule = new LegacyModule();
 
-	legacyModule.addDependencies(defaultApp.method.token, defaultApp.method.validator);
-	defaultApp.app.registerModule(legacyModule);
+	legacyModule.addDependencies(method.token, method.validator);
+	app.registerModule(legacyModule);
 
-	return defaultApp.app;
+	return app;
 };

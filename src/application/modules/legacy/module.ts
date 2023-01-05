@@ -110,7 +110,7 @@ export class LegacyModule extends BaseModule {
 		this._moduleConfig = getModuleConfig(genesisConfig, mergedModuleConfig);
 		this._reclaimLSKCommand.init({
 			tokenIDReclaim: this._moduleConfig.tokenIDReclaim,
-			name: this.name,
+			moduleName: this.name,
 		});
 	}
 
