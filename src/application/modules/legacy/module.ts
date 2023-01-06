@@ -108,7 +108,10 @@ export class LegacyModule extends BaseModule {
 			moduleConfig,
 		) as ModuleConfigJSON;
 		this._moduleConfig = getModuleConfig(genesisConfig, mergedModuleConfig);
-		this._reclaimLSKCommand.init({ tokenIDReclaim: this._moduleConfig.tokenIDReclaim });
+		this._reclaimLSKCommand.init({
+			tokenIDReclaim: this._moduleConfig.tokenIDReclaim,
+			moduleName: this.name,
+		});
 	}
 
 	public async initGenesisState(ctx: GenesisBlockExecuteContext): Promise<void> {

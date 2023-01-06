@@ -11,17 +11,15 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { Application, PartialApplicationConfig, TokenModule, ValidatorsModule } from 'lisk-sdk';
+import { Application, PartialApplicationConfig } from 'lisk-sdk';
 
 import { LegacyModule } from './modules';
 
 export const getApplication = (config: PartialApplicationConfig): Application => {
-	const { app } = Application.defaultApplication(config, true);
+	const { app, method } = Application.defaultApplication(config, true);
 	const legacyModule = new LegacyModule();
-	const tokenModule = new TokenModule();
-	const validatorModule = new ValidatorsModule();
 
-	legacyModule.addDependencies(tokenModule.method, validatorModule.method);
+	legacyModule.addDependencies(method.token, method.validator);
 	app.registerModule(legacyModule);
 
 	return app;

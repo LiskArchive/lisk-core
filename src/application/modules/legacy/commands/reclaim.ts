@@ -26,7 +26,7 @@ import {
 import { ADDRESS_LEGACY_RESERVE } from '../constants';
 
 import { reclaimLSKParamsSchema } from '../schemas';
-import { ReclaimLSKParamsData, TokenIDReclaim } from '../types';
+import { ReclaimLSKParamsData, TokenIDReclaim, ModuleName } from '../types';
 import { getLegacyAddress } from '../utils';
 import { LegacyAccountStore } from '../stores/legacyAccountStore';
 import { ReclaimLSKEvent } from '../events/reclaim';
@@ -42,13 +42,15 @@ export class ReclaimLSKCommand extends BaseCommand {
 	public legacyReserveAddress = ADDRESS_LEGACY_RESERVE;
 	private _tokenMethod!: TokenMethod;
 	private _tokenIDReclaim!: TokenIDReclaim;
+	private _moduleName!: ModuleName;
 
 	public addDependencies(tokenMethod: TokenMethod) {
 		this._tokenMethod = tokenMethod;
 	}
 
-	public init(args: { tokenIDReclaim: TokenIDReclaim }) {
+	public init(args: { tokenIDReclaim: TokenIDReclaim; moduleName: ModuleName }) {
 		this._tokenIDReclaim = args.tokenIDReclaim;
+		this._moduleName = args.moduleName;
 	}
 
 	public async verify(ctx: CommandVerifyContext): Promise<VerificationResult> {
@@ -98,7 +100,7 @@ export class ReclaimLSKCommand extends BaseCommand {
 		await this._tokenMethod.unlock(
 			ctx.getMethodContext(),
 			this.legacyReserveAddress,
-			this.name,
+			this._moduleName,
 			this._tokenIDReclaim,
 			params.amount,
 		);

@@ -47,3 +47,5 @@ export interface genesisLegacyStoreData {
 		balance: bigint;
 	}[];
 }
+
+export type ModuleName = string;
