@@ -19,10 +19,9 @@ import {
 	GenesisBlockExecuteContext,
 	validator as liskValidator,
 	utils,
+	ModuleMetadata,
 } from 'lisk-sdk';
 
-// TODO: Export 'ModuleMetadata' directly from SDK once available
-import { ModuleMetadata } from '../../../../node_modules/lisk-framework/dist-node/modules/base_module';
 import { LegacyMethod } from './method';
 import { LegacyEndpoint } from './endpoint';
 import {
@@ -96,6 +95,7 @@ export class LegacyModule extends BaseModule {
 					data: genesisLegacyStoreSchema,
 				},
 			],
+			stores: [],
 		};
 	}
 
