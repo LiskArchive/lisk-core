@@ -11,7 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-// TODO: Remove schema
+
 export const multisigRegMsgSchema = {
 	$id: '/auth/command/regMultisigMsg',
 	type: 'object',
