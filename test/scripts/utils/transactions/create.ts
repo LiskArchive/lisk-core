@@ -40,11 +40,10 @@ const createAndSignTransaction = async (
 	transaction: Transaction,
 	privateKey: string,
 	client: apiClient.APIClient,
-	options?: Record<string, unknown>,
 ) => {
-	const trx = await client.transaction.create(transaction, privateKey, options);
+	const trx = await client.transaction.create(transaction, privateKey);
 
-	return client.transaction.sign(trx, [privateKey], options);
+	return client.transaction.sign(trx, [privateKey]);
 };
 
 export const createTransferTransaction = async (
@@ -194,13 +193,6 @@ export const createMultiSignRegisterTransaction = async (
 		numberOfSignatures: input.numberOfSignatures,
 		signatures: [],
 	};
-	const options = {
-		multisignatureKeys: {
-			mandatoryKeys: input.mandatoryKeys.map(mandatoryKey => mandatoryKey.toString('hex')),
-			optionalKeys: input.optionalKeys.map(optionalKey => optionalKey.toString('hex')),
-			numberOfSignatures: input.numberOfSignatures,
-		},
-	};
 
 	let trx: any = await createAndSignTransaction(
 		{
@@ -214,13 +206,9 @@ export const createMultiSignRegisterTransaction = async (
 		},
 		input.senderAccount.privateKey.toString('hex'),
 		client,
-		options,
 	);
 
-	trx = await client.transaction.sign(trx, input.multisigAccountKeys, {
-		includeSenderSignature: true,
-		...options,
-	});
+	trx = await client.transaction.sign(trx, input.multisigAccountKeys);
 
 	// Members sign in order
 	const messageBytes = codec.encode(multisigRegMsgSchema, {
@@ -288,12 +276,6 @@ export const createMultisignatureTransferTransaction = async (
 		},
 		input.multisigAccountKeys,
 		client,
-		{
-			multisignatureKeys: {
-				mandatoryKeys: input.mandatoryKeys,
-				optionalKeys: input.optionalKeys,
-			},
-		},
 	);
 
 	return tx;

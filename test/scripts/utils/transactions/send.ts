@@ -26,7 +26,6 @@ import {
 	createMultisignatureTransferTransaction,
 } from './create';
 import { Account, GeneratorAccount, Stake } from '../types';
-import { wait } from '../wait';
 
 export const getBeddows = (lskAmount: string) =>
 	BigInt(transactions.convertLSKToBeddows(lskAmount));
@@ -94,8 +93,6 @@ export const sendTokenTransferTransactions = async (
 
 	for (let i = 0; i < transferTransactions.length; i++) {
 		await handleTransaction(transferTransactions[i], 'token transfer', client);
-		// TODO: Remove wait
-		await wait(20000);
 	}
 };
 

@@ -136,7 +136,7 @@ const start = async (count = STRESS_COUNT) => {
 		await sendMultiSigRegistrationTransaction(accounts[i], params, multisigAccountKeys, client);
 	}
 
-	// console.log('\n');
+	console.log('\n');
 	// await wait(40000);
 
 	// for (let i = 0; i < accountsLen; i += 1) {
