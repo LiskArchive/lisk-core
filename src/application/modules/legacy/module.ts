@@ -88,7 +88,10 @@ export class LegacyModule extends BaseModule {
 				name: command.name,
 				params: command.schema,
 			})),
-			events: [],
+			events: this.events.values().map(e => ({
+				name: e.name,
+				data: e.schema,
+			})),
 			assets: [
 				{
 					version: 0,
