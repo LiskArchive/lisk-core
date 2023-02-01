@@ -72,7 +72,7 @@ export const createValidatorsInfo = async (count = 103) => {
 				generatorPrivateKey: generatorPrivateKey.toString('hex'),
 				blsKeyPath,
 				blsKey: blsPublicKey.toString('hex'),
-				blsProofOfPosession: cryptography.bls.popProve(blsPrivateKey).toString('hex'),
+				blsProofOfPossession: cryptography.bls.popProve(blsPrivateKey).toString('hex'),
 				blsPrivateKey: blsPrivateKey.toString('hex'),
 			},
 			encrypted: encryptedMessageObject,
