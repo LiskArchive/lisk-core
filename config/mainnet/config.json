@@ -80,6 +80,9 @@
 		"fee": {
 			"feeTokenID": "0000000000000000"
 		},
+		"pos": {
+			"useInvalidBLSKey": true
+		},
 		"reward": {
 			"tokenID": "0000000000000000",
 			"offset": 2160,
