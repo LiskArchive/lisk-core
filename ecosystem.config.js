@@ -12,20 +12,22 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-
 module.exports = {
 	apps: [
 		{
 			name: 'lisk-core',
 			script: './bin/run',
-			args: 'start --network=mainnet --api-ipc --api-ws --console-log=info',
+			args: 'start --network=mainnet --api-ipc --api-ws --log=info',
 			// env: {
 			// 	LISK_NETWORK: 'mainnet',
+			// 	LISK_LOG_LEVEL: 'warn',
+			// 	LISK_CONFIG_FILE: '',
+			// 	LISK_DATA_PATH: '',
 			// 	LISK_API_IPC: true,
-			// 	LISK_ENABLE_FORGER_PLUGIN: true,
 			// 	LISK_API_WS: true,
-			// 	LISK_API_WS_PORT: 7887,
-			// 	LISK_CONSOLE_LOG_LEVEL: 'warn',
+			// 	LISK_API_HTTP: false,
+			// 	LISK_API_HOST: '127.0.0.1',
+			// 	LISK_API_PORT: 7887,
 			// },
 			pid_file: './pids/lisk-core.pid',
 			out_file: './logs/lisk-core.log',
