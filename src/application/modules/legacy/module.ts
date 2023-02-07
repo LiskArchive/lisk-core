@@ -19,10 +19,9 @@ import {
 	GenesisBlockExecuteContext,
 	validator as liskValidator,
 	utils,
+	ModuleMetadata,
 } from 'lisk-sdk';
 
-// TODO: Export 'ModuleMetadata' directly from SDK once available
-import { ModuleMetadata } from '../../../../node_modules/lisk-framework/dist-node/modules/base_module';
 import { LegacyMethod } from './method';
 import { LegacyEndpoint } from './endpoint';
 import {
@@ -89,13 +88,17 @@ export class LegacyModule extends BaseModule {
 				name: command.name,
 				params: command.schema,
 			})),
-			events: [],
+			events: this.events.values().map(e => ({
+				name: e.name,
+				data: e.schema,
+			})),
 			assets: [
 				{
 					version: 0,
 					data: genesisLegacyStoreSchema,
 				},
 			],
+			stores: [],
 		};
 	}
 
@@ -108,7 +111,10 @@ export class LegacyModule extends BaseModule {
 			moduleConfig,
 		) as ModuleConfigJSON;
 		this._moduleConfig = getModuleConfig(genesisConfig, mergedModuleConfig);
-		this._reclaimLSKCommand.init({ tokenIDReclaim: this._moduleConfig.tokenIDReclaim });
+		this._reclaimLSKCommand.init({
+			tokenIDReclaim: this._moduleConfig.tokenIDReclaim,
+			moduleName: this.name,
+		});
 	}
 
 	public async initGenesisState(ctx: GenesisBlockExecuteContext): Promise<void> {

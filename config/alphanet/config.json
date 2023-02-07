@@ -19,9 +19,7 @@
 		"maxTransactionsSize": 15360
 	},
 	"generator": {
-		"keys": {
-			"fromFile": "./config/dev-validators.json"
-		}
+		"keys": {}
 	},
 	"network": {
 		"version": "1.0",
@@ -43,6 +41,9 @@
 	"modules": {
 		"fee": {
 			"feeTokenID": "0300000000000000"
+		},
+		"pos": {
+			"useInvalidBLSKey": true
 		},
 		"reward": {
 			"tokenID": "0300000000000000",

@@ -44,6 +44,9 @@
 		"fee": {
 			"feeTokenID": "0400000000000000"
 		},
+		"pos": {
+			"useInvalidBLSKey": true
+		},
 		"reward": {
 			"tokenID": "0400000000000000",
 			"offset": 2160,
