@@ -65,10 +65,6 @@ export const createAccount = async () => {
 
 const passphrases = [
 	'attract squeeze option inflict dynamic end evoke love proof among random blanket table pumpkin general impose access toast undo extend fun employ agree dash',
-	'high cause service problem walnut surface funny happy income mention toy among upgrade suffer such sausage rose lunar share sunny yard rival broom estate',
-	'segment west flavor rice pigeon feature bread wrong happy session daring try bridge country mom laugh web guilt cricket seat step visual pass illness',
-	'just agent maple student exist before hello peace deliver marble short fiscal turtle grab now width cat right praise evidence market pear lounge sausage',
-	'effort skate zebra replace detail vicious marine toddler speed brown basic circle drink fee border about gallery enhance gaze doctor fatal tube boost blanket',
 ];
 
 const accountKeyPath = "m/44'/134'/0'";
