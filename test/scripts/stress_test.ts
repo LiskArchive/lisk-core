@@ -16,15 +16,16 @@
 import { apiClient } from 'lisk-sdk';
 
 import { createAccount, genesisAccount, createGeneratorKey } from './utils/accounts';
-import { TRANSACTIONS_PER_ACCOUNT, NUM_OF_ROUNDS } from './utils/constants';
+import { TRANSACTIONS_PER_ACCOUNT, NUM_OF_ROUNDS, MAX_COMMISSION } from './utils/constants';
 import {
 	sendTokenTransferTransactions,
 	sendValidatorRegistrationTransaction,
 	sendStakeTransaction,
 	getBeddows,
 	sendUpdateGeneratorKeyTransaction,
+	sendChangeCommissionTransaction,
 	sendMultiSigRegistrationTransaction,
-	// sendTransferTransactionFromMultiSigAccount,
+	sendTransferTransactionFromMultiSigAccount,
 } from './utils/transactions/send';
 import { Account, GeneratorAccount, Stake } from './utils/types';
 import { wait } from './utils/wait';
@@ -68,6 +69,7 @@ const start = async (count = STRESS_COUNT) => {
 	await sendTokenTransferTransactions(fundInitialAccount, await genesisAccount(), true, client);
 
 	// Wait for 2 blocks
+	console.log('\n');
 	await wait(20000);
 
 	const chunkedAccounts = chunkArray([...accounts]);
@@ -121,6 +123,18 @@ const start = async (count = STRESS_COUNT) => {
 	console.log('\n');
 	await wait(20000);
 
+	// Change commission
+	for (let i = 0; i < accountsLen; i++) {
+		const params = {
+			newCommission: Math.floor(Math.random() * MAX_COMMISSION),
+		};
+
+		await sendChangeCommissionTransaction(accounts[i], params, client);
+	}
+
+	console.log('\n');
+	await wait(20000);
+
 	for (let i = 0; i < accountsLen; i++) {
 		const account1 = accounts[(i + 1) % accountsLen];
 		const account2 = accounts[(i + 2) % accountsLen];
@@ -137,24 +151,28 @@ const start = async (count = STRESS_COUNT) => {
 	}
 
 	console.log('\n');
-	// await wait(40000);
+	await wait(20000);
 
-	// for (let i = 0; i < accountsLen; i += 1) {
-	// 	const account1 = accounts[(i + 1) % accountsLen];
-	// 	const account2 = accounts[(i + 2) % accountsLen];
-	// 	const params = {
-	// 		mandatoryKeys: [account1.publicKey],
-	// 		optionalKeys: [account2.publicKey],
-	// 	};
-	// 	const multisigAccountKeys = [account1.privateKey.toString('hex'), account2.privateKey.toString('hex')];
-	// 	await sendTransferTransactionFromMultiSigAccount(
-	// 		accounts[i],
-	// 		params,
-	// 		multisigAccountKeys,
-	// 		client,
-	// 	);
-	// }
+	for (let i = 0; i < accountsLen; i += 1) {
+		const account1 = accounts[(i + 1) % accountsLen];
+		const account2 = accounts[(i + 2) % accountsLen];
+		const params = {
+			mandatoryKeys: [account1.publicKey],
+			optionalKeys: [account2.publicKey],
+		};
+		const multisigAccountKeys = [
+			account1.privateKey.toString('hex'),
+			account2.privateKey.toString('hex'),
+		];
+		await sendTransferTransactionFromMultiSigAccount(
+			accounts[i],
+			params,
+			multisigAccountKeys,
+			client,
+		);
+	}
 
+	console.log('\n');
 	client.disconnect();
 };
 

@@ -22,6 +22,7 @@ import {
 	COMMAND_POS_REGISTER_VALIDATOR,
 	COMMAND_POS_STAKE,
 	COMMAND_POS_UPDATE_GENERATOR_KEY,
+	COMMAND_POS_CHANGE_COMMISSION,
 	MODULE_AUTH,
 	COMMAND_AUTH_REGISTER_MULTISIGNATURE,
 	LOCAL_ID,
@@ -174,6 +175,32 @@ export const createUpdateGeneratorKeyTransaction = async (
 	return tx;
 };
 
+export const createChangeCommissionTransaction = async (
+	input: {
+		account: GeneratorAccount;
+		fee?: bigint;
+		nonce: bigint;
+		params: any;
+	},
+	client: apiClient.APIClient,
+): Promise<Record<string, unknown>> => {
+	const tx = await createAndSignTransaction(
+		{
+			module: MODULE_POS,
+			command: COMMAND_POS_CHANGE_COMMISSION,
+			nonce: input.nonce,
+			senderPublicKey: input.account.publicKey.toString('hex'),
+			fee: input.fee ?? BigInt('2500000000'),
+			params: input.params,
+			signatures: [],
+		},
+		input.account.privateKey.toString('hex'),
+		client,
+	);
+
+	return tx;
+};
+
 export const createMultiSignRegisterTransaction = async (
 	input: {
 		chainID: Buffer;
@@ -247,8 +274,8 @@ export const createMultisignatureTransferTransaction = async (
 		fee?: bigint;
 		mandatoryKeys: Buffer[];
 		optionalKeys: Buffer[];
-		senderPublicKey: Buffer;
 		multisigAccountKeys: any;
+		senderAccount: GeneratorAccount;
 	},
 	client: apiClient.APIClient,
 ): Promise<Record<string, unknown>> => {
@@ -264,19 +291,21 @@ export const createMultisignatureTransferTransaction = async (
 		data: '',
 	};
 
-	const tx = await createAndSignTransaction(
+	let trx = await createAndSignTransaction(
 		{
 			module: MODULE_TOKEN,
 			command: COMMAND_TOKEN_TRANSFER,
 			nonce: input.nonce,
-			senderPublicKey: input.senderPublicKey.toString('hex'),
+			senderPublicKey: input.senderAccount.publicKey.toString('hex'),
 			fee: input.fee ?? BigInt('200000'),
 			params,
 			signatures: [],
 		},
-		input.multisigAccountKeys,
+		input.senderAccount.privateKey.toString('hex'),
 		client,
 	);
 
-	return tx;
+	trx = await client.transaction.sign(trx, input.multisigAccountKeys);
+
+	return trx;
 };
