@@ -66,14 +66,13 @@ export const createAccount = async () => {
 const passphrase =
 	'attract squeeze option inflict dynamic end evoke love proof among random blanket table pumpkin general impose access toast undo extend fun employ agree dash';
 
-const getAccountKeyPath = () => {
+export const getAccountKeyPath = () => {
 	const accountKeyPathOffset = Math.floor(Math.random() * 102);
 	const accountKeyPath = `m/44'/134'/${accountKeyPathOffset}'`;
 	return accountKeyPath;
 };
 
-export const genesisAccount = async (keyPath = undefined) => {
-	const accountKeyPath = keyPath ? keyPath : getAccountKeyPath();
+export const genesisAccount = async accountKeyPath => {
 	const privateKey = await cryptography.ed.getPrivateKeyFromPhraseAndPath(
 		passphrase,
 		accountKeyPath,

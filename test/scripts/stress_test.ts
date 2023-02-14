@@ -15,7 +15,12 @@
 
 import { apiClient } from 'lisk-sdk';
 
-import { createAccount, genesisAccount, createGeneratorKey } from './utils/accounts';
+import {
+	createAccount,
+	genesisAccount,
+	createGeneratorKey,
+	getAccountKeyPath,
+} from './utils/accounts';
 import { TRANSACTIONS_PER_ACCOUNT, NUM_OF_ROUNDS, MAX_COMMISSION } from './utils/constants';
 import {
 	sendTokenTransferTransactions,
@@ -26,6 +31,8 @@ import {
 	sendChangeCommissionTransaction,
 	sendMultiSigRegistrationTransaction,
 	sendTransferTransactionFromMultiSigAccount,
+	sendTokenTransferTransaction,
+	sendRegisterKeysTransaction,
 } from './utils/transactions/send';
 import { Account, GeneratorAccount, Stake } from './utils/types';
 import { wait } from './utils/wait';
@@ -66,7 +73,13 @@ const start = async (count = STRESS_COUNT) => {
 	const accountsLen = accounts.length;
 	// Due to TPool limit of 64 trx/account, fund initial accounts
 	const fundInitialAccount: Account[] = accounts.slice(0, TRANSACTIONS_PER_ACCOUNT);
-	await sendTokenTransferTransactions(fundInitialAccount, await genesisAccount(), true, client);
+	const accountKeyPath = getAccountKeyPath();
+	await sendTokenTransferTransactions(
+		fundInitialAccount,
+		await genesisAccount(accountKeyPath),
+		true,
+		client,
+	);
 
 	// Wait for 2 blocks
 	console.log('\n');
@@ -170,6 +183,32 @@ const start = async (count = STRESS_COUNT) => {
 			multisigAccountKeys,
 			client,
 		);
+	}
+
+	// Wait for 2 blocks
+	console.log('\n');
+	await wait(20000);
+
+	// require validators based on network, default to devnet
+	const network = process.argv[2] || 'devnet';
+	const { keys: validatorKeys } = require(`../../config/${network}/dev-validators.json`);
+
+	// Send token transfer transactions from all genesis accounts
+	for (let i = 0; i < validatorKeys.length; i++) {
+		const keyPath = validatorKeys[i].keyPath;
+		const account = await genesisAccount(keyPath);
+		await sendTokenTransferTransaction(fundInitialAccount[0], account, client);
+
+		const params = {
+			blsKey: validatorKeys[i].plain.blsKey,
+			proofOfPossession: validatorKeys[i].plain.blsProofOfPossession,
+			generatorKey: validatorKeys[i].plain.generatorKey,
+		};
+
+		await sendRegisterKeysTransaction(account, params, client);
+
+		// Remove wait once SDK fixed the issue
+		await wait(500);
 	}
 
 	console.log('\n');

@@ -26,13 +26,15 @@ import {
 	MODULE_AUTH,
 	COMMAND_AUTH_REGISTER_MULTISIGNATURE,
 	LOCAL_ID,
+	MODULE_LEGACY,
+	COMMAND_LEGACY_REGISTER_KEYS,
 } from '../constants';
 import {
 	createSignatureForMultisignature,
 	createSignatureObject,
 	getSignBytes,
 } from '../multisignature';
-import { GeneratorAccount, Transaction, Stake } from '../types';
+import { GeneratorAccount, Transaction, Stake, Account } from '../types';
 import { multisigRegMsgSchema } from '../schemas';
 
 let TOKEN_ID;
@@ -308,4 +310,30 @@ export const createMultisignatureTransferTransaction = async (
 	trx = await client.transaction.sign(trx, input.multisigAccountKeys);
 
 	return trx;
+};
+
+export const createRegisterKeysTransaction = async (
+	input: {
+		account: Account;
+		fee?: bigint;
+		nonce: bigint;
+		params: any;
+	},
+	client: apiClient.APIClient,
+): Promise<Record<string, unknown>> => {
+	const tx = await createAndSignTransaction(
+		{
+			module: MODULE_LEGACY,
+			command: COMMAND_LEGACY_REGISTER_KEYS,
+			nonce: input.nonce,
+			senderPublicKey: input.account.publicKey.toString('hex'),
+			fee: input.fee ?? BigInt('2500000000'),
+			params: input.params,
+			signatures: [],
+		},
+		input.account.privateKey.toString('hex'),
+		client,
+	);
+
+	return tx;
 };

@@ -31,3 +31,6 @@ export const COMMAND_POS_CHANGE_COMMISSION = 'changeCommission';
 
 export const MODULE_AUTH = 'auth';
 export const COMMAND_AUTH_REGISTER_MULTISIGNATURE = 'registerMultisignature';
+
+export const MODULE_LEGACY = 'legacy';
+export const COMMAND_LEGACY_REGISTER_KEYS = 'registerKeys';

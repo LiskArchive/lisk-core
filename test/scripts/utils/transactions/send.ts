@@ -25,6 +25,7 @@ import {
 	createChangeCommissionTransaction,
 	createMultiSignRegisterTransaction,
 	createMultisignatureTransferTransaction,
+	createRegisterKeysTransaction,
 } from './create';
 import { Account, GeneratorAccount, Stake } from '../types';
 
@@ -95,6 +96,27 @@ export const sendTokenTransferTransactions = async (
 	for (let i = 0; i < transferTransactions.length; i++) {
 		await handleTransaction(transferTransactions[i], 'token transfer', client);
 	}
+};
+
+export const sendTokenTransferTransaction = async (
+	account: Account,
+	fromAccount: Account,
+	client: apiClient.APIClient,
+) => {
+	const AccountNonce = await getAccountNonce(fromAccount.address, client);
+
+	const trx = await createTransferTransaction(
+		{
+			recipientAddress: account.address,
+			nonce: BigInt(AccountNonce),
+			amount: getBeddows('25'),
+			fee: DEFAULT_TX_FEES,
+			fromAccount,
+		},
+		client,
+	);
+
+	await handleTransaction(trx, 'token transfer', client);
 };
 
 export const sendValidatorRegistrationTransaction = async (
@@ -227,4 +249,24 @@ export const sendTransferTransactionFromMultiSigAccount = async (
 	);
 
 	await handleTransaction(transaction, 'token transfer transaction from multisig account', client);
+};
+
+export const sendRegisterKeysTransaction = async (
+	account: Account,
+	params,
+	client: apiClient.APIClient,
+) => {
+	const AccountNonce = await getAccountNonce(account.address, client);
+
+	const transaction = await createRegisterKeysTransaction(
+		{
+			nonce: BigInt(AccountNonce),
+			fee: getBeddows('15'),
+			account,
+			params,
+		},
+		client,
+	);
+
+	await handleTransaction(transaction, 'register keys', client);
 };
