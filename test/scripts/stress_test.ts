@@ -189,11 +189,11 @@ const start = async (count = STRESS_COUNT) => {
 	console.log('\n');
 	await wait(20000);
 
-	// require validators based on network, default to devnet
+	// require genesis accounts (validators) based on network, default to devnet
 	const network = process.argv[2] || 'devnet';
 	const { keys: validatorKeys } = require(`../../config/${network}/dev-validators.json`);
 
-	// Send token transfer transactions from all genesis accounts
+	// Send transactions from all genesis accounts
 	for (let i = 0; i < validatorKeys.length; i++) {
 		const keyPath = validatorKeys[i].keyPath;
 		const account = await genesisAccount(keyPath);
@@ -208,7 +208,7 @@ const start = async (count = STRESS_COUNT) => {
 		await sendRegisterKeysTransaction(account, params, client);
 
 		// Remove wait once SDK fixed the issue
-		await wait(500);
+		await wait(1000);
 	}
 
 	console.log('\n');
