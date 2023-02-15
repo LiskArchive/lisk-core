@@ -75,8 +75,8 @@ export class RegisterKeysCommand extends BaseCommand {
 		await this._validatorsMethod.setValidatorBLSKey(
 			ctx.getMethodContext(),
 			validatorAddress,
-			params.proofOfPossession,
 			params.blsKey,
+			params.proofOfPossession,
 		);
 
 		const registerKeysEvent = this.events.get(RegisterKeysEvent);
