@@ -56,6 +56,13 @@ export const getSchemas = () => schemas;
 export const getMetadata = () => metadata;
 
 const start = async (count = STRESS_COUNT) => {
+	const network = process.argv[2] || 'devnet';
+	if (!['alphanet', 'devnet'].includes(network)) {
+		console.error('Invalid argument passed, accepted values are devnet and alphanet');
+		console.error('Exiting...');
+		process.exit(1);
+	}
+
 	// const URL = process.env.WS_SERVER_URL || 'ws://localhost:7887/rpc-ws';
 	const client = await apiClient.createIPCClient('~/.lisk/lisk-core');
 	const accounts: GeneratorAccount[] = await Promise.all(
@@ -189,8 +196,7 @@ const start = async (count = STRESS_COUNT) => {
 	console.log('\n');
 	await wait(20000);
 
-	// require genesis accounts (validators) based on network, default to devnet
-	const network = process.argv[2] || 'devnet';
+	// require genesis accounts (validators) based on the network, default to devnet
 	const { keys: validatorKeys } = require(`../../config/${network}/dev-validators.json`);
 
 	// Send transactions from all genesis accounts
