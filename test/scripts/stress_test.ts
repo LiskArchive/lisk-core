@@ -55,7 +55,7 @@ export const getSchemas = () => schemas;
 
 export const getMetadata = () => metadata;
 
-const start = async (count = STRESS_COUNT) => {
+const start = async (count, isValidatorsRegistered) => {
 	const network = process.argv[2] || 'devnet';
 	if (!['alphanet', 'devnet'].includes(network)) {
 		console.error('Invalid argument passed, accepted values are devnet and alphanet');
@@ -205,13 +205,14 @@ const start = async (count = STRESS_COUNT) => {
 		const account = await genesisAccount(keyPath);
 		await sendTokenTransferTransaction(fundInitialAccount[0], account, client);
 
-		const params = {
-			blsKey: validatorKeys[i].plain.blsKey,
-			proofOfPossession: validatorKeys[i].plain.blsProofOfPossession,
-			generatorKey: validatorKeys[i].plain.generatorKey,
-		};
-
-		await sendRegisterKeysTransaction(account, params, client);
+		if (!isValidatorsRegistered) {
+			const params = {
+				blsKey: validatorKeys[i].plain.blsKey,
+				proofOfPossession: validatorKeys[i].plain.blsProofOfPossession,
+				generatorKey: validatorKeys[i].plain.generatorKey,
+			};
+			await sendRegisterKeysTransaction(account, params, client);
+		}
 
 		// Remove wait once SDK fixed the issue https://github.com/LiskHQ/lisk-sdk/issues/8148
 		await wait(1000);
@@ -222,8 +223,13 @@ const start = async (count = STRESS_COUNT) => {
 };
 
 const createTransactions = async () => {
+	// Add flag to update the status of validator keys registration
+	let isValidatorsRegistered = false;
+
 	for (let i = 0; i < NUM_OF_ROUNDS; i++) {
-		await start();
+		await start(STRESS_COUNT, isValidatorsRegistered);
+		// Set isValidatorsRegistered flag to true after validators keys registration
+		isValidatorsRegistered = true;
 	}
 	console.info('Finished!!');
 };
