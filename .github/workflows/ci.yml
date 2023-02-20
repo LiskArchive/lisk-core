@@ -1,5 +1,5 @@
-name: Unit test & Code coverage
-on: [push]
+name: Unit test
+on: [pull_request]
 jobs:
   run:
     runs-on: ubuntu-latest
@@ -19,3 +19,9 @@ jobs:
         run: npm run test
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+          files: coverage-final.json
+          name: codecov-umbrella
+          verbose: true
