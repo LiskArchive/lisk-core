@@ -7,7 +7,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Read .nvmrc
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+        run: echo {name}={NVMRC::$(cat .nvmrc)} >> $GITHUB_OUTPUT
         id: nvm
       - name: Set up Node
         uses: actions/setup-node@v3
