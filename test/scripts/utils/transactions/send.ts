@@ -26,6 +26,7 @@ import {
 	createMultiSignRegisterTransaction,
 	createMultisignatureTransferTransaction,
 	createRegisterKeysTransaction,
+	createSidechainRegistrationTransaction,
 } from './create';
 import { Account, GeneratorAccount, Stake } from '../types';
 
@@ -269,4 +270,24 @@ export const sendRegisterKeysTransaction = async (
 	);
 
 	await handleTransaction(transaction, 'register keys', client);
+};
+
+export const sendSidechainRegistrationTransaction = async (
+	account: Account,
+	params,
+	client: apiClient.APIClient,
+) => {
+	const accountNonce = await getAccountNonce(account.address, client);
+
+	const transaction = await createSidechainRegistrationTransaction(
+		{
+			nonce: BigInt(accountNonce),
+			fee: getBeddows('15'),
+			account,
+			params,
+		},
+		client,
+	);
+
+	await handleTransaction(transaction, 'sidechain registration', client);
 };

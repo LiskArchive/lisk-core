@@ -28,6 +28,8 @@ import {
 	LOCAL_ID,
 	MODULE_LEGACY,
 	COMMAND_LEGACY_REGISTER_KEYS,
+	MODULE_INTEROPERABILITY,
+	COMMAND_INTEROPERABILITY_SIDECHAIN_REG,
 } from '../constants';
 import {
 	createSignatureForMultisignature,
@@ -325,6 +327,32 @@ export const createRegisterKeysTransaction = async (
 		{
 			module: MODULE_LEGACY,
 			command: COMMAND_LEGACY_REGISTER_KEYS,
+			nonce: input.nonce,
+			senderPublicKey: input.account.publicKey.toString('hex'),
+			fee: input.fee ?? BigInt('2500000000'),
+			params: input.params,
+			signatures: [],
+		},
+		input.account.privateKey.toString('hex'),
+		client,
+	);
+
+	return tx;
+};
+
+export const createSidechainRegistrationTransaction = async (
+	input: {
+		account: Account;
+		fee?: bigint;
+		nonce: bigint;
+		params: any;
+	},
+	client: apiClient.APIClient,
+): Promise<Record<string, unknown>> => {
+	const tx = await createAndSignTransaction(
+		{
+			module: MODULE_INTEROPERABILITY,
+			command: COMMAND_INTEROPERABILITY_SIDECHAIN_REG,
 			nonce: input.nonce,
 			senderPublicKey: input.account.publicKey.toString('hex'),
 			fee: input.fee ?? BigInt('2500000000'),

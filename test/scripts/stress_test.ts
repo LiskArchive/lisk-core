@@ -12,7 +12,6 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 /* eslint-disable no-console */
-
 import { apiClient } from 'lisk-sdk';
 
 import {
@@ -33,9 +32,11 @@ import {
 	sendTransferTransactionFromMultiSigAccount,
 	sendTokenTransferTransaction,
 	sendRegisterKeysTransaction,
+	sendSidechainRegistrationTransaction,
 } from './utils/transactions/send';
 import { Account, GeneratorAccount, Stake } from './utils/types';
 import { wait } from './utils/wait';
+import { registerSidechainParams } from '../fixtures/interoperabilityParams';
 
 const ITERATIONS = process.env.ITERATIONS ?? '1';
 const STRESS_COUNT = TRANSACTIONS_PER_ACCOUNT * parseInt(ITERATIONS, 10);
@@ -55,7 +56,7 @@ export const getSchemas = () => schemas;
 
 export const getMetadata = () => metadata;
 
-const start = async (count, isValidatorsRegistered) => {
+const start = async (count, isValidatorsRegistered, isSidechainRegistered) => {
 	const network = process.argv[2] || 'devnet';
 	if (!['alphanet', 'devnet'].includes(network)) {
 		console.error('Invalid argument passed, accepted values are devnet and alphanet');
@@ -99,6 +100,18 @@ const start = async (count, isValidatorsRegistered) => {
 
 	console.log('\n');
 	await wait(20000);
+
+	if (!isSidechainRegistered) {
+		const nodeInfo = await client.node.getNodeInfo();
+		const params = {
+			...registerSidechainParams,
+			chainID: nodeInfo.chainID.slice(0, 2).concat('000001'),
+		};
+		await sendSidechainRegistrationTransaction(accounts[0], params, client);
+		// Wait for 2 blocks
+		console.log('\n');
+		await wait(20000);
+	}
 
 	for (let i = 0; i < accountsLen; i++) {
 		await sendValidatorRegistrationTransaction(accounts[i], client);
@@ -225,11 +238,13 @@ const start = async (count, isValidatorsRegistered) => {
 const createTransactions = async () => {
 	// Add flag to update the status of validator keys registration
 	let isValidatorsRegistered = false;
+	let isSidechainRegistered = false;
 
 	for (let i = 0; i < NUM_OF_ROUNDS; i++) {
-		await start(STRESS_COUNT, isValidatorsRegistered);
+		await start(STRESS_COUNT, isValidatorsRegistered, isSidechainRegistered);
 		// Set isValidatorsRegistered flag to true after validators keys registration
 		isValidatorsRegistered = true;
+		isSidechainRegistered = true;
 	}
 	console.info('Finished!!');
 };
