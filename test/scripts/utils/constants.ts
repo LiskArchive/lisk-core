@@ -18,6 +18,7 @@ export const TAG_MULTISIG_REG = 'LSK_RMSG_';
 export const TAG_TRANSACTION = 'LSK_TX_';
 export const MNEMONIC_LENGTH = 256;
 export const LOCAL_ID = '00000000';
+export const MAX_COMMISSION = 10000;
 
 export const MODULE_TOKEN = 'token';
 export const COMMAND_TOKEN_TRANSFER = 'transfer';
@@ -26,6 +27,13 @@ export const MODULE_POS = 'pos';
 export const COMMAND_POS_REGISTER_VALIDATOR = 'registerValidator';
 export const COMMAND_POS_STAKE = 'stake';
 export const COMMAND_POS_UPDATE_GENERATOR_KEY = 'updateGeneratorKey';
+export const COMMAND_POS_CHANGE_COMMISSION = 'changeCommission';
 
 export const MODULE_AUTH = 'auth';
 export const COMMAND_AUTH_REGISTER_MULTISIGNATURE = 'registerMultisignature';
+
+export const MODULE_LEGACY = 'legacy';
+export const COMMAND_LEGACY_REGISTER_KEYS = 'registerKeys';
+
+export const MODULE_INTEROPERABILITY = 'interoperability';
+export const COMMAND_INTEROPERABILITY_SIDECHAIN_REG = 'registerSidechain';
