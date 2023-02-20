@@ -40,9 +40,9 @@ const generateRandomUserName = () => {
 	return [...Array(20)].map(() => base[(Math.random() * base.length) | 0]).join('');
 };
 
-const nonceSequenceItems = (AccountNonce: number, count = TRANSACTIONS_PER_ACCOUNT - 1) => [
-	AccountNonce,
-	...Array.from({ length: count }, (_, k) => AccountNonce + k + 1),
+const nonceSequenceItems = (accountNonce: number, count = TRANSACTIONS_PER_ACCOUNT - 1) => [
+	accountNonce,
+	...Array.from({ length: count }, (_, k) => accountNonce + k + 1),
 ];
 
 const getAccountNonce = async (address: string, client: apiClient.APIClient): Promise<number> => {
@@ -74,10 +74,10 @@ export const sendTokenTransferTransactions = async (
 	fromGenesis = true,
 	client: apiClient.APIClient,
 ) => {
-	const AccountNonce = fromGenesis ? await getAccountNonce(fromAccount.address, client) : 0;
+	const accountNonce = fromGenesis ? await getAccountNonce(fromAccount.address, client) : 0;
 
 	const transferTransactions = await Promise.all(
-		nonceSequenceItems(AccountNonce).map(async (nonce, index) => {
+		nonceSequenceItems(accountNonce).map(async (nonce, index) => {
 			const trx = await createTransferTransaction(
 				{
 					recipientAddress: accounts[index].address,
@@ -103,12 +103,12 @@ export const sendTokenTransferTransaction = async (
 	fromAccount: Account,
 	client: apiClient.APIClient,
 ) => {
-	const AccountNonce = await getAccountNonce(fromAccount.address, client);
+	const accountNonce = await getAccountNonce(fromAccount.address, client);
 
 	const trx = await createTransferTransaction(
 		{
 			recipientAddress: account.address,
-			nonce: BigInt(AccountNonce),
+			nonce: BigInt(accountNonce),
 			amount: getBeddows('25'),
 			fee: DEFAULT_TX_FEES,
 			fromAccount,
@@ -123,13 +123,13 @@ export const sendValidatorRegistrationTransaction = async (
 	account: GeneratorAccount,
 	client: apiClient.APIClient,
 ) => {
-	const AccountNonce = await getAccountNonce(account.address, client);
+	const accountNonce = await getAccountNonce(account.address, client);
 
 	const name = generateRandomUserName();
 	const transaction = await createValidatorRegisterTransaction(
 		{
 			name,
-			nonce: BigInt(AccountNonce),
+			nonce: BigInt(accountNonce),
 			fee: getBeddows('15'),
 			account,
 		},
@@ -144,11 +144,11 @@ export const sendStakeTransaction = async (
 	stakes: Stake[],
 	client: apiClient.APIClient,
 ) => {
-	const AccountNonce = await getAccountNonce(account.address, client);
+	const accountNonce = await getAccountNonce(account.address, client);
 
 	const transaction = await createStakeTransaction(
 		{
-			nonce: BigInt(AccountNonce),
+			nonce: BigInt(accountNonce),
 			stakes,
 			fee: DEFAULT_TX_FEES,
 			account,
@@ -164,11 +164,11 @@ export const sendUpdateGeneratorKeyTransaction = async (
 	params,
 	client: apiClient.APIClient,
 ) => {
-	const AccountNonce = await getAccountNonce(account.address, client);
+	const accountNonce = await getAccountNonce(account.address, client);
 
 	const transaction = await createUpdateGeneratorKeyTransaction(
 		{
-			nonce: BigInt(AccountNonce),
+			nonce: BigInt(accountNonce),
 			fee: getBeddows('15'),
 			account,
 			params,
@@ -184,11 +184,11 @@ export const sendChangeCommissionTransaction = async (
 	params,
 	client: apiClient.APIClient,
 ) => {
-	const AccountNonce = await getAccountNonce(account.address, client);
+	const accountNonce = await getAccountNonce(account.address, client);
 
 	const transaction = await createChangeCommissionTransaction(
 		{
-			nonce: BigInt(AccountNonce),
+			nonce: BigInt(accountNonce),
 			fee: getBeddows('15'),
 			account,
 			params,
@@ -205,14 +205,14 @@ export const sendMultiSigRegistrationTransaction = async (
 	multisigAccountKeys: string[],
 	client: apiClient.APIClient,
 ) => {
-	const AccountNonce = await getAccountNonce(account.address, client);
+	const accountNonce = await getAccountNonce(account.address, client);
 
 	const nodeInfo = await client.invoke<Record<string, any>>('system_getNodeInfo');
 
 	const transaction = await createMultiSignRegisterTransaction(
 		{
 			chainID: Buffer.from(nodeInfo.chainID, 'hex'),
-			nonce: BigInt(AccountNonce),
+			nonce: BigInt(accountNonce),
 			mandatoryKeys: params.mandatoryKeys,
 			optionalKeys: params.optionalKeys,
 			numberOfSignatures: params.numberOfSignatures,
@@ -232,13 +232,13 @@ export const sendTransferTransactionFromMultiSigAccount = async (
 	multisigAccountKeys: string[],
 	client: apiClient.APIClient,
 ) => {
-	const AccountNonce = await getAccountNonce(account.address, client);
+	const accountNonce = await getAccountNonce(account.address, client);
 
 	const transaction = await createMultisignatureTransferTransaction(
 		{
 			recipientAddress: account.address,
 			amount: getBeddows('1'),
-			nonce: BigInt(AccountNonce),
+			nonce: BigInt(accountNonce),
 			mandatoryKeys: params.mandatoryKeys,
 			optionalKeys: params.optionalKeys,
 			fee: DEFAULT_TX_FEES,
@@ -256,11 +256,11 @@ export const sendRegisterKeysTransaction = async (
 	params,
 	client: apiClient.APIClient,
 ) => {
-	const AccountNonce = await getAccountNonce(account.address, client);
+	const accountNonce = await getAccountNonce(account.address, client);
 
 	const transaction = await createRegisterKeysTransaction(
 		{
-			nonce: BigInt(AccountNonce),
+			nonce: BigInt(accountNonce),
 			fee: getBeddows('15'),
 			account,
 			params,

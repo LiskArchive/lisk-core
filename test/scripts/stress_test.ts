@@ -214,7 +214,7 @@ const start = async (count, isValidatorsRegistered) => {
 			await sendRegisterKeysTransaction(account, params, client);
 		}
 
-		// Remove wait once SDK fixed the issue https://github.com/LiskHQ/lisk-sdk/issues/8148
+		// Remove wait once SDK fixes issue: https://github.com/LiskHQ/lisk-sdk/issues/8148
 		await wait(1000);
 	}
 

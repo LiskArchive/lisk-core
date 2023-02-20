@@ -67,7 +67,7 @@ const passphrase =
 	'attract squeeze option inflict dynamic end evoke love proof among random blanket table pumpkin general impose access toast undo extend fun employ agree dash';
 
 export const getAccountKeyPath = () => {
-	const accountKeyPathOffset = Math.floor(Math.random() * 102);
+	const accountKeyPathOffset = Math.floor(Math.random() * 103);
 	const accountKeyPath = `m/44'/134'/${accountKeyPathOffset}'`;
 	return accountKeyPath;
 };

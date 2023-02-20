@@ -293,7 +293,7 @@ export const createMultisignatureTransferTransaction = async (
 		data: '',
 	};
 
-	let trx = await createAndSignTransaction(
+	const trx = await createAndSignTransaction(
 		{
 			module: MODULE_TOKEN,
 			command: COMMAND_TOKEN_TRANSFER,
@@ -307,9 +307,9 @@ export const createMultisignatureTransferTransaction = async (
 		client,
 	);
 
-	trx = await client.transaction.sign(trx, input.multisigAccountKeys);
+	const signedTrx = await client.transaction.sign(trx, input.multisigAccountKeys);
 
-	return trx;
+	return signedTrx;
 };
 
 export const createRegisterKeysTransaction = async (
