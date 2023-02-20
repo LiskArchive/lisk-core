@@ -8,7 +8,7 @@
 [![DeepScan grade](https://deepscan.io/api/teams/6759/projects/8870/branches/113510/badge/grade.svg)](https://deepscan.io/dashboard/#view=project&tid=6759&pid=8870&bid=113510)
 ![GitHub issues](https://img.shields.io/github/issues-raw/liskhq/lisk-core)
 ![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/liskhq/lisk-core)
-[![Code Coverage](https://codecov.io/gh/LiskHQ/lisk-core/branch/720-add-code-coverage/graph/badge.svg?token=U0CU1XQZ52)](https://codecov.io/gh/LiskHQ/lisk-core)
+[![Code Coverage](https://codecov.io/gh/LiskHQ/lisk-core/branch/development/graph/badge.svg?token=U0CU1XQZ52)](https://codecov.io/gh/LiskHQ/lisk-core)
 
 Lisk is a next-generation crypto-currency and decentralized application platform, written entirely in JavaScript. The official documentation about the whole ecosystem can be found in https://lisk.com/docs.
 
