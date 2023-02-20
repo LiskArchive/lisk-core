@@ -12,7 +12,7 @@ jobs:
           node-version: 16.14.2
       - name: Install dependencies
         run: npm ci
-      - name: Run tests and collect coverage
+      - name: Run unit tests and collect coverage
         run: npm run test:unit
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
