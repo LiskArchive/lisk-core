@@ -115,7 +115,7 @@ const start = async (count, roundNumber) => {
 		await wait(20000);
 
 		// require known legacy accounts based on the network, default to devnet
-		const { legacyAccounts } = require(`../../config/${network}/known_legacy_accounts.json`);
+		const { legacyAccounts } = require(`../config/known_legacy_accounts_${network}.json`);
 
 		for (let i = 0; i < 5; i++) {
 			const legacyAccount = await getLegacyAccountInfo(legacyAccounts[i]);
