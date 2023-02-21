@@ -29,7 +29,7 @@ import {
 	createSidechainRegistrationTransaction,
 	createReclaimLSKTransaction,
 } from './create';
-import { Account, GeneratorAccount, legacyAccount, Stake } from '../types';
+import { Account, GeneratorAccount, LegacyAccount, Stake } from '../types';
 
 export const getBeddows = (lskAmount: string) =>
 	BigInt(transactions.convertLSKToBeddows(lskAmount));
@@ -294,7 +294,7 @@ export const sendSidechainRegistrationTransaction = async (
 };
 
 export const sendReclaimLSKTransaction = async (
-	legacyAccount: legacyAccount,
+	legacyAccount: LegacyAccount,
 	params: any,
 	client: apiClient.APIClient,
 ) => {
@@ -311,5 +311,5 @@ export const sendReclaimLSKTransaction = async (
 		client,
 	);
 
-	await handleTransaction(transaction, 'reclaim lisk', client);
+	await handleTransaction(transaction, 'reclaim', client);
 };

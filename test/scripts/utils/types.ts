@@ -40,6 +40,6 @@ export interface Transaction {
 	signatures: string[];
 }
 
-export interface legacyAccount extends Account {
+export interface LegacyAccount extends Account {
 	amount: string;
 }
