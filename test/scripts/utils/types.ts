@@ -39,3 +39,7 @@ export interface Transaction {
 	params: Record<string, unknown>;
 	signatures: string[];
 }
+
+export interface legacyAccount extends Account {
+	amount: string;
+}
