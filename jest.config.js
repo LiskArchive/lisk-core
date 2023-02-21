@@ -9,9 +9,9 @@ module.exports = {
 	transform: {
 		'^.+\\.(ts|tsx)$': 'ts-jest',
 	},
-	verbose: true,
-	collectCoverage: true,
-	coverageReporters: ['text', 'json'],
+	verbose: false,
+	collectCoverage: false,
+	coverageReporters: ['json'],
 	coverageDirectory: '.coverage',
 	/**
 	 * restoreMocks [boolean]
