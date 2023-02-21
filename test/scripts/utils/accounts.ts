@@ -18,6 +18,19 @@ const { Mnemonic } = liskPassphrase;
 
 import { MNEMONIC_LENGTH } from './constants';
 
+export const getLegacyAccountInfo = async legacyAccount => {
+	const { privateKey, publicKey } = await cryptography.legacy.getKeys(legacyAccount.passphrase);
+	const address = await cryptography.address.getLisk32AddressFromPublicKey(publicKey);
+
+	return {
+		address,
+		publicKey,
+		privateKey,
+		passphrase,
+		amount: legacyAccount.amount,
+	};
+};
+
 export const createGeneratorKey = async (passphrase: string, generatorKeyPath: string) => {
 	const generatorPrivateKey = await cryptography.ed.getPrivateKeyFromPhraseAndPath(
 		passphrase,
