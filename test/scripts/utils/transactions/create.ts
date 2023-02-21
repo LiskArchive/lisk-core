@@ -30,6 +30,7 @@ import {
 	COMMAND_LEGACY_REGISTER_KEYS,
 	MODULE_INTEROPERABILITY,
 	COMMAND_INTEROPERABILITY_SIDECHAIN_REG,
+	COMMAND_LEGACY_RECLAIM_LSK,
 } from '../constants';
 import {
 	createSignatureForMultisignature,
@@ -360,6 +361,33 @@ export const createSidechainRegistrationTransaction = async (
 			signatures: [],
 		},
 		input.account.privateKey.toString('hex'),
+		client,
+	);
+
+	return tx;
+};
+
+export const createReclaimLSKTransaction = async (
+	input: {
+		fee?: bigint;
+		nonce: bigint;
+		params: any;
+		publicKey: Buffer;
+		privateKey: Buffer;
+	},
+	client: apiClient.APIClient,
+): Promise<Record<string, unknown>> => {
+	const tx = await createAndSignTransaction(
+		{
+			module: MODULE_LEGACY,
+			command: COMMAND_LEGACY_RECLAIM_LSK,
+			nonce: input.nonce,
+			senderPublicKey: input.publicKey.toString('hex'),
+			fee: input.fee ?? BigInt('2500000000'),
+			params: input.params,
+			signatures: [],
+		},
+		input.privateKey.toString('hex'),
 		client,
 	);
 

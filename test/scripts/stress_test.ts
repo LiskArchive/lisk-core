@@ -19,6 +19,7 @@ import {
 	genesisAccount,
 	createGeneratorKey,
 	getAccountKeyPath,
+	getLegacyAccountInfo,
 } from './utils/accounts';
 import { TRANSACTIONS_PER_ACCOUNT, NUM_OF_ROUNDS, MAX_COMMISSION } from './utils/constants';
 import {
@@ -33,6 +34,7 @@ import {
 	sendTokenTransferTransaction,
 	sendRegisterKeysTransaction,
 	sendSidechainRegistrationTransaction,
+	sendReclaimLSKTransaction,
 } from './utils/transactions/send';
 import { Account, GeneratorAccount, Stake } from './utils/types';
 import { wait } from './utils/wait';
@@ -56,7 +58,7 @@ export const getSchemas = () => schemas;
 
 export const getMetadata = () => metadata;
 
-const start = async (count, isValidatorsRegistered, isSidechainRegistered) => {
+const start = async (count, roundNumber) => {
 	const network = process.argv[2] || 'devnet';
 	if (!['alphanet', 'devnet'].includes(network)) {
 		console.error('Invalid argument passed, accepted values are devnet and alphanet');
@@ -101,13 +103,38 @@ const start = async (count, isValidatorsRegistered, isSidechainRegistered) => {
 	console.log('\n');
 	await wait(20000);
 
-	if (!isSidechainRegistered) {
+	if (roundNumber === 0) {
 		const nodeInfo = await client.node.getNodeInfo();
 		const params = {
 			...registerSidechainParams,
 			chainID: nodeInfo.chainID.slice(0, 2).concat('000001'),
 		};
 		await sendSidechainRegistrationTransaction(accounts[0], params, client);
+		// Wait for 2 blocks
+		console.log('\n');
+		await wait(20000);
+
+		// require known legacy accounts based on the network, default to devnet
+		const { legacyAccounts } = require(`../config/known_legacy_accounts_${network}.json`);
+
+		for (let i = 0; i < 5; i++) {
+			const legacyAccount = await getLegacyAccountInfo(legacyAccounts[i]);
+			// Initialize the legacy account with some funds
+			await sendTokenTransferTransaction(
+				legacyAccount,
+				await genesisAccount(accountKeyPath),
+				client,
+			);
+
+			// Wait for 1 block
+			await wait(10000);
+
+			const params = {
+				amount: legacyAccount.amount,
+			};
+			await sendReclaimLSKTransaction(legacyAccount, params, client);
+		}
+
 		// Wait for 2 blocks
 		console.log('\n');
 		await wait(20000);
@@ -218,7 +245,7 @@ const start = async (count, isValidatorsRegistered, isSidechainRegistered) => {
 		const account = await genesisAccount(keyPath);
 		await sendTokenTransferTransaction(fundInitialAccount[0], account, client);
 
-		if (!isValidatorsRegistered) {
+		if (roundNumber === 0) {
 			const params = {
 				blsKey: validatorKeys[i].plain.blsKey,
 				proofOfPossession: validatorKeys[i].plain.blsProofOfPossession,
@@ -236,15 +263,8 @@ const start = async (count, isValidatorsRegistered, isSidechainRegistered) => {
 };
 
 const createTransactions = async () => {
-	// Add flag to update the status of validator keys registration
-	let isValidatorsRegistered = false;
-	let isSidechainRegistered = false;
-
 	for (let i = 0; i < NUM_OF_ROUNDS; i++) {
-		await start(STRESS_COUNT, isValidatorsRegistered, isSidechainRegistered);
-		// Set isValidatorsRegistered flag to true after validators keys registration
-		isValidatorsRegistered = true;
-		isSidechainRegistered = true;
+		await start(STRESS_COUNT, i);
 	}
 	console.info('Finished!!');
 };

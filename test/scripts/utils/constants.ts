@@ -34,6 +34,7 @@ export const COMMAND_AUTH_REGISTER_MULTISIGNATURE = 'registerMultisignature';
 
 export const MODULE_LEGACY = 'legacy';
 export const COMMAND_LEGACY_REGISTER_KEYS = 'registerKeys';
+export const COMMAND_LEGACY_RECLAIM_LSK = 'reclaimLSK';
 
 export const MODULE_INTEROPERABILITY = 'interoperability';
 export const COMMAND_INTEROPERABILITY_SIDECHAIN_REG = 'registerSidechain';
