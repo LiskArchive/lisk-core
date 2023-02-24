@@ -45,11 +45,11 @@
 			"feeTokenID": "0400000000000000"
 		},
 		"pos": {
-			"useInvalidBLSKey": true
+			"useInvalidBLSKey": false
 		},
 		"reward": {
 			"tokenID": "0400000000000000",
-			"offset": 2160,
+			"offset": 360,
 			"distance": 3000000,
 			"brackets": ["500000000", "400000000", "300000000", "200000000", "100000000"]
 		},
