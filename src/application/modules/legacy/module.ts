@@ -60,7 +60,7 @@ export class LegacyModule extends BaseModule {
 
 	public constructor() {
 		super();
-		this.stores.register(LegacyAccountStore, new LegacyAccountStore(this.name));
+		this.stores.register(LegacyAccountStore, new LegacyAccountStore(this.name, 0));
 		this.events.register(ReclaimLSKEvent, new ReclaimLSKEvent(this.name));
 		this.events.register(RegisterKeysEvent, new RegisterKeysEvent(this.name));
 	}
