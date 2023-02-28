@@ -20,6 +20,7 @@ import { MonitorPlugin } from '@liskhq/lisk-framework-monitor-plugin';
 import { ForgerPlugin } from '@liskhq/lisk-framework-forger-plugin';
 import { ReportMisbehaviorPlugin } from '@liskhq/lisk-framework-report-misbehavior-plugin';
 import { FaucetPlugin } from '@liskhq/lisk-framework-faucet-plugin';
+import { ChainConnectorPlugin } from '@liskhq/lisk-framework-chain-connector-plugin';
 import { join } from 'path';
 import { getApplication } from '../application';
 
@@ -104,6 +105,12 @@ export class StartCommand extends BaseStartCommand {
 			env: 'LISK_DASHBOARD_PLUGIN_PORT',
 			dependsOn: ['enable-dashboard-plugin'],
 		}),
+		'enable-chain-connector-plugin': flagParser.boolean({
+			description:
+				'Enable Chain Connector Plugin. Environment variable "LISK_ENABLE_CHAIN_CONNECTOR_PLUGIN" can also be used.',
+			env: 'LISK_ENABLE_CHAIN_CONNECTOR_PLUGIN',
+			default: false,
+		}),
 	};
 
 	public async getApplication(config: PartialApplicationConfig): Promise<Application> {
@@ -123,6 +130,9 @@ export class StartCommand extends BaseStartCommand {
 		}
 		if (flags['enable-faucet-plugin']) {
 			app.registerPlugin(new FaucetPlugin(), { loadAsChildProcess: true });
+		}
+		if (flags['enable-chain-connector-plugin']) {
+			app.registerPlugin(new ChainConnectorPlugin(), { loadAsChildProcess: true });
 		}
 
 		return app;

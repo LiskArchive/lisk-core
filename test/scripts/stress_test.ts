@@ -12,22 +12,33 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 /* eslint-disable no-console */
-
 import { apiClient } from 'lisk-sdk';
 
-import { createAccount, genesisAccount, createGeneratorKey } from './utils/accounts';
-import { TRANSACTIONS_PER_ACCOUNT, NUM_OF_ROUNDS } from './utils/constants';
+import {
+	createAccount,
+	genesisAccount,
+	createGeneratorKey,
+	getAccountKeyPath,
+	getLegacyAccountInfo,
+} from './utils/accounts';
+import { TRANSACTIONS_PER_ACCOUNT, NUM_OF_ROUNDS, MAX_COMMISSION } from './utils/constants';
 import {
 	sendTokenTransferTransactions,
 	sendValidatorRegistrationTransaction,
 	sendStakeTransaction,
 	getBeddows,
 	sendUpdateGeneratorKeyTransaction,
+	sendChangeCommissionTransaction,
 	sendMultiSigRegistrationTransaction,
-	// sendTransferTransactionFromMultiSigAccount,
+	sendTransferTransactionFromMultiSigAccount,
+	sendTokenTransferTransaction,
+	sendRegisterKeysTransaction,
+	sendSidechainRegistrationTransaction,
+	sendReclaimLSKTransaction,
 } from './utils/transactions/send';
 import { Account, GeneratorAccount, Stake } from './utils/types';
 import { wait } from './utils/wait';
+import { registerSidechainParams } from '../fixtures/interoperabilityParams';
 
 const ITERATIONS = process.env.ITERATIONS ?? '1';
 const STRESS_COUNT = TRANSACTIONS_PER_ACCOUNT * parseInt(ITERATIONS, 10);
@@ -47,7 +58,14 @@ export const getSchemas = () => schemas;
 
 export const getMetadata = () => metadata;
 
-const start = async (count = STRESS_COUNT) => {
+const start = async (count, roundNumber) => {
+	const network = process.argv[2] || 'devnet';
+	if (!['alphanet', 'devnet'].includes(network)) {
+		console.error('Invalid argument passed, accepted values are devnet and alphanet');
+		console.error('Exiting...');
+		process.exit(1);
+	}
+
 	// const URL = process.env.WS_SERVER_URL || 'ws://localhost:7887/rpc-ws';
 	const client = await apiClient.createIPCClient('~/.lisk/lisk-core');
 	const accounts: GeneratorAccount[] = await Promise.all(
@@ -65,9 +83,16 @@ const start = async (count = STRESS_COUNT) => {
 	const accountsLen = accounts.length;
 	// Due to TPool limit of 64 trx/account, fund initial accounts
 	const fundInitialAccount: Account[] = accounts.slice(0, TRANSACTIONS_PER_ACCOUNT);
-	await sendTokenTransferTransactions(fundInitialAccount, await genesisAccount(), true, client);
+	const accountKeyPath = getAccountKeyPath();
+	await sendTokenTransferTransactions(
+		fundInitialAccount,
+		await genesisAccount(accountKeyPath),
+		true,
+		client,
+	);
 
 	// Wait for 2 blocks
+	console.log('\n');
 	await wait(20000);
 
 	const chunkedAccounts = chunkArray([...accounts]);
@@ -77,6 +102,43 @@ const start = async (count = STRESS_COUNT) => {
 
 	console.log('\n');
 	await wait(20000);
+
+	if (roundNumber === 0) {
+		const nodeInfo = await client.node.getNodeInfo();
+		const params = {
+			...registerSidechainParams,
+			chainID: nodeInfo.chainID.slice(0, 2).concat('000001'),
+		};
+		await sendSidechainRegistrationTransaction(accounts[0], params, client);
+		// Wait for 2 blocks
+		console.log('\n');
+		await wait(20000);
+
+		// require known legacy accounts based on the network, default to devnet
+		const { legacyAccounts } = require(`../config/known_legacy_accounts_${network}.json`);
+
+		for (let i = 0; i < 5; i++) {
+			const legacyAccount = await getLegacyAccountInfo(legacyAccounts[i]);
+			// Initialize the legacy account with some funds
+			await sendTokenTransferTransaction(
+				legacyAccount,
+				await genesisAccount(accountKeyPath),
+				client,
+			);
+
+			// Wait for 1 block
+			await wait(10000);
+
+			const params = {
+				amount: legacyAccount.amount,
+			};
+			await sendReclaimLSKTransaction(legacyAccount, params, client);
+		}
+
+		// Wait for 2 blocks
+		console.log('\n');
+		await wait(20000);
+	}
 
 	for (let i = 0; i < accountsLen; i++) {
 		await sendValidatorRegistrationTransaction(accounts[i], client);
@@ -121,6 +183,18 @@ const start = async (count = STRESS_COUNT) => {
 	console.log('\n');
 	await wait(20000);
 
+	// Change commission
+	for (let i = 0; i < accountsLen; i++) {
+		const params = {
+			newCommission: Math.floor(Math.random() * MAX_COMMISSION),
+		};
+
+		await sendChangeCommissionTransaction(accounts[i], params, client);
+	}
+
+	console.log('\n');
+	await wait(20000);
+
 	for (let i = 0; i < accountsLen; i++) {
 		const account1 = accounts[(i + 1) % accountsLen];
 		const account2 = accounts[(i + 2) % accountsLen];
@@ -137,30 +211,60 @@ const start = async (count = STRESS_COUNT) => {
 	}
 
 	console.log('\n');
-	// await wait(40000);
+	await wait(20000);
 
-	// for (let i = 0; i < accountsLen; i += 1) {
-	// 	const account1 = accounts[(i + 1) % accountsLen];
-	// 	const account2 = accounts[(i + 2) % accountsLen];
-	// 	const params = {
-	// 		mandatoryKeys: [account1.publicKey],
-	// 		optionalKeys: [account2.publicKey],
-	// 	};
-	// 	const multisigAccountKeys = [account1.privateKey.toString('hex'), account2.privateKey.toString('hex')];
-	// 	await sendTransferTransactionFromMultiSigAccount(
-	// 		accounts[i],
-	// 		params,
-	// 		multisigAccountKeys,
-	// 		client,
-	// 	);
-	// }
+	for (let i = 0; i < accountsLen; i += 1) {
+		const account1 = accounts[(i + 1) % accountsLen];
+		const account2 = accounts[(i + 2) % accountsLen];
+		const params = {
+			mandatoryKeys: [account1.publicKey],
+			optionalKeys: [account2.publicKey],
+		};
+		const multisigAccountKeys = [
+			account1.privateKey.toString('hex'),
+			account2.privateKey.toString('hex'),
+		];
+		await sendTransferTransactionFromMultiSigAccount(
+			accounts[i],
+			params,
+			multisigAccountKeys,
+			client,
+		);
+	}
 
+	// Wait for 2 blocks
+	console.log('\n');
+	await wait(20000);
+
+	// require genesis accounts (validators) based on the network, default to devnet
+	const { keys: validatorKeys } = require(`../../config/${network}/dev-validators.json`);
+
+	// Send transactions from all genesis accounts
+	for (let i = 0; i < validatorKeys.length; i++) {
+		const keyPath = validatorKeys[i].keyPath;
+		const account = await genesisAccount(keyPath);
+		await sendTokenTransferTransaction(fundInitialAccount[0], account, client);
+
+		if (roundNumber === 0) {
+			const params = {
+				blsKey: validatorKeys[i].plain.blsKey,
+				proofOfPossession: validatorKeys[i].plain.blsProofOfPossession,
+				generatorKey: validatorKeys[i].plain.generatorKey,
+			};
+			await sendRegisterKeysTransaction(account, params, client);
+		}
+
+		// Remove wait once SDK fixes issue: https://github.com/LiskHQ/lisk-sdk/issues/8148
+		await wait(1000);
+	}
+
+	console.log('\n');
 	client.disconnect();
 };
 
 const createTransactions = async () => {
 	for (let i = 0; i < NUM_OF_ROUNDS; i++) {
-		await start();
+		await start(STRESS_COUNT, i);
 	}
 	console.info('Finished!!');
 };

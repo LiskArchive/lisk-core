@@ -18,6 +18,19 @@ const { Mnemonic } = liskPassphrase;
 
 import { MNEMONIC_LENGTH } from './constants';
 
+export const getLegacyAccountInfo = async legacyAccount => {
+	const { privateKey, publicKey } = await cryptography.legacy.getKeys(legacyAccount.passphrase);
+	const address = await cryptography.address.getLisk32AddressFromPublicKey(publicKey);
+
+	return {
+		address,
+		publicKey,
+		privateKey,
+		passphrase,
+		amount: legacyAccount.amount,
+	};
+};
+
 export const createGeneratorKey = async (passphrase: string, generatorKeyPath: string) => {
 	const generatorPrivateKey = await cryptography.ed.getPrivateKeyFromPhraseAndPath(
 		passphrase,
@@ -63,15 +76,16 @@ export const createAccount = async () => {
 	};
 };
 
-const passphrases = [
-	'attract squeeze option inflict dynamic end evoke love proof among random blanket table pumpkin general impose access toast undo extend fun employ agree dash',
-];
+const passphrase =
+	'attract squeeze option inflict dynamic end evoke love proof among random blanket table pumpkin general impose access toast undo extend fun employ agree dash';
 
-const accountKeyPath = "m/44'/134'/0'";
+export const getAccountKeyPath = () => {
+	const accountKeyPathOffset = Math.floor(Math.random() * 103);
+	const accountKeyPath = `m/44'/134'/${accountKeyPathOffset}'`;
+	return accountKeyPath;
+};
 
-export const genesisAccount = async () => {
-	const passphraseIndex = Math.floor(Math.random() * passphrases.length);
-	const passphrase = passphrases[passphraseIndex];
+export const genesisAccount = async accountKeyPath => {
 	const privateKey = await cryptography.ed.getPrivateKeyFromPhraseAndPath(
 		passphrase,
 		accountKeyPath,

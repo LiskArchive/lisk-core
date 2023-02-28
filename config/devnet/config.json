@@ -45,11 +45,11 @@
 			"feeTokenID": "0400000000000000"
 		},
 		"pos": {
-			"useInvalidBLSKey": true
+			"useInvalidBLSKey": false
 		},
 		"reward": {
 			"tokenID": "0400000000000000",
-			"offset": 2160,
+			"offset": 360,
 			"distance": 3000000,
 			"brackets": ["500000000", "400000000", "300000000", "200000000", "100000000"]
 		},
@@ -60,6 +60,11 @@
 	"plugins": {
 		"reportMisbehavior": {
 			"encryptedPassphrase": "iterations=10&cipherText=5dea8b928a3ea2481ebc02499ae77679b7552189181ff189d4aa1f8d89e8d07bf31f7ebd1c66b620769f878629e1b90499506a6f752bf3323799e3a54600f8db02f504c44d&iv=37e0b1753b76a90ed0b8c319&salt=963c5b91d3f7ba02a9d001eed49b5836&tag=c3e30e8f3440ba3f5b6d9fbaccc8918d&version=1"
+		},
+		"chainConnector": {
+			"ccuFee": "5000000",
+			"encryptedPrivateKey": "kdf=argon2id&cipher=aes-256-gcm&version=1&ciphertext=bcf994c4da579c6c440a9d8b4f8334803cc060f1f900d7b22d6d442c08578313f69e2fb26efc2aa26c3bf3b36332ed99fc84f24e7fbd4c8954775e58fe03d7426d61bf57af986282735457e43289789988d96fb2099dd8452fa324234e90c439b8d4c633cf2c1902096378131a2aae68aa7902bdbf18b4fc2b42a863a1bebb75&mac=413f723231a50440b14feeab006f88a6ebea1b63247ab6883b355dced376de98&salt=ba183333474a62b1a298fc8910c51b84&iv=c023bde839be0f3b58e8ef4e&tag=76df672ca16943dc4ca30d6bb4df2ce0&iterations=1&parallelism=4&memorySize=2024",
+			"password": "lisk"
 		}
 	}
 }
