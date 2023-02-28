@@ -25,7 +25,7 @@ import {
 import { INVALID_BLS_KEY } from '../constants';
 import { registerKeysParamsSchema } from '../schemas';
 import { registerKeysData } from '../types';
-import { RegisterKeysEvent } from '../events/registerKeys';
+import { KeysRegisteredEvent } from '../events/keysRegistered';
 
 const {
 	address: { getAddressFromPublicKey },
@@ -79,8 +79,8 @@ export class RegisterKeysCommand extends BaseCommand {
 			params.proofOfPossession,
 		);
 
-		const registerKeysEvent = this.events.get(RegisterKeysEvent);
-		registerKeysEvent.log(ctx.getMethodContext(), {
+		const keysRegisteredEvent = this.events.get(KeysRegisteredEvent);
+		keysRegisteredEvent.log(ctx.getMethodContext(), {
 			address: validatorAddress,
 			generatorKey: params.generatorKey,
 			blsKey: params.blsKey,
