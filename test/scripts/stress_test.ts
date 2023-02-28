@@ -150,10 +150,6 @@ const start = async (count, roundNumber) => {
 	for (let i = 0; i < accountsLen; i++) {
 		const stakes: Stake[] = [
 			{ validatorAddress: accounts[accountsLen - i - 1].address, amount: getBeddows('20') },
-			{
-				validatorAddress: 'lskzort5bybu4rchqk6aj7sx2bbsu4azwf3wbutu4',
-				amount: BigInt('1000000000'),
-			},
 		];
 		await sendStakeTransaction(accounts[i], stakes, client);
 	}
@@ -245,7 +241,8 @@ const start = async (count, roundNumber) => {
 		const account = await genesisAccount(keyPath);
 		await sendTokenTransferTransaction(fundInitialAccount[0], account, client);
 
-		if (roundNumber === 0) {
+		// TODO: Dirty hack. Handle this separately
+		if (roundNumber === 0 && network !== 'devnet') {
 			const params = {
 				blsKey: validatorKeys[i].plain.blsKey,
 				proofOfPossession: validatorKeys[i].plain.blsProofOfPossession,

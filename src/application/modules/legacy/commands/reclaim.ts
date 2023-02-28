@@ -29,7 +29,7 @@ import { reclaimLSKParamsSchema } from '../schemas';
 import { ReclaimLSKParamsData, TokenIDReclaim, ModuleName } from '../types';
 import { getLegacyAddress } from '../utils';
 import { LegacyAccountStore } from '../stores/legacyAccountStore';
-import { ReclaimLSKEvent } from '../events/reclaim';
+import { AccountReclaimedEvent } from '../events/accountReclaimed';
 
 // eslint-disable-next-line prefer-destructuring
 const validator: liskValidator.LiskValidator = liskValidator.validator;
@@ -113,8 +113,8 @@ export class ReclaimLSKCommand extends BaseCommand {
 			params.amount,
 		);
 
-		const reclaimLSKEvent = this.events.get(ReclaimLSKEvent);
-		reclaimLSKEvent.log(ctx.getMethodContext(), {
+		const accountReclaimedEvent = this.events.get(AccountReclaimedEvent);
+		accountReclaimedEvent.log(ctx.getMethodContext(), {
 			legacyAddress,
 			address,
 			amount: params.amount,

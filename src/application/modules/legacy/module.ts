@@ -41,8 +41,8 @@ import { getModuleConfig } from './utils';
 import { LegacyAccountStore } from './stores/legacyAccountStore';
 import { ReclaimLSKCommand } from './commands/reclaim';
 import { RegisterKeysCommand } from './commands/register_keys';
-import { ReclaimLSKEvent } from './events/reclaim';
-import { RegisterKeysEvent } from './events/registerKeys';
+import { AccountReclaimedEvent } from './events/accountReclaimed';
+import { KeysRegisteredEvent } from './events/keysRegistered';
 
 // eslint-disable-next-line prefer-destructuring
 const validator: liskValidator.LiskValidator = liskValidator.validator;
@@ -65,8 +65,8 @@ export class LegacyModule extends BaseModule {
 		this.stores.register(LegacyAccountStore, new LegacyAccountStore(this.name, 0));
 
 		// Register events
-		this.events.register(ReclaimLSKEvent, new ReclaimLSKEvent(this.name));
-		this.events.register(RegisterKeysEvent, new RegisterKeysEvent(this.name));
+		this.events.register(AccountReclaimedEvent, new AccountReclaimedEvent(this.name));
+		this.events.register(KeysRegisteredEvent, new KeysRegisteredEvent(this.name));
 	}
 
 	// eslint-disable-next-line @typescript-eslint/member-ordering
