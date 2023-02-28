@@ -15,7 +15,7 @@ import { BaseEvent, EventQueuer } from 'lisk-sdk';
 
 import { LENGTH_LEGACY_ADDRESS, LENGTH_ADDRESS } from '../constants';
 
-export interface reclaimLSKEventData {
+export interface accountReclaimedEventData {
 	legacyAddress: Buffer;
 	address: Buffer;
 	amount: bigint;
@@ -43,10 +43,10 @@ export const accountReclaimedEventDataSchema = {
 	},
 };
 
-export class ReclaimLSKEvent extends BaseEvent<reclaimLSKEventData> {
+export class AccountReclaimedEvent extends BaseEvent<accountReclaimedEventData> {
 	public schema = accountReclaimedEventDataSchema;
 
-	public log(ctx: EventQueuer, data: reclaimLSKEventData): void {
+	public log(ctx: EventQueuer, data: accountReclaimedEventData): void {
 		this.add(ctx, data, [data.legacyAddress, data.address]);
 	}
 }

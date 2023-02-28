@@ -15,7 +15,7 @@ import { BaseEvent, EventQueuer } from 'lisk-sdk';
 
 import { LENGTH_ADDRESS, LENGTH_GENERATOR_KEY, LENGTH_BLS_KEY } from '../constants';
 
-export interface registerKeysEventData {
+export interface keysRegisteredEventData {
 	address: Buffer;
 	generatorKey: Buffer;
 	blsKey: Buffer;
@@ -44,10 +44,10 @@ export const keysRegisteredEventDataSchema = {
 	},
 };
 
-export class RegisterKeysEvent extends BaseEvent<registerKeysEventData> {
+export class KeysRegisteredEvent extends BaseEvent<keysRegisteredEventData> {
 	public schema = keysRegisteredEventDataSchema;
 
-	public log(ctx: EventQueuer, data: registerKeysEventData): void {
+	public log(ctx: EventQueuer, data: keysRegisteredEventData): void {
 		this.add(ctx, data, [data.address, data.generatorKey, data.blsKey]);
 	}
 }
