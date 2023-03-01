@@ -1,0 +1,197 @@
+= NPM setup
+Mona Bärenfänger <mona@lightcurve.io>
+:description: How to install and setup up a Lisk Core node with NPM.
+// Settings
+:toc: preamble
+// External URLs
+:url_nodejs: https://nodejs.org/
+:url_node_permission_errors: https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally
+:url_nvm: https://github.com/creationix/nvm
+:url_nvm_instructions: https://github.com/creationix/nvm#install--update-script
+:url_xcode: https://developer.apple.com/xcode/
+:url_homebrew: https://brew.sh/
+// Project URLs
+:url_run_logging: ROOT::run-blockchain/logging.adoc
+
+How to set up a Lisk Core node with NPM.
+
+== Pre-installation
+
+=== Requirements
+
+Supported Platforms::
+* Ubuntu 18.04 (LTS) x86_64
+* Ubuntu 20.04 (LTS) x86_64
+* MacOS x86_64
+Node.js::
+* 16.15.0
+
+include::partial$create-a-new-user.adoc[]
+
+=== Toolchain components
+
+These are used for compiling dependencies.
+
+[tabs]
+====
+Ubuntu::
++
+--
+[source,bash]
+----
+sudo apt update
+sudo apt install -y libtool automake autoconf curl build-essential python2-minimal
+----
+--
+MacOS::
++
+--
+Ensure that both {url_xcode}[XCode] and {url_homebrew}[Homebrew] are installed.
+
+[source,bash]
+----
+brew install autoconf automake libtool python2
+----
+--
+====
+
+=== Node.js & NPM
+
+{url_nodejs}[Node.js^] serves as the underlying engine for code execution.
+
+//NOTE: The correct version for NPM(6) is installed automatically with version 12 of Node.js.
+
+[tabs]
+====
+Option A - Node version manager::
++
+--
+It is recommended to use a Node version manager such as {url_nvm}[NVM^].
+NVM is a bash script that enables the management of multiple active Node.js versions.
+
+. Install NVM and follow the {url_nvm_instructions}[official instructions^] here.
+. Install the latest LTS version of Node.js using NVM with the following command shown below:
+
+[source,bash]
+----
+nvm install 16.15.0
+----
+--
+Option B - Node.js package::
++
+--
+If NVM or other package managers are not required, it is possible to install the Node package globally  as shown in the following commands below:
+
+*Ubuntu*
+
+[source,bash]
+----
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+sudo apt-get install -y nodejs
+----
+
+*MacOS*
+
+For MacOS, please execute the following command below:
+
+[source,bash]
+----
+brew install node@16.15.0
+----
+
+[TIP]
+=====
+In case you experience any permission issues, please follow the instructions below to adjust the location of the global NPM packages:
+
+. On the command line, in your home directory, create a directory for global installations:
+
+ mkdir ~/.npm-global
+
+. Configure npm to use the new directory path:
+
+ npm config set prefix '~/.npm-global'
+
+. In your preferred text editor, open or create a `~/.profile` file and add the following line:
+
+ export PATH=~/.npm-global/bin:$PATH
+
+. On the command line, update your system variables:
+
+ source ~/.profile
+
+More information can be found under {url_node_permission_errors}[^]
+=====
+--
+====
+
+== Installation
+
+Install Lisk Core with NPM:
+
+[source,bash]
+----
+npm install --global lisk-core
+----
+
+=== Location
+
+Lisk Core will be installed under the installation path of NPM.
+
+To check the location where Lisk Core was installed, execute the following:
+
+[source,bash]
+----
+npm list --global --depth=0
+----
+
+== Start
+
+After successful installation, start the node with the following command:
+
+[tabs]
+====
+Mainnet::
++
+--
+[source,bash]
+----
+lisk-core start --network mainnet
+----
+
+[NOTE]
+=====
+The default log levels for Mainnet are:
+
+[source,json]
+----
+"logger": {
+    "fileLogLevel": "error",
+    "consoleLogLevel": "none"
+},
+----
+
+So if you start the node, it won't show any logs in the console.
+This is the recommended setting for reducing the number of logs for a running node.
+However, to verify that the node started correctly, update the log levels in the config to `info` or lower.
+
+Alternatively, start the node with the following flag:
+
+[source,bash]
+----
+lisk-core start --network mainnet --console-log=info
+----
+
+See the xref:{url_run_logging}[] guide for more information about logging.
+=====
+--
+Testnet::
++
+--
+[source,bash]
+----
+lisk-core start --network testnet
+----
+--
+====
+
+include::partial$core-post-installation.adoc[]

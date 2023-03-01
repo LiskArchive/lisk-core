@@ -1,0 +1,16 @@
+=== Ports
+
+To connect to the desired network with Lisk Core, please ensure that the corresponding ports listed below are open.
+
+[options="header",]
+|===
+|Network |WebSocket(mandatory) |HTTP(optional)
+|Betanet |5001 |5000
+|Devnet |5000 |4000
+|===
+
+[NOTE]
+====
+These are the **default** ports for connecting with the network.
+They can be altered later in the xref:management/configuration.adoc[configuration].
+====

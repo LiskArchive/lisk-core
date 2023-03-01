@@ -1,0 +1,307 @@
+= Binary setup
+Christopher Braithwaite <christopher.braithwaite@lightcurve.io> Mona Bärenfänger <mona@lightcurve.io>
+:description: How to install and set up a Lisk Core (binary distribution).
+:toc: preamble
+:toclevels: 5
+:sectnums:
+:page-toclevels: 4
+
+// External URLs
+:url_set_path: https://opensource.com/article/17/6/set-path-linux
+// Project URLs
+:url_run_logging: lisk-docs::run-blockchain/logging.adoc
+:url_zsch_set_path: https://linuxhint.com/add-a-directory-to-path-in-zsh/
+:url_install_docker_mac: https://docs.docker.com/desktop/install/mac-install/
+
+The binary installation offers an easy and automated approach to setting up Lisk Core.
+
+== Pre-installation
+
+=== Supported platforms
+* Ubuntu 18.04 (LTS) x86_64
+* Ubuntu 20.04 (LTS) x86_64
+* MacOS x86_64
+* MacOS ARM (Apple Silicon)
+
+// include::partial$create-a-new-user.adoc[]
+
+[[install]]
+== Installation
+
+This section details how to install Lisk Core using pre-built application packages.
+Once completed, you will have a functioning node on the Lisk Network.
+
+When using a MAC powered by Apple Silicon, please adhere to the following setup instructions:
+
+=== Environment setup requirements
+
+As a first step, please ensure to clean the old Node.js installations (with arm64 binaries).
+
+[source,bash]
+----
+rm -rf ~/.nvm
+----
+
+==== Install Rosetta (Intel x86 emulation layer)
+Please execute the following command:
+
+[source,bash]
+----
+softwareupdate --install-rosetta
+----
+
+Add a new session and set the iTerm to open in the **Intel** mode. Now set a shortcut key (quick access), for opening the iTerm in the aforementioned mode.
+Following that, open a terminal in Intel mode. Optionally, to verify that the terminal is now running in Intel mode, execute the following command:
+
+[source,bash]
+----
+$ arch
+i386
+----
+// === Install Rosetta
+
+==== Install Homebrew
+Homebrew can be installed for either the ARM or Intel compatible binaries as mentioned below:
+[tabs]
+====
+
+ARM compatible binaries::
++
+--
+
+[source,bash]
+----
+arch -arm64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+----
+
+--
+
+Intel compatible binaries::
++
+--
+[source,bash]
+----
+arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+----
+--
+====
+Add Homebrew to your `~/.zshrc` or `.zsh_profile`
+
+[source,bash]
+----
+if [[ $(arch) = arm64 ]];
+then
+    echo 'Detected Apple Silicon, ARM Homebrew has precedence'
+    export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+else
+    echo 'Detected Intel CPU architecture, Intel Homebrew has precedence'
+    export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
+----
+==== Install nvm
+Node Version Manager can be installed for either the ARM or Intel compatible binaries as mentioned below:
+
+[tabs]
+====
+ARM compatible binaries::
++
+--
+[source,bash]
+----
+arch -arm64 /bin/bash -c "wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash"
+----
+--
+Intel compatible binaries::
++
+--
+[source,bash]
+----
+arch -x86_64 /bin/bash -c "wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash"
+----
+--
+====
+// When using the latest MAC hardware this allows mixing the Intel software with the native ARM compilations.
+
+==== Install Node.js
+To install Node.js execute the following command:
+
+[source,bash]
+----
+arch -x86_64 nvm install 16
+----
+// TIP: For installing docker on M1 chips, check out the guide about {url_install_docker_mac}[installing Docker on a Mac^].
+//TODO: Test if installing Python is necessary
+
+==== Install Python (For Macs running on Apple Silicon)
+
+To install Python on a Mac powered by Apple Silicon, execute the following commands:
+
+[source,bash]
+----
+brew install pyenv
+pyenv install 2.7.18
+export PATH="$(pyenv root)/shims:${PATH}"
+echo 'PATH=$(pyenv root)/shims:$PATH' >> ~/.zshrc
+pyenv global 2.7.18
+----
+
+[NOTE]
+====
+Please note, that some minimal housekeeping is required to ensure the right paths are included in the profile.
+
+* Apple Silicon (ARM) brew writes binaries to the following: `/opt/homebrew/bin`
+
+* Intel brew binaries are stored (as usual), in the following location: `/usr/local/Homebrew/bin`
+
+* Preference should be given to Apple Silicon binaries over Intel where possible.
+
+Remember to export the nvm path, (this should be performed automatically by the script).
+
+====
+
+=== Download and execute the installation script
+
+Download Lisk Core.
+
+[tabs]
+====
+Mainnet::
++
+--
+*Linux:*
+
+[source,bash]
+----
+curl -o lisk-core.tar.gz https://downloads.lisk.com/lisk/mainnet/4.0.0/lisk-core-v4.0.0-linux-x64.tar.gz
+----
+
+*MacOS:*
+
+[source,bash]
+----
+curl -o lisk-core.tar.gz https://downloads.lisk.com/lisk/mainnet/4.0.0/lisk-core-v4.0.0-darwin-x64.tar.gz
+----
+--
+Testnet::
++
+--
+*Linux:*
+
+[source,bash]
+----
+curl -o lisk-core.tar.gz https://downloads.lisk.com/lisk/testnet/4.0.0/lisk-core-v4.0.0-linux-x64.tar.gz
+----
+
+*MacOS:*
+
+[source,bash]
+----
+curl -o lisk-core.tar.gz https://downloads.lisk.com/lisk/testnet/4.0.0/lisk-core-v4.0.0-darwin-x64.tar.gz
+----
+--
+====
+
+Unpack it and add it to the system path, in order to use it in the terminal:
+
+[source,bash]
+----
+tar -xf ./lisk-core.tar.gz
+cd lisk-core
+./bin/lisk-core
+----
+
+You can make the `lisk-core` command available in the PATH, e.g. by executing the following:
+
+[tabs]
+=====
+bash::
++
+--
+[source,bash]
+----
+export PATH="$PATH:$HOME/lisk-core/bin"
+----
+
+See {url_set_path}[^] for more information.
+
+To make `lisk-core` permanently available in the CLI, add the above snippet to `~/.bashrc`.
+
+To reload `.bashrc`, run the following command:
+
+[source,bash]
+----
+source ~/.bashrc
+----
+
+--
+zshrc::
++
+--
+[source,bash]
+----
+export PATH="$HOME/lisk-core/bin:$PATH"
+----
+
+See {url_zsch_set_path}[^] for more information.
+
+To make `lisk-core` permanently available in the CLI, add the above snippet to `~/.zshrc`.
+
+To reload `.zshrc`, run the following command:
+
+[source,bash]
+----
+source ~/.zshrc
+----
+--
+=====
+
+== Verify successful installation
+
+To verify that your Lisk node is up and running, execute the following command:
+
+[tabs]
+====
+Mainnet::
++
+--
+[source,bash]
+----
+lisk-core start --network mainnet
+----
+
+[NOTE]
+=====
+The default log levels for Mainnet are:
+
+[source,json]
+----
+"system": {
+    "logLevel": "info",
+},
+----
+
+When the node is started, the logs will be visible in the console.
+You can adjust the level of logging as per your preference. Supported log levels are: `trace`, `debug`, `info`, `warn`, `error`, and `fatal`.
+To reduce the number of logs, it is recommended to set the log levels to `warn` or higher.
+
+Alternatively, start the node with the following flag:
+
+[source,bash]
+----
+lisk-core start --network mainnet --log=info
+----
+
+// See the xref:{url_run_logging}[logging] guide for more information about logging.
+// TODO: Add link back, once the respective docs are updated
+=====
+--
+Testnet::
++
+--
+[source,bash]
+----
+lisk-core start --network testnet
+----
+--
+====
+
+include::partial$core-post-installation.adoc[]
