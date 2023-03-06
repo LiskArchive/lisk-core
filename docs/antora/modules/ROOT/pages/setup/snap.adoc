@@ -1,0 +1,87 @@
+= Snap setup
+Mona Bärenfänger <mona@lightcurve.io>
+:description: How to install a Lisk Core node via Snap.
+// Settings
+// External URLs
+:url_snapcraft: https://snapcraft.io/
+:url_canonical: https://canonical.com/
+// Project URLs
+:url_run_logging: ROOT::run-blockchain/logging.adoc
+
+How to set up a Lisk Core node via Snap.
+
+== Pre-installation
+
+=== Supported Platforms
+* Ubuntu 18.04 (LTS) x86_64
+* Ubuntu 20.04 (LTS) x86_64
+
+// FIXME: not sure how to phrase this one
+Not officially supported but should still work::
+* Any Linux system running systemd and AppArmor
+
+=== Snap
+
+{url_snapcraft}[Snap^] is a software package management system created by {url_canonical}[Canonical^]. Snaps are sandboxed, self-contained applications.
+
+include::partial$create-a-new-user.adoc[]
+
+== Installation
+
+Install Lisk Core as a snap:
+
+[source,bash]
+----
+snap install lisk-core
+----
+
+== Start
+
+After successful installation, start the node with the following command:
+
+[tabs]
+====
+Mainnet::
++
+--
+[source,bash]
+----
+lisk-core start --network mainnet
+----
+
+[NOTE]
+=====
+The default log levels for Mainnet are:
+
+[source,json]
+----
+"logger": {
+    "fileLogLevel": "error",
+    "consoleLogLevel": "none"
+},
+----
+
+So if you start the node, it won't show any logs in the console.
+This is the recommended setting for reducing the number of logs for a running node.
+However, to verify that the node started correctly, update the log levels in the config to `info` or lower.
+
+Alternatively, start the node with the following flag:
+
+[source,bash]
+----
+lisk-core start --network mainnet --console-log=info
+----
+
+See the xref:{url_run_logging}[] guide for more information about logging.
+=====
+--
+Testnet::
++
+--
+[source,bash]
+----
+lisk-core start --network testnet
+----
+--
+====
+

@@ -1,0 +1,177 @@
+= Source code setup
+Mona Bärenfänger <mona@lightcurve.io>
+:description: How to install and setup a Lisk Core node from source.
+// Settings
+:toc:
+:v_sdk: master
+// External URLs
+:url_git: https://github.com/git/git
+:url_homebrew: https://brew.sh/
+:url_nodejs: https://nodejs.org/
+:url_nvm: https://github.com/creationix/nvm
+:url_nvm_instructions: https://github.com/creationix/nvm#install--update-script
+:url_pm2: https://github.com/Unitech/pm2
+:url_xcode: https://developer.apple.com/xcode/
+:url_core_releases: https://github.com/LiskHQ/lisk-core/releases
+:url_readme: https://github.com/LiskHQ/lisk-core/blob/development/README.md#tests
+// Project URLs
+
+The installation from source code is designed for anyone wishing to develop on the Lisk Core codebase.
+It also comes with an extensive test-suite which is described in the {url_readme}[README.md].
+An installation performed from the source code enables a developer to work on the latest codebase of Lisk Core, which may not have been tagged for a release yet.
+
+[[source-pre-install]]
+== Pre-Install
+
+To complete the installation certain prerequisites need to be fulfilled.
+If you have already performed these, then please proceed to the <<installation, Installation>> section.
+
+=== Requirements
+
+Supported Platforms::
+* Ubuntu 18.04 (LTS) x86_64
+* Ubuntu 20.04 (LTS) x86_64
+* MacOS x86_64
+Node.js::
+* 16.15.0
+
+=== Toolchain components
+
+These are used for compiling dependencies.
+
+[tabs]
+====
+Ubuntu::
++
+--
+[source,bash]
+----
+sudo apt update
+sudo apt install -y libtool automake autoconf curl build-essential python2-minimal
+----
+--
+MacOS::
++
+--
+Ensure that both {url_xcode}[XCode] and {url_homebrew}[Homebrew] are installed.
+
+[source,bash]
+----
+brew install autoconf automake libtool python2
+----
+--
+====
+
+include::partial$create-a-new-user.adoc[]
+
+=== Git
+
+{url_git}[Git^] is used for cloning and updating Lisk as displayed below:
+
+[tabs]
+====
+Ubuntu::
++
+--
+[source,bash]
+----
+sudo apt install git
+----
+--
+MacOS::
++
+--
+[source,bash]
+----
+brew install git
+----
+--
+====
+
+=== Node.js
+
+{url_nodejs}[Node.js^] serves as the underlying engine for code execution.
+
+// NOTE: The correct version for NPM(6) is installed automatically with version 12 of Node.js.
+
+[tabs]
+====
+Option A - Node version manager::
++
+--
+It is recommended to use a Node version manager such as {url_nvm}[NVM^].
+NVM is a bash script that enables the management of multiple active Node.js versions.
+
+. Install NVM by following the {url_nvm_instructions}[official instructions^].
+. Install the latest LTS version of Node.js using NVM with the following command shown below:
+
+[source,bash]
+----
+nvm install 16.15.0
+----
+--
+Option B - Node.js package::
++
+--
+If NVM or other package managers are not required, it is possible to install the Node package globally  as shown in the following commands below:
+
+*Ubuntu*
+
+[source,bash]
+----
+curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+sudo apt-get install -y nodejs
+----
+
+*MacOS*
+
+For MacOS, please execute the following command below:
+
+[source,bash]
+----
+brew install node@16.15.0
+----
+--
+====
+
+=== PM2 (optional)
+
+Install {url_pm2}[PM2^] for managing the start and stop of the application process in the background as shown below:
+
+[source,bash]
+----
+npm install pm2 -g
+----
+
+== Installation
+
+This section details how to install Lisk Core from the source code.
+When completed, a functioning node on the Lisk network will exist.
+
+[source,bash]
+----
+git clone https://github.com/LiskHQ/lisk-core.git #<1>
+cd lisk-core                                      #<2>
+git checkout v4.0.0 -b v4.0.0                     #<3>
+npm install --global                              #<4>
+----
+
+<1> Clone the repository.
+<2> Navigate into the `lisk-core` root folder.
+<3> Check out the latest release tag.
+<4> Install dependencies.
+
+NOTE: Please check for the latest release in {url_core_releases}[core releases^].
+
+To test that Lisk Core is built and configured correctly, execute the following command below to connect to the network:
+
+[source,bash]
+----
+lisk-core start --network devnet
+# From another terminal
+lisk-core node:info
+----
+
+If the process is running correctly, no errors are thrown in the logs.
+
+include::partial$core-post-installation.adoc[]
