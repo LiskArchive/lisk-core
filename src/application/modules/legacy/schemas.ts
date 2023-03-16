@@ -19,7 +19,7 @@ import {
 } from './constants';
 
 export const legacyAccountResponseSchema = {
-	$id: 'lisk/legacy/legacyAccount',
+	$id: '/legacy/endpoint/legacyAccountResponse',
 	type: 'object',
 	required: ['balance'],
 	properties: {
@@ -31,7 +31,7 @@ export const legacyAccountResponseSchema = {
 };
 
 export const reclaimLSKParamsSchema = {
-	$id: 'lisk/legacy/reclaimLSK',
+	$id: '/legacy/command/reclaimLSKParams',
 	type: 'object',
 	required: ['amount'],
 	properties: {
@@ -43,7 +43,7 @@ export const reclaimLSKParamsSchema = {
 };
 
 export const registerKeysParamsSchema = {
-	$id: 'lisk/legacy/registerKeys',
+	$id: '/legacy/command/registerKeysParams',
 	type: 'object',
 	required: ['blsKey', 'proofOfPossession', 'generatorKey'],
 	properties: {
@@ -69,7 +69,7 @@ export const registerKeysParamsSchema = {
 };
 
 export const genesisLegacyStoreSchema = {
-	$id: 'lisk/legacy/genesisLegacyStore',
+	$id: '/legacy/module/genesis',
 	type: 'object',
 	required: ['accounts'],
 	properties: {
@@ -97,7 +97,7 @@ export const genesisLegacyStoreSchema = {
 };
 
 export const legacyAccountRequestSchema = {
-	$id: 'lisk/legacy/endpoint/getLegacyAccount',
+	$id: '/legacy/endpoint/legacyAccountRequest',
 	type: 'object',
 	required: ['publicKey'],
 	properties: {

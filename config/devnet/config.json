@@ -5,9 +5,9 @@
 		"keepEventsForHeights": -1
 	},
 	"rpc": {
-		"modes": ["ipc", "ws"],
+		"modes": ["ipc", "ws", "http"],
 		"port": 7887,
-		"host": "127.0.0.1"
+		"host": "0.0.0.0"
 	},
 	"genesis": {
 		"block": {
@@ -15,8 +15,8 @@
 		},
 		"blockTime": 10,
 		"bftBatchSize": 103,
-		"chainID": "04000000",
-		"maxTransactionsSize": 15360
+		"maxTransactionsSize": 15360,
+		"chainID": "04000000"
 	},
 	"generator": {
 		"keys": {
@@ -25,12 +25,7 @@
 	},
 	"network": {
 		"version": "1.0",
-		"seedPeers": [
-			{
-				"ip": "127.0.0.1",
-				"port": 7667
-			}
-		],
+		"seedPeers": [],
 		"port": 7667
 	},
 	"transactionPool": {
@@ -62,8 +57,9 @@
 			"encryptedPassphrase": "iterations=10&cipherText=5dea8b928a3ea2481ebc02499ae77679b7552189181ff189d4aa1f8d89e8d07bf31f7ebd1c66b620769f878629e1b90499506a6f752bf3323799e3a54600f8db02f504c44d&iv=37e0b1753b76a90ed0b8c319&salt=963c5b91d3f7ba02a9d001eed49b5836&tag=c3e30e8f3440ba3f5b6d9fbaccc8918d&version=1"
 		},
 		"chainConnector": {
+			"receivingChainIPCPath": "~/.lisk/enevti-core",
 			"ccuFee": "5000000",
-			"encryptedPrivateKey": "kdf=argon2id&cipher=aes-256-gcm&version=1&ciphertext=bcf994c4da579c6c440a9d8b4f8334803cc060f1f900d7b22d6d442c08578313f69e2fb26efc2aa26c3bf3b36332ed99fc84f24e7fbd4c8954775e58fe03d7426d61bf57af986282735457e43289789988d96fb2099dd8452fa324234e90c439b8d4c633cf2c1902096378131a2aae68aa7902bdbf18b4fc2b42a863a1bebb75&mac=413f723231a50440b14feeab006f88a6ebea1b63247ab6883b355dced376de98&salt=ba183333474a62b1a298fc8910c51b84&iv=c023bde839be0f3b58e8ef4e&tag=76df672ca16943dc4ca30d6bb4df2ce0&iterations=1&parallelism=4&memorySize=2024",
+			"encryptedPrivateKey": "kdf=argon2id&cipher=aes-256-gcm&version=1&ciphertext=b5ab1d0d2a4e5061e46505254f9ad63eb8fc19881ae4502624942e76ccb0e4f1575f8cd85bb9273eba4910a190047c32c903fe7b24e98218622948ae610ebc94c266186d514ccdd5878a49597cd193748660c623db2513e2e0b16c9a6cbafb1db1e85d72cabf787000f04fc1f8e54a37c8abf0a9b6c2933ead4a221c1b9e9f99&mac=00c69d43bb11c4d68d8f486d2b0f8e5d656fdf10e6c3c3d5ec23cae291f61e3e&salt=9e4b039c4017ca3ea8ca29004c2dfee3&iv=152f0face07485016b08f3c8&tag=822dbb25e308fba08c387586ece6b86f&iterations=1&parallelism=4&memorySize=2024",
 			"password": "lisk"
 		}
 	}
