@@ -21,8 +21,8 @@ OPTIONS
   --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
-  system:node-info
-  system:node-info --data-path ./lisk
+  node:info
+  node:info  --data-path ./lisk
 ```
 
 _See code: [dist/commands/node/info.ts](https://github.com/LiskHQ/lisk-core/blob/v4.0.0-alpha.14/dist/commands/node/info.ts)_
@@ -42,8 +42,8 @@ OPTIONS
   --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
-  system:metadata
-  system:metadata --data-path ./lisk
+  node:metadata
+  node:metadata --data-path ./lisk
 ```
 
 _See code: [dist/commands/node/metadata.ts](https://github.com/LiskHQ/lisk-core/blob/v4.0.0-alpha.14/dist/commands/node/metadata.ts)_
