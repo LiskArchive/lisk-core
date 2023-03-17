@@ -32,13 +32,13 @@ import {
 } from './constants';
 import {
 	legacyAccountRequestSchema,
-	genesisLegacyStoreSchema,
+	genesisStoreSchema,
 	legacyAccountResponseSchema,
 } from './schemas';
 
-import { ModuleConfig, ModuleConfigJSON, ModuleInitArgs, genesisLegacyStoreData } from './types';
+import { ModuleConfig, ModuleConfigJSON, ModuleInitArgs, genesisLegacyStore } from './types';
 import { getModuleConfig } from './utils';
-import { LegacyAccountStore } from './stores/legacyAccountStore';
+import { LegacyAccountStore } from './stores/legacyAccount';
 import { ReclaimLSKCommand } from './commands/reclaim';
 import { RegisterKeysCommand } from './commands/register_keys';
 import { AccountReclaimedEvent } from './events/accountReclaimed';
@@ -99,7 +99,7 @@ export class LegacyModule extends BaseModule {
 			assets: [
 				{
 					version: 0,
-					data: genesisLegacyStoreSchema,
+					data: genesisStoreSchema,
 				},
 			],
 			stores: [],
@@ -128,12 +128,9 @@ export class LegacyModule extends BaseModule {
 			return;
 		}
 
-		const { accounts } = codec.decode<genesisLegacyStoreData>(
-			genesisLegacyStoreSchema,
-			legacyAssetsBuffer,
-		);
+		const { accounts } = codec.decode<genesisLegacyStore>(genesisStoreSchema, legacyAssetsBuffer);
 
-		validator.validate(genesisLegacyStoreSchema, { accounts });
+		validator.validate(genesisStoreSchema, { accounts });
 		const uniqueLegacyAccounts = new Set();
 		let totalBalance = BigInt('0');
 

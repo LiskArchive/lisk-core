@@ -24,16 +24,16 @@ import {
 	LEGACY_ACC_MAX_TOTAL_BAL_NON_INC,
 	defaultConfig,
 } from '../../../../src/application/modules/legacy/constants';
-import { genesisLegacyStoreSchema } from '../../../../src/application/modules/legacy/schemas';
-import { genesisLegacyStoreData } from '../../../../src/application/modules/legacy/types';
+import { genesisStoreSchema } from '../../../../src/application/modules/legacy/schemas';
+import { genesisLegacyStore } from '../../../../src/application/modules/legacy/types';
 
 const getLegacyBytesFromPassphrase = (passphrase: string): Buffer => {
 	const { publicKey } = cryptography.legacy.getKeys(passphrase);
 	return cryptography.legacyAddress.getFirstEightBytesReversed(cryptography.utils.hash(publicKey));
 };
 
-const getContext = (accounts: genesisLegacyStoreData, getStore: any, getMethodContext): any => {
-	const mockAssets = codec.encode(genesisLegacyStoreSchema, accounts);
+const getContext = (accounts: genesisLegacyStore, getStore: any, getMethodContext): any => {
+	const mockAssets = codec.encode(genesisStoreSchema, accounts);
 	return {
 		assets: {
 			getAsset: () => mockAssets,
@@ -98,7 +98,7 @@ describe('LegacyModule', () => {
 	});
 
 	describe('initGenesisState', () => {
-		let storeData: genesisLegacyStoreData;
+		let storeData: genesisLegacyStore;
 		const mockSetWithSchema = jest.fn();
 		const mockStoreHas = jest.fn();
 

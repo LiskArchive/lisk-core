@@ -18,17 +18,9 @@ import {
 	LENGTH_LEGACY_ADDRESS,
 } from './constants';
 
-export const legacyAccountResponseSchema = {
-	$id: '/legacy/endpoint/legacyAccountResponse',
-	type: 'object',
-	required: ['balance'],
-	properties: {
-		balance: {
-			dataType: 'uint64',
-			fieldNumber: 1,
-		},
-	},
-};
+import { legacyAccountStoreSchema } from './stores/legacyAccount';
+
+export const legacyAccountResponseSchema = legacyAccountStoreSchema;
 
 export const reclaimLSKParamsSchema = {
 	$id: '/legacy/command/reclaimLSKParams',
@@ -68,7 +60,7 @@ export const registerKeysParamsSchema = {
 	},
 };
 
-export const genesisLegacyStoreSchema = {
+export const genesisStoreSchema = {
 	$id: '/legacy/module/genesis',
 	type: 'object',
 	required: ['accounts'],

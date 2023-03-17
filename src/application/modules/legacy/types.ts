@@ -41,7 +41,7 @@ export interface registerKeysData {
 	generatorKey: Buffer;
 }
 
-export interface genesisLegacyStoreData {
+export interface genesisLegacyStore {
 	accounts: {
 		address: Buffer;
 		balance: bigint;

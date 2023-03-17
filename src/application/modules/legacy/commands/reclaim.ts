@@ -28,7 +28,7 @@ import { ADDRESS_LEGACY_RESERVE } from '../constants';
 import { reclaimLSKParamsSchema } from '../schemas';
 import { ReclaimLSKParamsData, TokenIDReclaim, ModuleName } from '../types';
 import { getLegacyAddress } from '../utils';
-import { LegacyAccountStore } from '../stores/legacyAccountStore';
+import { LegacyAccountStore } from '../stores/legacyAccount';
 import { AccountReclaimedEvent } from '../events/accountReclaimed';
 
 // eslint-disable-next-line prefer-destructuring
