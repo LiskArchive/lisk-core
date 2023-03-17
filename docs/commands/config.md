@@ -1,8 +1,33 @@
-# `lisk-core config`
+`lisk-core config`
+==================
 
 Commands relating to Lisk Core node configuration.
 
-- [`lisk-core config:show`](#lisk-core-configshow)
+* [`lisk-core config:create`](#lisk-core-configcreate)
+* [`lisk-core config:show`](#lisk-core-configshow)
+
+## `lisk-core config:create`
+
+Creates network configuration file.
+
+```
+USAGE
+  $ lisk-core config:create
+
+OPTIONS
+  -i, --chain-id=chain-id  (required) ChainID in hex format. For example, Lisk mainnet mainchain is 00000000
+  -l, --label=label        [default: beta-sdk-app] App Label
+
+  -o, --output=output      [default: /Users/sameer/Documents/Lisk/github/lisk-core] Directory where the config file is
+                           saved
+
+EXAMPLES
+  config:create --output mydir
+  config:create --output mydir --label beta-sdk-app
+  config:create --output mydir --label beta-sdk-app --community-identifier sdk
+```
+
+_See code: [dist/commands/config/create.ts](https://github.com/LiskHQ/lisk-core/blob/v4.0.0-alpha.14/dist/commands/config/create.ts)_
 
 ## `lisk-core config:show`
 
@@ -26,4 +51,4 @@ EXAMPLES
   config:show --config ./custom-config.json --data-path ./data
 ```
 
-_See code: [dist/commands/config/show.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/config/show.ts)_
+_See code: [dist/commands/config/show.ts](https://github.com/LiskHQ/lisk-core/blob/v4.0.0-alpha.14/dist/commands/config/show.ts)_

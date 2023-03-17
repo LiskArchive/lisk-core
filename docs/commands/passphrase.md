@@ -1,39 +1,52 @@
-# `lisk-core passphrase`
+`lisk-core passphrase`
+======================
 
 Commands relating to Lisk Core passphrases.
 
-- [`lisk-core passphrase:decrypt ENCRYPTEDPASSPHRASE`](#lisk-core-passphrasedecrypt-encryptedpassphrase)
-- [`lisk-core passphrase:encrypt`](#lisk-core-passphraseencrypt)
+* [`lisk-core passphrase:create`](#lisk-core-passphrasecreate)
+* [`lisk-core passphrase:decrypt`](#lisk-core-passphrasedecrypt)
+* [`lisk-core passphrase:encrypt`](#lisk-core-passphraseencrypt)
 
-## `lisk-core passphrase:decrypt ENCRYPTEDPASSPHRASE`
+## `lisk-core passphrase:create`
+
+Returns a randomly generated 24 words mnemonic passphrase.
+
+```
+USAGE
+  $ lisk-core passphrase:create
+
+OPTIONS
+  -o, --output=output  The output directory. Default will set to current working directory.
+
+EXAMPLES
+  passphrase:create
+  passphrase:create --output /mypath/passphrase.json
+```
+
+_See code: [dist/commands/passphrase/create.ts](https://github.com/LiskHQ/lisk-core/blob/v4.0.0-alpha.14/dist/commands/passphrase/create.ts)_
+
+## `lisk-core passphrase:decrypt`
 
 Decrypt secret passphrase using the password provided at the time of encryption.
 
 ```
 USAGE
-  $ lisk-core passphrase:decrypt ENCRYPTEDPASSPHRASE
-
-ARGUMENTS
-  ENCRYPTEDPASSPHRASE  Encrypted passphrase to decrypt.
+  $ lisk-core passphrase:decrypt
 
 OPTIONS
-  -w, --password=password  Specifies a source for your secret password. Command will prompt you for input if this option
-                           is not set.
-                           Examples:
-                           - --password=pass:password123 (should only be used where security is not important)
+  -f, --file-path=file-path  (required) Path of the file to import from
 
-  --pretty                 Prints JSON in pretty format rather than condensed.
+  -w, --password=password    Specifies a source for your secret password. Command will prompt you for input if this
+                             option is not set.
+                             Examples:
+                             - --password=pass:password123 (should only be used where security is not important)
 
 EXAMPLES
-  passphrase:decrypt
-  "iterations=1000000&cipherText=9b1c60&iv=5c8843f52ed3c0f2aa0086b0&salt=2240b7f1aa9c899894e528cf5b600e9c&tag=23c0111213
-  4317a63bcf3d41ea74e83b&version=1"
-  passphrase:decrypt
-  "iterations=1000000&cipherText=9b1c60&iv=5c8843f52ed3c0f2aa0086b0&salt=2240b7f1aa9c899894e528cf5b600e9c&tag=23c0111213
-  4317a63bcf3d41ea74e83b&version=1" --password your-password
+  passphrase:decrypt --file-path ./my/path/output.json
+  passphrase:decrypt --file-path ./my/path/output.json --password your-password
 ```
 
-_See code: [dist/commands/passphrase/decrypt.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/passphrase/decrypt.ts)_
+_See code: [dist/commands/passphrase/decrypt.ts](https://github.com/LiskHQ/lisk-core/blob/v4.0.0-alpha.14/dist/commands/passphrase/decrypt.ts)_
 
 ## `lisk-core passphrase:encrypt`
 
@@ -44,6 +57,8 @@ USAGE
   $ lisk-core passphrase:encrypt
 
 OPTIONS
+  -o, --output=output          The output directory. Default will set to current working directory.
+
   -p, --passphrase=passphrase  Specifies a source for your secret passphrase. Command will prompt you for input if this
                                option is not set.
                                Examples:
@@ -58,14 +73,12 @@ OPTIONS
   --output-public-key          Includes the public key in the output. This option is provided for the convenience of
                                node operators.
 
-  --pretty                     Prints JSON in pretty format rather than condensed.
-
 EXAMPLES
   passphrase:encrypt
-  passphrase:encrypt --passphrase your-passphrase
+  passphrase:encrypt --passphrase your-passphrase --output /mypath/keys.json
   passphrase:encrypt --password your-password
-  passphrase:encrypt --password your-password --passphrase your-passphrase --pretty
-  passphrase:encrypt --output-public-key
+  passphrase:encrypt --password your-password --passphrase your-passphrase --output /mypath/keys.json
+  passphrase:encrypt --output-public-key --output /mypath/keys.json
 ```
 
-_See code: [dist/commands/passphrase/encrypt.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/passphrase/encrypt.ts)_
+_See code: [dist/commands/passphrase/encrypt.ts](https://github.com/LiskHQ/lisk-core/blob/v4.0.0-alpha.14/dist/commands/passphrase/encrypt.ts)_

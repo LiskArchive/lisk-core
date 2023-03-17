@@ -39,7 +39,7 @@ The following dependencies need to be installed in order to run applications cre
 You can find further details on installing these dependencies in our [pre-installation setup guide](https://lisk.com/documentation/lisk-core/setup/source.html#source-pre-install).
 Clone the Lisk Core repository using Git and initialize the modules.
 
-## From Source
+### From Source
 
 ```bash
 git clone https://github.com/LiskHQ/lisk-core.git
@@ -51,17 +51,16 @@ npm run build
 ./bin/run --help
 ```
 
-## From NPM
+### From NPM
 
 <!-- usage -->
 
 ```sh-session
-$ nvm install v16.14.2
 $ npm install -g lisk-core
 $ lisk-core COMMAND
 running command...
 $ lisk-core (-v|--version|version)
-lisk-core/4.0.0 darwin-x64 node-v16.14.2
+lisk-core/4.0.0-alpha.14 darwin-arm64 node-v16.14.2
 $ lisk-core --help [COMMAND]
 USAGE
   $ lisk-core COMMAND
@@ -74,21 +73,23 @@ USAGE
 
 # Command Topics
 
-- [`lisk-core account`](docs/commands/account.md) - Commands relating to Lisk Core accounts.
-- [`lisk-core autocomplete`](docs/commands/autocomplete.md) - Display autocomplete installation instructions.
+- [`lisk-core autocomplete`](docs/commands/autocomplete.md) - display autocomplete installation instructions
 - [`lisk-core block`](docs/commands/block.md) - Commands relating to Lisk Core blocks.
 - [`lisk-core blockchain`](docs/commands/blockchain.md) - Commands relating to Lisk Core blockchain data.
 - [`lisk-core config`](docs/commands/config.md) - Commands relating to Lisk Core node configuration.
-- [`lisk-core forger-info`](docs/commands/forger-info.md) - Commands relating to Lisk Core forger-info data.
-- [`lisk-core forging`](docs/commands/forging.md) - Commands relating to Lisk Core forging.
-- [`lisk-core genesis-block`](docs/commands/genesis-block.md) - Download genesis block.
+- [`lisk-core console`](docs/commands/console.md) - Lisk interactive REPL session to run commands.
+- [`lisk-core endpoint`](docs/commands/endpoint.md) - Invokes the provided endpoint.
+- [`lisk-core generator`](docs/commands/generator.md) - Disable block generation for given validator address.
+- [`lisk-core genesis-block`](docs/commands/genesis-block.md) - Creates genesis block file.
 - [`lisk-core hash-onion`](docs/commands/hash-onion.md) - Create hash onions to be used by the forger.
-- [`lisk-core help`](docs/commands/help.md) - Display help for lisk-core.
+- [`lisk-core help`](docs/commands/help.md) - display help for lisk-core
+- [`lisk-core keys`](docs/commands/keys.md) - Return keys corresponding to the given passphrase.
 - [`lisk-core node`](docs/commands/node.md) - Commands relating to Lisk Core node.
 - [`lisk-core passphrase`](docs/commands/passphrase.md) - Commands relating to Lisk Core passphrases.
 - [`lisk-core sdk`](docs/commands/sdk.md) - Commands relating to Lisk SDK development.
-- [`lisk-core start`](docs/commands/start.md) - Start Lisk Core Node.
+- [`lisk-core start`](docs/commands/start.md) - Start Blockchain Node.
 - [`lisk-core transaction`](docs/commands/transaction.md) - Commands relating to Lisk Core transactions.
+- [`lisk-core version`](docs/commands/version.md)
 
 <!-- commandsstop -->
 
@@ -103,6 +104,10 @@ The following system requirements are recommended for validator nodes:
 - Machines with a minimum of 4 GB RAM for the Mainnet.
 - Machines with a minimum of 2 GB RAM for the Testnet.
 
+#### Storage
+
+- Machines with a minimum of 40 GB HDD.
+
 #### OS
 
 - Ubuntu 20.04
@@ -113,7 +118,7 @@ To start a Lisk Core node as a background process, we recommend using a process 
 ### Example using PM2
 
 ```
-nvm install v16.14.2
+nvm install
 npm i -g pm2
 pm2 start "lisk-core start" --name lisk-mainnet
 pm2 status
@@ -134,6 +139,16 @@ With custom config file `./custom-config.json` below:
 
 ```
 {
+  "system": {
+    "dataPath": "~/.lisk",
+    "logLevel": "debug",
+    "keepEventsForHeights": -1
+  },
+  "rpc": {
+    "modes": ["ipc", "ws", "http"],
+    "port": 7887,
+    "host": "127.0.0.1"
+  },
   "network": {
     "port": 7667,
   },
@@ -142,14 +157,20 @@ With custom config file `./custom-config.json` below:
     "maxTransactionsPerAccount": 1024,
   },
   "generator": {
-		"keys": {
-			"fromFile": "./config/dev-validators.json"
-		}
-	},
+    "keys": {
+      "fromFile": "./config/dev-validators.json"
+    }
+  },
   "plugins": {
     "reportMisbehavior": {
       "encryptedPassphrase": "iterations=10&cipherText=5dea8b928a3ea2481ebc02499ae77679b7552189181ff189d4aa1f8d89e8d07bf31f7ebd1c66b620769f878629e1b90499506a6f752bf3323799e3a54600f8db02f504c44d&iv=37e0b1753b76a90ed0b8c319&salt=963c5b91d3f7ba02a9d001eed49b5836&tag=c3e30e8f3440ba3f5b6d9fbaccc8918d&version=1"
     },
+    "chainConnector": {
+      "receivingChainIPCPath": "~/.lisk/sidechain",
+      "ccuFee": "5000000",
+      "encryptedPrivateKey": "kdf=argon2id&cipher=aes-256-gcm&version=1&ciphertext=f962147c16450604456db731156a31b5fa07bc1a55c32f243f59795414b75fbfcbe13a54426976c98fe21c0a9d918b80fb956d280ceff8a7ca35db29eb77ecfd0afbd359233a863425766815c84d5d20ba17ca0edd07e0eacaa3324e53ade573f7f647097dffaf64368cf40be05636bee58318389843d1f29b587d58c71e34ab&mac=bbe4120b758ba7c541cfb39d1ea9b6a781054cdaffbd4b5e724d375fc5367543&salt=20fdfa08a8e6d158fc1f8b70672f43aa&iv=22cb20bdf0a9f06124a7b53a&tag=37cbecb09493581e476dd4439e8ef1fc&iterations=1&parallelism=4&memorySize=2024",
+      "password": "lisk"
+    }
   },
 }
 ```
@@ -157,7 +178,7 @@ With custom config file `./custom-config.json` below:
 Running a command will overwrite the default config and use the specified options.
 
 ```bash
-lisk-core start -n devnet -c ./custom-config.json
+lisk-core start -n devnet -c ./custom-config.json --overwrite-config
 ```
 
 For a more detailed understanding of configuration read this [online documentation](https://lisk.com/documentation/lisk-core/reference/config.html).

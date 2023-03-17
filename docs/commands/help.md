@@ -1,8 +1,9 @@
-# `lisk-core help`
+`lisk-core help`
+================
 
 display help for lisk-core
 
-- [`lisk-core help [COMMAND]`](#lisk-core-help-command)
+* [`lisk-core help [COMMAND]`](#lisk-core-help-command)
 
 ## `lisk-core help [COMMAND]`
 
@@ -19,4 +20,4 @@ OPTIONS
   --all  see all commands in CLI
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.1.0/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.3.1/src/commands/help.ts)_
