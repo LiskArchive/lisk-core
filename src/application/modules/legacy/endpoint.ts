@@ -19,7 +19,7 @@ import {
 	validator as liskValidator,
 } from 'lisk-sdk';
 import { legacyAccountRequestSchema } from './schemas';
-import { LegacyAccountStore } from './stores/legacyAccountStore';
+import { LegacyAccountStore } from './stores/legacyAccount';
 import { LegacyStoreData } from './types';
 import { getLegacyAddress } from './utils';
 

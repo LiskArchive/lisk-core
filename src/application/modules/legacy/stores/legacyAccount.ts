@@ -17,8 +17,8 @@ export interface legacyAccount {
 	balance: bigint;
 }
 
-export const legacyAccountSchema = {
-	$id: 'lisk/legacy/legacyAccount',
+export const legacyAccountStoreSchema = {
+	$id: '/legacy/store/genesis',
 	type: 'object',
 	required: ['balance'],
 	properties: {
@@ -30,5 +30,5 @@ export const legacyAccountSchema = {
 };
 
 export class LegacyAccountStore extends BaseStore<legacyAccount> {
-	public schema = legacyAccountSchema;
+	public schema = legacyAccountStoreSchema;
 }

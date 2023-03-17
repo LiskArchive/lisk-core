@@ -18,20 +18,12 @@ import {
 	LENGTH_LEGACY_ADDRESS,
 } from './constants';
 
-export const legacyAccountResponseSchema = {
-	$id: 'lisk/legacy/legacyAccount',
-	type: 'object',
-	required: ['balance'],
-	properties: {
-		balance: {
-			dataType: 'uint64',
-			fieldNumber: 1,
-		},
-	},
-};
+import { legacyAccountStoreSchema } from './stores/legacyAccount';
+
+export const legacyAccountResponseSchema = legacyAccountStoreSchema;
 
 export const reclaimLSKParamsSchema = {
-	$id: 'lisk/legacy/reclaimLSK',
+	$id: '/legacy/command/reclaimLSKParams',
 	type: 'object',
 	required: ['amount'],
 	properties: {
@@ -43,7 +35,7 @@ export const reclaimLSKParamsSchema = {
 };
 
 export const registerKeysParamsSchema = {
-	$id: 'lisk/legacy/registerKeys',
+	$id: '/legacy/command/registerKeysParams',
 	type: 'object',
 	required: ['blsKey', 'proofOfPossession', 'generatorKey'],
 	properties: {
@@ -68,8 +60,8 @@ export const registerKeysParamsSchema = {
 	},
 };
 
-export const genesisLegacyStoreSchema = {
-	$id: 'lisk/legacy/genesisLegacyStore',
+export const genesisStoreSchema = {
+	$id: '/legacy/module/genesis',
 	type: 'object',
 	required: ['accounts'],
 	properties: {
@@ -97,7 +89,7 @@ export const genesisLegacyStoreSchema = {
 };
 
 export const legacyAccountRequestSchema = {
-	$id: 'lisk/legacy/endpoint/getLegacyAccount',
+	$id: '/legacy/endpoint/legacyAccountRequest',
 	type: 'object',
 	required: ['publicKey'],
 	properties: {

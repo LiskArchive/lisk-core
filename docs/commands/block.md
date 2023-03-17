@@ -1,8 +1,9 @@
-# `lisk-core block`
+`lisk-core block`
+=================
 
 Commands relating to Lisk Core blocks.
 
-- [`lisk-core block:get INPUT`](#lisk-core-blockget-input)
+* [`lisk-core block:get INPUT`](#lisk-core-blockget-input)
 
 ## `lisk-core block:get INPUT`
 
@@ -26,4 +27,4 @@ EXAMPLES
   block:get 2
 ```
 
-_See code: [dist/commands/block/get.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/block/get.ts)_
+_See code: [dist/commands/block/get.ts](https://github.com/LiskHQ/lisk-core/blob/v4.0.0-alpha.14/dist/commands/block/get.ts)_

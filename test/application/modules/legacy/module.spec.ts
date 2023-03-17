@@ -24,16 +24,16 @@ import {
 	LEGACY_ACC_MAX_TOTAL_BAL_NON_INC,
 	defaultConfig,
 } from '../../../../src/application/modules/legacy/constants';
-import { genesisLegacyStoreSchema } from '../../../../src/application/modules/legacy/schemas';
-import { genesisLegacyStoreData } from '../../../../src/application/modules/legacy/types';
+import { genesisStoreSchema } from '../../../../src/application/modules/legacy/schemas';
+import { genesisLegacyStore } from '../../../../src/application/modules/legacy/types';
 
 const getLegacyBytesFromPassphrase = (passphrase: string): Buffer => {
 	const { publicKey } = cryptography.legacy.getKeys(passphrase);
 	return cryptography.legacyAddress.getFirstEightBytesReversed(cryptography.utils.hash(publicKey));
 };
 
-const getContext = (accounts: genesisLegacyStoreData, getStore: any, getMethodContext): any => {
-	const mockAssets = codec.encode(genesisLegacyStoreSchema, accounts);
+const getContext = (accounts: genesisLegacyStore, getStore: any, getMethodContext): any => {
+	const mockAssets = codec.encode(genesisStoreSchema, accounts);
 	return {
 		assets: {
 			getAsset: () => mockAssets,
@@ -97,8 +97,27 @@ describe('LegacyModule', () => {
 		});
 	});
 
+	describe('metadata', () => {
+		it('should return module metadata', () => {
+			const moduleMetadata = legacyModule.metadata();
+			expect(typeof moduleMetadata).toBe('object');
+			expect(Object.keys(moduleMetadata)).toEqual([
+				'endpoints',
+				'commands',
+				'events',
+				'assets',
+				'stores',
+			]);
+			expect(moduleMetadata.endpoints).toHaveLength(1);
+			expect(moduleMetadata.commands).toHaveLength(2);
+			expect(moduleMetadata.events).toHaveLength(2);
+			expect(moduleMetadata.assets).toHaveLength(1);
+			expect(moduleMetadata.stores).toHaveLength(0);
+		});
+	});
+
 	describe('initGenesisState', () => {
-		let storeData: genesisLegacyStoreData;
+		let storeData: genesisLegacyStore;
 		const mockSetWithSchema = jest.fn();
 		const mockStoreHas = jest.fn();
 
@@ -119,6 +138,33 @@ describe('LegacyModule', () => {
 					balance: BigInt(Math.floor(Math.random() * 1000)),
 				});
 			}
+		});
+
+		it('should return undefined when legacy assets does not exists', async () => {
+			const genesisBlockExecuteContextInput = {
+				assets: { getAsset: jest.fn() },
+				getStore,
+				getMethodContext,
+			} as any;
+
+			when(genesisBlockExecuteContextInput.assets.getAsset)
+				.calledWith(legacyModule.name)
+				.mockReturnValue(false);
+			await expect(
+				legacyModule.initGenesisState(genesisBlockExecuteContextInput),
+			).resolves.toBeUndefined();
+		});
+
+		it('should reject the block when address entries are not pair-wise distinct', async () => {
+			const genesisBlockExecuteContextInput = getContext(
+				{ accounts: [...storeData.accounts, ...storeData.accounts] },
+				getStore,
+				getMethodContext,
+			);
+
+			await expect(
+				legacyModule.initGenesisState(genesisBlockExecuteContextInput),
+			).rejects.toThrow();
 		});
 
 		it('should save legacy accounts to state store if accounts are valid', async () => {
@@ -143,18 +189,6 @@ describe('LegacyModule', () => {
 					.has(account.address);
 				expect(isAccountInStore).toBe(true);
 			}
-		});
-
-		it('should reject the block when address entries are not pair-wise distinct', async () => {
-			const genesisBlockExecuteContextInput = getContext(
-				{ accounts: [...storeData.accounts, ...storeData.accounts] },
-				getStore,
-				getMethodContext,
-			);
-
-			await expect(
-				legacyModule.initGenesisState(genesisBlockExecuteContextInput),
-			).rejects.toThrow();
 		});
 
 		it('should save legacy accounts to state store when total balance for all legacy accounts is less than 2^64', async () => {
