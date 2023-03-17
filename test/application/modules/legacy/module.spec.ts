@@ -97,6 +97,25 @@ describe('LegacyModule', () => {
 		});
 	});
 
+	describe('metadata', () => {
+		it('should return module metadata', async () => {
+			const moduleMetadata = await legacyModule.metadata();
+			expect(typeof moduleMetadata).toBe('object');
+			expect(Object.keys(moduleMetadata)).toEqual([
+				'endpoints',
+				'commands',
+				'events',
+				'assets',
+				'stores',
+			]);
+			expect(moduleMetadata.endpoints.length).toBe(1);
+			expect(moduleMetadata.commands.length).toBe(2);
+			expect(moduleMetadata.events.length).toBe(2);
+			expect(moduleMetadata.assets.length).toBe(1);
+			expect(moduleMetadata.stores.length).toBe(0);
+		});
+	});
+
 	describe('initGenesisState', () => {
 		let storeData: genesisLegacyStore;
 		const mockSetWithSchema = jest.fn();
@@ -119,6 +138,33 @@ describe('LegacyModule', () => {
 					balance: BigInt(Math.floor(Math.random() * 1000)),
 				});
 			}
+		});
+
+		it('should return undefined when legacy assets does not exists', async () => {
+			const genesisBlockExecuteContextInput = {
+				assets: { getAsset: jest.fn() },
+				getStore,
+				getMethodContext,
+			} as any;
+
+			when(genesisBlockExecuteContextInput.assets.getAsset)
+				.calledWith(legacyModule.name)
+				.mockReturnValue(false);
+			expect(
+				legacyModule.initGenesisState(genesisBlockExecuteContextInput),
+			).resolves.toBeUndefined();
+		});
+
+		it('should reject the block when address entries are not pair-wise distinct', async () => {
+			const genesisBlockExecuteContextInput = getContext(
+				{ accounts: [...storeData.accounts, ...storeData.accounts] },
+				getStore,
+				getMethodContext,
+			);
+
+			await expect(
+				legacyModule.initGenesisState(genesisBlockExecuteContextInput),
+			).rejects.toThrow();
 		});
 
 		it('should save legacy accounts to state store if accounts are valid', async () => {
