@@ -1,8 +1,8 @@
 {
 	"system": {
 		"dataPath": "~/.lisk",
-		"keepEventsForHeights": 300,
-		"logLevel": "info"
+		"logLevel": "info",
+		"keepEventsForHeights": 300
 	},
 	"rpc": {
 		"modes": ["ipc", "ws"],
@@ -57,17 +57,17 @@
 		"minReplacementFeeDifference": "10"
 	},
 	"modules": {
+		"dynamicReward": {
+			"tokenID": "0200000000000000",
+			"offset": 2160,
+			"distance": 3000000,
+			"brackets": ["500000000", "400000000", "300000000", "200000000", "100000000"]
+		},
 		"fee": {
 			"feeTokenID": "0200000000000000"
 		},
 		"pos": {
 			"useInvalidBLSKey": true
-		},
-		"reward": {
-			"tokenID": "0200000000000000",
-			"offset": 2160,
-			"distance": 3000000,
-			"brackets": ["500000000", "400000000", "300000000", "200000000", "100000000"]
 		},
 		"token": {
 			"feeTokenID": "0200000000000000"
