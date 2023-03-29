@@ -191,26 +191,6 @@ There are almost 2,000 nodes around the world that are maintained by individuals
 For example, by broadcasting and receiving blocks or transactions from their peers.
 In addition, Lisk Core nodes are also required to generate/add new blocks to the blockchain.
 
-=== Who should operate a node?
-
-If you fall under one of the following categories listed below, then it is recommended to set up your own node:
-
-* *Exchanges* and other services that rely on a stable API interface to the network.
-* *Validators* who have registered as a validator and would like to actively generate new blocks.
-* *Users* who do not trust external sources and want to be in full control over their node.
-
-=== Why operate a node?
-
-- To have a private entry point to communicate with the network.
-This is especially important when running an exchange and implementing LSK tokens.
-- To create your own snapshots of the blockchain.
-- To create transactions and send them to the network.
-//TODO: Add link back, once docs are updated
-//- To have the option to xref:{url_config_forging}[generate] new blocks, (assuming you are an active delegate).
-//- To acquire full control in order to xref:{url_config}[configure] the node to your specific requirements.
-- To have the option to generate new blocks, (assuming you are an active validator).
-- To acquire full control in order to configure the node to your specific requirements.
-
 NOTE: To learn how to set up a node, please see the xref:{url_getting_started}[NPM setup] page.
 
 [[networks]]
