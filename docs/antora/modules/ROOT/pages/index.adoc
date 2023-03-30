@@ -131,53 +131,56 @@ The Legacy module also implements a command allowing validators without a BLS ke
 Within the protocol used by Lisk Core v4, each validator needs a separate key known as a generator key in order to generate blocks.
 More information on the generator key can be found here in {url_lip44}[LIP 0044^].
 
-The state of an interoperable chain in the Lisk ecosystem is maintained in a global state store.
-// Entries of the state store are inserted in a sparse Merkle tree, the state tree.
-// The whole state is thus authenticated by the tree Merkle root, the state root.
-// More details can found here in {url_lip40}[LIP 0040^].
-Furthermore, as a part of the interoperability solution, validators of each chain certify the current state of the chain.
-The certification is performed by using certificates that are signed once the block is finalized and used in cross-chain communication.
-In addition, the new certificate generation mechanism verifies all the required information for the cross-chain updates, including the state root, which allows the authentication of cross-chain messages, and the validators hash, which authenticates the validator, and therefore the signers of future certificates.
-// Maybe need info to add in overview description of changed schemas for better user experience (changing type of most IDs to bytes, etc.).
-// Also maybe need info on added events and event processing..?
 
-Finally, a new event mechanism has been introduced; designed to emit events from the application domain during the block processing.
-These events are included in a Sparse Merkle Tree (SMT), as leaf nodes.
-Hence, the root of the SMT being the event root, is added as a new property to block headers.
-Using the event root, it is possible to provide inclusion or non-inclusion proofs for events, proving whether an event was emitted during the block processing or not.
+// TODO: The following content is redundant and should be removed.
 
-==== Module State Store
+// The state of an interoperable chain in the Lisk ecosystem is maintained in a global state store.
+// // Entries of the state store are inserted in a sparse Merkle tree, the state tree.
+// // The whole state is thus authenticated by the tree Merkle root, the state root.
+// // More details can found here in {url_lip40}[LIP 0040^].
+// Furthermore, as a part of the interoperability solution, validators of each chain certify the current state of the chain.
+// The certification is performed by using certificates that are signed once the block is finalized and used in cross-chain communication.
+// In addition, the new certificate generation mechanism verifies all the required information for the cross-chain updates, including the state root, which allows the authentication of cross-chain messages, and the validators hash, which authenticates the validator, and therefore the signers of future certificates.
+// // Maybe need info to add in overview description of changed schemas for better user experience (changing type of most IDs to bytes, etc.).
+// // Also maybe need info on added events and event processing..?
 
-Within the chain each module that is registered defines its own state and the possible state transitions.
-The state transitions could be induced by the transactions defined within the module or the methods that can be called by other modules.
+// Finally, a new event mechanism has been introduced; designed to emit events from the application domain during the block processing.
+// These events are included in a Sparse Merkle Tree (SMT), as leaf nodes.
+// Hence, the root of the SMT being the event root, is added as a new property to block headers.
+// Using the event root, it is possible to provide inclusion or non-inclusion proofs for events, proving whether an event was emitted during the block processing or not.
 
-Within Lisk core v4 an updated state storage will be used. This new state architecture is now substantially different, as previously, the state of a chain was organized per account rather than per module.
-For example, a user's balance would be stored together with all the other properties related to that specific user.
-Alternatively, with the new state model, the balance of a user is stored in the token module's state and is separated from the properties of other modules, (e.g. public keys).
+// ==== Module State Store
 
-The chain maintains a *global state store*, which can be determined as a collection of key-value pairs defining the state of the blockchain.
-Following the modular architecture, the state store is further split into several *module stores*, namely, collections of key-value pairs that are defined within the state specific to the module.
-// This is achieved by imposing a specific format for keys in the global state store.
-// Hence, each key is given by the concatenation of the module store prefix, a substore prefix, and a store key.
-// A module store can be defined as the collection of key-value pairs whose keys share the same module store prefix (which identifies the specific module store).
+// Within the chain each module that is registered defines its own state and the possible state transitions.
+// The state transitions could be induced by the transactions defined within the module or the methods that can be called by other modules.
 
-// Separating the state store into several key-value maps allows us to logically compartmentalize each module, following the same mantra behind our chain architecture, each module defines its part of the state and its own state transitions.
+// Within Lisk core v4 an updated state storage will be used. This new state architecture is now substantially different, as previously, the state of a chain was organized per account rather than per module.
+// For example, a user's balance would be stored together with all the other properties related to that specific user.
+// Alternatively, with the new state model, the balance of a user is stored in the token module's state and is separated from the properties of other modules, (e.g. public keys).
 
-// - *Module State* The key-value pairs stored in the map of the module.
-// For example, the user balance, and the escrow accounts are stored in the token module.
-// - *Module state transactions*: The transactions defined in a module (for example, the token transfer transaction in the token module), as well as the logic executed with every block or transactions, such as the reward assigned to the generator after a block has been processed.
+// The chain maintains a *global state store*, which can be determined as a collection of key-value pairs defining the state of the blockchain.
+// Following the modular architecture, the state store is further split into several *module stores*, namely, collections of key-value pairs that are defined within the state specific to the module.
+// // This is achieved by imposing a specific format for keys in the global state store.
+// // Hence, each key is given by the concatenation of the module store prefix, a substore prefix, and a store key.
+// // A module store can be defined as the collection of key-value pairs whose keys share the same module store prefix (which identifies the specific module store).
 
-The state tree is the sparse Merkle tree built on top of the state store. More information on SMTs can be found here in {url_lip39}[LIP 0039^].
-// Organizing the state of a blockchain in a Merkle tree allows to cryptographically authenticate the whole state with a single hash, the state root.
-// The state root property is calculated at the end of the block processing as the Merkle root of the state tree and included in the block header.
-// Information from the block header is then used to create a certificate and signed by the chain validators.
+// // Separating the state store into several key-value maps allows us to logically compartmentalize each module, following the same mantra behind our chain architecture, each module defines its part of the state and its own state transitions.
 
-The illustration below in Figure 2 depicts the general structure of the state Sparse Merkle Tree for a Lisk blockchain using two application-specific modules.
-The state root is the Merkle root, and as described above each module defines its own module store.
-The keys of the leaf nodes start with the store prefixes, so that each module subtree is separated from the others. Please note, not all modules are shown in this illustration.
+// // - *Module State* The key-value pairs stored in the map of the module.
+// // For example, the user balance, and the escrow accounts are stored in the token module.
+// // - *Module state transactions*: The transactions defined in a module (for example, the token transfer transaction in the token module), as well as the logic executed with every block or transactions, such as the reward assigned to the generator after a block has been processed.
 
-.State sparse Merkle tree
-image::state-tree.png[align=center]
+// The state tree is the sparse Merkle tree built on top of the state store. More information on SMTs can be found here in {url_lip39}[LIP 0039^].
+// // Organizing the state of a blockchain in a Merkle tree allows to cryptographically authenticate the whole state with a single hash, the state root.
+// // The state root property is calculated at the end of the block processing as the Merkle root of the state tree and included in the block header.
+// // Information from the block header is then used to create a certificate and signed by the chain validators.
+
+// The illustration below in Figure 2 depicts the general structure of the state Sparse Merkle Tree for a Lisk blockchain using two application-specific modules.
+// The state root is the Merkle root, and as described above each module defines its own module store.
+// The keys of the leaf nodes start with the store prefixes, so that each module subtree is separated from the others. Please note, not all modules are shown in this illustration.
+
+// .State sparse Merkle tree
+// image::state-tree.png[align=center]
 
 == Getting started
 
@@ -225,16 +228,6 @@ The most significant byte within the `chainID` is the first byte which is used t
 
 |===
 
-// Used to identify the chains exchanging the cross-chain messages, the chainID can be seen below:
-
-// cols="1h,1m",options="header"]
-// |===
-// | Network | Lisk chainID
-
-// | Mainnet
-// | 00000000
-// |Testnet
-// | 01000000
 
 [cols="1h,1m,1m,1m" options="header"]
 |===
