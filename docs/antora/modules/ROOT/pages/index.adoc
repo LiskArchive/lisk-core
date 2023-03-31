@@ -92,7 +92,7 @@ With the latest version of Lisk Core, there will be new configurable settings an
 
 === Modules
 
-The Lisk Core v4 makes full use of the xref:{url_sdk_modules}[modules defined by Lisk SDK V6].
+The Lisk Core v4 makes full use of the xref:{url_sdk_modules}[modules defined by Lisk SDK v6].
 Apart from the aforementioned modules, Lisk Core has an additional module called the {url_lip50}[Legacy module^].
 
 * The Legacy module maintains all accounts on the Lisk mainchain that received balance transfers to their address in the old 8-byte format, and for which no public key is associated.
