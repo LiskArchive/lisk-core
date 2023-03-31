@@ -239,7 +239,7 @@ To connect to the Testnet via {url_lisk_desktop}[Lisk Desktop^], simply enable t
 | API | Transport| Architecture | Port (default) |Comment |Reference
 
 | RPC Endpoints
-| WS
+| WS, IPC & HTTP
 | RPC
 | Depends on the network, see: <<networks>>
 | To enable, enable RPC websockets in the node config.
