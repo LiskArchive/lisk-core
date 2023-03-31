@@ -183,9 +183,6 @@ More information on the generator key can be found here in {url_lip44}[LIP 0044^
 // .State sparse Merkle tree
 // image::state-tree.png[align=center]
 
-== Getting started
-
-
 [[networks]]
 == Networks
 
@@ -193,16 +190,6 @@ The Lisk Core can be connected to different networks.
 Please be aware that there are two key accessible public networks existing which are entirely independent of each other.
 These networks are covered below in this section.
 //Note: ChainIDs & ports could be further updated according to Manu.
-
-=== Chain Identifiers
-
-The chain identifiers (synonymous to the previously known, network identifiers), are mainly used within the interoperability protocol in order to distinguish between different blockchains running in the ecosystem.
-In addition, they are also used for transaction, block header, and arbitrary signatures, whereby they are able to prevent replay attacks and the re-usage of signatures.
-More information on chain identifiers can be found in here in {url_lip37}[LIP 0037^].
-
-Therefore, network identifiers (nethash), are not exposed anymore, and the network can be determined based on the `chainID`.
-Chain identifiers are 4-byte values, and the first byte is set to the `CHAIN_ID_PREFIX_MAINNET` for chains running in the mainnet network, and hence to the `CHAIN_ID_PREFIX_TESTNET` for chains running in the testnet network.
-The most significant byte within the `chainID` is the first byte which is used to determine the network, and the remaining 3 bytes are used to determine the chain.
 
 .Public networks of Lisk
 [cols="1h,1m",options="header"]
@@ -215,23 +202,6 @@ The most significant byte within the `chainID` is the first byte which is used t
 | Testnet
 | `7001`
 
-
-|===
-
-
-[cols="1h,1m,1m,1m" options="header"]
-|===
-| Network | Name | Type | ChainID Prefix
-
-|Mainnet
-| `CHAIN_ID_PREFIX_MAINNET`
-| bytes
-| 0x00
-
-|Testnet
-| `CHAIN_ID_PREFIX_TESTNET`
-|bytes
-| 0x01
 
 |===
 
