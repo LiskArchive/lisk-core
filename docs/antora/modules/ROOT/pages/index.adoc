@@ -31,8 +31,9 @@ Christopher Braithwaite <christopher.braithwaite@lightcurve.io> Muhammad Talha <
 :url_bft: {docs_general}understand-blockchain/consensus/bft.adoc
 :url_cross_chain: {docs_general}understand-blockchain/interoperability/communication.adoc
 // :url_lisk_migrator: {docs_general}migration.adoc#setting-up-the-lisk-migrator
-:url_lisk_api: lisk-sdk::references/lisk-elements/api-client.adoc
+:url_sdk_modules: {docs_sdk}modules/index.adoc
 :url_lisk_api: {docs_general}api/lisk-node-rpc.adoc
+
 // Lips
 :url_lip50: https://github.com/LiskHQ/lips/blob/main/proposals/lip-0050.md
 :url_lip46: https://github.com/LiskHQ/lips/blob/main/proposals/lip-0046.md
@@ -91,33 +92,38 @@ With the latest version of Lisk Core, there will be new configurable settings an
 
 === Modules
 
-Within Lisk Core v4, the following modules will be registered and used in the specified order:
+The Lisk Core v4 makes full use of the xref:{url_sdk_modules}[modules defined by Lisk SDK V6].
+Apart from the aforementioned modules, Lisk Core has an additional module called the Legacy Module.
 
-* Auth
-- The {url_lip41}[Auth module^] is responsible for handling and verifying nonces and for transaction signature validation, including transactions from multisignature accounts.
+* The {url_lip50}[Legacy module^] maintains all accounts on the Lisk mainchain that received balance transfers to their address in the old 8-byte format, and for which no public key is associated.
+The Legacy module also implements a command allowing validators without a BLS key to register one.
 
-* Validator
-- The {url_lip44}[Validator module^] is responsible for validating the eligibility of a validator for generating a block and the block signature.
-Furthermore, it maintains information about the registered validators in its module store and provides the generator list.
 
-* Token
-- This module allows any chain in the ecosystem to handle and transfer tokens in a coherent, secure, and controlled manner.
-Furthermore, the {url_lip51}[Token module^] also handles cross-chain token transfers.
+// * Auth
+// - The {url_lip41}[Auth module^] is responsible for handling and verifying nonces and for transaction signature validation, including transactions from multisignature accounts.
 
-* Fee
-- The {url_lip48}[Fee module^] is responsible for the handling of the transaction fees, including the extra command fees, (e.g., the validator registration fees, relayer fees, etc.).
-It allows chains to choose the token used to pay the fee, and to define a minimum fee for the transactions to be valid.
+// * Validator
+// - The {url_lip44}[Validator module^] is responsible for validating the eligibility of a validator for generating a block and the block signature.
+// Furthermore, it maintains information about the registered validators in its module store and provides the generator list.
 
-* Interoperability
-- The {url_lip45}[Interoperability module^] provides basic functionalities to transmit information between interoperable chains in the Lisk ecosystem using xref:{url_cross_chain}[cross-chain messages].
-In addition, it also supports/defines the chain lifecycle.
+// * Token
+// - This module allows any chain in the ecosystem to handle and transfer tokens in a coherent, secure, and controlled manner.
+// Furthermore, the {url_lip51}[Token module^] also handles cross-chain token transfers.
 
-* PoS
-- The {url_lip57}[PoS module, (Proof-of-stake)^] is responsible for handling validator registration, staking, and computing the validator weight.
+// * Fee
+// - The {url_lip48}[Fee module^] is responsible for the handling of the transaction fees, including the extra command fees, (e.g., the validator registration fees, relayer fees, etc.).
+// It allows chains to choose the token used to pay the fee, and to define a minimum fee for the transactions to be valid.
 
-* Random
-- The {url_lip46}[Random module^] handles the validation of the inputs and computation of outputs for the commit and reveal process for a Lisk blockchain.
-Hence, it manages the validation of the inputs for the commit and reveal process, as well as the random seeds that are used for delegate ordering in a round, and also for picking standby validators.
+// * Interoperability
+// - The {url_lip45}[Interoperability module^] provides basic functionalities to transmit information between interoperable chains in the Lisk ecosystem using xref:{url_cross_chain}[cross-chain messages].
+// In addition, it also supports/defines the chain lifecycle.
+
+// * PoS
+// - The {url_lip57}[PoS module, (Proof-of-stake)^] is responsible for handling validator registration, staking, and computing the validator weight.
+
+// * Random
+// - The {url_lip46}[Random module^] handles the validation of the inputs and computation of outputs for the commit and reveal process for a Lisk blockchain.
+// Hence, it manages the validation of the inputs for the commit and reveal process, as well as the random seeds that are used for delegate ordering in a round, and also for picking standby validators.
 
 // Info on Random process in LIP 0022
 // * Dynamic Block Rewards Module
@@ -125,12 +131,7 @@ Hence, it manages the validation of the inputs for the commit and reveal process
 // It computes the block rewards according to the validator weight for active validators, and includes specific logic for rewarding the standby validators.
 // The rewards will now be automatically shared using an on-chain reward sharing mechanism, more details on this can be found {url_lip70}[here^].
 
-* Legacy
-- The {url_lip50}[Legacy module^] maintains all accounts on the Lisk mainchain that received balance transfers to their address in the old 8-byte format, and for which no public key is associated.
-The Legacy module also implements a command allowing validators without a BLS key to register one.
 
-Within the protocol used by Lisk Core v4, each validator needs a separate key known as a generator key in order to generate blocks.
-More information on the generator key can be found here in {url_lip44}[LIP 0044^].
 
 
 // TODO: The following content is redundant and should be removed.
