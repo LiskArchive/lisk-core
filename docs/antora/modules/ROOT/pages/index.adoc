@@ -93,9 +93,9 @@ With the latest version of Lisk Core, there will be new configurable settings an
 === Modules
 
 The Lisk Core v4 makes full use of the xref:{url_sdk_modules}[modules defined by Lisk SDK V6].
-Apart from the aforementioned modules, Lisk Core has an additional module called the Legacy Module.
+Apart from the aforementioned modules, Lisk Core has an additional module called the {url_lip50}[Legacy module^].
 
-* The {url_lip50}[Legacy module^] maintains all accounts on the Lisk mainchain that received balance transfers to their address in the old 8-byte format, and for which no public key is associated.
+* The Legacy module maintains all accounts on the Lisk mainchain that received balance transfers to their address in the old 8-byte format, and for which no public key is associated.
 The Legacy module also implements a command allowing validators without a BLS key to register one.
 
 
