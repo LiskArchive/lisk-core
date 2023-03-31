@@ -185,17 +185,6 @@ More information on the generator key can be found here in {url_lip44}[LIP 0044^
 
 == Getting started
 
-[[node]]
-=== What is a node?
-
-The Lisk blockchain is a decentralized network that consists of many different servers, (or nodes).
-Node operators are required to set up Lisk Core on a server, and then connect it to the desired network.
-
-There are almost 2,000 nodes around the world that are maintained by individuals, and these nodes communicate with the network.
-For example, by broadcasting and receiving blocks or transactions from their peers.
-In addition, Lisk Core nodes are also required to generate/add new blocks to the blockchain.
-
-NOTE: To learn how to set up a node, please see the xref:{url_getting_started}[NPM setup] page.
 
 [[networks]]
 == Networks
