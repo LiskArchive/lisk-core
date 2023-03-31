@@ -2,7 +2,7 @@
 	"system": {
 		"dataPath": "~/.lisk",
 		"logLevel": "info",
-		"keepEventsForHeights": 300
+		"keepEventsForHeights": -1
 	},
 	"rpc": {
 		"modes": ["ipc", "ws"],
@@ -34,17 +34,17 @@
 		"minReplacementFeeDifference": "10"
 	},
 	"modules": {
+		"dynamicReward": {
+			"tokenID": "0300000000000000",
+			"offset": 360,
+			"distance": 3000,
+			"brackets": ["500000000", "400000000", "300000000", "200000000", "100000000"]
+		},
 		"fee": {
 			"feeTokenID": "0300000000000000"
 		},
 		"pos": {
 			"useInvalidBLSKey": true
-		},
-		"reward": {
-			"tokenID": "0300000000000000",
-			"offset": 2160,
-			"distance": 3000000,
-			"brackets": ["500000000", "400000000", "300000000", "200000000", "100000000"]
 		},
 		"token": {
 			"feeTokenID": "0300000000000000"
@@ -57,7 +57,7 @@
 		"chainConnector": {
 			"receivingChainID": "03000001",
 			"receivingChainWsPath": "",
-			"ccuFee": "5000000",
+			"ccuFee": "1000000000",
 			"encryptedPrivateKey": "kdf=argon2id&cipher=aes-256-gcm&version=1&ciphertext=b5ab1d0d2a4e5061e46505254f9ad63eb8fc19881ae4502624942e76ccb0e4f1575f8cd85bb9273eba4910a190047c32c903fe7b24e98218622948ae610ebc94c266186d514ccdd5878a49597cd193748660c623db2513e2e0b16c9a6cbafb1db1e85d72cabf787000f04fc1f8e54a37c8abf0a9b6c2933ead4a221c1b9e9f99&mac=00c69d43bb11c4d68d8f486d2b0f8e5d656fdf10e6c3c3d5ec23cae291f61e3e&salt=9e4b039c4017ca3ea8ca29004c2dfee3&iv=152f0face07485016b08f3c8&tag=822dbb25e308fba08c387586ece6b86f&iterations=1&parallelism=4&memorySize=2024",
 			"password": "lisk"
 		}
