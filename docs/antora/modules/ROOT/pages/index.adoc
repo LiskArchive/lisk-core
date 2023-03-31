@@ -120,10 +120,10 @@ In addition, it also supports/defines the chain lifecycle.
 Hence, it manages the validation of the inputs for the commit and reveal process, as well as the random seeds that are used for delegate ordering in a round, and also for picking standby validators.
 
 // Info on Random process in LIP 0022
-* Dynamic Block Rewards Module
-- The {url_lip71}[Dynamic Block Rewards module^] is responsible for providing the base reward system for the Lisk blockchain according to the validator weight.
-It computes the block rewards according to the validator weight for active validators, and includes specific logic for rewarding the standby validators.
-The rewards will now be automatically shared using an on-chain reward sharing mechanism, more details on this can be found {url_lip70}[here^].
+// * Dynamic Block Rewards Module
+// - The {url_lip71}[Dynamic Block Rewards module^] is responsible for providing the base reward system for the Lisk blockchain according to the validator weight.
+// It computes the block rewards according to the validator weight for active validators, and includes specific logic for rewarding the standby validators.
+// The rewards will now be automatically shared using an on-chain reward sharing mechanism, more details on this can be found {url_lip70}[here^].
 
 * Legacy
 - The {url_lip50}[Legacy module^] maintains all accounts on the Lisk mainchain that received balance transfers to their address in the old 8-byte format, and for which no public key is associated.
