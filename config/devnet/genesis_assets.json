@@ -5913,7 +5913,7 @@
 					}
 				],
 				"genesisData": {
-					"initRounds": 60480,
+					"initRounds": 3,
 					"initValidators": [
 						"lskguo9kqnea2zsfo3a6qppozsxsg92nuuma3p7ad",
 						"lskx7rscmxc3k9yokbqpxspjj92zz6fue84e2xw92",
