@@ -23,7 +23,12 @@
 	},
 	"network": {
 		"version": "1.0",
-		"seedPeers": [],
+		"seedPeers": [
+			{
+				"ip": "alphanet-seed-01.liskdev.net",
+				"port": 4001
+			}
+		],
 		"port": 7667
 	},
 	"transactionPool": {
