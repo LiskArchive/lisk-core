@@ -91,7 +91,9 @@ describe('Register keys command', () => {
 			const getValidatorKeys = jest
 				.fn()
 				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
-			registerKeysCommand.addDependencies({ getValidatorKeys } as any);
+
+			const unbanValidator = jest.fn();
+			registerKeysCommand.addDependencies({ getValidatorKeys } as any, { unbanValidator } as any);
 			await expect(registerKeysCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
 				'status',
 				VerifyStatus.OK,
@@ -108,7 +110,9 @@ describe('Register keys command', () => {
 			const getValidatorKeys = jest
 				.fn()
 				.mockReturnValue({ blsKey: getRandomBytes(48), generatorKey: getRandomBytes(32) });
-			registerKeysCommand.addDependencies({ getValidatorKeys } as any);
+			const unbanValidator = jest.fn();
+
+			registerKeysCommand.addDependencies({ getValidatorKeys } as any, { unbanValidator } as any);
 			await expect(registerKeysCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
 				'status',
 				VerifyStatus.FAIL,
@@ -128,11 +132,16 @@ describe('Register keys command', () => {
 			const setValidatorBLSKey = jest.fn().mockReturnValue(true);
 			const setValidatorGeneratorKey = jest.fn().mockReturnValue(true);
 			const getValidatorKeys = jest.fn().mockReturnValue({ generatorKey: Buffer.alloc(32, 255) });
-			registerKeysCommand.addDependencies({
-				setValidatorBLSKey,
-				setValidatorGeneratorKey,
-				getValidatorKeys,
-			} as any);
+			const unbanValidator = jest.fn();
+
+			registerKeysCommand.addDependencies(
+				{
+					setValidatorBLSKey,
+					setValidatorGeneratorKey,
+					getValidatorKeys,
+				} as any,
+				{ unbanValidator } as any,
+			);
 			const context = getContext(transactionParams, publicKey, getMethodContext, eventQueue);
 			await expect(registerKeysCommand.execute(context)).resolves.toBeUndefined();
 			expect(setValidatorGeneratorKey).toHaveBeenCalledTimes(1);
@@ -142,20 +151,30 @@ describe('Register keys command', () => {
 			const setValidatorBLSKey = jest.fn().mockReturnValue(true);
 			const setValidatorGeneratorKey = jest.fn().mockReturnValue(true);
 			const getValidatorKeys = jest.fn().mockReturnValue({ generatorKey: Buffer.alloc(32) });
-			registerKeysCommand.addDependencies({
-				setValidatorBLSKey,
-				getValidatorKeys,
-				setValidatorGeneratorKey,
-			} as any);
+			const unbanValidator = jest.fn();
+
+			registerKeysCommand.addDependencies(
+				{
+					setValidatorBLSKey,
+					getValidatorKeys,
+					setValidatorGeneratorKey,
+				} as any,
+				{ unbanValidator } as any,
+			);
 			const context = getContext(transactionParams, publicKey, getMethodContext, eventQueue);
 			await expect(registerKeysCommand.execute(context)).resolves.toBeUndefined();
 			expect(setValidatorBLSKey).toHaveBeenCalledTimes(1);
+			expect(unbanValidator).toHaveBeenCalledTimes(1);
 		});
 
 		it('should throw error if transaction params does not follow registerBLSKeyParamsSchema', async () => {
 			const setValidatorBLSKey = jest.fn();
 			const getValidatorKeys = jest.fn().mockReturnValue({ generatorKey: Buffer.alloc(32) });
-			registerKeysCommand.addDependencies({ setValidatorBLSKey, getValidatorKeys } as any);
+			const unbanValidator = jest.fn();
+			registerKeysCommand.addDependencies(
+				{ setValidatorBLSKey, getValidatorKeys } as any,
+				{ unbanValidator } as any,
+			);
 			const invalidParams = {
 				blsKey: getRandomBytes(48),
 				proofOfPossession: getRandomBytes(64).toString('hex'),
@@ -174,7 +193,9 @@ describe('Register keys command', () => {
 			const getValidatorKeys = jest
 				.fn()
 				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
-			registerKeysCommand.addDependencies({ getValidatorKeys } as any);
+			const unbanValidator = jest.fn();
+
+			registerKeysCommand.addDependencies({ getValidatorKeys } as any, { unbanValidator } as any);
 			await expect(registerKeysCommand.execute(context)).rejects.toThrow();
 		});
 
@@ -188,7 +209,9 @@ describe('Register keys command', () => {
 			const getValidatorKeys = jest
 				.fn()
 				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
-			registerKeysCommand.addDependencies({ getValidatorKeys } as any);
+			const unbanValidator = jest.fn();
+
+			registerKeysCommand.addDependencies({ getValidatorKeys } as any, { unbanValidator } as any);
 			await expect(registerKeysCommand.execute(context)).rejects.toThrow();
 		});
 
@@ -201,7 +224,9 @@ describe('Register keys command', () => {
 			const getValidatorKeys = jest
 				.fn()
 				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
-			registerKeysCommand.addDependencies({ getValidatorKeys } as any);
+			const unbanValidator = jest.fn();
+
+			registerKeysCommand.addDependencies({ getValidatorKeys } as any, { unbanValidator } as any);
 			await expect(registerKeysCommand.execute(context)).rejects.toThrow();
 		});
 
@@ -215,7 +240,9 @@ describe('Register keys command', () => {
 			const getValidatorKeys = jest
 				.fn()
 				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
-			registerKeysCommand.addDependencies({ getValidatorKeys } as any);
+			const unbanValidator = jest.fn();
+
+			registerKeysCommand.addDependencies({ getValidatorKeys } as any, { unbanValidator } as any);
 			await expect(registerKeysCommand.execute(context)).rejects.toThrow();
 		});
 
@@ -228,7 +255,9 @@ describe('Register keys command', () => {
 			const getValidatorKeys = jest
 				.fn()
 				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
-			registerKeysCommand.addDependencies({ getValidatorKeys } as any);
+			const unbanValidator = jest.fn();
+
+			registerKeysCommand.addDependencies({ getValidatorKeys } as any, { unbanValidator } as any);
 			await expect(registerKeysCommand.execute(context)).rejects.toThrow();
 		});
 
@@ -242,7 +271,9 @@ describe('Register keys command', () => {
 			const getValidatorKeys = jest
 				.fn()
 				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
-			registerKeysCommand.addDependencies({ getValidatorKeys } as any);
+			const unbanValidator = jest.fn();
+
+			registerKeysCommand.addDependencies({ getValidatorKeys } as any, { unbanValidator } as any);
 			await expect(registerKeysCommand.execute(context)).rejects.toThrow();
 		});
 	});
