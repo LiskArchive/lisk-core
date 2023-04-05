@@ -19,7 +19,7 @@ export const getApplication = (config: PartialApplicationConfig): Application =>
 	const { app, method } = Application.defaultApplication(config, true);
 	const legacyModule = new LegacyModule();
 
-	legacyModule.addDependencies(method.token, method.validator);
+	legacyModule.addDependencies(method.token, method.validator, method.pos);
 	app.registerModule(legacyModule);
 
 	return app;

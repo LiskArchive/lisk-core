@@ -15,6 +15,7 @@
 import {
 	BaseCommand,
 	ValidatorsMethod,
+	PoSMethod,
 	CommandExecuteContext,
 	CommandVerifyContext,
 	VerificationResult,
@@ -38,9 +39,11 @@ export class RegisterKeysCommand extends BaseCommand {
 	public schema = registerKeysParamsSchema;
 	private readonly invalidBlsKey = INVALID_BLS_KEY;
 	private _validatorsMethod!: ValidatorsMethod;
+	private _posMethod!: PoSMethod;
 
-	public addDependencies(validatorsMethod: ValidatorsMethod) {
+	public addDependencies(validatorsMethod: ValidatorsMethod, posMethod: PoSMethod) {
 		this._validatorsMethod = validatorsMethod;
+		this._posMethod = posMethod;
 	}
 
 	public async verify(ctx: CommandVerifyContext): Promise<VerificationResult> {
@@ -85,5 +88,7 @@ export class RegisterKeysCommand extends BaseCommand {
 			generatorKey: params.generatorKey,
 			blsKey: params.blsKey,
 		});
+
+		await this._posMethod.unbanValidator(ctx.getMethodContext(), validatorAddress);
 	}
 }
