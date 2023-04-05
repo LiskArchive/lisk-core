@@ -175,10 +175,17 @@ describe('LegacyModule', () => {
 
 			const genesisBlockExecuteContextInput = getContext(storeData, getStore, getMethodContext);
 
-			const tokenAPI = {
+			const tokenMethod = {
 				getLockedAmount: jest.fn().mockResolvedValue(BigInt(currentTotalBalance)),
 			};
-			legacyModule.addDependencies(tokenAPI as any, { setValidatorBLSKey: jest.fn() } as any);
+			const posMethod = {
+				unbanValidator: jest.fn(),
+			};
+			legacyModule.addDependencies(
+				tokenMethod as any,
+				{ setValidatorBLSKey: jest.fn() } as any,
+				posMethod as any,
+			);
 
 			await legacyModule.initGenesisState(genesisBlockExecuteContextInput);
 
@@ -211,10 +218,17 @@ describe('LegacyModule', () => {
 
 			const genesisBlockExecuteContextInput = getContext(storeData, getStore, getMethodContext);
 
-			const tokenAPI = {
+			const tokenMethod = {
 				getLockedAmount: jest.fn().mockResolvedValue(BigInt(UpdatedTotalBalance)),
 			};
-			legacyModule.addDependencies(tokenAPI as any, { setValidatorBLSKey: jest.fn() } as any);
+			const posMethod = {
+				unbanValidator: jest.fn(),
+			};
+			legacyModule.addDependencies(
+				tokenMethod as any,
+				{ setValidatorBLSKey: jest.fn() } as any,
+				posMethod as any,
+			);
 
 			await legacyModule.initGenesisState(genesisBlockExecuteContextInput);
 
@@ -282,10 +296,17 @@ describe('LegacyModule', () => {
 
 		it('should reject the block when total balance for all legacy accounts is not equal to lockedAmount', async () => {
 			const genesisBlockExecuteContextInput = getContext(storeData, getStore, getMethodContext);
-			const tokenAPI = {
+			const tokenMethod = {
 				getLockedAmount: jest.fn().mockResolvedValue(BigInt(10000100000)),
 			};
-			legacyModule.addDependencies(tokenAPI as any, { setValidatorBLSKey: jest.fn() } as any);
+			const posMethod = {
+				unbanValidator: jest.fn(),
+			};
+			legacyModule.addDependencies(
+				tokenMethod as any,
+				{ setValidatorBLSKey: jest.fn() } as any,
+				posMethod as any,
+			);
 
 			await expect(
 				legacyModule.initGenesisState(genesisBlockExecuteContextInput),

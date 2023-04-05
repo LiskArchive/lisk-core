@@ -15,6 +15,7 @@ import {
 	BaseModule,
 	TokenMethod,
 	ValidatorsMethod,
+	PoSMethod,
 	codec,
 	GenesisBlockExecuteContext,
 	validator as liskValidator,
@@ -53,6 +54,7 @@ export class LegacyModule extends BaseModule {
 	public legacyReserveAddress = ADDRESS_LEGACY_RESERVE;
 	private _tokenMethod!: TokenMethod;
 	private _validatorsMethod!: ValidatorsMethod;
+	private _posMethod!: PoSMethod;
 	private _moduleConfig!: ModuleConfig;
 
 	private readonly _reclaimLSKCommand = new ReclaimLSKCommand(this.stores, this.events);
@@ -72,11 +74,16 @@ export class LegacyModule extends BaseModule {
 	// eslint-disable-next-line @typescript-eslint/member-ordering
 	public commands = [this._reclaimLSKCommand, this._registerKeysCommand];
 
-	public addDependencies(tokenAPI: TokenMethod, validatorsMethod: ValidatorsMethod) {
-		this._tokenMethod = tokenAPI;
+	public addDependencies(
+		tokenMethod: TokenMethod,
+		validatorsMethod: ValidatorsMethod,
+		posMethod: PoSMethod,
+	) {
+		this._posMethod = posMethod;
+		this._tokenMethod = tokenMethod;
 		this._validatorsMethod = validatorsMethod;
 		this._reclaimLSKCommand.addDependencies(this._tokenMethod);
-		this._registerKeysCommand.addDependencies(this._validatorsMethod);
+		this._registerKeysCommand.addDependencies(this._validatorsMethod, this._posMethod);
 	}
 
 	public metadata(): ModuleMetadata {
