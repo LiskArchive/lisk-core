@@ -147,7 +147,7 @@ describe('Register keys command', () => {
 			expect(setValidatorGeneratorKey).toHaveBeenCalledTimes(1);
 		});
 
-		it('should setValidatorBLSKey', async () => {
+		it('should setValidatorBLSKey and unban validator', async () => {
 			const setValidatorBLSKey = jest.fn().mockReturnValue(true);
 			const setValidatorGeneratorKey = jest.fn().mockReturnValue(true);
 			const getValidatorKeys = jest.fn().mockReturnValue({ generatorKey: Buffer.alloc(32) });
