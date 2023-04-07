@@ -667,6 +667,183 @@ $ lisk-core config:show --pretty
 ----
 ====
 
+=== endpoint
+Commands relating to invoking and listing the endpoints.
+
+[source,bash]
+----
+USAGE
+  $ lisk-core endpoint COMMAND
+
+COMMANDS
+  endpoint invoke  Invokes the provided endpoint.
+  endpoint list    Lists registered endpoints.
+----
+
+==== endpoint:invoke
+Invokes the provided endpoint.
+
+[source,bash]
+----
+USAGE
+  $ lisk-core endpoint invoke [ENDPOINT] [PARAMS] [-d <value>] [--pretty] [-f <value>]
+
+ARGUMENTS
+  ENDPOINT  Endpoint to invoke
+  PARAMS    Endpoint parameters (Optional)
+
+FLAGS
+  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
+  -f, --file=<value>       Input file.
+  --pretty                 Prints JSON in pretty format rather than condensed.
+
+DESCRIPTION
+  Invokes the provided endpoint.
+
+EXAMPLES
+  endpoint:invoke {endpoint} {parameters}
+
+  endpoint:invoke --data-path --file
+
+  endpoint:invoke generator_getAllKeys
+
+  endpoint:invoke consensus_getBFTParameters '{"height": 2}' -d ~/.lisk/pos-mainchain --pretty
+
+  endpoint:invoke consensus_getBFTParameters -f ./input.json
+----
+
+.Example 
+[%collapsible]
+====
+[source,bash]
+----
+$ lisk-core endpoint:invoke system_getNodeInfo --pretty
+{
+  "version": "4.0.0-alpha.18",
+  "networkVersion": "1.0",
+  "chainID": "04000000",
+  "lastBlockID": "dd207c37a76c453e4b718f2bf238b84186f6e673679915b197ce1fdf94d3c180",
+  "height": 49,
+  "finalizedHeight": 0,
+  "syncing": false,
+  "unconfirmedTransactions": 0,
+  "genesisHeight": 0,
+  "genesis": {
+    "block": {
+      "fromFile": "./config/genesis_block.blob"
+    },
+    "blockTime": 10,
+    "bftBatchSize": 103,
+    "maxTransactionsSize": 15360,
+    "chainID": "04000000"
+  },
+  "network": {
+    "version": "1.0",
+    "port": 7667,
+    "seedPeers": []
+  }
+}
+----
+====
+
+==== endpoint:list
+Returns the list of all the module endpoints
+
+[source,bash]
+----
+USAGE
+  $ lisk-core endpoint list [ENDPOINT] [-d <value>] [--pretty] [-m <value>] [-i]
+
+ARGUMENTS
+  ENDPOINT  Endpoint name (Optional)
+
+FLAGS
+  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
+  -i, --info               Prints additional info; Request and Response objects.
+  -m, --module=<value>     Parent module.
+  --pretty                 Prints JSON in pretty format rather than condensed.
+
+DESCRIPTION
+  Lists registered endpoints.
+
+EXAMPLES
+  endpoint:list
+
+  endpoint:list {endpoint} -m {module}
+
+  endpoint:list {endpoint} -m {module} -i
+
+  endpoint:list -m validator
+
+  endopint:list getBalance
+
+  endpoint:list get -m token
+
+  endpoint:list getBalances -m token -i --pretty
+
+  endpoint:list getBalances -m token -d ~/.lisk/pos-mainchain
+----
+
+.Example 
+[%collapsible]
+====
+[source,bash]
+----
+$ lisk-core endpoint:list --pretty
+[
+  "auth_getAuthAccount",
+  "auth_isValidNonce",
+  "auth_isValidSignature",
+  "auth_getMultiSigRegMsgSchema",
+  "auth_sortMultisignatureGroup",
+  "auth_getMultiSigRegMsgTag",
+  "dynamicReward_getDefaultRewardAtHeight",
+  "dynamicReward_getAnnualInflation",
+  "dynamicReward_getRewardTokenID",
+  "fee_getMinFeePerByte",
+  "fee_getFeeTokenID",
+  "interoperability_getChainAccount",
+  "interoperability_getAllChainAccounts",
+  "interoperability_getChannel",
+  "interoperability_getOwnChainAccount",
+  "interoperability_getTerminatedStateAccount",
+  "interoperability_getTerminatedOutboxAccount",
+  "interoperability_getRegistrationFee",
+  "interoperability_getMinimumMessageFee",
+  "interoperability_getChainValidators",
+  "interoperability_isChainIDAvailable",
+  "interoperability_isChainNameAvailable",
+  "legacy_getLegacyAccount",
+  "pos_getAllValidators",
+  "pos_getValidator",
+  "pos_getStaker",
+  "pos_getConstants",
+  "pos_getPoSTokenID",
+  "pos_getClaimableRewards",
+  "pos_getLockedReward",
+  "pos_getLockedStakedAmount",
+  "pos_getValidatorsByStake",
+  "pos_getPendingUnlocks",
+  "pos_getRegistrationFee",
+  "random_isSeedRevealValid",
+  "random_setHashOnion",
+  "random_getHashOnionSeeds",
+  "random_hasHashOnion",
+  "random_getHashOnionUsage",
+  "token_getBalance",
+  "token_getBalances",
+  "token_getTotalSupply",
+  "token_getSupportedTokens",
+  "token_isSupported",
+  "token_getEscrowedAmounts",
+  "token_getInitializationFees",
+  "token_hasUserAccount",
+  "token_hasEscrowAccount",
+  "validators_validateBLSKey",
+  "validators_getValidator"
+]
+----
+====
 
 
 
