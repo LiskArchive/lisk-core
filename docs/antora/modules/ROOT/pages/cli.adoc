@@ -562,7 +562,7 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core config:create --output /Users/iamtalha --chain-id 04000000
+$ lisk-core config:create --output /Users/XYZ --chain-id 04000000
 ----
 ====
 
@@ -1060,7 +1060,78 @@ $ lisk-core generator:status --pretty
 ====
 
 
+=== genesis-block
+Commands relating to the genesis-block.
 
+[source,bash]
+----
+USAGE
+  $ lisk-core genesis-block COMMAND
+
+COMMANDS
+  genesis-block create    Creates genesis block file.
+  genesis-block download  Download genesis block.
+----
+
+==== genesis-block:create
+Creates a genesis block file and the corresponding generator\'s configuration data and accounts information.
+
+[source,bash]
+----
+USAGE
+  $ lisk-core genesis-block create -f <value> [-n <value>] [-c <value>] [-o <value>]
+
+FLAGS
+  -c, --config=<value>       File path to a custom config. Environment variable "LISK_CONFIG_FILE" can also be used.
+  -f, --assets-file=<value>  (required) Path to file which contains genesis block asset in JSON format
+  -n, --network=<value>      [default: default] Default network config to use. Environment variable "LISK_NETWORK" can also be used.
+  -o, --output=<value>       [default: config] Output folder path of the generated genesis block
+
+DESCRIPTION
+  Creates genesis block file.
+
+EXAMPLES
+  genesis-block:create --output mydir
+
+  genesis-block:create --output mydir --assets-file ./assets.json
+----
+
+.Example 
+[%collapsible]
+====
+[source,bash]
+----
+$ lisk-core genesis-block:create --assets-file genesis_assets.json --output ./devnet                                                                                  ─╯
+2023-04-07T16:47:08.874Z INFO XYZ.local application 55996 Registered and initialized fee module
+2023-04-07T16:47:08.875Z INFO XYZ.local application 55996 Registered and initialized auth module
+2023-04-07T16:47:08.875Z INFO XYZ.local application 55996 Registered auth module has command registerMultisignature
+2023-04-07T16:47:08.875Z INFO XYZ.local application 55996 Registered and initialized validators module
+2023-04-07T16:47:08.876Z INFO XYZ.local application 55996 Registered and initialized token module
+2023-04-07T16:47:08.876Z INFO XYZ.local application 55996 Registered token module has command transfer
+2023-04-07T16:47:08.876Z INFO XYZ.local application 55996 Registered token module has command transferCrossChain
+2023-04-07T16:47:08.878Z INFO XYZ.local application 55996 Registered and initialized dynamicReward module
+2023-04-07T16:47:08.878Z INFO XYZ.local application 55996 Registered and initialized random module
+2023-04-07T16:47:08.881Z INFO XYZ.local application 55996 Registered and initialized pos module
+2023-04-07T16:47:08.881Z INFO XYZ.local application 55996 Registered pos module has command registerValidator
+2023-04-07T16:47:08.881Z INFO XYZ.local application 55996 Registered pos module has command reportMisbehavior
+2023-04-07T16:47:08.881Z INFO XYZ.local application 55996 Registered pos module has command unlock
+2023-04-07T16:47:08.881Z INFO XYZ.local application 55996 Registered pos module has command updateGeneratorKey
+2023-04-07T16:47:08.881Z INFO XYZ.local application 55996 Registered pos module has command stake
+2023-04-07T16:47:08.881Z INFO XYZ.local application 55996 Registered pos module has command changeCommission
+2023-04-07T16:47:08.881Z INFO XYZ.local application 55996 Registered pos module has command claimRewards
+2023-04-07T16:47:08.881Z INFO XYZ.local application 55996 Registered and initialized interoperability module
+2023-04-07T16:47:08.881Z INFO XYZ.local application 55996 Registered interoperability module has command submitMainchainCrossChainUpdate
+2023-04-07T16:47:08.881Z INFO XYZ.local application 55996 Registered interoperability module has command initializeMessageRecovery
+2023-04-07T16:47:08.881Z INFO XYZ.local application 55996 Registered interoperability module has command recoverMessage
+2023-04-07T16:47:08.881Z INFO XYZ.local application 55996 Registered interoperability module has command registerSidechain
+2023-04-07T16:47:08.881Z INFO XYZ.local application 55996 Registered interoperability module has command recoverState
+2023-04-07T16:47:08.881Z INFO XYZ.local application 55996 Registered interoperability module has command terminateSidechainForLiveness
+2023-04-07T16:47:08.881Z INFO XYZ.local application 55996 Registered and initialized legacy module
+2023-04-07T16:47:08.881Z INFO XYZ.local application 55996 Registered legacy module has command reclaimLSK
+2023-04-07T16:47:08.881Z INFO XYZ.local application 55996 Registered legacy module has command registerKeys
+Genesis block files saved at: /Users/XYZ/.nvm/versions/node/v16.18.0/lib/node_modules/lisk-core/config/devnet/devnet
+----
+====
 
 
 
