@@ -845,15 +845,219 @@ $ lisk-core endpoint:list --pretty
 ----
 ====
 
+=== generator
+Commands relating to the block generation and generator-info of a blockchain.
+[source,bash]
+----
+USAGE
+  $ lisk-core generator COMMAND
+
+COMMANDS
+  generator disable  Disable block generation for given validator address.
+  generator enable   Enable block generation for given validator address.
+  generator export   Export to <FILE>.
+  generator import   Import from <FILE>.
+  generator status   Get forging information for the locally running node.
+----
+
+==== generator:disable
+Disables block generation for a given generator's address.
+
+[source,bash]
+----
+USAGE
+  $ lisk-core generator disable [ADDRESS] [-d <value>] [--pretty] [-w <value>]
+
+ARGUMENTS
+  ADDRESS  Address of an account in a lisk32 format.
+
+FLAGS
+  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
+  -w, --password=<value>   Specifies a source for your secret password. Command will prompt you for input if this option is not set.
+                           	Examples:
+                           	- --password=pass:password123 (should only be used where security is not important)
+  --pretty                 Prints JSON in pretty format rather than condensed.
+
+DESCRIPTION
+  Disable block generation for given validator address.
+
+EXAMPLES
+  generator:disable lskycz7hvr8yfu74bcwxy2n4mopfmjancgdvxq8xz
+
+  generator:disable lskycz7hvr8yfu74bcwxy2n4mopfmjancgdvxq8xz --data-path ./data
+
+  generator:disable lskycz7hvr8yfu74bcwxy2n4mopfmjancgdvxq8xz --data-path ./data --password your_password
+----
+
+.Example
+[%collapsible]
+====
+[source,bash]
+----
+$ lisk-core generator:disable lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3
+? Enter password to decrypt the encrypted passphrase:  ********
+
+Disabled block generation for lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3
+----
+====
+
+==== generator:enable
+Enables block generation for a given generator\'s address.
+
+[source,bash]
+----
+USAGE
+  $ lisk-core generator enable [ADDRESS] [-d <value>] [--pretty] [-w <value>] [--height <value>] [--max-height-generated <value>] [--max-height-prevoted <value>]
+    [--use-status-value]
+
+ARGUMENTS
+  ADDRESS  Address of an account in a lisk32 format.
+
+FLAGS
+  -d, --data-path=<value>         Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
+  -w, --password=<value>          Specifies a source for your secret password. Command will prompt you for input if this option is not set.
+                                  	Examples:
+                                  	- --password=pass:password123 (should only be used where security is not important)
+  --height=<value>                Last generated block height.
+  --max-height-generated=<value>  Validator's largest previously generated height.
+  --max-height-prevoted=<value>   Validator's largest prevoted height for a block.
+  --pretty                        Prints JSON in pretty format rather than condensed.
+  --use-status-value              Use status value from the connected node
+
+DESCRIPTION
+  Enable block generation for given validator address.
+
+EXAMPLES
+  generator:enable lsk24cd35u4jdq8szo3pnsqe5dsxwrnazyqqqg5eu --use-status-value
+
+  generator:enable lsk24cd35u4jdq8szo3pnsqe5dsxwrnazyqqqg5eu --height=100 --max-height-generated=30 --max-height-prevoted=10
+
+  generator:enable lsk24cd35u4jdq8szo3pnsqe5dsxwrnazyqqqg5eu --height=100 --max-height-generated=30 --max-height-prevoted=10 --data-path ./data
+
+  generator:enable lsk24cd35u4jdq8szo3pnsqe5dsxwrnazyqqqg5eu --height=100 --max-height-generated=30 --max-height-prevoted=10 --data-path ./data --password your_password
+----
+
+.Example
+[%collapsible]
+====
+[source,bash]
+----
+$ lisk-core generator:enable lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3 --use-status-value
+
+ Current block generation status for validator account lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3 is:
+{"height":14814092,"maxHeightPrevoted":14814017,"maxHeightGenerated":14814025}
+? Do you want to use the above values to enable block generation? yes
+? Enter password to decrypt the encrypted passphrase:  ********
+
+Updated block generation status:
+{"address":"lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3","enabled":true}
+----
+====
 
 
+==== generator:export
+Exports generator's data to a file.
 
+[source,bash]
+----
+USAGE
+  $ lisk-core generator export [-d <value>] [--pretty] [-o <value>]
 
+FLAGS
+  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
+  -o, --output=<value>     The output directory. Default will set to current working directory.
+  --pretty                 Prints JSON in pretty format rather than condensed.
 
+DESCRIPTION
+  Export to <FILE>.
 
+EXAMPLES
+  generator:export --output /mypath/genInfo.json
 
+  generator:export --output /mypath/genInfo.json --data-path ./data
+----
 
+.Example 
+[%collapsible]
+====
+[source,bash]
+----
+$ lisk-core generator export --output /Users/XYZ/genInfo.json
+----
+====
 
+==== generator:import
+Imports generator's data from a file.
+
+[source,bash]
+----
+USAGE
+  $ lisk-core generator import -f <value> [-d <value>] [--pretty]
+
+FLAGS
+  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
+  -f, --file-path=<value>  (required) Path of the file to import from
+  --pretty                 Prints JSON in pretty format rather than condensed.
+
+DESCRIPTION
+  Import from <FILE>.
+
+EXAMPLES
+  generator:import --file-path ./my/path/genInfo.json
+
+  generator:import --file-path ./my/path/genInfo.json --data-path ./data
+----
+
+.Example 
+[%collapsible]
+====
+[source,bash]
+----
+$./bin/run generator:import --file-path /Users/XYZ/genInfo.json
+----
+====
+
+==== generator:status
+Gets block generation information for the locally running node.
+
+[source,bash]
+----
+USAGE
+  $ lisk-core generator status [-d <value>] [--pretty]
+
+FLAGS
+  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
+  --pretty                 Prints JSON in pretty format rather than condensed.
+
+DESCRIPTION
+  Get forging information for the locally running node.
+
+EXAMPLES
+  generator:status
+
+  generator:status --data-path ./sample --pretty
+----
+
+.Example 
+[%collapsible]
+====
+[source,bash]
+----
+$ lisk-core generator:status --pretty
+{
+  "info": {
+    "status":
+    [{
+        "address": "lskzpvesvp7p9odszcp3s4dffnj4ozqz7b79tonqp",
+        "height": 574,
+        "maxHeightPrevoted": 487,
+        "maxHeightGenerated": 459,
+        "enabled": true
+      }
+  ]}
+}
+----
+====
 
 
 
