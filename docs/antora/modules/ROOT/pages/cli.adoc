@@ -567,6 +567,106 @@ $ lisk-core config:create --output /Users/iamtalha --chain-id 04000000
 ====
 
 
+==== config:show
+Shows the application's config.
+
+[source,bash]
+----
+USAGE
+  $ lisk-core config show [-d <value>] [-c <value>] [--pretty]
+
+FLAGS
+  -c, --config=<value>     File path to a custom config. Environment variable "LISK_CONFIG_FILE" can also be used.
+  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
+  --pretty                 Prints JSON in pretty format rather than condensed.
+
+DESCRIPTION
+  Show application config.
+
+EXAMPLES
+  config:show
+
+  config:show --pretty
+
+  config:show --config ./custom-config.json --data-path ./data
+----
+
+.Example 
+[%collapsible]
+====
+[source,bash]
+----
+$ lisk-core config:show --pretty
+{
+  "system": {
+    "dataPath": "/Users/XYZ/.lisk/lisk-core",
+    "logLevel": "info",
+    "keepEventsForHeights": -1
+  },
+  "rpc": {
+    "modes": [
+      "ipc",
+      "ws",
+      "http"
+    ],
+    "port": 7887,
+    "host": "0.0.0.0"
+  },
+  "genesis": {
+    "block": {
+      "fromFile": "./config/genesis_block.blob"
+    },
+    "blockTime": 10,
+    "bftBatchSize": 103,
+    "chainID": "04000000",
+    "maxTransactionsSize": 15360
+  },
+  "generator": {
+    "keys": {
+      "fromFile": "./config/dev-validators.json"
+    }
+  },
+  "network": {
+    "version": "1.0",
+    "seedPeers": [],
+    "port": 7667
+  },
+  "transactionPool": {
+    "maxTransactions": 4096,
+    "maxTransactionsPerAccount": 64,
+    "transactionExpiryTime": 10800000,
+    "minEntranceFeePriority": "0",
+    "minReplacementFeeDifference": "10"
+  },
+  "modules": {
+    "dynamicReward": {
+      "tokenID": "0400000000000000",
+      "offset": 360,
+      "distance": 1000,
+      "brackets": [
+        "500000000",
+        "400000000",
+        "300000000",
+        "200000000",
+        "100000000"
+      ]
+    },
+    "fee": {
+      "feeTokenID": "0400000000000000"
+    },
+    "pos": {
+      "useInvalidBLSKey": false
+    },
+    "token": {
+      "feeTokenID": "0400000000000000"
+    }
+  },
+  "plugins": {
+  }
+}
+----
+====
+
 
 
 
