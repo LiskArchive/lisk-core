@@ -1,7 +1,7 @@
 = Core CLI
 Muhammad Talha <muhammad.talha@lightcurve.io>
 :description: All available CLI commands and topics for Lisk Core including the config file structure are covered here.
-:toc:
+:toc: preamble
 :page-no-next: true
 :url_sdk_references_config: master@lisk-sdk::references/config.adoc
 
@@ -1376,6 +1376,149 @@ $ lisk-core keys:import --file-path ~/mykeys.json
 ----
 ====
 
+=== passphrase
+Commands relating to Lisk Core passphrases.
+
+[source,bash]
+----
+USAGE
+  $ lisk-core passphrase COMMAND
+
+COMMANDS
+  passphrase create   Returns a randomly generated 24 words mnemonic passphrase.
+  passphrase decrypt  Decrypt secret passphrase using the password provided at the time of encryption.
+  passphrase encrypt  Encrypt secret passphrase using password.
+----
+
+==== passphrase:create
+Decrypts the secret passphrase using the password provided at the time of encryption.
+
+[source,bash]
+----
+USAGE
+  $ lisk-core passphrase create [-o <value>]
+
+FLAGS
+  -o, --output=<value>  The output directory. Default will set to current working directory.
+
+DESCRIPTION
+  Returns a randomly generated 24 words mnemonic passphrase.
+
+EXAMPLES
+  passphrase:create
+
+  passphrase:create --output /mypath/passphrase.json
+----
+
+.Example 
+[%collapsible]
+====
+[source,bash]
+----
+$ lisk-core passphrase create
+{
+  "passphrase": "lava empower laundry taxi believe cute boss stairs bicycle vivid dirt vendor accuse identify general run knock medal chief space remain flush extra bike"
+}
+----
+====
+
+==== passphrase:decrypt
+Decrypts the secret passphrase using the password provided at the time of encryption.
+
+[source,bash]
+----
+USAGE
+  $ lisk-core passphrase decrypt -f <value> [-w <value>]
+
+FLAGS
+  -f, --file-path=<value>  (required) Path of the file to import from
+  -w, --password=<value>   Specifies a source for your secret password. Command will prompt you for input if this option is not set.
+                           	Examples:
+                           	- --password=pass:password123 (should only be used where security is not important)
+
+DESCRIPTION
+  Decrypt secret passphrase using the password provided at the time of encryption.
+
+EXAMPLES
+  passphrase:decrypt --file-path ./my/path/output.json
+
+  passphrase:decrypt --file-path ./my/path/output.json --password your-password
+----
+
+.Example 
+[%collapsible]
+====
+[source,bash]
+----
+$ lisk-core passphrase:decrypt --file-path ./my/path/keys.json
+? Please enter password:  [hidden]
+? Please re-enter password:  [hidden]
+{"passphrase":"my secret passphrase"}
+----
+====
+
+==== passphrase:encrypt
+Encrypts the secret passphrase using a password.
+
+[source,bash]
+----
+USAGE
+  $ lisk-core passphrase encrypt [-w <value>] [-p <value>] [--output-public-key] [-o <value>]
+
+FLAGS
+  -o, --output=<value>      The output directory. Default will set to current working directory.
+  -p, --passphrase=<value>  Specifies a source for your secret passphrase. Command will prompt you for input if this option is not set.
+                            	Examples:
+                            	- --passphrase='my secret passphrase' (should only be used where security is not important)
+  -w, --password=<value>    Specifies a source for your secret password. Command will prompt you for input if this option is not set.
+                            	Examples:
+                            	- --password=pass:password123 (should only be used where security is not important)
+  --output-public-key       Includes the public key in the output. This option is provided for the convenience of node operators.
+
+DESCRIPTION
+  Encrypt secret passphrase using password.
+
+EXAMPLES
+  passphrase:encrypt
+
+  passphrase:encrypt --passphrase your-passphrase --output /mypath/keys.json
+
+  passphrase:encrypt --password your-password
+
+  passphrase:encrypt --password your-password --passphrase your-passphrase --output /mypath/keys.json
+
+  passphrase:encrypt --output-public-key --output /mypath/keys.json
+----
+
+.Example 
+[%collapsible]
+====
+[source,bash]
+----
+$ lisk-core passphrase:encrypt -p 'my secret passphrase'
+? Please enter password:  [hidden]
+? Please re-enter password:  [hidden]
+{
+  "encryptedPassphrase": {
+    "ciphertext": "f0abd47a3095f288f3b291a883222cd64d7748b0",
+    "mac": "f88e98d461c9be73bcf8f3b37e5e8123a7f7ce351fcdf3b9c9f226f5e07d9cda",
+    "kdf": "argon2id",
+    "kdfparams": {
+      "parallelism": 4,
+      "iterations": 1,
+      "memorySize": 2024,
+      "salt": "a5e440ce3bc216ec8b2bc122155971c9"
+    },
+    "cipher": "aes-256-gcm",
+    "cipherparams": {
+      "iv": "272b5a4caa0b3605ae9837b0",
+      "tag": "7a0601cc12ca169300aba9a9f53c652b"
+    },
+    "version": "1"
+  }
+}
+----
+====
 
 
 
