@@ -206,7 +206,7 @@ Data on the node can be obtained by commands like
 
 ```
 ./bin/run endpoint invoke system_getNodeInfo --pretty
-./bin/run node:info --data-path ./devnet-data
+./bin/run system node-info --data-path ./devnet-data
 ./bin/run block:get 3 --data-path ./devnet-data
 ```
 
