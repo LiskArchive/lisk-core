@@ -3,8 +3,8 @@
 
 Commands relating to Lisk Core node.
 
-* [`lisk-core system:node-info`](#lisk-core-nodeinfo)
-* [`lisk-core system:metadata`](#lisk-core-nodemetadata)
+* [`lisk-core system:node-info`](#lisk-core-systemnode-info)
+* [`lisk-core system:metadata`](#lisk-core-systemmetadata)
 
 ## `lisk-core system:node-info`
 
