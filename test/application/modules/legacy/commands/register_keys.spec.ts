@@ -81,7 +81,7 @@ describe('Register keys command', () => {
 			generatorKey: getRandomBytes(32),
 		};
 
-		it('should return status OK', async () => {
+		it('should return status when called with valid params', async () => {
 			const commandVerifyContextInput = getContext(
 				transactionParams,
 				publicKey,
@@ -100,7 +100,7 @@ describe('Register keys command', () => {
 			);
 		});
 
-		it('should throw error when validator has a already registered BLS keys', async () => {
+		it('should throw error when validator has an already registered BLS keys', async () => {
 			const commandVerifyContextInput = getContext(
 				transactionParams,
 				publicKey,

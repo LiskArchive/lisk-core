@@ -12,7 +12,9 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-import { BaseCommand, VerifyStatus } from 'lisk-sdk';
+import { BaseCommand, VerifyStatus, testing, codec, Transaction, } from 'lisk-sdk';
+
+import { PrefixedStateReadWriter } from '../../../../../node_modules/lisk-framework/dist-node/state_machine/prefixed_state_read_writer';
 
 import { when } from 'jest-when';
 
@@ -24,6 +26,14 @@ import {
 	legacyAccountResponseSchema,
 } from '../../../../../src/application/modules/legacy/schemas';
 import { getLegacyAddress } from '../../../../../src/application/modules/legacy/utils';
+import { LegacyAccountStore } from '../../../../../src/application/modules/legacy/stores/legacyAccount';
+
+
+const chainID = Buffer.from(
+	'e48feb88db5b5cf5ad71d93cdcd1d879b6d5ed187a36b0002cc34e0ef9883255',
+	'hex',
+);
+
 
 const getContext = (amount, publicKey, getMethodContext, getStore, eventQueue): any => {
 	const params = { amount: BigInt(amount) };
@@ -40,7 +50,17 @@ const getContext = (amount, publicKey, getMethodContext, getStore, eventQueue): 
 	} as any;
 };
 
+const createStoreGetter = (stateStore) => ({
+    getStore: (p1, p2) => stateStore.getStore(p1, p2),
+});
+
+
+
 describe('Reclaim command', () => {
+// TODO: Update this once exposed from SDK
+let stateStore: PrefixedStateReadWriter;
+let legacyAccountStore: LegacyAccountStore;
+
 	let reclaimLSKCommand: ReclaimLSKCommand;
 	let mint: any;
 	const senderPublicKey = '275ce55f7b42fab1a12f718a14eb886f59631d172e236be46255c33506a64c6c';
@@ -65,11 +85,31 @@ describe('Reclaim command', () => {
 		eventQueue,
 	});
 
+	const transactionParams = {
+		amount: reclaimBalance,
+	};
+	const encodedTransactionParams = codec.encode(
+		reclaimLSKParamsSchema,
+		transactionParams,
+	);
+	const reclaimLskTransaction = new Transaction({
+		module: 'legacy',
+		command: 'reclaimLSK',
+		senderPublicKey: Buffer.from(senderPublicKey, 'hex'),
+		nonce: BigInt(0),
+		fee: BigInt(1000000000),
+		params: encodedTransactionParams,
+		signatures: [Buffer.from(senderPublicKey, 'hex')],
+	});
+
 	beforeEach(() => {
 		mint = jest.fn();
 		const module = new LegacyModule();
 		reclaimLSKCommand = new ReclaimLSKCommand(module.stores, module.events);
 		reclaimLSKCommand.addDependencies({ mint } as any);
+
+		stateStore = new PrefixedStateReadWriter(new testing.InMemoryPrefixedStateDB());
+		legacyAccountStore  = module.stores.get(LegacyAccountStore);
 	});
 
 	it('should inherit from BaseCommand', () => {
@@ -87,21 +127,33 @@ describe('Reclaim command', () => {
 	});
 
 	describe('verify', () => {
-		it(`should return status Ok`, async () => {
-			const commandVerifyContextInput = getContext(
-				reclaimBalance,
-				senderPublicKey,
-				getMethodContext,
-				getStore,
-				eventQueue,
+		it(`should return status when called with valid input`, async () => {
+			const context = testing.createTransactionContext({
+				chainID,
+				transaction: reclaimLskTransaction,
+			}).createCommandVerifyContext(reclaimLSKParamsSchema);
+
+
+			await legacyAccountStore.set(
+			createStoreGetter(stateStore),
+			legacyAddress,
+			{ balance: reclaimBalance },
 			);
 
-			when(mockStoreHas).calledWith(legacyAddress).mockReturnValue(true);
-			when(mockGetWithSchema)
-				.calledWith(legacyAddress, legacyAccountResponseSchema)
-				.mockReturnValue({ balance: reclaimBalance });
+			// const commandVerifyContextInput = getContext(
+			// 	reclaimBalance,
+			// 	senderPublicKey,
+			// 	getMethodContext,
+			// 	getStore,
+			// 	eventQueue,
+			// );
 
-			await expect(reclaimLSKCommand.verify(commandVerifyContextInput)).resolves.toHaveProperty(
+			// when(mockStoreHas).calledWith(legacyAddress).mockReturnValue(true);
+			// when(mockGetWithSchema)
+			// 	.calledWith(legacyAddress, legacyAccountResponseSchema)
+			// 	.mockReturnValue({ balance: reclaimBalance });
+
+			await expect(reclaimLSKCommand.verify(context)).resolves.toHaveProperty(
 				'status',
 				VerifyStatus.OK,
 			);
