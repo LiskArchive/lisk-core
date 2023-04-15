@@ -12,7 +12,7 @@ Get node information from a running application.
 
 ```
 USAGE
-  $ lisk-core system:info
+  $ lisk-core system:node-info
 
 OPTIONS
   -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
@@ -21,8 +21,8 @@ OPTIONS
   --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
-  system:info
-  system:info  --data-path ./lisk
+  system:node-info
+  system:node-info  --data-path ./lisk
 ```
 
 _See code: [dist/commands/system/node-info.ts](https://github.com/LiskHQ/lisk-core/blob/v4.0.0-alpha.19/dist/commands/system/node-info.ts)_
