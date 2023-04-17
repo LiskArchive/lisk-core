@@ -2,6 +2,7 @@
 	"system": {
 		"dataPath": "~/.lisk",
 		"logLevel": "info",
+		"enableMetrics": false,
 		"keepEventsForHeights": 300
 	},
 	"rpc": {
