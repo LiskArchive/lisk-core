@@ -84,7 +84,7 @@ USAGE
 - [`lisk-core hash-onion`](docs/commands/hash-onion.md) - Create hash onions to be used by the forger.
 - [`lisk-core help`](docs/commands/help.md) - display help for lisk-core
 - [`lisk-core keys`](docs/commands/keys.md) - Return keys corresponding to the given passphrase.
-- [`lisk-core node`](docs/commands/node.md) - Commands relating to Lisk Core node.
+- [`lisk-core system`](docs/commands/system.md) - Commands relating to Lisk Core node.
 - [`lisk-core passphrase`](docs/commands/passphrase.md) - Commands relating to Lisk Core passphrases.
 - [`lisk-core sdk`](docs/commands/sdk.md) - Commands relating to Lisk SDK development.
 - [`lisk-core start`](docs/commands/start.md) - Start Blockchain Node.
@@ -206,7 +206,7 @@ Data on the node can be obtained by commands like
 
 ```
 ./bin/run endpoint invoke system_getNodeInfo --pretty
-./bin/run node:info --data-path ./devnet-data
+./bin/run system node-info --data-path ./devnet-data
 ./bin/run block:get 3 --data-path ./devnet-data
 ```
 

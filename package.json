@@ -78,7 +78,7 @@
 			"forging": {
 				"description": "Commands relating to Lisk Core forging."
 			},
-			"node": {
+			"system": {
 				"description": "Commands relating to Lisk Core node."
 			},
 			"config": {
