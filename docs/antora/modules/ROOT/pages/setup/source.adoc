@@ -169,7 +169,7 @@ To test that Lisk Core is built and configured correctly, execute the following 
 ----
 lisk-core start --network devnet
 # From another terminal
-lisk-core node:info
+lisk-core system node-info
 ----
 
 If the process is running correctly, no errors are thrown in the logs.
