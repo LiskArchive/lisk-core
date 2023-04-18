@@ -25,13 +25,10 @@ import {
 // TODO: Update this once exposed from SDK
 import { PrefixedStateReadWriter } from '../../../../../node_modules/lisk-framework/dist-node/state_machine/prefixed_state_read_writer';
 
-
 import { COMMAND_RECLAIM } from '../../../../../src/application/modules/legacy/constants';
 import { LegacyModule } from '../../../../../src/application/modules/legacy/module';
 import { ReclaimLSKCommand } from '../../../../../src/application/modules/legacy/commands/reclaim';
-import {
-	reclaimLSKParamsSchema,
-} from '../../../../../src/application/modules/legacy/schemas';
+import { reclaimLSKParamsSchema } from '../../../../../src/application/modules/legacy/schemas';
 import { getLegacyAddress } from '../../../../../src/application/modules/legacy/utils';
 import { LegacyAccountStore } from '../../../../../src/application/modules/legacy/stores/legacyAccount';
 import { AccountReclaimedEvent } from '../../../../../src/application/modules/legacy/events/accountReclaimed';
@@ -52,7 +49,7 @@ const legacyAddress = getLegacyAddress(Buffer.from(senderPublicKey, 'hex'));
 const reclaimBalance = BigInt(10000);
 
 const checkEventResult = (
-	eventQueue: EventQueuer["eventQueue"],
+	eventQueue: EventQueuer['eventQueue'],
 	EventClass: any,
 	moduleName: string,
 	expectedResult: any,
@@ -70,8 +67,8 @@ const checkEventResult = (
 	expect(eventData).toEqual(expectedResult);
 };
 
-const createStoreGetter = (stateStore) => ({
-    getStore: (p1, p2) => stateStore.getStore(p1, p2),
+const createStoreGetter = stateStore => ({
+	getStore: (p1, p2) => stateStore.getStore(p1, p2),
 });
 
 const getReclaimTransaction = (transactionParams: any, customSchema?: any): Transaction => {
@@ -94,8 +91,8 @@ const getReclaimTransaction = (transactionParams: any, customSchema?: any): Tran
 };
 
 describe('Reclaim command', () => {
-let stateStore: PrefixedStateReadWriter;
-let legacyAccountStore: LegacyAccountStore;
+	let stateStore: PrefixedStateReadWriter;
+	let legacyAccountStore: LegacyAccountStore;
 
 	let reclaimLSKCommand: ReclaimLSKCommand;
 	let mint: any;
@@ -103,14 +100,14 @@ let legacyAccountStore: LegacyAccountStore;
 		amount: reclaimBalance,
 	});
 
-	beforeEach(async () => {
+	beforeEach(() => {
 		mint = jest.fn();
 		const module = new LegacyModule();
 		reclaimLSKCommand = new ReclaimLSKCommand(module.stores, module.events);
 		reclaimLSKCommand.addDependencies({ mint } as any);
 
 		stateStore = new PrefixedStateReadWriter(new testing.InMemoryPrefixedStateDB());
-		legacyAccountStore  = module.stores.get(LegacyAccountStore);
+		legacyAccountStore = module.stores.get(LegacyAccountStore);
 	});
 
 	it('should inherit from BaseCommand', () => {
@@ -129,16 +126,16 @@ let legacyAccountStore: LegacyAccountStore;
 
 	describe('verify', () => {
 		it(`should return status when called with valid input`, async () => {
-			await legacyAccountStore.set(
-				createStoreGetter(stateStore),
-				legacyAddress,
-				{ balance: reclaimBalance },
-			);
-			const context = testing.createTransactionContext({
-				chainID,
-				transaction: validReclaimLskTransaction,
-				stateStore,
-			}).createCommandVerifyContext(reclaimLSKParamsSchema);
+			await legacyAccountStore.set(createStoreGetter(stateStore), legacyAddress, {
+				balance: reclaimBalance,
+			});
+			const context = testing
+				.createTransactionContext({
+					chainID,
+					transaction: validReclaimLskTransaction,
+					stateStore,
+				})
+				.createCommandVerifyContext(reclaimLSKParamsSchema);
 
 			await expect(reclaimLSKCommand.verify(context)).resolves.toHaveProperty(
 				'status',
@@ -150,16 +147,16 @@ let legacyAccountStore: LegacyAccountStore;
 			const invalidAmountReclaimTransaction = getReclaimTransaction({
 				amount: reclaimBalance + BigInt(10000),
 			});
-			await legacyAccountStore.set(
-				createStoreGetter(stateStore),
-				legacyAddress,
-				{ balance: reclaimBalance },
-			);
-			const context = testing.createTransactionContext({
-				chainID,
-				transaction: invalidAmountReclaimTransaction,
-				stateStore,
-			}).createCommandVerifyContext(reclaimLSKParamsSchema);
+			await legacyAccountStore.set(createStoreGetter(stateStore), legacyAddress, {
+				balance: reclaimBalance,
+			});
+			const context = testing
+				.createTransactionContext({
+					chainID,
+					transaction: invalidAmountReclaimTransaction,
+					stateStore,
+				})
+				.createCommandVerifyContext(reclaimLSKParamsSchema);
 
 			await expect(reclaimLSKCommand.verify(context)).resolves.toHaveProperty(
 				'status',
@@ -168,11 +165,13 @@ let legacyAccountStore: LegacyAccountStore;
 		});
 
 		it('should throw error when user has no entry in the legacy account substore', async () => {
-			const context = testing.createTransactionContext({
-				chainID,
-				transaction: validReclaimLskTransaction,
-				stateStore,
-			}).createCommandVerifyContext(reclaimLSKParamsSchema);
+			const context = testing
+				.createTransactionContext({
+					chainID,
+					transaction: validReclaimLskTransaction,
+					stateStore,
+				})
+				.createCommandVerifyContext(reclaimLSKParamsSchema);
 
 			await expect(reclaimLSKCommand.verify(context)).resolves.toHaveProperty(
 				'status',
@@ -196,11 +195,13 @@ let legacyAccountStore: LegacyAccountStore;
 				{ invalidParam: reclaimBalance + BigInt(10000) },
 				invalidSchema,
 			);
-			const context = testing.createTransactionContext({
-				chainID,
-				transaction: invalidParamTransaction,
-				stateStore,
-			}).createCommandVerifyContext(invalidSchema);
+			const context = testing
+				.createTransactionContext({
+					chainID,
+					transaction: invalidParamTransaction,
+					stateStore,
+				})
+				.createCommandVerifyContext(invalidSchema);
 
 			await expect(reclaimLSKCommand.verify(context)).resolves.toHaveProperty(
 				'status',
@@ -214,17 +215,17 @@ let legacyAccountStore: LegacyAccountStore;
 			const unlock = jest.fn().mockReturnValue(true);
 			const transfer = jest.fn().mockReturnValue(true);
 
-			await legacyAccountStore.set(
-				createStoreGetter(stateStore),
-				legacyAddress,
-				{ balance: reclaimBalance },
-			);
+			await legacyAccountStore.set(createStoreGetter(stateStore), legacyAddress, {
+				balance: reclaimBalance,
+			});
 
-			const context = testing.createTransactionContext({
-				chainID,
-				transaction: validReclaimLskTransaction,
-				stateStore,
-			}).createCommandExecuteContext(reclaimLSKParamsSchema);
+			const context = testing
+				.createTransactionContext({
+					chainID,
+					transaction: validReclaimLskTransaction,
+					stateStore,
+				})
+				.createCommandExecuteContext(reclaimLSKParamsSchema);
 
 			reclaimLSKCommand.addDependencies({
 				unlock,
@@ -236,15 +237,11 @@ let legacyAccountStore: LegacyAccountStore;
 			expect(transfer).toHaveBeenCalledTimes(1);
 
 			// Check if the event is in the event queue
-			checkEventResult(
-				context.eventQueue,
-				AccountReclaimedEvent,
-				MODULE_NAME,
-				{
-					legacyAddress,
-					address: getAddressFromPublicKey(Buffer.from(senderPublicKey, 'hex')),
-					amount: reclaimBalance,
-				});
+			checkEventResult(context.eventQueue, AccountReclaimedEvent, MODULE_NAME, {
+				legacyAddress,
+				address: getAddressFromPublicKey(Buffer.from(senderPublicKey, 'hex')),
+				amount: reclaimBalance,
+			});
 		});
 	});
 });

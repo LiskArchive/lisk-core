@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-import { 
+import {
 	BaseCommand,
 	cryptography,
 	VerifyStatus,
@@ -21,10 +21,10 @@ import {
 	codec,
 	EventQueuer,
 	// ValidatorsModule,
- } from 'lisk-sdk';
+} from 'lisk-sdk';
 
- // TODO: Update this once exposed from SDK
- import { PrefixedStateReadWriter } from '../../../../../node_modules/lisk-framework/dist-node/state_machine/prefixed_state_read_writer';
+// TODO: Update this once exposed from SDK
+import { PrefixedStateReadWriter } from '../../../../../node_modules/lisk-framework/dist-node/state_machine/prefixed_state_read_writer';
 
 import { COMMAND_REGISTER_KEYS } from '../../../../../src/application/modules/legacy/constants';
 import { LegacyModule } from '../../../../../src/application/modules/legacy/module';
@@ -32,7 +32,6 @@ import { LegacyModule } from '../../../../../src/application/modules/legacy/modu
 import { RegisterKeysCommand } from '../../../../../src/application/modules/legacy/commands/register_keys';
 import { registerKeysParamsSchema } from '../../../../../src/application/modules/legacy/schemas';
 import { KeysRegisteredEvent } from '../../../../../src/application/modules/legacy/events/keysRegistered';
-
 
 const {
 	address: { getAddressFromPublicKey },
@@ -67,7 +66,7 @@ const getRegisterKeysTransaction = (transactionParams: any, customSchema?: any):
 };
 
 const checkEventResult = (
-	eventQueue: EventQueuer["eventQueue"],
+	eventQueue: EventQueuer['eventQueue'],
 	EventClass: any,
 	moduleName: string,
 	expectedResult: any,
@@ -139,18 +138,20 @@ describe('Register keys command', () => {
 			// 	},
 			// );
 
-			const context = testing.createTransactionContext({
-				chainID,
-				transaction: validRegisterKeysTransaction,
-				stateStore,
-			}).createCommandVerifyContext(registerKeysParamsSchema);
+			const context = testing
+				.createTransactionContext({
+					chainID,
+					transaction: validRegisterKeysTransaction,
+					stateStore,
+				})
+				.createCommandVerifyContext(registerKeysParamsSchema);
 
 			const getValidatorKeys = jest
 				.fn()
 				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
 
 			const unbanValidator = jest.fn();
-			registerKeysCommand.addDependencies(({ getValidatorKeys } as any), { unbanValidator } as any);
+			registerKeysCommand.addDependencies({ getValidatorKeys } as any, { unbanValidator } as any);
 			await expect(registerKeysCommand.verify(context)).resolves.toHaveProperty(
 				'status',
 				VerifyStatus.OK,
@@ -159,10 +160,12 @@ describe('Register keys command', () => {
 
 		it('should return status FAIL when validator has an already registered BLS keys', async () => {
 			const validRegisterKeysTransaction = getRegisterKeysTransaction(transactionParams);
-			const context = testing.createTransactionContext({
-				chainID,
-				transaction: validRegisterKeysTransaction,
-			}).createCommandVerifyContext(registerKeysParamsSchema);
+			const context = testing
+				.createTransactionContext({
+					chainID,
+					transaction: validRegisterKeysTransaction,
+				})
+				.createCommandVerifyContext(registerKeysParamsSchema);
 
 			const getValidatorKeys = jest
 				.fn()
@@ -201,10 +204,12 @@ describe('Register keys command', () => {
 
 			// Create context
 			const validRegisterKeysTransaction = getRegisterKeysTransaction(transactionParams);
-			const context = testing.createTransactionContext({
-				chainID,
-				transaction: validRegisterKeysTransaction,
-			}).createCommandExecuteContext(registerKeysParamsSchema);
+			const context = testing
+				.createTransactionContext({
+					chainID,
+					transaction: validRegisterKeysTransaction,
+				})
+				.createCommandExecuteContext(registerKeysParamsSchema);
 
 			await expect(registerKeysCommand.execute(context)).resolves.toBeUndefined();
 			expect(setValidatorGeneratorKey).toHaveBeenCalledTimes(1);
@@ -212,20 +217,18 @@ describe('Register keys command', () => {
 			expect(unbanValidator).toHaveBeenCalledTimes(1);
 
 			// Check if the event is in the event queue
-			checkEventResult(
-				context.eventQueue,
-				KeysRegisteredEvent,
-				MODULE_NAME,
-				{
-					address: validatorAddress,
-					generatorKey: transactionParams.generatorKey,
-					blsKey: transactionParams.blsKey,
-				});
+			checkEventResult(context.eventQueue, KeysRegisteredEvent, MODULE_NAME, {
+				address: validatorAddress,
+				generatorKey: transactionParams.generatorKey,
+				blsKey: transactionParams.blsKey,
+			});
 		});
 
 		it('should throw error when setValidatorBLSKey fails', async () => {
 			// Create mocked dependencies
-			const setValidatorBLSKey = jest.fn(() => { throw Error("Custom Error") });
+			const setValidatorBLSKey = jest.fn(() => {
+				throw Error('Custom Error');
+			});
 			const setValidatorGeneratorKey = jest.fn().mockReturnValue(true);
 			const getValidatorKeys = jest.fn().mockReturnValue({ generatorKey: Buffer.alloc(32) });
 			const unbanValidator = jest.fn();
@@ -240,10 +243,12 @@ describe('Register keys command', () => {
 
 			// Create context
 			const validRegisterKeysTransaction = getRegisterKeysTransaction(transactionParams);
-			const context = testing.createTransactionContext({
-				chainID,
-				transaction: validRegisterKeysTransaction,
-			}).createCommandExecuteContext(registerKeysParamsSchema);
+			const context = testing
+				.createTransactionContext({
+					chainID,
+					transaction: validRegisterKeysTransaction,
+				})
+				.createCommandExecuteContext(registerKeysParamsSchema);
 
 			await expect(registerKeysCommand.execute(context)).rejects.toThrow();
 			expect(setValidatorGeneratorKey).toHaveBeenCalledTimes(1);
@@ -257,7 +262,9 @@ describe('Register keys command', () => {
 			// Create mocked dependencies
 			const setValidatorBLSKey = jest.fn().mockReturnValue(true);
 			const setValidatorGeneratorKey = jest.fn(() => {
-				throw new Error('This address is not registered as validator. Only validators can register a generator key.');
+				throw new Error(
+					'This address is not registered as validator. Only validators can register a generator key.',
+				);
 			});
 			const getValidatorKeys = jest.fn().mockReturnValue({ generatorKey: Buffer.alloc(32) });
 			const unbanValidator = jest.fn();
@@ -272,12 +279,18 @@ describe('Register keys command', () => {
 
 			// Create context
 			const validRegisterKeysTransaction = getRegisterKeysTransaction(transactionParams);
-			const context = testing.createTransactionContext({
-				chainID,
-				transaction: validRegisterKeysTransaction,
-			}).createCommandExecuteContext(registerKeysParamsSchema);
+			const context = testing
+				.createTransactionContext({
+					chainID,
+					transaction: validRegisterKeysTransaction,
+				})
+				.createCommandExecuteContext(registerKeysParamsSchema);
 
-			await expect(registerKeysCommand.execute(context)).rejects.toThrow(new Error('This address is not registered as validator. Only validators can register a generator key.'));
+			await expect(registerKeysCommand.execute(context)).rejects.toThrow(
+				new Error(
+					'This address is not registered as validator. Only validators can register a generator key.',
+				),
+			);
 			expect(setValidatorGeneratorKey).toHaveBeenCalledTimes(1);
 			expect(setValidatorBLSKey).toHaveBeenCalledTimes(0);
 			expect(unbanValidator).toHaveBeenCalledTimes(0);
@@ -313,11 +326,16 @@ describe('Register keys command', () => {
 					},
 				},
 			};
-			const invalidRegisterKeysTransaction = getRegisterKeysTransaction(invalidParams, invalidRegisterKeysParamsSchema);
-			const context = testing.createTransactionContext({
-				chainID,
-				transaction: invalidRegisterKeysTransaction,
-			}).createCommandExecuteContext(invalidRegisterKeysParamsSchema);
+			const invalidRegisterKeysTransaction = getRegisterKeysTransaction(
+				invalidParams,
+				invalidRegisterKeysParamsSchema,
+			);
+			const context = testing
+				.createTransactionContext({
+					chainID,
+					transaction: invalidRegisterKeysTransaction,
+				})
+				.createCommandExecuteContext(invalidRegisterKeysParamsSchema);
 
 			await expect(registerKeysCommand.execute(context)).rejects.toThrow();
 			expect(setValidatorBLSKey).toHaveBeenCalledTimes(0);
@@ -333,8 +351,8 @@ describe('Register keys command', () => {
 
 			// Create context
 			const invalidParams = {
-					proofOfPossession: getRandomBytes(96),
-					generatorKey: getRandomBytes(32),
+				proofOfPossession: getRandomBytes(96),
+				generatorKey: getRandomBytes(32),
 			};
 			const noBLSKeyRegisterKeysParamsSchema = {
 				$id: '/legacy/command/noBLSKeyRegisterKeysParams',
@@ -351,11 +369,16 @@ describe('Register keys command', () => {
 					},
 				},
 			};
-			const invalidRegisterKeysTransaction = getRegisterKeysTransaction(invalidParams, noBLSKeyRegisterKeysParamsSchema);
-			const context = testing.createTransactionContext({
-				chainID,
-				transaction: invalidRegisterKeysTransaction,
-			}).createCommandExecuteContext(noBLSKeyRegisterKeysParamsSchema);
+			const invalidRegisterKeysTransaction = getRegisterKeysTransaction(
+				invalidParams,
+				noBLSKeyRegisterKeysParamsSchema,
+			);
+			const context = testing
+				.createTransactionContext({
+					chainID,
+					transaction: invalidRegisterKeysTransaction,
+				})
+				.createCommandExecuteContext(noBLSKeyRegisterKeysParamsSchema);
 
 			await expect(registerKeysCommand.execute(context)).rejects.toThrow();
 		});
@@ -385,11 +408,16 @@ describe('Register keys command', () => {
 					},
 				},
 			};
-			const invalidRegisterKeysTransaction = getRegisterKeysTransaction(invalidParams, invalidBLSKeyParamsSchema);
-			const context = testing.createTransactionContext({
-				chainID,
-				transaction: invalidRegisterKeysTransaction,
-			}).createCommandExecuteContext(invalidBLSKeyParamsSchema);
+			const invalidRegisterKeysTransaction = getRegisterKeysTransaction(
+				invalidParams,
+				invalidBLSKeyParamsSchema,
+			);
+			const context = testing
+				.createTransactionContext({
+					chainID,
+					transaction: invalidRegisterKeysTransaction,
+				})
+				.createCommandExecuteContext(invalidBLSKeyParamsSchema);
 
 			await expect(registerKeysCommand.execute(context)).rejects.toThrow();
 		});
@@ -422,11 +450,16 @@ describe('Register keys command', () => {
 					},
 				},
 			};
-			const invalidRegisterKeysTransaction = getRegisterKeysTransaction(invalidParams, noProofOfPossessionParamsSchema);
-			const context = testing.createTransactionContext({
-				chainID,
-				transaction: invalidRegisterKeysTransaction,
-			}).createCommandExecuteContext(noProofOfPossessionParamsSchema);
+			const invalidRegisterKeysTransaction = getRegisterKeysTransaction(
+				invalidParams,
+				noProofOfPossessionParamsSchema,
+			);
+			const context = testing
+				.createTransactionContext({
+					chainID,
+					transaction: invalidRegisterKeysTransaction,
+				})
+				.createCommandExecuteContext(noProofOfPossessionParamsSchema);
 
 			await expect(registerKeysCommand.execute(context)).rejects.toThrow();
 		});
@@ -456,11 +489,16 @@ describe('Register keys command', () => {
 					},
 				},
 			};
-			const invalidRegisterKeysTransaction = getRegisterKeysTransaction(invalidParams, invalidProofOfPossessionParamsSchema);
-			const context = testing.createTransactionContext({
-				chainID,
-				transaction: invalidRegisterKeysTransaction,
-			}).createCommandExecuteContext(invalidProofOfPossessionParamsSchema);
+			const invalidRegisterKeysTransaction = getRegisterKeysTransaction(
+				invalidParams,
+				invalidProofOfPossessionParamsSchema,
+			);
+			const context = testing
+				.createTransactionContext({
+					chainID,
+					transaction: invalidRegisterKeysTransaction,
+				})
+				.createCommandExecuteContext(invalidProofOfPossessionParamsSchema);
 
 			await expect(registerKeysCommand.execute(context)).rejects.toThrow();
 		});
@@ -493,11 +531,16 @@ describe('Register keys command', () => {
 					},
 				},
 			};
-			const invalidRegisterKeysTransaction = getRegisterKeysTransaction(invalidParams, noGeneratorKeyParamsSchema);
-			const context = testing.createTransactionContext({
-				chainID,
-				transaction: invalidRegisterKeysTransaction,
-			}).createCommandExecuteContext(noGeneratorKeyParamsSchema);
+			const invalidRegisterKeysTransaction = getRegisterKeysTransaction(
+				invalidParams,
+				noGeneratorKeyParamsSchema,
+			);
+			const context = testing
+				.createTransactionContext({
+					chainID,
+					transaction: invalidRegisterKeysTransaction,
+				})
+				.createCommandExecuteContext(noGeneratorKeyParamsSchema);
 
 			await expect(registerKeysCommand.execute(context)).rejects.toThrow();
 		});
@@ -527,11 +570,16 @@ describe('Register keys command', () => {
 					},
 				},
 			};
-			const invalidRegisterKeysTransaction = getRegisterKeysTransaction(invalidParams, invalidGeneratorKeyParamsSchema);
-			const context = testing.createTransactionContext({
-				chainID,
-				transaction: invalidRegisterKeysTransaction,
-			}).createCommandExecuteContext(invalidGeneratorKeyParamsSchema);
+			const invalidRegisterKeysTransaction = getRegisterKeysTransaction(
+				invalidParams,
+				invalidGeneratorKeyParamsSchema,
+			);
+			const context = testing
+				.createTransactionContext({
+					chainID,
+					transaction: invalidRegisterKeysTransaction,
+				})
+				.createCommandExecuteContext(invalidGeneratorKeyParamsSchema);
 
 			await expect(registerKeysCommand.execute(context)).rejects.toThrow();
 		});
