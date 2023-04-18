@@ -20,7 +20,6 @@ import {
 	Transaction,
 	codec,
 	EventQueuer,
-	// ValidatorsModule,
 } from 'lisk-sdk';
 
 // TODO: Update this once exposed from SDK
@@ -35,14 +34,11 @@ import { KeysRegisteredEvent } from '../../../../../src/application/modules/lega
 
 const {
 	address: { getAddressFromPublicKey },
-} = cryptography;
-
-const {
 	utils: { getRandomBytes },
 } = cryptography;
 
 const MODULE_NAME = 'legacy';
-const COMMAND_NAME = 'reclaimLSK';
+const COMMAND_NAME = 'registerKeys';
 const senderPublicKey = 'ac8fb4c7318a1ff9e399102f4b87e3d831e734a48013967bfdba978c9313455c';
 const validatorAddress = getAddressFromPublicKey(Buffer.from(senderPublicKey, 'hex'));
 
@@ -84,10 +80,6 @@ const checkEventResult = (
 	expect(eventData).toEqual(expectedResult);
 };
 
-// const createStoreGetter = (stateStore) => ({
-//     getStore: (p1, p2) => stateStore.getStore(p1, p2),
-// });
-
 const chainID = Buffer.from(
 	'e48feb88db5b5cf5ad71d93cdcd1d879b6d5ed187a36b0002cc34e0ef9883255',
 	'hex',
@@ -123,21 +115,16 @@ describe('Register keys command', () => {
 		};
 
 		it('should return status OK when called with valid params', async () => {
-			// const module = new ValidatorsModule();
+			// Mock dependencies
+			const getValidatorKeys = jest
+				.fn()
+				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
+			const unbanValidator = jest.fn();
+			registerKeysCommand.addDependencies({ getValidatorKeys } as any, { unbanValidator } as any);
+
+			// Create context
 			const stateStore = new PrefixedStateReadWriter(new testing.InMemoryPrefixedStateDB());
-			// const validatorKeysStore  = module.stores.get(ValidatorKeysStore);
-
 			const validRegisterKeysTransaction = getRegisterKeysTransaction(transactionParams);
-
-			// await validatorKeysStore.set(
-			// 	createStoreGetter(stateStore),
-			// 	getAddressFromPublicKey(Buffer.from(senderPublicKey, 'hex')),
-			// 	{
-			// 		generatorKey: transactionParams.generatorKey,
-			// 		blsKey: transactionParams.blsKey,
-			// 	},
-			// );
-
 			const context = testing
 				.createTransactionContext({
 					chainID,
@@ -146,12 +133,6 @@ describe('Register keys command', () => {
 				})
 				.createCommandVerifyContext(registerKeysParamsSchema);
 
-			const getValidatorKeys = jest
-				.fn()
-				.mockReturnValue({ blsKey: Buffer.alloc(48), generatorKey: getRandomBytes(32) });
-
-			const unbanValidator = jest.fn();
-			registerKeysCommand.addDependencies({ getValidatorKeys } as any, { unbanValidator } as any);
 			await expect(registerKeysCommand.verify(context)).resolves.toHaveProperty(
 				'status',
 				VerifyStatus.OK,
@@ -191,7 +172,9 @@ describe('Register keys command', () => {
 			// Create mocked dependencies
 			const setValidatorBLSKey = jest.fn().mockReturnValue(true);
 			const setValidatorGeneratorKey = jest.fn().mockReturnValue(true);
-			const getValidatorKeys = jest.fn().mockReturnValue({ generatorKey: Buffer.alloc(32) });
+			const getValidatorKeys = jest
+				.fn()
+				.mockReturnValue({ generatorKey: transactionParams.generatorKey });
 			const unbanValidator = jest.fn();
 			registerKeysCommand.addDependencies(
 				{
@@ -227,7 +210,7 @@ describe('Register keys command', () => {
 		it('should throw error when setValidatorBLSKey fails', async () => {
 			// Create mocked dependencies
 			const setValidatorBLSKey = jest.fn(() => {
-				throw Error('Custom Error');
+				throw new Error('Custom Error');
 			});
 			const setValidatorGeneratorKey = jest.fn().mockReturnValue(true);
 			const getValidatorKeys = jest.fn().mockReturnValue({ generatorKey: Buffer.alloc(32) });
@@ -250,15 +233,13 @@ describe('Register keys command', () => {
 				})
 				.createCommandExecuteContext(registerKeysParamsSchema);
 
-			await expect(registerKeysCommand.execute(context)).rejects.toThrow();
+			await expect(registerKeysCommand.execute(context)).rejects.toThrow(new Error('Custom Error'));
 			expect(setValidatorGeneratorKey).toHaveBeenCalledTimes(1);
 			expect(setValidatorBLSKey).toHaveBeenCalledTimes(1);
 			expect(unbanValidator).toHaveBeenCalledTimes(0);
 		});
 
-		// throw new Error('This address is not registered as validator. Only validators can register a generator key.')
-
-		it('should throw error when setValidatorBLSKey fails when Public key of the transaction sender does not correspond to a registered validator', async () => {
+		it('should throw error when Public key of the transaction sender does not correspond to a registered validator', async () => {
 			// Create mocked dependencies
 			const setValidatorBLSKey = jest.fn().mockReturnValue(true);
 			const setValidatorGeneratorKey = jest.fn(() => {

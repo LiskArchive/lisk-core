@@ -192,7 +192,7 @@ describe('Reclaim command', () => {
 				},
 			};
 			const invalidParamTransaction = getReclaimTransaction(
-				{ invalidParam: reclaimBalance + BigInt(10000) },
+				{ invalidParam: reclaimBalance },
 				invalidSchema,
 			);
 			const context = testing
