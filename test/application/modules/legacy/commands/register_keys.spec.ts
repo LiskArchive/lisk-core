@@ -22,7 +22,7 @@ import {
 	EventQueuer,
 } from 'lisk-sdk';
 
-// TODO: Update this once exposed from SDK
+// TODO: Update the import once this issue is closed: https://github.com/LiskHQ/lisk-sdk/issues/8372
 import { PrefixedStateReadWriter } from '../../../../../node_modules/lisk-framework/dist-node/state_machine/prefixed_state_read_writer';
 
 import { COMMAND_REGISTER_KEYS } from '../../../../../src/application/modules/legacy/constants';

@@ -22,7 +22,7 @@ import {
 	EventQueuer,
 } from 'lisk-sdk';
 
-// TODO: Update this once exposed from SDK
+// TODO: Update the import once this issue is closed: https://github.com/LiskHQ/lisk-sdk/issues/8372
 import { PrefixedStateReadWriter } from '../../../../../node_modules/lisk-framework/dist-node/state_machine/prefixed_state_read_writer';
 
 import { COMMAND_RECLAIM } from '../../../../../src/application/modules/legacy/constants';
@@ -125,7 +125,7 @@ describe('Reclaim command', () => {
 	});
 
 	describe('verify', () => {
-		it(`should return status when called with valid input`, async () => {
+		it('should return status when called with valid input', async () => {
 			await legacyAccountStore.set(createStoreGetter(stateStore), legacyAddress, {
 				balance: reclaimBalance,
 			});
@@ -211,7 +211,7 @@ describe('Reclaim command', () => {
 	});
 
 	describe('execute', () => {
-		it(`should add event to eventQueue on valid reclaim transaction`, async () => {
+		it('should add event to eventQueue on valid reclaim transaction', async () => {
 			const unlock = jest.fn().mockReturnValue(true);
 			const transfer = jest.fn().mockReturnValue(true);
 
