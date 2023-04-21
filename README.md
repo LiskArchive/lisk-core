@@ -33,7 +33,7 @@ The following dependencies need to be installed in order to run applications cre
 
 | Dependencies             | Version |
 | ------------------------ | ------- |
-| NodeJS                   | 16.14.2 |
+| NodeJS                   | 16.20 |
 | Python (for development) | 2.7.18  |
 
 You can find further details on installing these dependencies in our [pre-installation setup guide](https://lisk.com/documentation/lisk-core/setup/source.html#source-pre-install).
@@ -54,42 +54,39 @@ npm run build
 ### From NPM
 
 <!-- usage -->
-
 ```sh-session
 $ npm install -g lisk-core
 $ lisk-core COMMAND
 running command...
 $ lisk-core (-v|--version|version)
-lisk-core/4.0.0-alpha.14 darwin-arm64 node-v16.14.2
+lisk-core/4.0.0-beta.0 darwin-x64 node-v16.20.0
 $ lisk-core --help [COMMAND]
 USAGE
   $ lisk-core COMMAND
 ...
 ```
-
 <!-- usagestop -->
 
 <!-- commands -->
-
 # Command Topics
 
-- [`lisk-core autocomplete`](docs/commands/autocomplete.md) - display autocomplete installation instructions
-- [`lisk-core block`](docs/commands/block.md) - Commands relating to Lisk Core blocks.
-- [`lisk-core blockchain`](docs/commands/blockchain.md) - Commands relating to Lisk Core blockchain data.
-- [`lisk-core config`](docs/commands/config.md) - Commands relating to Lisk Core node configuration.
-- [`lisk-core console`](docs/commands/console.md) - Lisk interactive REPL session to run commands.
-- [`lisk-core endpoint`](docs/commands/endpoint.md) - Invokes the provided endpoint.
-- [`lisk-core generator`](docs/commands/generator.md) - Disable block generation for given validator address.
-- [`lisk-core genesis-block`](docs/commands/genesis-block.md) - Creates genesis block file.
-- [`lisk-core hash-onion`](docs/commands/hash-onion.md) - Create hash onions to be used by the forger.
-- [`lisk-core help`](docs/commands/help.md) - display help for lisk-core
-- [`lisk-core keys`](docs/commands/keys.md) - Return keys corresponding to the given passphrase.
-- [`lisk-core system`](docs/commands/system.md) - Commands relating to Lisk Core node.
-- [`lisk-core passphrase`](docs/commands/passphrase.md) - Commands relating to Lisk Core passphrases.
-- [`lisk-core sdk`](docs/commands/sdk.md) - Commands relating to Lisk SDK development.
-- [`lisk-core start`](docs/commands/start.md) - Start Blockchain Node.
-- [`lisk-core transaction`](docs/commands/transaction.md) - Commands relating to Lisk Core transactions.
-- [`lisk-core version`](docs/commands/version.md)
+* [`lisk-core autocomplete`](docs/commands/autocomplete.md) - display autocomplete installation instructions
+* [`lisk-core block`](docs/commands/block.md) - Commands relating to Lisk Core blocks.
+* [`lisk-core blockchain`](docs/commands/blockchain.md) - Commands relating to Lisk Core blockchain data.
+* [`lisk-core config`](docs/commands/config.md) - Commands relating to Lisk Core node configuration.
+* [`lisk-core console`](docs/commands/console.md) - Lisk interactive REPL session to run commands.
+* [`lisk-core endpoint`](docs/commands/endpoint.md) - Invokes the provided endpoint.
+* [`lisk-core generator`](docs/commands/generator.md) - Disable block generation for given validator address.
+* [`lisk-core genesis-block`](docs/commands/genesis-block.md) - Creates genesis block file.
+* [`lisk-core hash-onion`](docs/commands/hash-onion.md) - Create hash onions to be used by the forger.
+* [`lisk-core help`](docs/commands/help.md) - display help for lisk-core
+* [`lisk-core keys`](docs/commands/keys.md) - Return keys corresponding to the given passphrase.
+* [`lisk-core passphrase`](docs/commands/passphrase.md) - Commands relating to Lisk Core passphrases.
+* [`lisk-core sdk`](docs/commands/sdk.md) - Commands relating to Lisk SDK development.
+* [`lisk-core start`](docs/commands/start.md) - Start Blockchain Node.
+* [`lisk-core system`](docs/commands/system.md) - Commands relating to Lisk Core node.
+* [`lisk-core transaction`](docs/commands/transaction.md) - Commands relating to Lisk Core transactions.
+* [`lisk-core version`](docs/commands/version.md)
 
 <!-- commandsstop -->
 
