@@ -17,9 +17,7 @@ USAGE
 OPTIONS
   -i, --chain-id=chain-id  (required) ChainID in hex format. For example, Lisk mainnet mainchain is 00000000
   -l, --label=label        [default: beta-sdk-app] App Label
-
-  -o, --output=output      [default: /Users/sameer/Documents/Lisk/github/lisk-core] Directory where the config file is
-                           saved
+  -o, --output=output      [default: /Users/manu/workspace/lisk-core] Directory where the config file is saved
 
 EXAMPLES
   config:create --output mydir
@@ -27,7 +25,7 @@ EXAMPLES
   config:create --output mydir --label beta-sdk-app --community-identifier sdk
 ```
 
-_See code: [dist/commands/config/create.ts](https://github.com/LiskHQ/lisk-core/blob/v4.0.0-alpha.14/dist/commands/config/create.ts)_
+_See code: [dist/commands/config/create.ts](https://github.com/LiskHQ/lisk-core/blob/v4.0.0-beta.0/dist/commands/config/create.ts)_
 
 ## `lisk-core config:show`
 
@@ -51,4 +49,4 @@ EXAMPLES
   config:show --config ./custom-config.json --data-path ./data
 ```
 
-_See code: [dist/commands/config/show.ts](https://github.com/LiskHQ/lisk-core/blob/v4.0.0-alpha.14/dist/commands/config/show.ts)_
+_See code: [dist/commands/config/show.ts](https://github.com/LiskHQ/lisk-core/blob/v4.0.0-beta.0/dist/commands/config/show.ts)_
