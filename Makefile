@@ -18,7 +18,7 @@ CORE_CHANNEL := canary
 endif
 
 build:
-	cd docker && docker build -f Dockerfile --build-arg NODEJS_VERSION=$(shell cat ./.nvmrc ) -t=lisk/core:$(CORE_VERSION) ..
+	docker build -f ./docker/Dockerfile --build-arg NODEJS_VERSION=$(shell cat ./.nvmrc ) -t=lisk/core:$(CORE_VERSION) .
 
 start:
 	docker run -d -p 7887:7887 -p 7667:7667 --name lisk-core lisk/core:$(CORE_VERSION) start --network=devnet
