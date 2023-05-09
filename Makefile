@@ -17,6 +17,18 @@ else ifneq ($(findstring canary,$(CORE_VERSION)),)
 CORE_CHANNEL := canary
 endif
 
+build:
+	cd docker && docker build -f Dockerfile --build-arg NODEJS_VERSION=$(shell cat ./.nvmrc ) -t=lisk/core:$(CORE_VERSION) ..
+
+start:
+	docker run -d -p 7887:7887 -p 7667:7667 --name lisk-core lisk/core:$(CORE_VERSION) start --network=devnet
+
+stop:
+	docker stop lisk-core && docker rm lisk-core
+
+logs:
+	docker logs lisk-core --follow
+
 all: node_modules dist/index.js release
 
 clean:
