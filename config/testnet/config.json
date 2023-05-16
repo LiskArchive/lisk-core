@@ -7,7 +7,8 @@
 	"rpc": {
 		"modes": ["ipc", "ws"],
 		"port": 7887,
-		"host": "127.0.0.1"
+		"host": "127.0.0.1",
+		"disabledMethods": ["generator", "random"]
 	},
 	"genesis": {
 		"block": {
@@ -16,7 +17,8 @@
 		"blockTime": 10,
 		"bftBatchSize": 103,
 		"chainID": "01000000",
-		"maxTransactionsSize": 15360
+		"maxTransactionsSize": 15360,
+		"minimumCertifyHeight": 1
 	},
 	"network": {
 		"version": "4.0",
