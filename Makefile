@@ -56,7 +56,7 @@ build-local:
 clean: clean-image clean-local
 
 clean-image:
-	docker rmi lisk/core
+	docker rmi lisk/core; :
 
 clean-local:
 	rm -rf dist/ node_modules/
@@ -66,7 +66,7 @@ start: check-args
 	docker run -d -p 7887:7887 -p 7667:7667 --name lisk-core --rm lisk/core start $(ARGS)
 
 stop:
-	docker stop lisk-core
+	docker stop lisk-core; :
 
 logs:
 	docker logs lisk-core
@@ -74,7 +74,7 @@ logs:
 logs-live:
 	docker logs lisk-core --follow
 
-# Usage: make run ARGS="start help"
+# Usage: make run ARGS="start --help"
 run: check-args
 	docker run --name lisk-core-temp --rm lisk/core $(ARGS)
 
