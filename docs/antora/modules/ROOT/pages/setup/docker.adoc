@@ -113,7 +113,7 @@ Mainnet::
 [source,bash]
 ----
 docker run --volume lisk-data:/home/lisk/.lisk \
-           --publish 5001:5001 \
+           --publish 7887:7887 \
            --name lisk-core \
            lisk/core:4.0.0 \
              start --network=mainnet
@@ -153,7 +153,7 @@ Testnet::
 [source,bash]
 ----
 docker run --volume lisk-data:/home/lisk/.lisk \
-           --publish 5001:5001 \
+           --publish 7887:7887 \
            --name lisk-core \
            lisk/core:4.0.0 \
              start --network=testnet
@@ -168,8 +168,8 @@ Further parameters can be passed after `--network`, for example, as shown below:
 [source,bash]
 ----
 docker run --volume lisk-data:/home/lisk/.lisk \
-           --publish 5001:5001 \
-           --publish 127.0.0.1:5000:5000 \
+           --publish 7887:7887 \
+           --publish 127.0.0.1:7667:7667 \
            --name lisk-core \
            lisk/core:4.0.0 \
              start --network=testnet --enable-http-api-plugin
@@ -180,7 +180,7 @@ Environment variables can be set with `--env`:
 [source,bash]
 ----
 docker run --volume lisk-data:/home/lisk/.lisk \
-           --publish 5001:5001 \
+           --publish 7887:7887 \
            --env LISK_CONSOLE_LOG_LEVEL=debug \
            --name lisk-core \
            lisk/core:4.0.0 \
