@@ -98,7 +98,7 @@ NOTE: Please check for the latest release in the {url_core_releases}[Lisk Core r
 .Podman
 [NOTE]
 ====
-It is also possible to use {url_podman}[podman] instead of docker by simply replacing the occurrences of docker with `podman`, in the following examples or alternatively by creating an alias with the alias `docker=podman`.
+It is also possible to use {url_podman}[podman] instead of docker by simply replacing the occurrences of docker with `podman`, in the following examples or alternatively by creating an alias with `alias docker=podman`.
 // Simply replace occurrences of `docker` with `podman` or `alias docker=podman`.
 
 
