@@ -118,7 +118,7 @@ docker run --volume lisk-data:/home/lisk/.lisk \
            --publish 7887:7887 \
            --name lisk-core \
            lisk/core:4.0.0 \
-             start --network=mainnet
+           start --network=mainnet
 ----
 
 [NOTE]
@@ -158,7 +158,7 @@ docker run --volume lisk-data:/home/lisk/.lisk \
            --publish 7887:7887 \
            --name lisk-core \
            lisk/core:4.0.0 \
-             start --network=testnet
+           start --network=testnet
 ----
 --
 ====
@@ -174,7 +174,7 @@ docker run --volume lisk-data:/home/lisk/.lisk \
            --publish 127.0.0.1:7887:7887 \
            --name lisk-core \
            lisk/core:4.0.0 \
-             start --network=testnet --api-ws --api-http --log=debug
+           start --network=testnet --api-ws --api-http --log=debug
 ----
 
 Environment variables can be set with `--env`:
@@ -186,7 +186,7 @@ docker run --volume lisk-data:/home/lisk/.lisk \
            --env LISK_CONSOLE_LOG_LEVEL=debug \
            --name lisk-core \
            lisk/core:4.0.0 \
-             start --network=mainnet
+           start --network=mainnet
 ----
 
 //TODO: Add link back, once docs are updated
