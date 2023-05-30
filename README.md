@@ -110,8 +110,9 @@ The following system requirements are recommended for validator nodes:
 
 #### OS
 
-- Ubuntu 20.04
-- Ubuntu 18.04
+- Ubuntu 22
+- Ubuntu 20
+- MacOS 13
 
 To start a Lisk Core node as a background process, we recommend using a process management tool, such as [PM2](https://pm2.keymetrics.io/).
 

@@ -4,7 +4,7 @@ ARG NODEJS_VERSION=16
 
 FROM node:$NODEJS_VERSION-alpine AS builder
 
-RUN apk add --no-cache alpine-sdk=~1.0 python3=~3.10 libtool=~2.4 autoconf=~2.71 automake=~1.16 rust=~1.64 cargo=~1.64 cmake=~3.24 clang15-libs=~15.0 clang15-dev=~15.0 clang15=~15.0 rustfmt=~1.64 linux-headers=~5.19 && \
+RUN apk add --no-cache alpine-sdk=~1 python3=~3 libtool=~2 autoconf=~2 automake=~1 rust=~1 cargo=~1 cmake=~3 clang15-libs=~15 clang15-dev=~15 clang15=~15 rustfmt=~1 linux-headers=~5 && \
     adduser -D lisk && \
     mkdir /home/lisk/build && \
     chown -R lisk:lisk /home/lisk/ && \
