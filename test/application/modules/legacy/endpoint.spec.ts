@@ -133,5 +133,16 @@ describe('LegacyEndpoint', () => {
 			expect(legacyAccount).toHaveProperty('legacyAddress', expectedLegacyAccount.legacyAddress);
 			expect(legacyAccount).toHaveProperty('balance', expectedLegacyAccount.balance);
 		});
+
+		it('should throw error when called with invalid params', async () => {
+			const context = testing.createTransientModuleEndpointContext({
+				stateStore,
+				params: {
+					address: getAddressFromPublicKey(nonExistingPublicKey),
+				},
+			});
+
+			await expect(legacyEndpoint.getLegacyAccount(context)).rejects.toThrow();
+		});
 	});
 });

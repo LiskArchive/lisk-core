@@ -160,7 +160,7 @@ describe('Register keys command', () => {
 			);
 		});
 
-		it('should throw error if transaction params does not follow registerBLSKeyParamsSchema', async () => {
+		it('should throw error if transaction params does not follow registerKeysParamsSchema', async () => {
 			// Mock dependencies
 			const setValidatorBLSKey = jest.fn();
 			const getValidatorKeys = jest.fn().mockReturnValue({ generatorKey: Buffer.alloc(32) });

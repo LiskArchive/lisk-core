@@ -32,12 +32,12 @@ export class LegacyEndpoint extends BaseEndpoint {
 	public async getLegacyAccount(
 		ctx: ModuleEndpointContext,
 	): Promise<JSONObject<LegacyStoreData> | undefined> {
-		validator.validate(legacyAccountRequestSchema, ctx.params);
-
-		const publicKey = Buffer.from(ctx.params.publicKey as string, 'hex');
-		const legacyStore = this.stores.get(LegacyAccountStore);
-
 		try {
+			validator.validate(legacyAccountRequestSchema, ctx.params);
+
+			const publicKey = Buffer.from(ctx.params.publicKey as string, 'hex');
+			const legacyStore = this.stores.get(LegacyAccountStore);
+
 			const legacyAddressBuffer = getLegacyAddress(publicKey);
 			const legacyAddress = legacyAddressBuffer.toString('hex');
 			const hasLegacyAddress = await legacyStore.has(ctx, legacyAddressBuffer);
