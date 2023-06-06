@@ -47,6 +47,17 @@ export class RegisterKeysCommand extends BaseCommand {
 	}
 
 	public async verify(ctx: CommandVerifyContext): Promise<VerificationResult> {
+		const params = (ctx.params as unknown) as registerKeysData;
+
+		try {
+			validator.validate(registerKeysParamsSchema, params);
+		} catch (err) {
+			return {
+				status: VerifyStatus.FAIL,
+				error: err as Error,
+			};
+		}
+
 		const validatorAddress = getAddressFromPublicKey(ctx.transaction.senderPublicKey);
 		const validatorKeys = await this._validatorsMethod.getValidatorKeys(
 			ctx.getMethodContext(),
@@ -65,8 +76,6 @@ export class RegisterKeysCommand extends BaseCommand {
 
 	public async execute(ctx: CommandExecuteContext): Promise<void> {
 		const params = (ctx.params as unknown) as registerKeysData;
-		validator.validate(registerKeysParamsSchema, params);
-
 		const validatorAddress = getAddressFromPublicKey(ctx.transaction.senderPublicKey);
 
 		await this._validatorsMethod.setValidatorGeneratorKey(
