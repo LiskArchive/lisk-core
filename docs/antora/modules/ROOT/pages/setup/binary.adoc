@@ -6,6 +6,7 @@ Christopher Braithwaite <christopher.braithwaite@lightcurve.io> Mona Bärenfäng
 :sectnums:
 :page-toclevels: 4
 
+
 // External URLs
 :url_set_path: https://opensource.com/article/17/6/set-path-linux
 // Project URLs
@@ -18,8 +19,8 @@ The binary installation offers an easy and automated approach to setting up Lisk
 == Pre-installation
 
 === Supported platforms
-* Ubuntu 18.04 (LTS) x86_64
 * Ubuntu 20.04 (LTS) x86_64
+* Ubuntu 22.04 (LTS) x86_64
 * MacOS x86_64
 * MacOS ARM (Apple Silicon)
 
