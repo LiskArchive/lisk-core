@@ -24,7 +24,7 @@ Supported Platforms::
 * Ubuntu 22.04 (LTS) x86_64
 * MacOS x86_64
 Node.js::
-* 18.16.0
+* 18
 
 include::partial$create-a-new-user.adoc[]
 
