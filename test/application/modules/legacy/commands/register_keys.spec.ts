@@ -159,6 +159,53 @@ describe('Register keys command', () => {
 				VerifyStatus.FAIL,
 			);
 		});
+
+		it('should throw error if transaction params does not follow registerKeysParamsSchema', async () => {
+			// Mock dependencies
+			const setValidatorBLSKey = jest.fn();
+			const getValidatorKeys = jest.fn().mockReturnValue({ generatorKey: Buffer.alloc(32) });
+			const unbanValidator = jest.fn();
+			registerKeysCommand.addDependencies(
+				{ setValidatorBLSKey, getValidatorKeys } as any,
+				{ unbanValidator } as any,
+			);
+
+			// Create context
+			const invalidParams = {
+				blsKey: getRandomBytes(48),
+				proofOfPossession: getRandomBytes(64).toString('hex'),
+			};
+			const invalidRegisterKeysParamsSchema = {
+				$id: '/legacy/command/invalidRegisterKeysParams',
+				type: 'object',
+				required: ['blsKey', 'proofOfPossession'],
+				properties: {
+					blsKey: {
+						dataType: 'bytes',
+						fieldNumber: 1,
+					},
+					proofOfPossession: {
+						dataType: 'string',
+						fieldNumber: 2,
+					},
+				},
+			};
+			const invalidRegisterKeysTransaction = getRegisterKeysTransaction(
+				invalidParams,
+				invalidRegisterKeysParamsSchema,
+			);
+			const context = testing
+				.createTransactionContext({
+					chainID,
+					transaction: invalidRegisterKeysTransaction,
+				})
+				.createCommandVerifyContext(invalidRegisterKeysParamsSchema);
+
+			await expect(registerKeysCommand.verify(context)).resolves.toHaveProperty(
+				'status',
+				VerifyStatus.FAIL,
+			);
+		});
 	});
 
 	describe('execute', () => {
@@ -275,51 +322,6 @@ describe('Register keys command', () => {
 			expect(setValidatorGeneratorKey).toHaveBeenCalledTimes(1);
 			expect(setValidatorBLSKey).toHaveBeenCalledTimes(0);
 			expect(unbanValidator).toHaveBeenCalledTimes(0);
-		});
-
-		it('should throw error if transaction params does not follow registerBLSKeyParamsSchema', async () => {
-			// Mock dependencies
-			const setValidatorBLSKey = jest.fn();
-			const getValidatorKeys = jest.fn().mockReturnValue({ generatorKey: Buffer.alloc(32) });
-			const unbanValidator = jest.fn();
-			registerKeysCommand.addDependencies(
-				{ setValidatorBLSKey, getValidatorKeys } as any,
-				{ unbanValidator } as any,
-			);
-
-			// Create context
-			const invalidParams = {
-				blsKey: getRandomBytes(48),
-				proofOfPossession: getRandomBytes(64).toString('hex'),
-			};
-			const invalidRegisterKeysParamsSchema = {
-				$id: '/legacy/command/invalidRegisterKeysParams',
-				type: 'object',
-				required: ['blsKey', 'proofOfPossession'],
-				properties: {
-					blsKey: {
-						dataType: 'bytes',
-						fieldNumber: 1,
-					},
-					proofOfPossession: {
-						dataType: 'string',
-						fieldNumber: 2,
-					},
-				},
-			};
-			const invalidRegisterKeysTransaction = getRegisterKeysTransaction(
-				invalidParams,
-				invalidRegisterKeysParamsSchema,
-			);
-			const context = testing
-				.createTransactionContext({
-					chainID,
-					transaction: invalidRegisterKeysTransaction,
-				})
-				.createCommandExecuteContext(invalidRegisterKeysParamsSchema);
-
-			await expect(registerKeysCommand.execute(context)).rejects.toThrow();
-			expect(setValidatorBLSKey).toHaveBeenCalledTimes(0);
 		});
 
 		it('should throw error when transaction params has no BLS key', async () => {

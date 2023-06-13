@@ -98,8 +98,10 @@ NOTE: Please check for the latest release in the {url_core_releases}[Lisk Core r
 .Podman
 [NOTE]
 ====
-{url_podman}[podman] can be used.
-Simply replace occurrences of `docker` with `podman` or `alias docker=podman`.
+It is also possible to use {url_podman}[podman] instead of docker by simply replacing the occurrences of docker with `podman`, in the following examples or alternatively by creating an alias with `alias docker=podman`.
+// Simply replace occurrences of `docker` with `podman` or `alias docker=podman`.
+
+
 ====
 
 Create a "lisk-core" container:
@@ -113,10 +115,10 @@ Mainnet::
 [source,bash]
 ----
 docker run --volume lisk-data:/home/lisk/.lisk \
-           --publish 5001:5001 \
+           --publish 7887:7887 \
            --name lisk-core \
            lisk/core:4.0.0 \
-             start --network=mainnet
+           start --network=mainnet
 ----
 
 [NOTE]
@@ -153,10 +155,10 @@ Testnet::
 [source,bash]
 ----
 docker run --volume lisk-data:/home/lisk/.lisk \
-           --publish 5001:5001 \
+           --publish 7887:7887 \
            --name lisk-core \
            lisk/core:4.0.0 \
-             start --network=testnet
+           start --network=testnet
 ----
 --
 ====
@@ -168,11 +170,11 @@ Further parameters can be passed after `--network`, for example, as shown below:
 [source,bash]
 ----
 docker run --volume lisk-data:/home/lisk/.lisk \
-           --publish 5001:5001 \
-           --publish 127.0.0.1:5000:5000 \
+           --publish 7667:7667 \
+           --publish 127.0.0.1:7887:7887 \
            --name lisk-core \
            lisk/core:4.0.0 \
-             start --network=testnet --enable-http-api-plugin
+           start --network=testnet --api-ws --api-http --log=debug
 ----
 
 Environment variables can be set with `--env`:
@@ -180,27 +182,17 @@ Environment variables can be set with `--env`:
 [source,bash]
 ----
 docker run --volume lisk-data:/home/lisk/.lisk \
-           --publish 5001:5001 \
+           --publish 7667:7667 \
            --env LISK_CONSOLE_LOG_LEVEL=debug \
            --name lisk-core \
            lisk/core:4.0.0 \
-             start --network=testnet
+           start --network=mainnet
 ----
 
 //TODO: Add link back, once docs are updated
 //See the xref:{url_config}[] guide for a reference of more configuration options.
 
-An example with all possible flags set is shown below:
 
-[source,bash]
-----
-docker run -d --volume /data:/home/lisk/.lisk \
-    --publish 7000:7000 --publish 8080:8080 --publish 7008:7008\
-    --name lisk-core lisk/core:4.0.0 start --network=testnet --port 7000\
-    --api-ws --enable-http-api-plugin --http-api-plugin-port 7008\
-    --http-api-plugin-host host.docker.internal --http-api-plugin-whitelist 0.0.0.0/0 \
-    --api-ws --api-ws-port 8080 --api-ws-host 0.0.0.0
-----
 
 == Import blockchain snapshot
 
