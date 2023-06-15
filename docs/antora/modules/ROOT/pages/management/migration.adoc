@@ -12,20 +12,21 @@
 // Project URLs
 :url_core_install: setup/binary.adoc
 :url_sdk_protocol_voteweight: ROOT::understand-blockchain/consensus/pos-poa.adoc#validator-weight
+:url_run_validator: ROOT::run-blockchain/become-validator.adoc
 
 This guide explains how to migrate a Lisk Core v3.0.4 node to Lisk Core v4.x using the Lisk migrator v2.
 
 The Lisk migrator CLI will generate a new genesis block for Lisk Core v4.
 The new genesis block is created based on a snapshot of the old blockchain (running on Lisk Core v3.0.4) at a given height.
-The Lisk migrator will not install Lisk Core v4, nor will it uninstall Lisk Core v3.0.4, these are steps that need to be done manually as described below.
 
 [IMPORTANT]
 
 ====
-All actively forging delegates on the Lisk Mainnet and the Lisk Testnet need to follow this guide to correctly migrate their nodes to the new network, in order to not miss any blocks after the network hard fork.
+All active validators on the Lisk Mainnet and the Lisk Testnet need to follow this guide to correctly migrate their nodes to the new network, in order to not miss any blocks after the network hard fork.
 
 Optionally, anyone running a Lisk Core v3.0.4 who is not an active validator can participate in the migration process.
-In this case, the following steps 1.4, 2.7, 2.8, and 2.9 in this guide can be skipped, as they are only relevant for validators.
+//TODO: Update steps
+//In this case, the following steps 1.4, 2.7, 2.8, and 2.9 in this guide can be skipped, as they are only relevant for validators.
 ====
 
 :sectnums:
@@ -39,8 +40,7 @@ In this case, the following steps 1.4, 2.7, 2.8, and 2.9 in this guide can be sk
 The following system requirements are recommended for running the migration script:
 
 Memory::
-* Machines with a minimum of 4 GB RAM for the Mainnet.
-* Machines with a minimum of 2 GB RAM for the Testnet.
+* minimum of 4 GB RAM
 
 OS::
 * Ubuntu 20.04 LTS
@@ -107,126 +107,21 @@ Make the `lisk-migrator` command available in the PATH, e.g. by executing the fo
 export PATH="$PATH:$HOME/lisk-migrator/bin"
 ----
 
-Replace `$HOME` with the absolute path of where the `lisk-migrator` folder is located, in case it was extracted somewhere else other than in your home directory.
-
-=== Setting up Lisk Core v4
-
-Follow the guide how to xref:{url_core_install}[setup Lisk Core v4] for the binary distribution.
-
-IMPORTANT: Don't start Lisk Core v4 yet.
-
-=== Add your validator information to the node config
-
-First copy the existing config file for the respective network.
-
-[tabs]
-====
-Mainnet::
-+
---
-[source,bash]
-----
-cp ~/lisk-core/config/mainnet/config.json ~/lisk-core/config/mainnet/custom-config.json <1>
-----
---
-Testnet::
-+
---
-[source,bash]
-----
-cp ~/lisk-core/config/testnet/config.json ~/lisk-core/config/testnet/custom-config.json <1>
-----
---
-====
-
-Next, use the CLI of Lisk Core v4 to generate the delegate configuration data.
-
-[source,bash]
-----
-lisk-core forging:config --output custom-forging.json
-----
-
-After running the command, you will be prompted for your delegate passphrase and for the password that will be used to encrypt the passphrase, so it can be stored securely in the delegate configuration data.
-
-----
-? Please enter passphrase:  [hidden]
-? Please re-enter passphrase:  [hidden]
-? Please enter password:  [hidden]
-? Please re-enter password:  [hidden]
-----
-
-After providing the required inputs, the delegate configuration data will be saved in the file `custom-forging.json`.
-
-.Example of custom-forging.json
-[source,js]
-----
-{
-  forging: {
-    delegates: [ <1>
-        {
-            address: "86555265f0110b4ed5a8cb95dbc732e77732c474",
-            encryptedPassphrase: "iterations=1&salt=476d4299531718af8c88156aab0bb7d6&cipherText=663dde611776d87029ec188dc616d96d813ecabcef62ed0ad05ffe30528f5462c8d499db943ba2ded55c3b7c506815d8db1c2d4c35121e1d27e740dc41f6c405ce8ab8e3120b23f546d8b35823a30639&iv=1a83940b72adc57ec060a648&tag=b5b1e6c6e225c428a4473735bc8f1fc9&version=1",
-            hashOnion: {
-                "count": 1000000,
-                "distance": 1000,
-                "hashes": [
-                    "ff2156e33c4aefa4a5a790edbe329f4a",
-                    "5f86db180d4e63be6412d42d444dfb49",
-                    "10fc37bb42d7f77030138e45795fef65",
-                    "f04a306a73c5d7d94cc4f262b4d5ebb4",
-                    //[...]
-                    "ca41d52225f4b76140fc7f277731d326",
-                    "fde61109609b74ba16d5ebd72a8b446f",
-                    "9752dc2228492466d7c2046354d5fdfd"
-                ]
-            }
-        }
-    ]
-  }
-}
-----
-
-<1>  The list of delegates who are allowed to forge on this node.
-
-Merge the forging config with the created custom config as shown in <<create-a-custom-config-with-your-delegate-information,step 1.4>> above, to add the delegate information to the application configuration:
-
-[tabs]
-====
-Mainnet::
-+
---
-[source,bash]
-----
-TEMP_FILE=$( mktemp )
-jq --slurp '.[0] * .[1]' ~/lisk-core/config/mainnet/custom-config.json ./custom-forging.json >$TEMP_FILE
-mv $TEMP_FILE ~/lisk-core/config/mainnet/custom-config.json
-----
---
-Testnet::
-+
---
-[source,bash]
-----
-TEMP_FILE=$( mktemp )
-jq --slurp '.[0] * .[1]' ~/lisk-core/config/testnet/custom-config.json ./custom-forging.json >$TEMP_FILE
-mv $TEMP_FILE ~/lisk-core/config/testnet/custom-config.json
-----
---
-====
+In case `lisk-migrator` was extracted somewhere else other than in your home directory, replace `$HOME` with the absolute path of where the `lisk-migrator` folder is located.
 
 == Migration steps
 
 === Check the announced snapshot height
 
-* For Mainnet: `16270292` +
+* For Mainnet: `TBD` +
 For more information check the {url_lisk_blog_migration_mainnet}[Mainnet migration announcement^].
-* For Testnet: `14075259` +
+* For Testnet: `TBD` +
 For more information check the {url_lisk_blog_migration}[Testnet migration announcement^].
 
 The height is needed by `lisk-migrator` in the next step.
 A snapshot of the blockchain will be created at this particular height, which will then be used to create the genesis block for the new blockchain.
 
-=== Ensure Lisk Core v2.1.7 is fully synced with the network
+=== Ensure Lisk Core v3.0.4 is fully synced with the network
 Check the current block height of your node directly in the terminal by running the following command:
 
 [tabs]
@@ -261,7 +156,7 @@ Compare the current height of your node to the network height in {url_wallet}[Li
 
 If both heights are equal, it is verified that your node is fully synched with the network.
 
-NOTE: To view the current height of the Lisk Testnet, use the network switcher of Lisk Desktop, which can be enabled in the settings.
+NOTE: To view the current height of the *Lisk Testnet*, use the network switcher of Lisk Desktop, which can be enabled in the settings.
 
 === Run lisk migrator
 
@@ -280,7 +175,7 @@ Mainnet::
 --
 [source,bash]
 ----
-lisk-migrator --snapshot-height ${snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet/genesis_block.json --lisk-core-path ~/lisk-main
+lisk-migrator --snapshot-height ${snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --lisk-core-v3-data-path ~/lisk-main --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
 ----
 --
 Testnet::
@@ -288,7 +183,7 @@ Testnet::
 --
 [source,bash]
 ----
-lisk-migrator --snapshot-height ${snapshotHeight} --output ~/.lisk/lisk-core/config/testnet/genesis_block.json --lisk-core-path ~/lisk-test
+lisk-migrator --snapshot-height ${snapshotHeight} --output ~/.lisk/lisk-core/config/testnet --lisk-core-v3-data-path ~/lisk-test --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
 ----
 --
 ====
@@ -298,8 +193,8 @@ The height on which the blockchain snapshot will be performed.
 The snapshot height will be announced separately.
 * `--output`:
 The absolute path to the directory, where the newly generated genesis block should be saved.
-* `--lisk-core-path`:
-The absolute path to the directory, where the Lisk Core v2.1.7 node is located.
+* `--lisk-core-v3-data-path`:
+The absolute path to the directory, where the Lisk Core v3.0.4 node is located.
 
 [TIP]
 
@@ -311,7 +206,7 @@ With `screen` you can detach the current terminal window into the background:
 .Example (Mainnet) footnote:snap_footnote[]
 [source,bash]
 ----
-screen -dmSL migration lisk-migrator --snapshot-height ${snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet/genesis_block.json --lisk-core-path ~/lisk-main
+screen -dmSL migration lisk-migrator --snapshot-height ${snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --lisk-core-v3-data-path ~/lisk-main --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
 ----
 
 Shortly before the migration occurs, it is possible to reattach to it in order to check if everything is working correctly.
@@ -341,16 +236,16 @@ screen -r 1842.migration
 
 === Wait until the network reaches the snapshot height
 
-Observe if `lisk-migrator` finishes successfully, (this takes about 30-60 minutes from the snapshot height).
+Observe if `lisk-migrator` finishes successfully, (this takes about several minutes).
 
-After the snapshot height is reached, delegates have approximately 2 hours time to start their Lisk Core v3 and enable forging, to ensure they will not miss any blocks after the hardfork.
+After the snapshot height is reached, validators have approximately 2 hours time to enable block generation, to ensure they will not miss any blocks after the hardfork.
 
 If the node is started at a later point in time, it will simply sync to the current network height.
-For delegates, this might result in them missing a block, for everyone else it will not have any impact.
+For validators, this might result in them missing a block, for everyone else it will not have any impact.
 
-=== Stop Lisk Core v2.1.7
+=== Stop Lisk Core v3.0.4
 
-After the `lisk-migrator` script has finished and the announced snapshot height has passed, there is no reason to continue running Lisk Core v2.1.7 and therefore it is recommended to stop it.
+After the `lisk-migrator` script has finished and the announced snapshot height has passed, there is no reason to continue running Lisk Core v3.0.4 and therefore it is recommended to stop it.
 
 First ensure, that Lisk Core will not start again by removing the existing cronjob:
 
@@ -365,14 +260,14 @@ Choose your favorite editor to open the `crontab` file and remove the following 
 
 Save and close the `crontab` file again.
 
-Navigate into the root folder of your Lisk Core v2.1.7 installation and run the following command to stop the old Lisk Core version:
+Navigate into the root folder of your Lisk Core v3.0.4 installation and run the following command to stop the old Lisk Core version:
 
 [source,bash]
 ----
 bash lisk.sh stop
 ----
 
-Last but not least, remove the folder with Lisk Core v2.1.7, e.g. by executing the following:
+Last but not least, remove the folder with Lisk Core v3.0.4, e.g. by executing the following:
 
 [tabs]
 ====
@@ -394,6 +289,7 @@ rm -r lisk-test
 --
 ====
 
+////
 === Start Lisk Core v3
 Use the Lisk Core CLI to start Lisk Core v3.
 
@@ -491,132 +387,181 @@ This will return certain general node information, for example as shown below:
 ----
 
 TIP: Use the `--pretty` flag to return the response in formatted JSON: `lisk-core node:info --pretty`.
+////
+=== Enabling block generators after migration (for validators)
 
-=== Check new account address
+==== Allow methods in the node config
 
-It is necessary to know your new address to enable forging for your delegate in the new network.
+To be able to run certain validator-related commands of the node, it is required to enable security-sensitive methods in the node config.
 
-Use the following command to view your new account address.
-You will be prompted for your passphrase from which the other account details will be generated.
+.config.json
+[source,json]
+----
+{
+  "rpc": {
+    "modes": ["ipc"],
+    "allowedMethods": ["generator", "system", "random"]
+  },
+}
+----
+
+Restart the node with the `--overwrite-config` flag, to load the updated configuration.
+
+[TIP]
+====
+`allowedMethods` refers to the `method` defined in the {url_jsonrpc}[JSON-RPC specification^].
+
+Add the `namespace`, to allow all endpoints of `namespace`, or `namespace_endpointName` to allow a specific endpoint.
+====
+
+==== Create the validator keys
+
+It is possible to generate all relevant validator keys to enable block generation from the account passphrase.
+
+To do so, use the command xref:{url_sdk_cli_keyscreate}[keys:create].
 
 [source,bash]
 ----
-lisk-core account:show
+lisk-core keys:create --output config/keys.json
 ----
 
-After running the above command, you will be prompted for your delegate passphrase.
+Next, you will be prompted for the validator *passphrase*, and it will also ask for a *password*, in order to symmetrically encrypt the passphrase for the config.
 
 ----
 ? Please enter passphrase:  [hidden]
 ? Please re-enter passphrase:  [hidden]
+? Please enter password:  [hidden]
+? Please re-enter password:  [hidden]
 ----
 
-This will return an object including `privateKey`, `publicKey`, `address`, and `binaryAddress`.
+CAUTION: The password is sensitive information.
+Store the password used here for the encryption somewhere safe.
+It will be required every time to enable block generation, in order to decrypt the generator keys in the node.
 
-The value under `binaryAddress` is used to self-vote for the delegate account and to enable forging in the next steps.
+This will generate the following file, which includes all important keys for the validator account:
 
-=== Self-voting
+.config/keys.json
+[source,json]
+----
+{
+  "keys": [
+    {
+      "address": "lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3",
+      "keyPath": "m/44'/134'/0'",
+      "publicKey": "6290c8b58de8b71fedb7e3cb9a6ee9426aa3e7ac0141f278526375d46705b546",
+      "privateKey": "759305903f7bbb449cf2fd22e6da476792b63e24558e266a4859f9ed3c91fd7e6290c8b58de8b71fedb7e3cb9a6ee9426aa3e7ac0141f278526375d46705b546",
+      "plain": {
+        "generatorKeyPath": "m/25519'/134'/0'/0'",
+        "generatorKey": "aaecd278a3fadc40a4a824d6f4aa24547d8fb9d075ec4d6967a7084f9a3f2541",
+        "generatorPrivateKey": "81316f0582fd2cc0a651318aa0041ce36e7b786033b98ec545ec04078fad67caaaecd278a3fadc40a4a824d6f4aa24547d8fb9d075ec4d6967a7084f9a3f2541",
+        "blsKeyPath": "m/12381/134/0/0",
+        "blsKey": "815a9e7643cf2bace98d1337f1dca8e39949592cd3fcb79bf3ab5784981468b9987b3340527bc9ca263a2fd061812024",
+        "blsProofOfPosession": "add8669bb57f3dceec04dc0f875906cb52a677f1df911536c01f447c8830bf27cd43713af18d84de5a64ec504aeaf9a30521c09438bb5a4d5fd634946c65e0fc4ea3681fdb4f6949cb6c1bc1ac1ddec3df058a13466af5a13d50737938fd7d5f",
+        "blsPrivateKey": "36506a53431665265ee03d7e19a5d44db3ff159d9aeee05727a8b24abc67651a"
+      },
+      "encrypted": {
+        "ciphertext": "c3009d4a505ac32a652ffce6aa718073c7ca75b00578420ba20c2533a83f38e2b3e20cf1d6f0c9905efe28b5276142b93fdbdd33134d37bcd2db23654da92bb2becd00971c49ecc749100748c93344477ea52f6073c3fefec7234962d0eccdaa6862d9d0da46dbfe85cef98ad6cab0f2c1cb1b54326617132bb950d1c14a774a1e6403e8fa1bf3a2c7c0d6856266cf738f41ac01b2217d93070c4079e1b82044d3a692ea225290c2b6bcb902e0ffb8132f4c0f29325e6a3a",
+        "mac": "2b3c65d0385a870ab499dfcddf411347506671015f412b35600153b132a455ea",
+        "kdf": "argon2id",
+        "kdfparams": {
+          "parallelism": 4,
+          "iterations": 1,
+          "memorySize": 2024,
+          "salt": "a5598628001346f608b3f57dd38b8611"
+        },
+        "cipher": "aes-256-gcm",
+        "cipherparams": {
+          "iv": "683600a199d154e51c0f97e6",
+          "tag": "32807058f7f89921b4839fc39256cd24"
+        },
+        "version": "1"
+      }
+    }
+  ]
+}
+----
 
-In the new DPoS rules, delegates need to self-vote with a significant amount of tokens to be able to reach forging positions.
+[CAUTION]
+====
+The generated keys are very sensitive information.
 
-For more information how self-voting affects the vote weight, see xref:{url_sdk_protocol_voteweight}[Delegates, voting, and delegate weight, (Lisk Protocol)].
+Especially the not encrypted values need to be treated *equally sensitive as the passphrase for an account.*
+So after the keys are imported in step <<import-the-validator-keys>>, make sure to store the file somewhere safe, or delete the file completely.
+====
 
-==== Voting with Lisk Desktop
+==== Import the validator keys
 
-Use Lisk Desktop to cast the self-vote conveniently from a user interface.
-
-Just login with your passphrase, after updating Lisk Desktop to the latest 2.x version.
-
-See the two example videos below, which show how to vote with Lisk Desktop v2:
-
-video::CKwf2u-QfuU[youtube]
-
-video::KAPor0lMz5U[youtube]
-
-==== Voting via Lisk Core CLI
-
-Use the Lisk Core CLI to cast the self-vote with the desired amount of tokens from the command line.
+After creating the validator keys as suggested in the  <<create-the-validator-keys>> section, the next step is to import them into the node.
 
 [source,bash]
 ----
-$ lisk-core transaction:create 5 1 100000000
-? Please enter: votes(delegateAddress, amount):  89aa5fc8861d392f60662f76a379cc348fe97d28, 148000000000
-? Want to enter another votes(delegateAddress, amount) No
-? Please enter passphrase:  [hidden]
-? Please re-enter passphrase:  [hidden]
-{"transaction":"0805100118012080c2d72f2a2024350a05e078b181fa8f3c273ca9882a8f5ed6efbaf3d1537665f9480635273f321f0a1d0a1489aa5fc8861d392f60662f76a379cc348fe97d281080a0e6d7ce083a403aef0012b05f3d962e3bc4b1ba70d6cc4fea783e24c02c36bc644e283ef2dd7618ec072594505c7ab8ce2a1e22dda5e90c51be79d06ac4871daf8430ff6a330b"}
-$ lisk-core transaction:send 0805100118012080c2d72f2a2024350a05e078b181fa8f3c273ca9882a8f5ed6efbaf3d1537665f9480635273f321f0a1d0a1489aa5fc8861d392f60662f76a379cc348fe97d281080a0e6d7ce083a403aef0012b05f3d962e3bc4b1ba70d6cc4fea783e24c02c36bc644e283ef2dd7618ec072594505c7ab8ce2a1e22dda5e90c51be79d06ac4871daf8430ff6a330b
-Transaction with id: '6a6121adf6a73a857bef92eaec9c29545f53c9196a16faa1eafdf58012f5a2e5' received by node.
+lisk-core keys:import --file-path config/keys.json
 ----
 
-==== Voting with a multisignature account
-
-All accounts which had a second passphrase registered in Lisk Core v2 are converted to multisignature accounts which need 2 mandatory signatures.
-The voting process therefore works a little different for accounts with a second passphrase:
+==== Set the hash onion
+Without the hash onion, a validator won't be able to receive any rewards for generating new blocks, although the blocks would still be valid in that case.
+To not miss any rewards, it is of high interest for a validator to set the hash onion, before enabling block generation on the node.
 
 [source,bash]
 ----
-$ lisk-core transaction:create 5 1 100000000
-? Please enter: votes(delegateAddress, amount):  331e287263c8166febde9d77a5f333df75056c74, 5555000000000
-? Want to enter another votes(delegateAddress, amount) No
-? Please enter passphrase:  [hidden] # <1>
-? Please re-enter passphrase:  [hidden]
-{"transaction":"0805100118002080c2d72f2a2030c07dbb72b41e3fda9f29e1a4fc0fce893bb00788515a5e6f50b80312e2f48332200a1e0a14331e287263c8166febde9d77a5f333df75056c741080f8e9fcabc3023a4072b159f5a7d2934b1a5131b36f711e9ca8fcd2cce68c607eb468cb1926b84fa33205fd294df23cd02e5b2107849b651e5a9b8e064c59ca16eb1f72e90065330f"}
-# Use the transaction hex output from above in the command below
-$ lisk-core transaction:sign 0805100118002080c2d72f2a2030c07dbb72b41e3fda9f29e1a4fc0fce893bb00788515a5e6f50b80312e2f48332200a1e0a14331e287263c8166febde9d77a5f333df75056c741080f8e9fcabc3023a4072b159f5a7d2934b1a5131b36f711e9ca8fcd2cce68c607eb468cb1926b84fa33205fd294df23cd02e5b2107849b651e5a9b8e064c59ca16eb1f72e90065330f \
---mandatory-keys="30c07dbb72b41e3fda9f29e1a4fc0fce893bb00788515a5e6f50b80312e2f483" \ # <2>
---mandatory-keys="f7a16edaf7995d522d5e6ac69d7325df76f5883dd084409eb13df8d61c33abfb" \ # <3>
---sender-public-key="30c07dbb72b41e3fda9f29e1a4fc0fce893bb00788515a5e6f50b80312e2f483" # <4>
-? Please enter passphrase:  [hidden] # <5>
-? Please re-enter passphrase:  [hidden]
-{"transaction":"0805100118002080c2d72f2a2030c07dbb72b41e3fda9f29e1a4fc0fce893bb00788515a5e6f50b80312e2f48332200a1e0a14331e287263c8166febde9d77a5f333df75056c741080f8e9fcabc3023a4072b159f5a7d2934b1a5131b36f711e9ca8fcd2cce68c607eb468cb1926b84fa33205fd294df23cd02e5b2107849b651e5a9b8e064c59ca16eb1f72e90065330f3a00"}
-# Use the transaction hex output from above in the command below
-$ lisk-core transaction:sign 0805100118002080c2d72f2a2030c07dbb72b41e3fda9f29e1a4fc0fce893bb00788515a5e6f50b80312e2f48332200a1e0a14331e287263c8166febde9d77a5f333df75056c741080f8e9fcabc3023a4072b159f5a7d2934b1a5131b36f711e9ca8fcd2cce68c607eb468cb1926b84fa33205fd294df23cd02e5b2107849b651e5a9b8e064c59ca16eb1f72e90065330f \
---mandatory-keys="30c07dbb72b41e3fda9f29e1a4fc0fce893bb00788515a5e6f50b80312e2f483" \
---mandatory-keys="f7a16edaf7995d522d5e6ac69d7325df76f5883dd084409eb13df8d61c33abfb" \
---sender-public-key="30c07dbb72b41e3fda9f29e1a4fc0fce893bb00788515a5e6f50b80312e2f483"
-? Please enter passphrase:  [hidden] # <6>
-? Please re-enter passphrase:  [hidden]
-{"transaction":"0805100118002080c2d72f2a2030c07dbb72b41e3fda9f29e1a4fc0fce893bb00788515a5e6f50b80312e2f48332200a1e0a14331e287263c8166febde9d77a5f333df75056c741080f8e9fcabc3023a4072b159f5a7d2934b1a5131b36f711e9ca8fcd2cce68c607eb468cb1926b84fa33205fd294df23cd02e5b2107849b651e5a9b8e064c59ca16eb1f72e90065330f3a401c644e345238bc27f0f6af84ed8be2c8f3b70d30d91b3af45da511cb0da61f80061fbb05bab09e0606a3f9d715176d49cdf5400dd299bd2e04bd8573a6933d04"}
-# Use the transaction hex output from above in the command below
-$ lisk-core transaction:send 0805100118002080c2d72f2a2030c07dbb72b41e3fda9f29e1a4fc0fce893bb00788515a5e6f50b80312e2f48332200a1e0a14331e287263c8166febde9d77a5f333df75056c741080f8e9fcabc3023a4072b159f5a7d2934b1a5131b36f711e9ca8fcd2cce68c607eb468cb1926b84fa33205fd294df23cd02e5b2107849b651e5a9b8e064c59ca16eb1f72e90065330f3a401c644e345238bc27f0f6af84ed8be2c8f3b70d30d91b3af45da511cb0da61f80061fbb05bab09e0606a3f9d715176d49cdf5400dd299bd2e04bd8573a6933d04
-Transaction with id: 'cf1e7af1b385a630c893ac45c9a4cdf5536769ba6e678a9779ff9af135ee5ec9' received by node.
+lisk-core endpoint:invoke random_setHashOnion '{"address":"lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3"}'
 ----
 
-<1> Use the *passphrase* of the *first* account.
-<2> Use the *public key* of the *first* account.
-<3> Use the *public key* of the *second* account.
-<4> Use the *public key* of the *first* account.
-<5> Use the *passphrase* of the *first* account.
-<6> Use the *passphrase* of the *second* account.
+To verify that the hash onion was set correctly, <<get-the-hash-onion>> back from the node.
 
-=== Enable forging
+[CAUTION]
+====
+If you see the following error after running the command:
 
-The final step is to enable forging on the node for your delegate.
+[source,bash]
+----
+$ lisk-core endpoint:invoke random_setHashOnion '{"address":"lskxsddtvbc7ze98bqbawaq3ydj2f8387429633t9"}'
+ ›   Error: Response not received in 3000ms
+----
+
+This suggests that the API timed out.
+However, the hash onion is still created in most cases.
+You can wait for a while and then get the hash onion, to verify that it actually is set.
+
+[source,bash]
+----
+lisk-core endpoint:invoke random_getHashOnionSeeds --pretty
+----
+====
+
+==== Register legacy validaor keys
+
+
+==== Enable block generation
+
+The final step is to enable block generation on the node for your validator.
 
 Again, this can be done by using the Lisk Core CLI.
-Just use it with your own delegate address.
 
 [source,bash]
 ----
-lisk-core forging:enable 89aa5fc8861d392f60662f76a379cc348fe97d28 0 0 0
+lisk-core generator:enable lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3 --use-status-value
 ----
 
 Replace the address with your delegate address in hexadecimal representation.
 
-The `0 0 0` stands for the three variables, `height`, `maxHeightPreviouslyForged`, and `maxHeightPrevoted`.
-These three variables need to be set to `0` for every delegate who starts forging for the first time in the network, which will be the case for all delegates participating in the migration.
-
-[TIP]
-
+.Don't use zeros as validator info data!
+[WARNING]
 ====
-When a delegate has already forged in the network, it is necessary to check which values to use for `height`, `maxHeightPreviouslyForged`, and `maxHeightPrevoted`.
+If the validator already generated blocks with Lisk Core v3, they need to use their current validator info data.
+The validator info data is migrated during the migration process, and can directly be used to enable block generation on the v4 node.
 
-These values can be checked by running the following command:
+To directly set the values, use the `--use-status-value` flag, or by set the values manually as described below.
 
+For setting the values manually, first get the data:
 [source,bash]
 ----
-lisk-core forging:status
-[{"address":"89aa5fc8861d392f60662f76a379cc348fe97d28","forging":true,"height":670237,"maxHeightPrevoted":670159,"maxHeightPreviouslyForged":670187}]
+lisk-core generator:status --pretty
+----
+
+And then set the values manually by adding the relevant flags:
+[source,bash]
+----
+lisk-core generator:enable lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3 --height=123 --max-height-generated=101 --max-height-prevoted=101
 ----
 ====
