@@ -3,15 +3,16 @@
 :experimental:
 :idprefix:
 :idseparator: -
+:snapshotHeight: TBD
+:snapshotHeightTestnet: TBD
 :lisk-migrator: lisk-migrator-v2.0.0-linux-x64.tar.gz
 // External URLs
 :url_lisk_migrator: https://downloads.lisk.com/lisk-migrator/{lisk-migrator}
 :url_wallet: https://lisk.com/wallet
+:url_jsonrpc: https://www.jsonrpc.org/specification
 :url_lisk_blog_migration: https://lisk.com/blog/development/announcing-lisk-testnet-v3-migration
 :url_lisk_blog_migration_mainnet: https://lisk.com/blog/development/announcing-lisk-mainnet-v3-migration
 // Project URLs
-:url_core_install: setup/binary.adoc
-:url_sdk_protocol_voteweight: ROOT::understand-blockchain/consensus/pos-poa.adoc#validator-weight
 :url_run_validator: ROOT::run-blockchain/become-validator.adoc
 
 This guide explains how to migrate a Lisk Core v3.0.4 node to Lisk Core v4.x using the Lisk migrator v2.
@@ -113,9 +114,9 @@ In case `lisk-migrator` was extracted somewhere else other than in your home dir
 
 === Check the announced snapshot height
 
-* For Mainnet: `TBD` +
+* For Mainnet: {snapshotHeight} +
 For more information check the {url_lisk_blog_migration_mainnet}[Mainnet migration announcement^].
-* For Testnet: `TBD` +
+* For Testnet: {snapshotHeightTestnet} +
 For more information check the {url_lisk_blog_migration}[Testnet migration announcement^].
 
 The height is needed by `lisk-migrator` in the next step.
@@ -173,17 +174,17 @@ If you have added `lisk-migrator` to the PATH as described in the section <<sett
 Mainnet::
 +
 --
-[source,bash]
+[source,bash,subs=attributes+]
 ----
-lisk-migrator --snapshot-height ${snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --lisk-core-v3-data-path ~/lisk-main --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
+lisk-migrator --snapshot-height {snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --lisk-core-v3-data-path ~/lisk-main --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
 ----
 --
 Testnet::
 +
 --
-[source,bash]
+[source,bash,subs=attributes+]
 ----
-lisk-migrator --snapshot-height ${snapshotHeight} --output ~/.lisk/lisk-core/config/testnet --lisk-core-v3-data-path ~/lisk-test --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
+lisk-migrator --snapshot-height {snapshotHeightTestnet} --output ~/.lisk/lisk-core/config/testnet --lisk-core-v3-data-path ~/lisk-test --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
 ----
 --
 ====
@@ -204,9 +205,9 @@ It is possible to use tools such as `screen` to run the Lisk migrator in the bac
 With `screen` you can detach the current terminal window into the background:
 
 .Example (Mainnet) footnote:snap_footnote[]
-[source,bash]
+[source,bash,subs=attributes+]
 ----
-screen -dmSL migration lisk-migrator --snapshot-height ${snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --lisk-core-v3-data-path ~/lisk-main --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
+screen -dmSL migration lisk-migrator --snapshot-height {snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --lisk-core-v3-data-path ~/lisk-main --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
 ----
 
 Shortly before the migration occurs, it is possible to reattach to it in order to check if everything is working correctly.
@@ -529,8 +530,11 @@ lisk-core endpoint:invoke random_getHashOnionSeeds --pretty
 ----
 ====
 
-==== Register legacy validaor keys
+==== Register legacy validator keys
 
+IMPORTANT: The registration of the legacy validator keys has to be done latest at the end of `initRounds`, otherwise, the validator will miss block rewards.
+
+To register the legacy validator keys with the new node, utilize the `registerKeys` command of the Legacy module.
 
 ==== Enable block generation
 
