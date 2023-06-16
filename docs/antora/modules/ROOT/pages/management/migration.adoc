@@ -5,6 +5,7 @@
 :idseparator: -
 :snapshotHeight: TBD
 :snapshotHeightTestnet: TBD
+:initRounds: TBD
 :lisk-migrator: lisk-migrator-v2.0.0-linux-x64.tar.gz
 :docs_sdk: v6@lisk-sdk::
 // External URLs
@@ -371,6 +372,21 @@ rm -r lisk-test
 
 === Enabling block generation after migration (for validators)
 
+After migration, *101 initial validators* will be active to generate blocks during the `initRounds`.
+
+`initRounds` is number of rounds for the bootstrap period of the new network.
+The bootstrap period after migration to Core v4 is {initRounds} rounds.
+
+The initial validators will be exactly the 101 validators that were in active positions in the Lisk Core v3 network, at the time of the migration.
+
+For the initial validators, it will be important to enable block generation as soon as possible on the new node, to not miss any block rewards.
+
+It is also important that as many as possible validators participate in the network migration.
+If only a small number of validators migrate their nodes, this can prolong the bootstrap period for a long time.
+Additionally, for blocks to be finalized, enough of the active validators (min. 68) need to participate in the migration process.
+
+After {initRounds} rounds, the normal Lisk PoS protocol will be followed to generate the list of active validators.
+
 ==== Allow methods in the node config
 To be able to run certain validator-related commands of the node, it is required to enable security-sensitive methods in the node config.
 
@@ -507,34 +523,9 @@ lisk-core endpoint:invoke random_getHashOnionSeeds --pretty
 ----
 ====
 
-==== Register legacy validator keys
-
-.This step is crucial for migrating validators!
-IMPORTANT: The registration of the legacy validator keys has to be done *latest at the end of `initRounds`*, to be eligible to generate blocks in the new network.
-Otherwise, the validator will be *banned* in the network, until the validator keys are registered in the legacy module.
-
-To register the legacy validator keys with the new node, create a new `registerKeys` transaction like so:
-
-[source,bash]
-----
-lisk-core transaction:create legacy registerKeys 10000000
-----
-
-It will ask you for the required parameters:
-----
-? Please enter passphrase:  [hidden]
-? Please enter: blsKey:
-? Please enter: proofOfPossession:
-? Please enter: generatorKey:
-----
-
-The required parameters can be obtained from the `keys.json` file, which was created in step <<create-the-validator-keys>> previously.
-
 ==== Enable block generation
 
-The final step is to enable block generation on the node for your validator.
-
-Again, this can be done by using the Lisk Core CLI.
+Now, it is possible to enable block generation on the new node for your validator by using the Lisk Core CLI.
 
 [source,bash]
 ----
@@ -563,6 +554,29 @@ And then set the values manually by adding the relevant flags:
 lisk-core generator:enable lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3 --height=123 --max-height-generated=101 --max-height-prevoted=101
 ----
 ====
+
+=== Register legacy validator keys
+
+.This step is crucial for migrating validators!
+IMPORTANT: The registration of the legacy validator keys has to be done *latest at the end of `initRounds`*, to be eligible to generate blocks in the new network.
+Otherwise, the validator will be *banned* in the network, until the validator keys are registered in the legacy module.
+
+To register the legacy validator keys with the new node, create a new `registerKeys` transaction like so:
+
+[source,bash]
+----
+lisk-core transaction:create legacy registerKeys 10000000
+----
+
+It will ask you for the required parameters:
+----
+? Please enter passphrase:  [hidden]
+? Please enter: blsKey:
+? Please enter: proofOfPossession:
+? Please enter: generatorKey:
+----
+
+The required parameters can be obtained from the `keys.json` file, which was created in step <<create-the-validator-keys>> previously.
 
 The migration of Lisk Core from v3 to v4 is now completed.
 
