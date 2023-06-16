@@ -48,7 +48,8 @@ OS::
 * Ubuntu 20.04 LTS
 * Ubuntu 22.04 LTS
 
-If you have Node.js installed ensure to use version 18 (LTS)
+Node.js::
+* Version 18 (LTS)
 ====
 
 === Preparing Lisk Core v3.0.4
@@ -126,39 +127,16 @@ A snapshot of the blockchain will be created at this particular height, which wi
 === Ensure Lisk Core v3.0.4 is fully synced with the network
 Check the current block height of your node directly in the terminal by running the following command:
 
-[tabs]
-====
-Mainnet::
-+
---
-./home/lisk/lisk-main
 [source,bash]
 ----
-$ bash lisk.sh status
-Lisk configured for mainnet
-[+] Lisk is running as PID: 24468
-Current Block Height:   14992772
+lisk-core node:info --pretty
 ----
---
-Testnet::
-+
---
-./home/lisk/lisk-test
-[source,bash]
-----
-$ bash lisk.sh status
-Lisk configured for testnet
-[+] Lisk is running as PID: 24751
-Current Block Height:  13279765
-----
---
-====
 
 Compare the current height of your node to the network height in {url_wallet}[Lisk Desktop^], which is shown on the kbd:[Network] or kbd:[Blocks] pages.
 
-If both heights are equal, it is verified that your node is fully synched with the network.
+If both heights are equal, it is verified that your node is fully synced with the network.
 
-NOTE: To view the current height of the *Lisk Testnet*, use the network switcher of Lisk Desktop, which can be enabled in the settings.
+TIP: To view the current height of the *Lisk Testnet*, use the network switcher of Lisk Desktop, which can be enabled in the settings.
 
 === Run lisk migrator
 
@@ -238,9 +216,10 @@ screen -r 1842.migration
 
 === Wait until the network reaches the snapshot height
 
-Observe if `lisk-migrator` finishes successfully, (this takes about several minutes).
+Observe if `lisk-migrator` finishes successfully, (this can take several minutes).
 
-The flag `--auto-download-lisk-core-v4` will also download and install Lisk Core v4 automatically for you.
+The flag `--auto-download-lisk-core-v4` will also download and install Lisk Core v4 for you.
+The flag `--auto-migrate-config` will automatically migrate the config from old to new node.
 
 //TODO: Update timeframe for initRounds
 After the snapshot height is reached, validators have approximately 2 hours time to enable block generation, to ensure they will not miss any blocks after the hardfork.
@@ -250,6 +229,29 @@ For validators, this might result in missing blocks, for everyone else it will n
 
 === Start Lisk Core v4
 If you set the flag `--auto-start-lisk-core-v4` when running lisk-migrator, it will start Lisk Core v4 in the foreground right after successful migration.
+
+Otherwise, start Lisk Core manually like so:
+
+
+[tabs]
+====
+Mainnet::
++
+--
+[source,bash]
+----
+lisk-core start --network mainnet
+----
+--
+Testnet::
++
+--
+[source,bash]
+----
+lisk-core start --network testnet
+----
+--
+====
 
 Observe the logs in the terminal, to verify the node is starting correctly.
 
@@ -377,7 +379,7 @@ To be able to run certain validator-related commands of the node, it is required
   "rpc": {
     "modes": ["ipc"],
     "allowedMethods": ["generator", "system", "random"]
-  },
+  }
 }
 ----
 
