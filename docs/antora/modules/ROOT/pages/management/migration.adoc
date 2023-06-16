@@ -7,6 +7,7 @@
 :snapshotHeightTestnet: TBD
 :lisk-migrator: lisk-migrator-v2.0.0-linux-x64.tar.gz
 // External URLs
+:url_lisk_chat: https://lisk.chat/
 :url_lisk_migrator: https://downloads.lisk.com/lisk-migrator/{lisk-migrator}
 :url_wallet: https://lisk.com/wallet
 :url_jsonrpc: https://www.jsonrpc.org/specification
@@ -364,10 +365,9 @@ rm -r lisk-test
 --
 ====
 
-=== Enabling block generators after migration (for validators)
+=== Enabling block generation after migration (for validators)
 
 ==== Allow methods in the node config
-
 To be able to run certain validator-related commands of the node, it is required to enable security-sensitive methods in the node config.
 
 .config.json
@@ -505,9 +505,26 @@ lisk-core endpoint:invoke random_getHashOnionSeeds --pretty
 
 ==== Register legacy validator keys
 
-IMPORTANT: The registration of the legacy validator keys has to be done latest at the end of `initRounds`, otherwise, the validator will miss block rewards.
+.This step is crucial for migrating validators!
+IMPORTANT: The registration of the legacy validator keys has to be done *latest at the end of `initRounds`*.
+Otherwise, the validator will be *banned* in the network.
 
-To register the legacy validator keys with the new node, utilize the `registerKeys` command of the Legacy module.
+To register the legacy validator keys with the new node, create a new `registerKeys` transaction like so:
+
+[source,bash]
+----
+lisk-core transaction:create legacy registerKeys 10000000
+----
+
+It will ask you for the required parameters:
+----
+? Please enter passphrase:  [hidden]
+? Please enter: blsKey:
+? Please enter: proofOfPossession:
+? Please enter: generatorKey:
+----
+
+The required parameters can be obtained from the `keys.json` file, which was created in step <<create-the-validator-keys>> previously.
 
 ==== Enable block generation
 
@@ -542,3 +559,7 @@ And then set the values manually by adding the relevant flags:
 lisk-core generator:enable lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3 --height=123 --max-height-generated=101 --max-height-prevoted=101
 ----
 ====
+
+The migration of Lisk Core from v3 to v4 is now completed.
+
+If you have specific questions regarding the process or need additional support, please reach out in the dedicated community channels, like {url_lisk_chat}[^].
