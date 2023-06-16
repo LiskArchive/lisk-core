@@ -385,7 +385,10 @@ It is also important that as many as possible validators participate in the netw
 If only a small number of validators migrate their nodes, this can prolong the bootstrap period for a long time.
 Additionally, for blocks to be finalized, enough of the active validators (min. 68) need to participate in the migration process.
 
-After {initRounds} rounds, the normal Lisk PoS protocol will be followed to generate the list of active validators.
+After {initRounds} rounds, the normal Lisk PoS protocol will be followed to generate the list of active validators, but only for validators who <<register-legacy-validator-keys,registered their validator keys>>.
+
+WARNING: All validators who did not <<register-legacy-validator-keys,register>> their keys will be *banned after the bootstrap period*.
+Registering the keys will un-ban the validator again.
 
 ==== Allow methods in the node config
 To be able to run certain validator-related commands of the node, it is required to enable security-sensitive methods in the node config.
