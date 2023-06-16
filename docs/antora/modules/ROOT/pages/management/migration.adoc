@@ -508,8 +508,8 @@ lisk-core endpoint:invoke random_getHashOnionSeeds --pretty
 ==== Register legacy validator keys
 
 .This step is crucial for migrating validators!
-IMPORTANT: The registration of the legacy validator keys has to be done *latest at the end of `initRounds`*.
-Otherwise, the validator will be *banned* in the network.
+IMPORTANT: The registration of the legacy validator keys has to be done *latest at the end of `initRounds`*, to be eligible to generate blocks in the new network.
+Otherwise, the validator will be *banned* in the network, until the validator keys are registered in the legacy module.
 
 To register the legacy validator keys with the new node, create a new `registerKeys` transaction like so:
 
