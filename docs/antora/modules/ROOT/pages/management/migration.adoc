@@ -6,6 +6,7 @@
 :snapshotHeight: TBD
 :snapshotHeightTestnet: TBD
 :lisk-migrator: lisk-migrator-v2.0.0-linux-x64.tar.gz
+:docs_sdk: v6@lisk-sdk::
 // External URLs
 :url_lisk_chat: https://lisk.chat/
 :url_lisk_migrator: https://downloads.lisk.com/lisk-migrator/{lisk-migrator}
@@ -15,6 +16,7 @@
 :url_lisk_blog_migration_mainnet: https://lisk.com/blog/development/announcing-lisk-mainnet-v3-migration
 // Project URLs
 :url_run_validator: ROOT::run-blockchain/become-validator.adoc
+:url_sdk_cli_keyscreate: {docs_sdk}client-cli.adoc#keyscreate
 
 This guide explains how to migrate a Lisk Core v3.0.4 node to Lisk Core v4.x using the Lisk migrator v2.
 
