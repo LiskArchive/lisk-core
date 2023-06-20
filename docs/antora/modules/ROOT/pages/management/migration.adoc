@@ -58,7 +58,7 @@ Node.js::
 === Preparing Lisk Core v3.0.4
 
 ==== Ensure you are running the binary distribution of Lisk Core
-If you are using a different distribution of Lisk Core v3.0.4, such as Docker, Commander or Source, it will be necessary to install the application/binary distribution.
+If you are using a different distribution of Lisk Core v3.0.4, such as Docker, Commander, or Source, it will be necessary to install the application/binary distribution.
 
 ==== Ensure you are running version 3.0.4 of Lisk Core
 Ensure you are running version 3.0.4 of Lisk Core to be able to seamlessly migrate to Lisk Core 4.0.0.
@@ -77,8 +77,8 @@ Download the migration script by running the following command in the terminal:
 curl -o {lisk-migrator} {url_lisk_migrator}
 ----
 
-==== Download checksum and verify
-Download the checksum and verify the successful download of lisk-migrator.
+==== Download the checksum and verify
+Download the checksum and verify the successful download of the lisk-migrator.
 
 {counter:seq3:A}) Download the checksum.
 
@@ -113,7 +113,7 @@ Make the `lisk-migrator` command available in the PATH, e.g. by executing the fo
 export PATH="$PATH:$HOME/lisk-migrator/bin"
 ----
 
-In case `lisk-migrator` was extracted somewhere else other than in your home directory, replace `$HOME` with the absolute path of where the `lisk-migrator` folder is located.
+In case the `lisk-migrator` was extracted somewhere else other than in your home directory, replace `$HOME` with the absolute path of where the `lisk-migrator` folder is located.
 
 == Migration steps
 
@@ -124,7 +124,7 @@ For more information check the {url_lisk_blog_migration_mainnet}[Mainnet migrati
 * For Testnet: {snapshotHeightTestnet} +
 For more information check the {url_lisk_blog_migration}[Testnet migration announcement^].
 
-The height is needed by `lisk-migrator` in the next step.
+The height is needed by the `lisk-migrator` in the next step.
 A snapshot of the blockchain will be created at this particular height, which will then be used to create the genesis block for the new blockchain.
 
 === Ensure Lisk Core v3.0.4 is fully synced with the network
@@ -149,7 +149,7 @@ TIP: To view the current height of the *Lisk Testnet*, use the network switcher 
 `lisk-migrator` can be started any time before the announced snapshot height.
 ====
 
-If you have added `lisk-migrator` to the PATH as described in the section <<setting-up-the-lisk-migrator>>, you can start the migration script by running the following command footnote:snap_footnote[Snap versions of Lisk Core store everything in `~/snap/lisk-core/current/.lisk/lisk-core` instead of `~/.lisk/lisk-core`] in the terminal:
+If you have added the `lisk-migrator` to the PATH as described in the section <<setting-up-the-lisk-migrator>>, you can start the migration script by running the following command footnote:snap_footnote[Snap versions of Lisk Core store everything in `~/snap/lisk-core/current/.lisk/lisk-core` instead of `~/.lisk/lisk-core`] in the terminal:
 
 [tabs]
 ====
@@ -192,9 +192,9 @@ With `screen` you can detach the current terminal window into the background:
 screen -dmSL migration lisk-migrator --snapshot-height {snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --lisk-core-v3-data-path ~/lisk-main --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
 ----
 
-Shortly before the migration occurs, it is possible to reattach to it in order to check if everything is working correctly.
+Shortly before the migration occurs, it is possible to reattach to the screen, in order to check if everything is working correctly.
 
-First check the name of the detached screen:
+First, check the name of the detached screen:
 
 [source,bash]
 ----
@@ -219,13 +219,13 @@ screen -r 1842.migration
 
 === Wait until the network reaches the snapshot height
 
-Observe if `lisk-migrator` finishes successfully, (this can take several minutes).
+Observe if the `lisk-migrator` finishes successfully, (this can take several minutes).
 
 The flag `--auto-download-lisk-core-v4` will also download and install Lisk Core v4 for you.
-The flag `--auto-migrate-config` will automatically migrate the config from old to new node.
+The flag `--auto-migrate-config` will automatically migrate the config from the old to the new node.
 
 //TODO: Update timeframe for initRounds
-After the snapshot height is reached, validators have approximately 2 hours time to enable block generation, to ensure they will not miss any blocks after the hardfork.
+After the snapshot height is reached, validators have approximately 2 hours time to enable block generation, to ensure they will not miss any blocks after the hard fork.
 
 NOTE: If the node is not migrated, but started at a later point in time, it will simply sync to the current network height.
 For validators, this might result in missing blocks, for everyone else it will not have any impact.
@@ -370,11 +370,11 @@ rm -r lisk-test
 --
 ====
 
-=== Enabling block generation after migration (for validators)
+=== Enabling block generation after the migration (for validators)
 
 After migration, *101 initial validators* will be active to generate blocks during the `initRounds`.
 
-`initRounds` is number of rounds for the bootstrap period of the new network.
+`initRounds` is the number of rounds for the bootstrap period of the new network.
 The bootstrap period after migration to Core v4 is {initRounds} rounds.
 
 The initial validators will be exactly the 101 validators that were in active positions in the Lisk Core v3 network, at the time of the migration.
@@ -484,7 +484,7 @@ This will generate the following file, which includes all important keys for the
 ====
 The generated keys are very sensitive information.
 
-Especially the not encrypted values need to be treated *equally sensitive as the passphrase for an account.*
+Especially the non encrypted values need to be treated *as equally sensitive as the passphrase for an account.*
 So after the keys are imported in step <<import-the-validator-keys>>, make sure to store the file somewhere safe, or delete the file completely.
 ====
 
@@ -535,7 +535,7 @@ Now, it is possible to enable block generation on the new node for your validato
 lisk-core generator:enable lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3 --use-status-value
 ----
 
-Replace the address with your delegate address in hexadecimal representation.
+Replace the address with your validator address.
 
 .Don't use zeros as validator info data!
 [WARNING]
@@ -543,7 +543,7 @@ Replace the address with your delegate address in hexadecimal representation.
 If the validator already generated blocks with Lisk Core v3, they need to use their current validator info data.
 The validator info data is migrated during the migration process, and can directly be used to enable block generation on the v4 node.
 
-To directly set the values, use the `--use-status-value` flag, or by set the values manually as described below.
+To directly set the values, use the `--use-status-value` flag, or set the values manually as described below.
 
 For setting the values manually, first get the data:
 [source,bash]
