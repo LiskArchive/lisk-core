@@ -18,6 +18,7 @@
 // Project URLs
 :url_run_validator: ROOT::run-blockchain/become-validator.adoc
 :url_sdk_cli_keyscreate: {docs_sdk}client-cli.adoc#keyscreate
+:url_setup_binary: swtup/binary.adoc
 
 This guide explains how to migrate a Lisk Core v3.0.4 node to Lisk Core v4.x using the Lisk migrator v2.
 
@@ -58,7 +59,7 @@ Node.js::
 === Preparing Lisk Core v3.0.4
 
 ==== Ensure you are running the binary distribution of Lisk Core
-If you are using a different distribution of Lisk Core v3.0.4, such as Docker, Commander or Source, it will be necessary to install the application/binary distribution.
+If you are using a different distribution of Lisk Core v3.0.4, such as Docker, Commander or Source, it will be necessary to install the xref:{url_setup_binary}[binary distribution].
 
 ==== Ensure you are running version 3.0.4 of Lisk Core
 Ensure you are running version 3.0.4 of Lisk Core to be able to seamlessly migrate to Lisk Core 4.0.0.
@@ -119,10 +120,11 @@ In case `lisk-migrator` was extracted somewhere else other than in your home dir
 
 === Check the announced snapshot height
 
+//TODO: update links to blog posts once created
 * For Mainnet: {snapshotHeight} +
-For more information check the {url_lisk_blog_migration_mainnet}[Mainnet migration announcement^].
+//For more information check the {url_lisk_blog_migration_mainnet}[Mainnet migration announcement^].
 * For Testnet: {snapshotHeightTestnet} +
-For more information check the {url_lisk_blog_migration}[Testnet migration announcement^].
+//For more information check the {url_lisk_blog_migration}[Testnet migration announcement^].
 
 The height is needed by `lisk-migrator` in the next step.
 A snapshot of the blockchain will be created at this particular height, which will then be used to create the genesis block for the new blockchain.
