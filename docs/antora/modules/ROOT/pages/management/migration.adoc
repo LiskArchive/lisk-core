@@ -18,7 +18,7 @@
 // Project URLs
 :url_run_validator: ROOT::run-blockchain/become-validator.adoc
 :url_sdk_cli_keyscreate: {docs_sdk}client-cli.adoc#keyscreate
-:url_setup_binary: swtup/binary.adoc
+:url_setup_binary: setup/binary.adoc
 
 This guide explains how to migrate a Lisk Core v3.0.4 node to Lisk Core v4.x using the Lisk migrator v2.
 
@@ -227,7 +227,7 @@ The flag `--auto-download-lisk-core-v4` will also download and install Lisk Core
 The flag `--auto-migrate-config` will automatically migrate the config from the old to the new node.
 
 //TODO: Update timeframe for initRounds
-After the snapshot height is reached, validators have approximately 2 hours time to enable block generation, to ensure they will not miss any blocks after the hard fork.
+After the snapshot height is reached, validators have approximately 2 hours to enable block generation, to ensure they will not miss any blocks after the hard fork.
 
 NOTE: If the node is not migrated, but started at a later point in time, it will simply sync to the current network height.
 For validators, this might result in missing blocks, for everyone else it will not have any impact.
