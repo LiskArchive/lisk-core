@@ -6,6 +6,7 @@
 :snapshotHeight: TBD
 :snapshotHeightTestnet: TBD
 :initRounds: TBD
+:initRoundsTime: TBD hours
 :lisk-migrator: lisk-migrator-v2.0.0-linux-x64.tar.gz
 :docs_sdk: v6@lisk-sdk::
 // External URLs
@@ -19,20 +20,21 @@
 :url_run_validator: ROOT::run-blockchain/become-validator.adoc
 :url_sdk_cli_keyscreate: {docs_sdk}client-cli.adoc#keyscreate
 :url_setup_binary: setup/binary.adoc
+:url_cli_generatorenable: core-cli.adoc#generatorenable
+:url_cli_endpointinvoke: core-cli.adoc#endpointinvoke
 
-This guide explains how to migrate a Lisk Core v3.0.4 node to Lisk Core v4.x using the Lisk migrator v2.
+This guide explains how to migrate a Lisk Core v3.0.5 node to Lisk Core v4.x using the Lisk migrator v2.
 
 The Lisk migrator CLI will generate a new genesis block for Lisk Core v4.
-The new genesis block is created based on a snapshot of the old blockchain (running on Lisk Core v3.0.4) at a given height.
+The new genesis block is created based on a snapshot of the old blockchain (running on Lisk Core v3.0.5) at a given height.
 
 [IMPORTANT]
 
 ====
 All active validators on the Lisk Mainnet and the Lisk Testnet need to follow this guide to correctly migrate their nodes to the new network, in order to not miss any blocks after the network hard fork.
 
-Optionally, anyone running a Lisk Core v3.0.4 who is not an active validator can participate in the migration process.
-//TODO: Update steps
-//In this case, the following steps 1.4, 2.7, 2.8, and 2.9 in this guide can be skipped, as they are only relevant for validators.
+Optionally, anyone running a Lisk Core v3.0.5 who is not an active validator can participate in the migration process.
+In this case, the following steps 2.7 and 2.8 in this guide can be skipped, as they are only relevant for validators.
 ====
 
 :sectnums:
@@ -56,21 +58,21 @@ Node.js::
 * Version 18 (LTS)
 ====
 
-=== Preparing Lisk Core v3.0.4
+=== Preparing Lisk Core v3.0.5
 
 ==== Ensure you are running the binary distribution of Lisk Core
-If you are using a different distribution of Lisk Core v3.0.4, such as Docker, Commander, or Source, it will be necessary to install the xref:{url_setup_binary}[binary distribution].
+If you are using a different distribution of Lisk Core v3.0.5, such as Docker, Commander, or Source, it will be necessary to install the xref:{url_setup_binary}[binary distribution].
 
-==== Ensure you are running version 3.0.4 of Lisk Core
-Ensure you are running version 3.0.4 of Lisk Core to be able to seamlessly migrate to Lisk Core 4.0.0.
+==== Ensure you are running version 3.0.5 of Lisk Core
+Ensure you are running version 3.0.5 of Lisk Core to be able to seamlessly migrate to Lisk Core 4.0.0.
 
 Open `package.json` to check the `version` of your Lisk Core node.
-If your version is lower than 3.0.4, ensure to update Lisk Core before proceeding with the migration.
+If your version is lower than 3.0.5, ensure to update Lisk Core before proceeding with the migration.
 
 === Setting up the Lisk migrator
 
 ==== Download the migration script
-Download the migration script by running the following command in the terminal:
+Navigate into the folder where you want to install the Lisk Migrator, and then download the migration script by running the following command in the terminal:
 
 [subs=attributes+]
 [source,bash]
@@ -129,7 +131,7 @@ In case the `lisk-migrator` was extracted somewhere else other than in your home
 The height is needed by the `lisk-migrator` in the next step.
 A snapshot of the blockchain will be created at this particular height, which will then be used to create the genesis block for the new blockchain.
 
-=== Ensure Lisk Core v3.0.4 is fully synced with the network
+=== Ensure Lisk Core v3.0.5 is fully synced with the network
 Check the current block height of your node directly in the terminal by running the following command:
 
 [source,bash]
@@ -139,9 +141,18 @@ lisk-core node:info --pretty
 
 Compare the current height of your node to the network height in {url_wallet}[Lisk Desktop^], which is shown on the kbd:[Network] or kbd:[Blocks] pages.
 
-If both heights are equal, it is verified that your node is fully synced with the network.
-
 TIP: To view the current height of the *Lisk Testnet*, use the network switcher of Lisk Desktop, which can be enabled in the settings.
+
+Alternatively users can also verify the current height by comparing `data.height` in the response from the https://service.lisk.com/api/v2/network/status endpoint.
+
+To directly check the current height via command line, run:
+
+[source,bash]
+----
+curl --silent https://service.lisk.com/api/v2/network/status | jq '.data.height'
+----
+
+If both heights are equal, it is verified that your node is fully synced with the network.
 
 === Run lisk migrator
 
@@ -179,7 +190,7 @@ The snapshot height will be announced separately.
 * `--output`:
 The absolute path to the directory, where the newly generated genesis block should be saved.
 * `--lisk-core-v3-data-path`:
-The absolute path to the directory, where the Lisk Core v3.0.4 node is located.
+The absolute path to the directory, where the Lisk Core v3.0.5 node is located.
 
 [TIP]
 
@@ -227,7 +238,7 @@ The flag `--auto-download-lisk-core-v4` will also download and install Lisk Core
 The flag `--auto-migrate-config` will automatically migrate the config from the old to the new node.
 
 //TODO: Update timeframe for initRounds
-After the snapshot height is reached, validators have approximately 2 hours to enable block generation, to ensure they will not miss any blocks after the hard fork.
+After the snapshot height is reached, validators have approximately {initRoundsTime} to enable block generation, to ensure they will not miss any blocks after the hard fork.
 
 NOTE: If the node is not migrated, but started at a later point in time, it will simply sync to the current network height.
 For validators, this might result in missing blocks, for everyone else it will not have any impact.
@@ -326,9 +337,9 @@ lisk-core system:node-info --pretty
 
 This will return certain general node information.
 
-=== Stop Lisk Core v3.0.4
+=== Stop Lisk Core v3.0.5
 
-After the `lisk-migrator` script has finished and the announced snapshot height has passed, there is no reason to continue running Lisk Core v3.0.4 and therefore it is recommended to stop it.
+After the `lisk-migrator` script has finished and the announced snapshot height has passed, there is no reason to continue running Lisk Core v3.0.5 and therefore it is recommended to stop it.
 
 First ensure, that Lisk Core will not start again by removing the existing cronjob:
 
@@ -343,14 +354,14 @@ Choose your favorite editor to open the `crontab` file and remove the following 
 
 Save and close the `crontab` file again.
 
-Navigate into the root folder of your Lisk Core v3.0.4 installation and run the following command to stop the old Lisk Core version:
+Navigate into the root folder of your Lisk Core v3.0.5 installation and run the following command to stop the old Lisk Core version:
 
 [source,bash]
 ----
 bash lisk.sh stop
 ----
 
-Last but not least, remove the folder with Lisk Core v3.0.4, e.g. by executing the following:
+Last but not least, remove the folder with Lisk Core v3.0.5, e.g. by executing the following:
 
 [tabs]
 ====
@@ -372,7 +383,7 @@ rm -r lisk-test
 --
 ====
 
-=== Enabling block generation after the migration (for validators)
+=== Enable block generation after the migration (for validators)
 
 After migration, *101 initial validators* will be active to generate blocks during the `initRounds`.
 
@@ -503,6 +514,9 @@ lisk-core keys:import --file-path config/keys.json
 Without the hash onion, a validator won't be able to receive any rewards for generating new blocks, although the blocks would still be valid in that case.
 To not miss any rewards, it is of high interest for a validator to set the hash onion, before enabling block generation on the node.
 
+//TODO: Add link to endpoint API reference, once endpoint reference ready
+Set the hash-onion by invoking the xref:{}[setHashOnion] endpoint via the xref:{endpointinvoke}[endpoint:invoke] CLI command.
+
 [source,bash]
 ----
 lisk-core endpoint:invoke random_setHashOnion '{"address":"lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3"}'
@@ -530,7 +544,7 @@ lisk-core endpoint:invoke random_getHashOnionSeeds --pretty
 
 ==== Enable block generation
 
-Now, it is possible to enable block generation on the new node for your validator by using the Lisk Core CLI.
+Now, it is possible to enable block generation on the new node for your validator by using the xref:{url_cli_generatorenable}[generator:enable] command of the Lisk Core CLI.
 
 [source,bash]
 ----
