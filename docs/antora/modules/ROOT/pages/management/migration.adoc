@@ -403,25 +403,17 @@ This will return certain general node information.
 
 After the `lisk-migrator` script has finished and the announced snapshot height has passed, there is no reason to continue running Lisk Core v3.0.5 and therefore it is recommended to stop it.
 
-First ensure, that Lisk Core will not start again by removing the existing cronjob:
-
-[source,bash]
-----
-crontab -e
-----
-
-Choose your favorite editor to open the `crontab` file and remove the following line:
-
- @reboot /bin/bash /home/lisk/lisk-test/lisk.sh start > /home/lisk/lisk-test/cron.log 2>&1
-
-Save and close the `crontab` file again.
-
+//TODO: Update with correct command to stop Lisk Core
+////
 Navigate into the root folder of your Lisk Core v3.0.5 installation and run the following command to stop the old Lisk Core version:
 
 [source,bash]
 ----
-bash lisk.sh stop
+lisk-core
 ----
+////
+
+NOTE: Users that have set something up to start Lisk Core on boot, whether it's through `cron` or `systemd` or something else, should keep that in mind and adjust things accordingly so that Lisk Core 4.x gets started instead of Lisk Core 3.x.
 
 Last but not least, remove the folder with Lisk Core v3.0.5, e.g. by executing the following:
 
