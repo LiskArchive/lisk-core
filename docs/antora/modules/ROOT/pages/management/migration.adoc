@@ -11,6 +11,8 @@
 :lisk-migrator: lisk-migrator-v2.0.0-linux-x64.tar.gz
 :docs_sdk: v6@lisk-sdk::
 // External URLs
+:url_curl: https://curl.se/
+:url_jq: https://jqlang.github.io/jq/
 :url_lisk_chat: https://lisk.chat/
 :url_lisk_migrator: https://downloads.lisk.com/lisk-migrator/{lisk-migrator}
 :url_wallet: https://lisk.com/wallet
@@ -154,6 +156,8 @@ To directly check the current height via command line, run:
 ----
 curl --silent https://service.lisk.com/api/v2/network/status | jq '.data.height'
 ----
+
+To run the command, both {url_curl}[curl^] and {url_jq}[jq^] are required to be installed.
 
 If both heights are equal, it is verified that your node is fully synced with the network.
 
