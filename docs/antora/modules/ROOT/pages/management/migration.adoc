@@ -7,14 +7,17 @@
 :snapshotHeightTestnet: TBD
 :initRounds: TBD
 :initRoundsTime: TBD hours
-//TODO: Add links for other distribution platforms
 :lisk-migrator: lisk-migrator-v2.0.0-linux-x64.tar.gz
+:lisk-migrator_darwinx64: lisk-migrator-v2.0.0-darwin-x64.tar.gz
+:lisk-migrator_darwinarm64: lisk-migrator-v2.0.0-darwin-arm64.tar.gz
 :docs_sdk: v6@lisk-sdk::
 // External URLs
 :url_curl: https://curl.se/
 :url_jq: https://jqlang.github.io/jq/
 :url_lisk_chat: https://lisk.chat/
 :url_lisk_migrator: https://downloads.lisk.com/lisk-migrator/{lisk-migrator}
+:url_lisk_migrator_darwinarm64: https://downloads.lisk.com/lisk-migrator/{lisk-migrator_darwinarm64}
+:url_lisk_migrator_darwinx64: https://downloads.lisk.com/lisk-migrator/{lisk-migrator_darwinx64}
 :url_wallet: https://lisk.com/wallet
 :url_jsonrpc: https://www.jsonrpc.org/specification
 //TODO: Update links to blog posts
@@ -79,22 +82,74 @@ If your version is lower than 3.0.5, ensure to update Lisk Core before proceedin
 Navigate into the folder where you want to install the Lisk Migrator, and then download the migration script by running the following command in the terminal:
 
 //TODO: Update with examples for the different distribution platforms
+
+
+[tabs]
+====
+Linux x64::
++
+--
 [subs=attributes+]
 [source,bash]
 ----
 curl -o {lisk-migrator} {url_lisk_migrator}
 ----
+--
+Darwin x64::
++
+--
+[subs=attributes+]
+[source,bash]
+----
+curl -o {lisk-migrator_darwinx64} {url_lisk_migrator_darwinx64}
+----
+--
+Darwin ARM64::
++
+--
+[subs=attributes+]
+[source,bash]
+----
+curl -o {lisk-migrator_darwinarm64} {url_lisk_migrator_darwinarm64}
+----
+--
+====
 
 ==== Download the checksum and verify
 Download the checksum and verify the successful download of the lisk-migrator.
 
 {counter:seq3:A}) Download the checksum.
 
+[tabs]
+====
+Linux x64::
++
+--
 [subs=attributes+]
 [source,bash]
 ----
 curl -o {lisk-migrator}.SHA256 {url_lisk_migrator}.SHA256
 ----
+--
+Darwin x64::
++
+--
+[subs=attributes+]
+[source,bash]
+----
+curl -o {lisk-migrator_darwinx64}.SHA256 {url_lisk_migrator_darwinx64}.SHA256
+----
+--
+Darwin ARM64::
++
+--
+[subs=attributes+]
+[source,bash]
+----
+curl -o {lisk-migrator_darwinarm64}.SHA256 {url_lisk_migrator_darwinarm64}.SHA256
+----
+--
+====
 
 {counter:seq3}) Run the following command in the terminal and ensure the output is `sha256sum: <file name>: OK`
 
