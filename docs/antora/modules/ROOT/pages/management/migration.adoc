@@ -7,6 +7,7 @@
 :snapshotHeightTestnet: TBD
 :initRounds: TBD
 :initRoundsTime: TBD hours
+//TODO: Add links for other distribution platforms
 :lisk-migrator: lisk-migrator-v2.0.0-linux-x64.tar.gz
 :docs_sdk: v6@lisk-sdk::
 // External URLs
@@ -14,10 +15,11 @@
 :url_lisk_migrator: https://downloads.lisk.com/lisk-migrator/{lisk-migrator}
 :url_wallet: https://lisk.com/wallet
 :url_jsonrpc: https://www.jsonrpc.org/specification
+//TODO: Update links to blog posts
 :url_lisk_blog_migration: https://lisk.com/blog/development/announcing-lisk-testnet-v3-migration
 :url_lisk_blog_migration_mainnet: https://lisk.com/blog/development/announcing-lisk-mainnet-v3-migration
 // Project URLs
-:url_run_validator: ROOT::run-blockchain/become-validator.adoc
+:url_run_validator: beta@ROOT::run-blockchain/become-validator.adoc
 :url_sdk_cli_keyscreate: {docs_sdk}client-cli.adoc#keyscreate
 :url_setup_binary: setup/binary.adoc
 :url_cli_generatorenable: core-cli.adoc#generatorenable
@@ -74,6 +76,7 @@ If your version is lower than 3.0.5, ensure to update Lisk Core before proceedin
 ==== Download the migration script
 Navigate into the folder where you want to install the Lisk Migrator, and then download the migration script by running the following command in the terminal:
 
+//TODO: Update with examples for the different distribution platforms
 [subs=attributes+]
 [source,bash]
 ----
