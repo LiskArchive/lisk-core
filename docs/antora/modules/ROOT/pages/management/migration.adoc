@@ -264,7 +264,7 @@ With `screen` you can detach the current terminal window into the background:
 .Example (Mainnet) footnote:snap_footnote[]
 [source,bash,subs=attributes+]
 ----
-screen -dmSL migration lisk-migrator --snapshot-height {snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --lisk-core-v3-data-path ~/lisk-main --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
+screen -dmSL migration lisk-migrator --snapshot-height {snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
 ----
 
 Shortly before the migration occurs, it is possible to reattach to the screen, in order to check if everything is working correctly.
@@ -400,7 +400,7 @@ This will return certain general node information.
 
 === Stop Lisk Core v3.0.5
 
-After the `lisk-migrator` script has finished and the announced snapshot height has passed, there is no reason to continue running Lisk Core v3.0.5 and therefore it is recommended to stop it.
+After the `lisk-migrator` script has finished and the announced snapshot height has passed, there is no reason to continue running Lisk Core v3.0.5, and therefore it is recommended to stop it.
 
 //TODO: Update with correct command to stop Lisk Core
 ////
@@ -416,25 +416,10 @@ NOTE: Users that have set something up to start Lisk Core on boot, whether it's 
 
 Last but not least, remove the folder with Lisk Core v3.0.5, e.g. by executing the following:
 
-[tabs]
-====
-Mainnet::
-+
---
 [source,bash]
 ----
-rm -r lisk-main
+rm -r lisk-core
 ----
---
-Testnet::
-+
---
-[source,bash]
-----
-rm -r lisk-test
-----
---
-====
 
 === Enable block generation after the migration (for validators)
 
