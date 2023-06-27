@@ -3,6 +3,7 @@
 :experimental:
 :idprefix:
 :idseparator: -
+//TODO: Update TBD values
 :snapshotHeight: TBD
 :snapshotHeightTestnet: TBD
 :initRounds: TBD
@@ -26,7 +27,7 @@
 // Project URLs
 :url_run_validator: beta@ROOT::run-blockchain/become-validator.adoc
 :url_sdk_cli_keyscreate: {docs_sdk}client-cli.adoc#keyscreate
-:url_setup_binary: setup/binary.adoc
+:url_sdk_config_system: {docs_sdk}config.adoc#system
 :url_cli_generatorenable: core-cli.adoc#generatorenable
 :url_cli_endpointinvoke: core-cli.adoc#endpointinvoke
 
@@ -65,24 +66,16 @@ Node.js::
 * Version 18 (LTS)
 ====
 
-=== Preparing Lisk Core v3.0.5
-
-==== Ensure you are running the binary distribution of Lisk Core
-If you are using a different distribution of Lisk Core v3.0.5, such as Docker, Commander, or Source, it will be necessary to install the xref:{url_setup_binary}[binary distribution].
-
-==== Ensure you are running version 3.0.5 of Lisk Core
+=== Ensure you are running version 3.0.5 of Lisk Core
 Ensure you are running version 3.0.5 of Lisk Core to be able to seamlessly migrate to Lisk Core 4.0.0.
 
-Open `package.json` to check the `version` of your Lisk Core node.
+Navigate into the root folder of your Lisk Core installation, and open `package.json` to check the `version` of your Lisk Core node.
 If your version is lower than 3.0.5, ensure to update Lisk Core before proceeding with the migration.
 
 === Setting up the Lisk migrator
 
 ==== Download the migration script
 Navigate into the folder where you want to install the Lisk Migrator, and then download the migration script by running the following command in the terminal:
-
-//TODO: Update with examples for the different distribution platforms
-
 
 [tabs]
 ====
@@ -233,7 +226,7 @@ Mainnet::
 --
 [source,bash,subs=attributes+]
 ----
-lisk-migrator --snapshot-height {snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --lisk-core-v3-data-path ~/lisk-main --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
+lisk-migrator --snapshot-height {snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
 ----
 --
 Testnet::
@@ -241,7 +234,7 @@ Testnet::
 --
 [source,bash,subs=attributes+]
 ----
-lisk-migrator --snapshot-height {snapshotHeightTestnet} --output ~/.lisk/lisk-core/config/testnet --lisk-core-v3-data-path ~/lisk-test --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
+lisk-migrator --snapshot-height {snapshotHeightTestnet} --output ~/.lisk/lisk-core/config/testnet --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
 ----
 --
 ====
@@ -251,11 +244,18 @@ The height on which the blockchain snapshot will be performed.
 The snapshot height will be announced separately.
 * `--output`:
 The absolute path to the directory, where the newly generated genesis block should be saved.
-* `--lisk-core-v3-data-path`:
-The absolute path to the directory, where the Lisk Core v3.0.5 node is located.
 
 [TIP]
+====
+In case a custom xref:{url_sdk_config_system}[dataPath] is defined in the config, different to the default path `~/.lisk/lisk-core`, then it is possible to define the data path with the `--lisk-core-v3-data-path` flag like so:
 
+[source,bash,subs=attributes+]
+----
+lisk-migrator --snapshot-height {snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --lisk-core-v3-data-path ~/.lisk/custom/path/ --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
+----
+====
+
+[TIP]
 ====
 It is possible to use tools such as `screen` to run the Lisk migrator in the background.
 
@@ -299,7 +299,6 @@ Observe if the `lisk-migrator` finishes successfully, (this can take several min
 The flag `--auto-download-lisk-core-v4` will also download and install Lisk Core v4 for you.
 The flag `--auto-migrate-config` will automatically migrate the config from the old to the new node.
 
-//TODO: Update timeframe for initRounds
 After the snapshot height is reached, validators have approximately {initRoundsTime} to enable block generation, to ensure they will not miss any blocks after the hard fork.
 
 NOTE: If the node is not migrated, but started at a later point in time, it will simply sync to the current network height.
