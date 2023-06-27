@@ -584,8 +584,9 @@ lisk-core generator:enable lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3 --height=12
 === Register legacy validator keys
 
 .This step is crucial for migrating validators!
-IMPORTANT: The registration of the legacy validator keys has to be done *latest at the end of `initRounds`*, to be eligible to generate blocks in the new network.
-Otherwise, the validator will continue to be *banned* on the network, until the validator keys are registered in the legacy module.
+IMPORTANT: As already mentioned, all non-initial validators will be banned during the bootstrap period.
+The registration of the legacy validator keys has to be done *latest at the end of `initRounds`*, to be eligible to generate blocks in the new network.
+Otherwise, the validator will continue to be banned on the network, until the validator keys are registered in the legacy module.
 
 To register the legacy validator keys with the new node, create a new `registerKeys` transaction like so:
 
