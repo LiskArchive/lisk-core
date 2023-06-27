@@ -324,10 +324,11 @@ This can take ~10 mins against the Testnet, and ~3 hours against the Mainnet.
 The flag `--auto-download-lisk-core-v4` will download and install Lisk Core v4 for you.
 The flag `--auto-migrate-config` will automatically migrate the config from the old to the new node.
 
-After the snapshot height is reached, validators have approximately {initRoundsTime} to enable block generation, to ensure that they do not miss any blocks after the hard fork.
+After the snapshot height is reached, validators have approximately *{initRoundsTime}* to enable block generation, to ensure that they do not miss any blocks after the hard fork.
 
 NOTE: If the node is not migrated, but started at a later point in time, it will simply sync to the current network height.
-For validators, this might result in missing blocks. For everyone else, it will not have any impact.
+For validators, this might result in missing blocks.
+For everyone else, it will not have any impact.
 
 === Start Lisk Core v4
 If you set the flag `--auto-start-lisk-core-v4` when running lisk-migrator, it will start Lisk Core v4 in the foreground right after successful migration.
@@ -392,7 +393,7 @@ After migration, *101 initial validators* will be active to generate blocks duri
 All other validators will be banned during the bootstrap period.
 
 `initRounds` is the number of rounds for the bootstrap period of the new network.
-The bootstrap period after migration to Core v4 is {initRounds} rounds.
+The bootstrap period after migration to Core v4 is *{initRounds} rounds*.
 
 The initial validators will be exactly the 101 validators that were in active positions in the Lisk Core v3 network, at the time of the migration.
 
@@ -584,7 +585,7 @@ lisk-core generator:enable lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3 --height=12
 === Register legacy validator keys
 
 .This step is crucial for migrating validators!
-IMPORTANT: As already mentioned, all non-initial validators will be banned during the bootstrap period.
+IMPORTANT: As already mentioned, all non-initial validators will be *banned* during the bootstrap period.
 The registration of the legacy validator keys has to be done *latest at the end of `initRounds`*, to be eligible to generate blocks in the new network.
 Otherwise, the validator will continue to be banned on the network, until the validator keys are registered in the legacy module.
 
