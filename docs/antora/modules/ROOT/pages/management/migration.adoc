@@ -41,8 +41,8 @@ The new genesis block is created based on a snapshot of the old blockchain (runn
 ====
 All active validators on the Lisk Mainnet and the Lisk Testnet need to follow this guide to correctly migrate their nodes to the new network, in order to not miss any blocks after the network hard fork.
 
-Optionally, anyone running a Lisk Core v3.0.5 who is not an active validator can participate in the migration process.
-In this case, the following steps 2.7 and 2.8 in this guide can be skipped, as they are only relevant for validators.
+Optionally, anyone running a Lisk Core v3.0.5 who is not an active validator can also participate in the migration process.
+In this case, the following steps 2.7 and 2.8 in this guide can be skipped, as they are only relevant for the current validators.
 ====
 
 :sectnums:
@@ -251,7 +251,7 @@ In case a custom xref:{url_sdk_config_system}[dataPath] is defined in the config
 
 [source,bash,subs=attributes+]
 ----
-lisk-migrator --snapshot-height {snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --lisk-core-v3-data-path ~/.lisk/custom/path/ --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
+lisk-migrator --snapshot-height {snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --lisk-core-v3-data-path ~/lisk/custom/path/ --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
 ----
 ====
 
@@ -299,10 +299,10 @@ Observe if the `lisk-migrator` finishes successfully, (this can take several min
 The flag `--auto-download-lisk-core-v4` will also download and install Lisk Core v4 for you.
 The flag `--auto-migrate-config` will automatically migrate the config from the old to the new node.
 
-After the snapshot height is reached, validators have approximately {initRoundsTime} to enable block generation, to ensure they will not miss any blocks after the hard fork.
+After the snapshot height is reached, validators have approximately {initRoundsTime} to enable block generation, to ensure that they do not miss any blocks after the hard fork.
 
 NOTE: If the node is not migrated, but started at a later point in time, it will simply sync to the current network height.
-For validators, this might result in missing blocks, for everyone else it will not have any impact.
+For validators, this might result in missing blocks. For everyone else, it will not have any impact.
 
 === Start Lisk Core v4
 If you set the flag `--auto-start-lisk-core-v4` when running lisk-migrator, it will start Lisk Core v4 in the foreground right after successful migration.
@@ -434,9 +434,9 @@ For the initial validators, it will be important to enable block generation as s
 
 It is also important that as many as possible validators participate in the network migration.
 If only a small number of validators migrate their nodes, this can prolong the bootstrap period for a long time.
-Additionally, for blocks to be finalized, enough of the active validators (min. 68) need to participate in the migration process.
+Additionally, for blocks to be finalized, enough of the active validators (minimum 68) need to participate in the migration process.
 
-After {initRounds} rounds, the normal Lisk PoS protocol will be followed to generate the list of active validators, but only for validators who <<register-legacy-validator-keys,registered their validator keys>>.
+After {initRounds} rounds, the normal Lisk PoS protocol will be followed to generate the list of active validators, but only for the validators who have <<register-legacy-validator-keys,registered their validator keys>>.
 
 WARNING: All validators who did not <<register-legacy-validator-keys,register>> their keys will be *banned after the bootstrap period*.
 Registering the keys will un-ban the validator again.
@@ -486,7 +486,7 @@ Next, you will be prompted for the validator *passphrase*, and it will also ask 
 
 CAUTION: The password is sensitive information.
 Store the password used here for the encryption somewhere safe.
-It will be required every time to enable block generation, in order to decrypt the generator keys in the node.
+It will be required every time to enable block generation, in order to decrypt the generator keys on the node.
 
 This will generate the following file, which includes all important keys for the validator account:
 
@@ -535,7 +535,7 @@ This will generate the following file, which includes all important keys for the
 ====
 The generated keys are very sensitive information.
 
-Especially the non encrypted values need to be treated *as equally sensitive as the passphrase for an account.*
+Especially the non-encrypted values need to be treated *as equally sensitive as the passphrase for an account.*
 So after the keys are imported in step <<import-the-validator-keys>>, make sure to store the file somewhere safe, or delete the file completely.
 ====
 
@@ -616,7 +616,7 @@ lisk-core generator:enable lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3 --height=12
 
 .This step is crucial for migrating validators!
 IMPORTANT: The registration of the legacy validator keys has to be done *latest at the end of `initRounds`*, to be eligible to generate blocks in the new network.
-Otherwise, the validator will be *banned* in the network, until the validator keys are registered in the legacy module.
+Otherwise, the validator will continue to be *banned* on the network, until the validator keys are registered in the legacy module.
 
 To register the legacy validator keys with the new node, create a new `registerKeys` transaction like so:
 
