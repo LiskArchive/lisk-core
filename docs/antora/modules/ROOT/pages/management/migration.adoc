@@ -366,7 +366,7 @@ You can verify that the node is running correctly by executing the following com
 lisk-core system:node-info --pretty
 ----
 
-This will return certain general node information.
+Check the value of `version` in the response, to verify you are running version 4.0.0 of Lisk Core.
 
 === Stop Lisk Core v3.0.5
 
