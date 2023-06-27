@@ -1,0 +1,611 @@
+= Testnet and Mainnet v4 migration guide
+:toc: preamble
+:experimental:
+:idprefix:
+:idseparator: -
+//TODO: Update TBD values
+:snapshotHeight: TBD
+:snapshotHeightTestnet: TBD
+:initRounds: 60480
+:initRoundsTime: 1 week
+:lisk-migrator: lisk-migrator-v2.0.0-linux-x64.tar.gz
+:lisk-migrator_darwinx64: lisk-migrator-v2.0.0-darwin-x64.tar.gz
+:lisk-migrator_darwinarm64: lisk-migrator-v2.0.0-darwin-arm64.tar.gz
+:docs_sdk: v6@lisk-sdk::
+:docs_lisk: beta@ROOT::
+// External URLs
+:url_curl: https://curl.se/
+:url_jq: https://jqlang.github.io/jq/
+:url_lisk_chat: https://lisk.chat/
+:url_lisk_migrator: https://downloads.lisk.com/lisk-migrator/{lisk-migrator}
+:url_lisk_migrator_darwinarm64: https://downloads.lisk.com/lisk-migrator/{lisk-migrator_darwinarm64}
+:url_lisk_migrator_darwinx64: https://downloads.lisk.com/lisk-migrator/{lisk-migrator_darwinx64}
+:url_wallet: https://lisk.com/wallet
+:url_jsonrpc: https://www.jsonrpc.org/specification
+//TODO: Update links to blog posts
+:url_lisk_blog_migration: https://lisk.com/blog/development/announcing-lisk-testnet-v3-migration
+:url_lisk_blog_migration_mainnet: https://lisk.com/blog/development/announcing-lisk-mainnet-v3-migration
+// Project URLs
+:url_run_validator: {docs_lisk}run-blockchain/become-validator.adoc
+:url_run_pm2: {docs_lisk}run-blockchain/process-management.adoc
+:url_sdk_cli_keyscreate: {docs_sdk}client-cli.adoc#keyscreate
+:url_sdk_config_system: {docs_sdk}config.adoc#system
+:url_cli_generatorenable: core-cli.adoc#generatorenable
+:url_cli_endpointinvoke: core-cli.adoc#endpointinvoke
+
+This guide explains how to migrate a Lisk Core v3.0.5 node to Lisk Core v4.x using the Lisk migrator v2.
+
+The Lisk migrator CLI will generate a new genesis block for Lisk Core v4.
+The new genesis block is created based on a snapshot of the old blockchain (running on Lisk Core v3.0.5) at a given height.
+
+[IMPORTANT]
+====
+All active validators on the Lisk Mainnet and the Lisk Testnet need to follow this guide to correctly migrate their nodes to the new network, in order to not miss any blocks after the network hard fork.
+
+Optionally, anyone running a Lisk Core v3.0.5 who is not an active validator can also participate in the migration process.
+In this case, the following steps 2.4 and 2.5 in this guide can be skipped, as they are only relevant for the current validators.
+====
+
+:sectnums:
+:sectnumlevels: 5
+== Preparation
+
+.System requirements
+[NOTE]
+====
+The following system requirements are recommended for running the migration script:
+
+//TODO: Verify minimum values after testing
+Memory::
+* minimum of 8 GB RAM
+
+OS::
+* Ubuntu 20.04 LTS
+* Ubuntu 22.04 LTS
+
+Node.js::
+* Version 18 (LTS)
+====
+
+=== Ensure you are running version 3.0.5 of Lisk Core
+Ensure you are running version 3.0.5 of Lisk Core to be able to seamlessly migrate to Lisk Core 4.0.0.
+
+Print the Lisk Core node info in the terminal, and check the value of `version`.
+
+[source,bash]
+----
+lisk-core node:info --pretty
+----
+
+If your version is lower than 3.0.5, ensure to update Lisk Core before proceeding with the migration.
+
+=== Setting up the Lisk migrator
+
+==== Download the migration script
+Navigate into the folder where you want to install the Lisk Migrator, and then download the migration script by running the following command in the terminal:
+
+[tabs]
+====
+Linux x64::
++
+--
+[subs=attributes+]
+[source,bash]
+----
+curl -o {lisk-migrator} {url_lisk_migrator}
+----
+--
+Darwin x64::
++
+--
+[subs=attributes+]
+[source,bash]
+----
+curl -o {lisk-migrator_darwinx64} {url_lisk_migrator_darwinx64}
+----
+--
+Darwin ARM64::
++
+--
+[subs=attributes+]
+[source,bash]
+----
+curl -o {lisk-migrator_darwinarm64} {url_lisk_migrator_darwinarm64}
+----
+--
+====
+
+==== Download the checksum and verify
+Download the checksum and verify the successful download of the lisk-migrator.
+
+{counter:seq3:A}) Download the checksum.
+
+[tabs]
+====
+Linux x64::
++
+--
+[subs=attributes+]
+[source,bash]
+----
+curl -o {lisk-migrator}.SHA256 {url_lisk_migrator}.SHA256
+----
+--
+Darwin x64::
++
+--
+[subs=attributes+]
+[source,bash]
+----
+curl -o {lisk-migrator_darwinx64}.SHA256 {url_lisk_migrator_darwinx64}.SHA256
+----
+--
+Darwin ARM64::
++
+--
+[subs=attributes+]
+[source,bash]
+----
+curl -o {lisk-migrator_darwinarm64}.SHA256 {url_lisk_migrator_darwinarm64}.SHA256
+----
+--
+====
+
+{counter:seq3}) Run the following command in the terminal and ensure the output is `sha256sum: <file name>: OK`
+
+[tabs]
+====
+Linux::
++
+--
+[subs=attributes+]
+[source,bash]
+----
+sha256sum -c {lisk-migrator}.SHA256
+----
+--
+Darwin::
++
+--
+[subs=attributes+]
+[source,bash]
+----
+sha -a 256 {lisk-migrator}.SHA256
+----
+--
+====
+
+==== Extract and add to PATH
+
+Unpack it, and then add it to the system path, in order to use it in the terminal:
+
+[subs=attributes+]
+[source,bash]
+----
+tar -xf ./{lisk-migrator}
+----
+
+Make the `lisk-migrator` command available in the PATH, e.g. by executing the following command:
+
+[source,bash]
+----
+export PATH="$PATH:$HOME/lisk-migrator/bin"
+----
+
+In case the `lisk-migrator` was extracted somewhere else other than in your home directory, replace `$HOME` with the absolute path of where the `lisk-migrator` folder is located.
+
+=== Check the announced snapshot height
+
+//TODO: update links to blog posts once created
+* For Mainnet: {snapshotHeight} +
+//For more information check the {url_lisk_blog_migration_mainnet}[Mainnet migration announcement^].
+* For Testnet: {snapshotHeightTestnet} +
+//For more information check the {url_lisk_blog_migration}[Testnet migration announcement^].
+
+The height is needed by the `lisk-migrator` in the next step.
+A snapshot of the blockchain will be created at this particular height, which will then be used to create the genesis block for the new blockchain.
+
+=== Ensure Lisk Core v3.0.5 is fully synced with the network
+Check the current block height of your node directly in the terminal by running the following command:
+
+[source,bash]
+----
+lisk-core node:info --pretty
+----
+
+Compare the current height of your node to the network height in {url_wallet}[Lisk Desktop^], which is shown on the kbd:[Network] or kbd:[Blocks] pages.
+
+TIP: To view the current height of the *Lisk Testnet*, use the network switcher of Lisk Desktop, which can be enabled in the settings.
+
+Alternatively, users can also verify the current height by comparing `data.height` in the response from the https://service.lisk.com/api/v2/network/status endpoint.
+
+To directly check the current height via the command line, run:
+
+[source,bash]
+----
+curl --silent https://service.lisk.com/api/v2/network/status | jq '.data.height'
+----
+
+To run the command, both {url_curl}[curl^] and {url_jq}[jq^] are required to be installed.
+
+If both heights are equal, it is verified that your node is fully synced with the network.
+
+=== Run lisk migrator
+
+[IMPORTANT]
+====
+.When to start the migrator script?
+`lisk-migrator` can be started any time before the announced snapshot height.
+====
+
+If you have added the `lisk-migrator` to the PATH as described in the section <<setting-up-the-lisk-migrator>>, you can start the migration script by running the following command footnote:snap_footnote[Snap versions of Lisk Core store everything in `~/snap/lisk-core/current/.lisk/lisk-core` instead of `~/.lisk/lisk-core`] in the terminal:
+
+[tabs]
+====
+Mainnet::
++
+--
+[source,bash,subs=attributes+]
+----
+lisk-migrator --snapshot-height {snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
+----
+--
+Testnet::
++
+--
+[source,bash,subs=attributes+]
+----
+lisk-migrator --snapshot-height {snapshotHeightTestnet} --output ~/.lisk/lisk-core/config/testnet --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
+----
+--
+====
+
+* `--snapshot-height`:
+The height on which the blockchain snapshot will be performed.
+The snapshot height will be announced separately.
+* `--output`:
+The absolute path to the directory, where the newly generated genesis block should be saved.
+
+[TIP]
+====
+In case a custom xref:{url_sdk_config_system}[dataPath] is defined in the config, different to the default path `~/.lisk/lisk-core`, then it is possible to define the data path with the `--lisk-core-v3-data-path` flag like so:
+
+[source,bash,subs=attributes+]
+----
+lisk-migrator --snapshot-height {snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --lisk-core-v3-data-path ~/lisk/custom/path/ --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
+----
+====
+
+[TIP]
+====
+It is possible to use tools such as `screen` to run the Lisk migrator in the background.
+
+With `screen` you can detach the current terminal window into the background:
+
+.Example (Mainnet) footnote:snap_footnote[]
+[source,bash,subs=attributes+]
+----
+screen -dmSL migration lisk-migrator --snapshot-height {snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
+----
+
+Shortly before the migration occurs, it is possible to reattach to the screen, in order to check if everything is working correctly.
+
+First, check the name of the detached screen:
+
+[source,bash]
+----
+screen -ls
+----
+
+This returns a list of all detached screens with `screen`:
+
+----
+There is a screen on:
+	1842.migration	(05/07/2021 12:35:59 PM)	(Detached)
+1 Socket in /run/screen/S-lisk.
+----
+
+Use `screen -r` and the name of the detached screen you want to connect to
+
+[source,bash]
+----
+screen -r 1842.migration
+----
+====
+
+== Migration steps
+
+=== Wait until the network reaches the snapshot height
+
+Observe if the `lisk-migrator` finishes successfully.
+
+This can take ~10 mins against the Testnet, and ~3 hours against the Mainnet.
+
+The flag `--auto-download-lisk-core-v4` will download and install Lisk Core v4 for you.
+The flag `--auto-migrate-config` will automatically migrate the config from the old to the new node.
+
+After the snapshot height is reached, validators have approximately *{initRoundsTime}* to enable block generation, to ensure that they do not miss any blocks after the hard fork.
+
+NOTE: If the node is not migrated, but started at a later point in time, it will simply sync to the current network height.
+For validators, this might result in missing blocks.
+For everyone else, it will not have any impact.
+
+=== Start Lisk Core v4
+If you set the flag `--auto-start-lisk-core-v4` when running lisk-migrator, it will start Lisk Core v4 in the foreground right after successful migration.
+
+Otherwise, start Lisk Core manually like so:
+
+
+[tabs]
+====
+Mainnet::
++
+--
+[source,bash]
+----
+lisk-core start --network mainnet
+----
+--
+Testnet::
++
+--
+[source,bash]
+----
+lisk-core start --network testnet
+----
+--
+====
+
+Observe the logs in the terminal, to verify the node is starting correctly.
+
+TIP: To run Lisk Core in the background install PM2, as described in the guide xref:{url_run_pm2}[].
+
+You can verify that the node is running correctly by executing the following command:
+
+[source,bash]
+----
+lisk-core system:node-info --pretty
+----
+
+Check the value of `version` in the response, to verify you are running version 4.0.0 of Lisk Core.
+
+=== Stop Lisk Core v3.0.5
+
+After the `lisk-migrator` script has finished and the announced snapshot height has passed, there is no reason to continue running Lisk Core v3.0.5, and therefore it is recommended to stop it.
+
+//TODO: Update with correct command to stop Lisk Core
+////
+Navigate into the root folder of your Lisk Core v3.0.5 installation and run the following command to stop the old Lisk Core version:
+
+[source,bash]
+----
+lisk-core
+----
+////
+
+NOTE: Users that have set something up to start Lisk Core on boot, whether it's through `cron` or `systemd` or something else, should keep that in mind and adjust things accordingly so that Lisk Core 4.x gets started instead of Lisk Core 3.x.
+
+Last but not least, remove the folder with Lisk Core v3.0.5.
+
+=== Enable block generation after the migration (for validators)
+
+After migration, *101 initial validators* will be active to generate blocks during the `initRounds`.
+All other validators will be banned during the bootstrap period.
+
+`initRounds` is the number of rounds for the bootstrap period of the new network.
+The bootstrap period after migration to Core v4 is *{initRounds} rounds*.
+
+The initial validators will be exactly the 101 validators that were in active positions in the Lisk Core v3 network, at the time of the migration.
+
+For the initial validators, it will be important to enable block generation as soon as possible on the new node, to not miss any block rewards.
+
+It is also important that as many as possible validators participate in the network migration.
+If only a small number of validators migrate their nodes, this can prolong the bootstrap period for a long time.
+Additionally, for blocks to be finalized, enough of the active validators (minimum 68) need to participate in the migration process.
+
+After {initRounds} rounds, the normal Lisk PoS protocol will be followed to generate the list of active validators, but only for the validators who have <<register-legacy-validator-keys,registered their validator keys>>.
+
+WARNING: All validators who *did not register their keys* until the bootstrap period ends will stay *banned*.
+To be un-banned, a validator needs to <<register-legacy-validator-keys>>.
+
+==== Allow methods in the node config
+To be able to run certain validator-related commands of the node, it is required to enable security-sensitive methods in the node config.
+
+.config.json
+[source,json]
+----
+{
+  "rpc": {
+    "modes": ["ipc"],
+    "allowedMethods": ["generator", "system", "random"]
+  }
+}
+----
+
+Restart the node with the `--overwrite-config` flag, to load the updated configuration.
+
+[TIP]
+====
+`allowedMethods` refers to the `method` defined in the {url_jsonrpc}[JSON-RPC specification^].
+
+Add the `namespace`, to allow all endpoints of `namespace`, or `namespace_endpointName` to allow a specific endpoint.
+====
+
+==== Create the validator keys
+
+It is possible to generate all relevant validator keys to enable block generation from the account passphrase.
+
+To do so, use the command xref:{url_sdk_cli_keyscreate}[keys:create].
+
+[source,bash]
+----
+lisk-core keys:create --output config/keys.json
+----
+
+Next, you will be prompted for the validator *passphrase*, and it will also ask for a *password*, in order to symmetrically encrypt the passphrase for the config.
+
+----
+? Please enter passphrase:  [hidden]
+? Please re-enter passphrase:  [hidden]
+? Please enter password:  [hidden]
+? Please re-enter password:  [hidden]
+----
+
+CAUTION: The password is sensitive information.
+Store the password used here for the encryption somewhere safe.
+It will be required every time to enable block generation, in order to decrypt the generator keys on the node.
+
+This will generate the following file, which includes all important keys for the validator account:
+
+[%collapsible]
+====
+.config/keys.json
+[source,json]
+----
+{
+  "keys": [
+    {
+      "address": "lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3",
+      "keyPath": "m/44'/134'/0'",
+      "publicKey": "6290c8b58de8b71fedb7e3cb9a6ee9426aa3e7ac0141f278526375d46705b546",
+      "privateKey": "759305903f7bbb449cf2fd22e6da476792b63e24558e266a4859f9ed3c91fd7e6290c8b58de8b71fedb7e3cb9a6ee9426aa3e7ac0141f278526375d46705b546",
+      "plain": {
+        "generatorKeyPath": "m/25519'/134'/0'/0'",
+        "generatorKey": "aaecd278a3fadc40a4a824d6f4aa24547d8fb9d075ec4d6967a7084f9a3f2541",
+        "generatorPrivateKey": "81316f0582fd2cc0a651318aa0041ce36e7b786033b98ec545ec04078fad67caaaecd278a3fadc40a4a824d6f4aa24547d8fb9d075ec4d6967a7084f9a3f2541",
+        "blsKeyPath": "m/12381/134/0/0",
+        "blsKey": "815a9e7643cf2bace98d1337f1dca8e39949592cd3fcb79bf3ab5784981468b9987b3340527bc9ca263a2fd061812024",
+        "blsProofOfPosession": "add8669bb57f3dceec04dc0f875906cb52a677f1df911536c01f447c8830bf27cd43713af18d84de5a64ec504aeaf9a30521c09438bb5a4d5fd634946c65e0fc4ea3681fdb4f6949cb6c1bc1ac1ddec3df058a13466af5a13d50737938fd7d5f",
+        "blsPrivateKey": "36506a53431665265ee03d7e19a5d44db3ff159d9aeee05727a8b24abc67651a"
+      },
+      "encrypted": {
+        "ciphertext": "c3009d4a505ac32a652ffce6aa718073c7ca75b00578420ba20c2533a83f38e2b3e20cf1d6f0c9905efe28b5276142b93fdbdd33134d37bcd2db23654da92bb2becd00971c49ecc749100748c93344477ea52f6073c3fefec7234962d0eccdaa6862d9d0da46dbfe85cef98ad6cab0f2c1cb1b54326617132bb950d1c14a774a1e6403e8fa1bf3a2c7c0d6856266cf738f41ac01b2217d93070c4079e1b82044d3a692ea225290c2b6bcb902e0ffb8132f4c0f29325e6a3a",
+        "mac": "2b3c65d0385a870ab499dfcddf411347506671015f412b35600153b132a455ea",
+        "kdf": "argon2id",
+        "kdfparams": {
+          "parallelism": 4,
+          "iterations": 1,
+          "memorySize": 2024,
+          "salt": "a5598628001346f608b3f57dd38b8611"
+        },
+        "cipher": "aes-256-gcm",
+        "cipherparams": {
+          "iv": "683600a199d154e51c0f97e6",
+          "tag": "32807058f7f89921b4839fc39256cd24"
+        },
+        "version": "1"
+      }
+    }
+  ]
+}
+----
+====
+
+[CAUTION]
+====
+The generated keys are very sensitive information.
+
+Especially the non-encrypted values need to be treated *as equally sensitive as the passphrase for an account.*
+So after the keys are imported in step <<import-the-validator-keys>>, make sure to store the file somewhere safe, or delete the file completely.
+====
+
+==== Import the validator keys
+
+After creating the validator keys as suggested in the  <<create-the-validator-keys>> section, the next step is to import them into the node.
+
+[source,bash]
+----
+lisk-core keys:import --file-path config/keys.json
+----
+
+==== Set the hash onion
+Without the hash onion, a validator won't be able to receive any rewards for generating new blocks, although the blocks would still be valid in that case.
+To not miss any rewards, it is of high interest for a validator to set the hash onion, before enabling block generation on the node.
+
+//TODO: Add link to endpoint API reference, once endpoint reference ready
+Set the hash-onion by invoking the xref:{}[setHashOnion] endpoint via the xref:{url_cli_endpointinvoke}[endpoint:invoke] CLI command.
+
+[source,bash]
+----
+lisk-core endpoint:invoke random_setHashOnion '{"address":"lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3"}'
+----
+
+[CAUTION]
+====
+If you see the following error after running the command:
+
+[source,bash]
+----
+$ lisk-core endpoint:invoke random_setHashOnion '{"address":"lskxsddtvbc7ze98bqbawaq3ydj2f8387429633t9"}'
+ ›   Error: Response not received in 3000ms
+----
+
+This suggests that the API timed out.
+However, the hash onion is still created in most cases.
+You can wait for a while and then get the hash onion, to verify that it actually is set.
+
+[source,bash]
+----
+lisk-core endpoint:invoke random_getHashOnionSeeds --pretty
+----
+====
+
+==== Enable block generation
+
+Now, it is possible to enable block generation on the new node for your validator by using the xref:{url_cli_generatorenable}[generator:enable] command of the Lisk Core CLI.
+
+[source,bash]
+----
+lisk-core generator:enable lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3 --use-status-value
+----
+
+Replace the address with your validator address.
+
+.Don't use zeros as validator info data!
+[WARNING]
+====
+If the validator already generated blocks with Lisk Core v3, they need to use their current validator info data.
+The validator info data is migrated during the migration process, and can directly be used to enable block generation on the v4 node.
+
+To directly set the values, use the `--use-status-value` flag, or set the values manually as described below.
+
+For setting the values manually, first get the data:
+[source,bash]
+----
+lisk-core generator:status --pretty
+----
+
+And then set the values manually by adding the relevant flags:
+[source,bash]
+----
+lisk-core generator:enable lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3 --height=123 --max-height-generated=101 --max-height-prevoted=101
+----
+====
+
+=== Register legacy validator keys
+
+.This step is crucial for migrating validators!
+IMPORTANT: As already mentioned, all non-initial validators will be *banned* during the bootstrap period.
+The registration of the legacy validator keys has to be done *latest at the end of `initRounds`*, to be eligible to generate blocks in the new network.
+Otherwise, the validator will continue to be banned on the network, until the validator keys are registered in the legacy module.
+
+To register the legacy validator keys with the new node, create a new `registerKeys` transaction like so:
+
+[source,bash]
+----
+lisk-core transaction:create legacy registerKeys 10000000
+----
+
+It will ask you for the required parameters:
+----
+? Please enter passphrase:  [hidden]
+? Please enter: blsKey:
+? Please enter: proofOfPossession:
+? Please enter: generatorKey:
+----
+
+The required parameters can be obtained from the `keys.json` file, which was created in step <<create-the-validator-keys>> previously.
+
+The migration of Lisk Core from v3 to v4 is now completed.
+
+If you have specific questions regarding the process or need additional support, please reach out in the dedicated community channels, like {url_lisk_chat}[^].
