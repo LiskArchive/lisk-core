@@ -43,7 +43,7 @@ The new genesis block is created based on a snapshot of the old blockchain (runn
 All active validators on the Lisk Mainnet and the Lisk Testnet need to follow this guide to correctly migrate their nodes to the new network, in order to not miss any blocks after the network hard fork.
 
 Optionally, anyone running a Lisk Core v3.0.5 who is not an active validator can also participate in the migration process.
-In this case, the following steps 2.7 and 2.8 in this guide can be skipped, as they are only relevant for the current validators.
+In this case, the following steps 2.4 and 2.5 in this guide can be skipped, as they are only relevant for the current validators.
 ====
 
 :sectnums:
@@ -194,8 +194,6 @@ export PATH="$PATH:$HOME/lisk-migrator/bin"
 
 In case the `lisk-migrator` was extracted somewhere else other than in your home directory, replace `$HOME` with the absolute path of where the `lisk-migrator` folder is located.
 
-== Migration steps
-
 === Check the announced snapshot height
 
 //TODO: update links to blog posts once created
@@ -314,6 +312,8 @@ Use `screen -r` and the name of the detached screen you want to connect to
 screen -r 1842.migration
 ----
 ====
+
+== Migration steps
 
 === Wait until the network reaches the snapshot height
 
