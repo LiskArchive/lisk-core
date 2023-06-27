@@ -196,9 +196,9 @@ Compare the current height of your node to the network height in {url_wallet}[Li
 
 TIP: To view the current height of the *Lisk Testnet*, use the network switcher of Lisk Desktop, which can be enabled in the settings.
 
-Alternatively users can also verify the current height by comparing `data.height` in the response from the https://service.lisk.com/api/v2/network/status endpoint.
+Alternatively, users can also verify the current height by comparing `data.height` in the response from the https://service.lisk.com/api/v2/network/status endpoint.
 
-To directly check the current height via command line, run:
+To directly check the current height via the command line, run:
 
 [source,bash]
 ----
