@@ -319,7 +319,7 @@ screen -r 1842.migration
 
 Observe if the `lisk-migrator` finishes successfully.
 
-This can take ~ 10 mins against the Testnet, and 3 hours against the Mainnet.
+This can take ~10 mins against the Testnet, and ~3 hours against the Mainnet.
 
 The flag `--auto-download-lisk-core-v4` will download and install Lisk Core v4 for you.
 The flag `--auto-migrate-config` will automatically migrate the config from the old to the new node.
