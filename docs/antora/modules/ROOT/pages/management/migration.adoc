@@ -553,7 +553,7 @@ Without the hash onion, a validator won't be able to receive any rewards for gen
 To not miss any rewards, it is of high interest for a validator to set the hash onion, before enabling block generation on the node.
 
 //TODO: Add link to endpoint API reference, once endpoint reference ready
-Set the hash-onion by invoking the xref:{}[setHashOnion] endpoint via the xref:{endpointinvoke}[endpoint:invoke] CLI command.
+Set the hash-onion by invoking the xref:{}[setHashOnion] endpoint via the xref:{url_cli_endpointinvoke}[endpoint:invoke] CLI command.
 
 [source,bash]
 ----
