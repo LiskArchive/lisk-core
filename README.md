@@ -33,7 +33,7 @@ The following dependencies need to be installed in order to run applications cre
 
 | Dependencies             | Version |
 | ------------------------ | ------- |
-| NodeJS                   | 16.20   |
+| NodeJS                   | 18.16   |
 | Python (for development) | 2.7.18  |
 
 You can find further details on installing these dependencies in our [pre-installation setup guide](https://lisk.com/documentation/lisk-core/setup/source.html#source-pre-install).
@@ -60,7 +60,7 @@ $ npm install -g lisk-core
 $ lisk-core COMMAND
 running command...
 $ lisk-core (-v|--version|version)
-lisk-core/4.0.0-beta.0 darwin-arm64 node-v16.20.0
+lisk-core/4.0.0-beta.2 darwin-arm64 node-v18.16.1
 $ lisk-core --help [COMMAND]
 USAGE
   $ lisk-core COMMAND
@@ -132,7 +132,13 @@ For a more advanced options refer to [PM2 documentation](https://pm2.keymetrics.
 
 [`lisk-core start`](docs/commands/start.md) supports flag and environment variable options to configure a node.
 
-Also, custom configuration through JSON file is available through the `--config, -c` flag.
+In addition, custom configuration through the JSON file can be made available through the `--config, -c` flag.
+
+> **NOTE**: As a security measure, access to all the methods on the node over the IPC and HTTP API by default are disabled. To allow access, the `system.allowedMethods` property within the custom node config file may be configured as shown below.
+>
+> - `system.allowedMethods: ["system_getNodeInfo"]` - Expose specific methods
+> - `system.allowedMethods: ["system", "token"]` - Expose all the registered methods under the specified namespaces
+> - `system.allowedMethods: ["*"]` - Expose all available registered methods under all the namespaces
 
 ### Example
 
@@ -143,7 +149,8 @@ With custom config file `./custom-config.json` below:
   "system": {
     "dataPath": "~/.lisk",
     "logLevel": "debug",
-    "keepEventsForHeights": -1
+    "keepEventsForHeights": -1,
+    "allowedMethods": ["*"]
   },
   "rpc": {
     "modes": ["ipc", "ws", "http"],
