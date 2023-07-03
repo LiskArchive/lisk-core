@@ -127,7 +127,7 @@ To install Node.js execute the following command:
 
 [source,bash]
 ----
-arch -x86_64 nvm install 16
+arch -x86_64 nvm install 18
 ----
 // TIP: For installing docker on M1 chips, check out the guide about {url_install_docker_mac}[installing Docker on a Mac^].
 //TODO: Test if installing Python is necessary
