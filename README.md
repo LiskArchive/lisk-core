@@ -132,7 +132,7 @@ For a more advanced options refer to [PM2 documentation](https://pm2.keymetrics.
 
 [`lisk-core start`](docs/commands/start.md) supports flag and environment variable options to configure a node.
 
-Also, custom configuration through JSON file can be made available through the `--config, -c` flag.
+In addition, custom configuration through the JSON file can be made available through the `--config, -c` flag.
 
 > **NOTE**: For security reasons, we disable access to all the methods on the node over the IPC and HTTP API by default. To allow access, the `system.allowedMethods` property within the custom node config file could be configured as shown below.
 >
