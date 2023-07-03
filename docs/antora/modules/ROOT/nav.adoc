@@ -7,4 +7,5 @@
 ** xref:setup/source.adoc[]
 * Management
 ** xref:management/configuration.adoc[]
+** xref:management/migration.adoc[]
 * xref:core-cli.adoc[]
