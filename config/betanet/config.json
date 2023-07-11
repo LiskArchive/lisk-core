@@ -70,9 +70,6 @@
 		"pos": {
 			"maxBFTWeightCap": 1000,
 			"useInvalidBLSKey": true
-		},
-		"token": {
-			"feeTokenID": "0200000000000000"
 		}
 	},
 	"plugins": {}
