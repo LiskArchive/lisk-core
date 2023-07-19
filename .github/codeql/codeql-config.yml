@@ -1,0 +1,7 @@
+paths-ignore:
+  - ./config
+  - ./docs
+  - ./logs
+  - ./pids
+  - ./source
+  
