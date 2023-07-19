@@ -120,19 +120,19 @@ export class StartCommand extends BaseStartCommand {
 		const app = getApplication(config);
 
 		if (flags['enable-forger-plugin']) {
-			app.registerPlugin(new ForgerPlugin(), { loadAsChildProcess: false });
+			app.registerPlugin(new ForgerPlugin(), { loadAsChildProcess: true });
 		}
 		if (flags['enable-monitor-plugin']) {
-			app.registerPlugin(new MonitorPlugin(), { loadAsChildProcess: false });
+			app.registerPlugin(new MonitorPlugin(), { loadAsChildProcess: true });
 		}
 		if (flags['enable-report-misbehavior-plugin']) {
-			app.registerPlugin(new ReportMisbehaviorPlugin(), { loadAsChildProcess: false });
+			app.registerPlugin(new ReportMisbehaviorPlugin(), { loadAsChildProcess: true });
 		}
 		if (flags['enable-faucet-plugin']) {
-			app.registerPlugin(new FaucetPlugin(), { loadAsChildProcess: false });
+			app.registerPlugin(new FaucetPlugin(), { loadAsChildProcess: true });
 		}
 		if (flags['enable-chain-connector-plugin']) {
-			app.registerPlugin(new ChainConnectorPlugin(), { loadAsChildProcess: false });
+			app.registerPlugin(new ChainConnectorPlugin(), { loadAsChildProcess: true });
 		}
 
 		return app;
