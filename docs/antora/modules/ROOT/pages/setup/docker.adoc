@@ -43,7 +43,7 @@ include::partial$create-a-new-user.adoc[]
 To run Lisk Core in Docker, firstly it is necessary to install the Docker engine.
 Determine if your platform can run Docker as described below.
 
-Please refer to {url_docker_install}[https://docs.docker.com/engine/installation]
+Please refer to {url_docker_install}[https://docs.docker.com/engine/installation].
 
 [tabs]
 ====
@@ -160,7 +160,21 @@ docker run --volume lisk-data:/home/lisk/.lisk \
            lisk/core:4.0.0 \
            start --network=testnet
 ----
+
 --
+Devnet::
++
+--
+[source,bash]
+----
+docker run --volume lisk-data:/home/lisk/.lisk \
+           --publish 7887:7887 \
+           --name lisk-core \
+           lisk/core:4.0.0 \
+           start --network=devnet
+----
+--
+NOTE: The passphrase for the genesis account can be found here in the Lisk Core GitHub repository under the following path: xref:{devnet_passphrase}[config/devnet/passphrase.json].
 ====
 
 == Configuration
