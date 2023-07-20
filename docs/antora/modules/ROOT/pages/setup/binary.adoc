@@ -6,7 +6,6 @@ Christopher Braithwaite <christopher.braithwaite@lightcurve.io> Mona Bärenfäng
 :sectnums:
 :page-toclevels: 4
 
-
 // External URLs
 :url_set_path: https://opensource.com/article/17/6/set-path-linux
 // Project URLs
