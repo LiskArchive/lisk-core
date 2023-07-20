@@ -192,6 +192,16 @@ Testnet::
 lisk-core start --network testnet
 ----
 --
+Devnet::
++
+--
+[source,bash]
+----
+lisk-core start --network devnet
+----
+--
+NOTE: The passphrase for the genesis account can be found here in the Lisk Core GitHub repository under the following path: xref:{devnet_passphrase}[config/devnet/passphrase.json].
+
 ====
 
 include::partial$core-post-installation.adoc[]
