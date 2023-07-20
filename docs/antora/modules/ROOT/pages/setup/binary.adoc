@@ -302,6 +302,14 @@ Testnet::
 lisk-core start --network testnet
 ----
 --
+Devnet::
++
+--
+[source,bash]
+----
+lisk-core start --network devnet
+----
+--
 ====
 
 include::partial$core-post-installation.adoc[]
