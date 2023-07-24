@@ -12,7 +12,7 @@ Mona Bärenfänger <mona@lightcurve.io>
 :url_docker_install_windows: https://docs.docker.com/docker-for-windows/install/
 :url_docker_linux_post_install: https://docs.docker.com/install/linux/linux-postinstall
 :url_xcode: https://developer.apple.com/xcode/features/
-:devnet_passphrase: https://github.com/LiskHQ/lisk-core/blob/development/config/devnet/passphrase.json
+:url_devnet_passphrase: https://github.com/LiskHQ/lisk-core/blob/development/config/devnet/passphrase.json
 // Project URLs
 :url_config: management/configuration.adoc
 :url_upgrade_source: update/source.adoc
@@ -174,7 +174,7 @@ docker run --volume lisk-data:/home/lisk/.lisk \
            start --network=devnet
 ----
 --
-NOTE: The passphrase for the genesis account can be found here in the Lisk Core GitHub repository under the following path: xref:{devnet_passphrase}[config/devnet/passphrase.json].
+NOTE: The passphrase for the genesis account can be found here in the Lisk Core GitHub repository under the following path: xref:{url_devnet_passphrase}[config/devnet/passphrase.json].
 ====
 
 == Configuration
