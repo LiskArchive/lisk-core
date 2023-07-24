@@ -12,9 +12,8 @@ Mona Bärenfänger <mona@lightcurve.io>
 :url_docker_install_windows: https://docs.docker.com/docker-for-windows/install/
 :url_docker_linux_post_install: https://docs.docker.com/install/linux/linux-postinstall
 :url_xcode: https://developer.apple.com/xcode/features/
-// Project URLs
-
 :devnet_passphrase: https://github.com/LiskHQ/lisk-core/blob/development/config/devnet/passphrase.json
+// Project URLs
 :url_config: management/configuration.adoc
 :url_upgrade_source: update/source.adoc
 :url_run_logging: lisk-core::run-blockchain/logging.adoc
