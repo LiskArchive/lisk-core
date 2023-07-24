@@ -8,12 +8,12 @@ Christopher Braithwaite <christopher.braithwaite@lightcurve.io> Mona Bärenfäng
 
 // External URLs
 :url_set_path: https://opensource.com/article/17/6/set-path-linux
-:devnet_passphrase: https://github.com/LiskHQ/lisk-core/blob/v4.0.0-beta.4/config/devnet/passphrase.json
-// TODO: replace the above url with this one when when the docs are released - devnet_passphrase: https://github.com/LiskHQ/lisk-core/blob/main/config/devnet/passphrase.json
-// Project URLs
-:url_run_logging: lisk-docs::run-blockchain/logging.adoc
+:url_devnet_passphrase: https://github.com/LiskHQ/lisk-core/blob/development/config/devnet/passphrase.json
 :url_zsch_set_path: https://linuxhint.com/add-a-directory-to-path-in-zsh/
 :url_install_docker_mac: https://docs.docker.com/desktop/install/mac-install/
+// Project URLs
+:url_run_logging: lisk-docs::run-blockchain/logging.adoc
+
 
 The binary installation offers an easy and automated approach to setting up Lisk Core.
 
@@ -312,7 +312,7 @@ Devnet::
 lisk-core start --network devnet
 ----
 --
-NOTE: The passphrase for the genesis account can be found here in the Lisk Core GitHub repository under the following path: xref:{devnet_passphrase}[config/devnet/passphrase.json].
+NOTE: The passphrase for the genesis account can be found here in the Lisk Core GitHub repository under the following path: xref:{url_devnet_passphrase}[config/devnet/passphrase.json].
 ====
 
 include::partial$core-post-installation.adoc[]
