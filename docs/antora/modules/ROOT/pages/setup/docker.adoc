@@ -15,7 +15,7 @@ Mona Bärenfänger <mona@lightcurve.io>
 // Project URLs
 
 :devnet_passphrase: https://github.com/LiskHQ/lisk-core/blob/v4.0.0-beta.4/config/devnet/passphrase.json
-// TODO: use this url when the docs are released - devnet_passphrase: https://github.com/LiskHQ/lisk-core/blob/main/config/devnet/passphrase.json
+// TODO: replace the above url with this one when the docs are released - devnet_passphrase: https://github.com/LiskHQ/lisk-core/blob/main/config/devnet/passphrase.json
 :url_config: management/configuration.adoc
 :url_upgrade_source: update/source.adoc
 :url_run_logging: lisk-core::run-blockchain/logging.adoc
