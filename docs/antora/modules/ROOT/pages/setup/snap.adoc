@@ -7,8 +7,7 @@ Mona Bärenfänger <mona@lightcurve.io>
 :url_canonical: https://canonical.com/
 // Project URLs
 :url_run_logging: ROOT::run-blockchain/logging.adoc
-:devnet_passphrase: https://github.com/LiskHQ/lisk-core/blob/v4.0.0-beta.4/config/devnet/passphrase.json
-// TODO: replace the above url with this one when when the docs are released - devnet_passphrase: https://github.com/LiskHQ/lisk-core/blob/main/config/devnet/passphrase.json
+:devnet_passphrase: https://github.com/LiskHQ/lisk-core/blob/development/config/devnet/passphrase.json
 
 How to set up a Lisk Core node via Snap.
 
