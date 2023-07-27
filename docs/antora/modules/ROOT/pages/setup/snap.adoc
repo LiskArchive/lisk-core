@@ -7,6 +7,7 @@ Mona Bärenfänger <mona@lightcurve.io>
 :url_canonical: https://canonical.com/
 // Project URLs
 :url_run_logging: ROOT::run-blockchain/logging.adoc
+:url_devnet_passphrase: https://github.com/LiskHQ/lisk-core/blob/development/config/devnet/passphrase.json
 
 How to set up a Lisk Core node via Snap.
 
@@ -83,5 +84,14 @@ Testnet::
 lisk-core start --network testnet
 ----
 --
+Devnet::
++
+--
+[source,bash]
+----
+lisk-core start --network devnet
+----
+--
+NOTE: The passphrase for the genesis account(s) can be found here in the Lisk Core GitHub repository under the following path: {url_devnet_passphrase}[config/devnet/passphrase.json].
 ====
 

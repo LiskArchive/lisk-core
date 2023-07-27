@@ -136,9 +136,9 @@ In addition, custom configuration through the JSON file can be made available th
 
 > **NOTE**: As a security measure, access to all the methods on the node over the IPC and HTTP API by default are disabled. To allow access, the `system.allowedMethods` property within the custom node config file may be configured as shown below.
 >
-> - `system.allowedMethods: ["system_getNodeInfo"]` - Expose specific methods
-> - `system.allowedMethods: ["system", "token"]` - Expose all the registered methods under the specified namespaces
-> - `system.allowedMethods: ["*"]` - Expose all available registered methods under all the namespaces
+> - `rpc.allowedMethods: ["system_getNodeInfo"]` - Expose specific methods
+> - `rpc.allowedMethods: ["system", "token"]` - Expose all the registered methods under the specified namespaces
+> - `rpc.allowedMethods: ["*"]` - Expose all available registered methods under all the namespaces
 
 ### Example
 
@@ -149,13 +149,18 @@ With custom config file `./custom-config.json` below:
   "system": {
     "dataPath": "~/.lisk",
     "logLevel": "debug",
-    "keepEventsForHeights": -1,
-    "allowedMethods": ["*"]
+    "keepEventsForHeights": -1
   },
   "rpc": {
-    "modes": ["ipc", "ws", "http"],
+    "modes": ["ipc"],
     "port": 7887,
-    "host": "127.0.0.1"
+    "host": "127.0.0.1",
+    "allowedMethods": ["*"]
+  },
+  "generator": {
+    "keys": {
+      "fromFile": "./config/dev-validators.json"
+    }
   },
   "network": {
     "port": 7667,
@@ -164,14 +169,9 @@ With custom config file `./custom-config.json` below:
     "maxTransactions": 8096,
     "maxTransactionsPerAccount": 1024,
   },
-  "generator": {
-    "keys": {
-      "fromFile": "./config/dev-validators.json"
-    }
-  },
   "plugins": {
     "reportMisbehavior": {
-      "encryptedPassphrase": "iterations=10&cipherText=5dea8b928a3ea2481ebc02499ae77679b7552189181ff189d4aa1f8d89e8d07bf31f7ebd1c66b620769f878629e1b90499506a6f752bf3323799e3a54600f8db02f504c44d&iv=37e0b1753b76a90ed0b8c319&salt=963c5b91d3f7ba02a9d001eed49b5836&tag=c3e30e8f3440ba3f5b6d9fbaccc8918d&version=1"
+      "encryptedPrivateKey": "kdf=argon2id&cipher=aes-256-gcm&version=1&ciphertext=fb564e463ce46efab010f21b06d01acc62f705049563b58628d4ca23053ba6bdce5be39cb5c0624bd75735ee10a8a12b9c7876d86fc3646d036b414701dc6b01217102480cd327f5eec31b2cf209ea8b6c64505ab8bab81ed315c12c33feaaef982facec63c876def26eeefd1c0d9a5b7dce5e604622c704106a64c27b71eff7&mac=429c65daf7f6e9dba5e105be55fb7a450c74e424ff9a20cd5cb614c31fb8b010&salt=19a15ea6d5925d7104b4db0c8b0ca73a&iv=b5ec03e61586b202a1f4e9aa&tag=82ca4b682f89daa642a13edae085feea&iterations=1&parallelism=4&memorySize=2024"
     },
     "chainConnector": {
       "receivingChainIPCPath": "~/.lisk/sidechain",

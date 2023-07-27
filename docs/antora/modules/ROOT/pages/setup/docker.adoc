@@ -12,8 +12,8 @@ Mona Bärenfänger <mona@lightcurve.io>
 :url_docker_install_windows: https://docs.docker.com/docker-for-windows/install/
 :url_docker_linux_post_install: https://docs.docker.com/install/linux/linux-postinstall
 :url_xcode: https://developer.apple.com/xcode/features/
+:url_devnet_passphrase: https://github.com/LiskHQ/lisk-core/blob/development/config/devnet/passphrase.json
 // Project URLs
-
 :url_config: management/configuration.adoc
 :url_upgrade_source: update/source.adoc
 :url_run_logging: lisk-core::run-blockchain/logging.adoc
@@ -43,16 +43,16 @@ include::partial$create-a-new-user.adoc[]
 To run Lisk Core in Docker, firstly it is necessary to install the Docker engine.
 Determine if your platform can run Docker as described below.
 
-Please refer to {url_docker_install}[https://docs.docker.com/engine/installation]
+Please refer to the {url_docker_install}[Docker installation] page.
 
 [tabs]
 ====
 Ubuntu::
 +
 --
-Please refer to the {url_docker_install_linux}[Docker installation for ubuntu]
+Please refer to the {url_docker_install_linux}[Docker installation for ubuntu].
 
-IMPORTANT: Configure Docker, in order that it can be run without `sudo` rights: {url_docker_linux_post_install}[linux post install]
+IMPORTANT: Configure Docker, in order that it can be run without `sudo` rights: {url_docker_linux_post_install}[linux post install].
 
 Install `make` using your package manager.
 For example, use `apt-get` if running Ubuntu as shown below:
@@ -72,7 +72,7 @@ Install `make` using {url_xcode}[XCode].
 Windows::
 +
 --
-Please refer to {url_docker_install_windows}[Docker installation for Windows^]
+Please refer to {url_docker_install_windows}[Docker installation for Windows^].
 --
 ====
 
@@ -160,7 +160,21 @@ docker run --volume lisk-data:/home/lisk/.lisk \
            lisk/core:4.0.0 \
            start --network=testnet
 ----
+
 --
+Devnet::
++
+--
+[source,bash]
+----
+docker run --volume lisk-data:/home/lisk/.lisk \
+           --publish 7887:7887 \
+           --name lisk-core \
+           lisk/core:4.0.0 \
+           start --network=devnet
+----
+--
+NOTE: The passphrase for the genesis account(s) can be found here in the Lisk Core GitHub repository under the following path: {url_devnet_passphrase}[config/devnet/passphrase.json].
 ====
 
 == Configuration
