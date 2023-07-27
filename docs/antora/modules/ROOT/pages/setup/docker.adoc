@@ -43,16 +43,16 @@ include::partial$create-a-new-user.adoc[]
 To run Lisk Core in Docker, firstly it is necessary to install the Docker engine.
 Determine if your platform can run Docker as described below.
 
-Please refer to {url_docker_install}[https://docs.docker.com/engine/installation].
+Please refer to the {url_docker_install}[Docker installation] page.
 
 [tabs]
 ====
 Ubuntu::
 +
 --
-Please refer to the {url_docker_install_linux}[Docker installation for ubuntu]
+Please refer to the {url_docker_install_linux}[Docker installation for ubuntu].
 
-IMPORTANT: Configure Docker, in order that it can be run without `sudo` rights: {url_docker_linux_post_install}[linux post install]
+IMPORTANT: Configure Docker, in order that it can be run without `sudo` rights: {url_docker_linux_post_install}[linux post install].
 
 Install `make` using your package manager.
 For example, use `apt-get` if running Ubuntu as shown below:
@@ -72,7 +72,7 @@ Install `make` using {url_xcode}[XCode].
 Windows::
 +
 --
-Please refer to {url_docker_install_windows}[Docker installation for Windows^]
+Please refer to {url_docker_install_windows}[Docker installation for Windows^].
 --
 ====
 
