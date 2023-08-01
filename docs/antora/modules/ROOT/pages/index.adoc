@@ -10,18 +10,11 @@ Christopher Braithwaite <christopher.braithwaite@lightcurve.io> Muhammad Talha <
 :imagesdir: ../assets/images
 
 // External URLs
-:url_faucet_testnet: https://testnet-faucet.lisk.com/
-:url_lisk_blog_betanet5: https://lisk.com/blog/development/launch-betanet-v5
-:url_lisk_desktop: https://lisk.com/wallet
 :url_nodejs: https://nodejs.org
 :url_postgresql: https://www.postgresql.org
 :url_redis: https://redis.io
 :url_semver: https://semver.org/
 :url_swagger: https://swagger.io
-:url_observer: https://lisk.observer/
-:url_observer_testnet: https://testnet.lisk.observer/
-:url_liskscan: https://liskscan.com/
-:url_liskscan_testnet: https://testnet.liskscan.com/
 // Project URLs
 :url_getting_started: setup/npm.adoc
 :url_ref_rpc: {docs_general}api/lisk-node-rpc.adoc#endpoints
@@ -183,52 +176,6 @@ The Legacy module also implements a command allowing validators without a BLS ke
 
 // .State sparse Merkle tree
 // image::state-tree.png[align=center]
-
-[[networks]]
-== Networks
-
-The Lisk Core can be connected to different networks.
-Please be aware that there are two key accessible public networks existing which are entirely independent of each other.
-These networks are covered below in this section.
-//Note: ChainIDs & ports could be further updated according to Manu.
-
-.Public networks of Lisk
-[cols="1h,1m",options="header"]
-|===
-| Network | Port (default)
-
-| Mainnet
-| `8001`
-
-| Testnet
-| `7001`
-
-
-|===
-
-=== Mainnet
-
-The Mainnet is where the true Lisk economy exists.
-Within this network the Lisk users can transfer LSK tokens from one account to another, register accounts as validators, and vote for other validators.
-
-==== Mainnet blockchain explorer
-
-* {url_observer}[^]
-* {url_liskscan}[^]
-
-=== Testnet
-
-The Testnet is an independent replica of the Lisk Mainnet, whose main function is to test the upgrades first before they are run on the Lisk Mainnet.
-Subsequently, this is where new/updated versions and fixes of the Lisk Core are tested.
-
-To start using the Testnet, please download your free LSK Testnet from the {url_faucet_testnet}[Testnet faucet^].
-
-To connect to the Testnet via {url_lisk_desktop}[Lisk Desktop^], simply enable the "Network Switcher" in the settings and then use it to switch the network to `Testnet`.
-
-==== Testnet blockchain explorer
-
-* {url_observer_testnet}[^]
-* {url_liskscan_testnet}[^]
 
 == APIs
 
