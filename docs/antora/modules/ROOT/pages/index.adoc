@@ -95,8 +95,8 @@ After installation, Lisk Core can be connected to the mainchain of the different
 [start=0]
 . xref:{url_mainnet}[Mainnet]
 . xref:{url_testnet}[Testnet]
-. xref:{url_betanet}[Alphanet]
 . xref:{url_alphanet}[Betanet]
+. xref:{url_betanet}[Alphanet]
 . xref:{url_devnet}[Devnet]
 
 == Modules
