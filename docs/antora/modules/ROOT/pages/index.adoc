@@ -95,8 +95,8 @@ After installation, Lisk Core can be connected to the mainchain of the different
 [start=0]
 . xref:{url_mainnet}[Mainnet]
 . xref:{url_testnet}[Testnet]
-. xref:{url_alphanet}[Betanet]
-. xref:{url_betanet}[Alphanet]
+. xref:{url_betanet}[Betanet]
+. xref:{url_alphanet}[Alphanet]
 . xref:{url_devnet}[Devnet]
 
 Follow the associated links to learn more about the Lisk blockchain networks and their mainchains.
