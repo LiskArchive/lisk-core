@@ -99,6 +99,8 @@ After installation, Lisk Core can be connected to the mainchain of the different
 . xref:{url_betanet}[Alphanet]
 . xref:{url_devnet}[Devnet]
 
+Follow the associated links to learn more about the Lisk blockchain networks and their mainchains.
+
 == Modules
 
 The Lisk Core v4 makes full use of the xref:{url_sdk_modules}[modules defined by Lisk SDK v6].
