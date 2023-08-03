@@ -14,7 +14,6 @@ Christopher Braithwaite <christopher.braithwaite@lightcurve.io> Mona Bärenfäng
 // Project URLs
 :url_run_logging: lisk-docs::run-blockchain/logging.adoc
 
-
 The binary installation offers an easy and automated approach to setting up Lisk Core.
 
 == Pre-installation
