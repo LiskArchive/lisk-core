@@ -39,6 +39,8 @@ Storage:
 
 Machines with a minimum of 40 GB HDD.
 
+These recommendations are derived from the log level settings, in the event that the user needs to increase storage to prevent limited memory access and potential memory-related problems with a node.
+
 [[install]]
 == Installation
 
