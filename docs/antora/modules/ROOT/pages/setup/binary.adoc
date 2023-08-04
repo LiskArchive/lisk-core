@@ -26,6 +26,10 @@ The binary installation offers an easy and automated approach to setting up Lisk
 
 // include::partial$create-a-new-user.adoc[]
 
+=== Hardware requirements
+
+
+
 [[install]]
 == Installation
 
