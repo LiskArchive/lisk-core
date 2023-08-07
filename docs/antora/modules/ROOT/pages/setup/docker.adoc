@@ -42,7 +42,6 @@ These recommendations are derived from the log level settings, in the event that
 Furthermore, as more transactions are processed and added to the blockchain, the size of the blockchain increases over time and this directly affects the HDD storage requirements for a blockchain node.
 Hence, adhering to the above listed requirements is highly recommended.
 
-
 include::partial$create-a-new-user.adoc[]
 // === Create a new user `lisk`
 
