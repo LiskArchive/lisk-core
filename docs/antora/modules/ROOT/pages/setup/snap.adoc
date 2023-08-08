@@ -17,7 +17,6 @@ How to set up a Lisk Core node via Snap.
 * Ubuntu 20.04 (LTS) x86_64
 * Ubuntu 22.04 (LTS) x86_64
 
-// FIXME: not sure how to phrase this one
 The following platforms are not officially supported but should still function as intended: ::
 * Any Linux system running systemd and AppArmor.
 
