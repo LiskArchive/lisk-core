@@ -28,14 +28,12 @@ Lisk Core version 4 does not have any external dependencies and hence does not r
 
 The following system requirements are recommended:
 
-*Memory*:
-
+Memory::
 * Machines with a minimum of 4 GB RAM for the Mainnet.
 
 * Machines with a minimum of 2 GB RAM for the Testnet.
 
-*Storage*:
-
+Storage::
 * Machines with a minimum of 40 GB HDD.
 
 NOTE: These recommendations are derived from the log level settings, in the event that the user needs to increase storage to prevent limited memory access and potential memory-related problems with a node.
