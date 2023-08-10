@@ -34,7 +34,7 @@ Memory::
 * Machines with a minimum of 2 GB RAM for the Testnet.
 
 Storage::
-* Machines with a minimum of 40 GB HDD.
+* Machines with a minimum of 40 GB HDD{fn}.
 
 NOTE: These recommendations are derived from the log level settings, in the event that the user needs to increase storage to prevent limited memory access and potential memory-related problems with a node.
 Furthermore, as more transactions are processed and added to the blockchain, the size of the blockchain increases over time and this directly affects the HDD storage requirements for a blockchain node.
