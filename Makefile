@@ -47,7 +47,7 @@ endif
 build: build-image build-local
 
 build-image:
-	docker build -f ./docker/Dockerfile --build-arg NODEJS_VERSION=$(shell cat .nvmrc) --tag=lisk/core .
+	docker buildx build -f ./docker/Dockerfile --build-arg NODEJS_VERSION=$(shell cat .nvmrc) --tag=lisk/core .
 
 build-local:
 	npm ci
