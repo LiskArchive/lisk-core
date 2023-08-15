@@ -25,46 +25,46 @@
 		"seedPeers": [
 			{
 				"ip": "mainnet-seed-01.lisk.com",
-				"port": 8001
+				"port": 7667
 			},
 			{
 				"ip": "mainnet-seed-02.lisk-nodes.net",
-				"port": 8001
+				"port": 7667
 			},
 			{
 				"ip": "mainnet-seed-03.lisk.com",
-				"port": 8001
+				"port": 7667
 			},
 			{
 				"ip": "mainnet-seed-04.lisk-nodes.net",
-				"port": 8001
+				"port": 7667
 			},
 			{
 				"ip": "mainnet-seed-05.lisk.com",
-				"port": 8001
+				"port": 7667
 			},
 			{
 				"ip": "mainnet-seed-06.lisk-nodes.net",
-				"port": 8001
+				"port": 7667
 			},
 			{
 				"ip": "mainnet-seed-07.lisk.com",
-				"port": 8001
+				"port": 7667
 			},
 			{
 				"ip": "mainnet-seed-08.lisk-nodes.net",
-				"port": 8001
+				"port": 7667
 			},
 			{
 				"ip": "mainnet-seed-09.lisk.com",
-				"port": 8001
+				"port": 7667
 			},
 			{
 				"ip": "mainnet-seed-10.lisk-nodes.net",
-				"port": 8001
+				"port": 7667
 			}
 		],
-		"port": 8001
+		"port": 7667
 	},
 	"transactionPool": {
 		"maxTransactions": 4096,
