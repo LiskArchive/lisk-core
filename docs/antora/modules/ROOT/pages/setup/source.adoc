@@ -14,7 +14,7 @@ Mona Bärenfänger <mona@lightcurve.io>
 :url_xcode: https://developer.apple.com/xcode/
 :url_core_releases: https://github.com/LiskHQ/lisk-core/releases
 :url_readme: https://github.com/LiskHQ/lisk-core/blob/development/README.md#tests
-// Project URLs
+:fn: footnote:hdd[These recommendations are derived from the log level settings, in the event that the user needs to increase storage to prevent limited memory access and potential memory-related problems with a node. Furthermore, as more transactions are processed and added to the blockchain, the size of the blockchain increases over time and this directly affects the HDD storage requirements for a blockchain node. Hence, adhering to the above listed requirements is highly recommended.]
 
 The installation from source code is designed for anyone wishing to develop on the Lisk Core codebase.
 It also comes with an extensive test-suite which is described in the {url_readme}[README.md].
@@ -32,8 +32,19 @@ Supported Platforms::
 * Ubuntu 20.04 (LTS) x86_64
 * Ubuntu 22.04 (LTS) x86_64
 * MacOS x86_64
+
 Node.js::
 * 18
+
+The following system requirements are recommended:
+
+Memory::
+* Machines with a minimum of 4 GB RAM for the Mainnet.
+
+* Machines with a minimum of 2 GB RAM for the Testnet.
+
+Storage::
+* Machines with a minimum of 40 GB HDD{fn}.
 
 === Toolchain components
 

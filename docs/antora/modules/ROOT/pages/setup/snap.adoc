@@ -8,6 +8,7 @@ Mona Bärenfänger <mona@lightcurve.io>
 // Project URLs
 :url_run_logging: ROOT::run-blockchain/logging.adoc
 :url_devnet_passphrase: https://github.com/LiskHQ/lisk-core/blob/development/config/devnet/passphrase.json
+:fn: footnote:hdd[These recommendations are derived from the log level settings, in the event that the user needs to increase storage to prevent limited memory access and potential memory-related problems with a node. Furthermore, as more transactions are processed and added to the blockchain, the size of the blockchain increases over time and this directly affects the HDD storage requirements for a blockchain node. Hence, adhering to the above listed requirements is highly recommended.]
 
 How to set up a Lisk Core node via Snap.
 
@@ -17,11 +18,22 @@ How to set up a Lisk Core node via Snap.
 * Ubuntu 20.04 (LTS) x86_64
 * Ubuntu 22.04 (LTS) x86_64
 
-// FIXME: not sure how to phrase this one
-Not officially supported but should still work::
-* Any Linux system running systemd and AppArmor
+The following platforms are not officially supported but should still function as intended: ::
+* Any Linux system running systemd and AppArmor.
 
-=== Snap
+=== Hardware requirements
+
+The following system requirements are recommended:
+
+Memory::
+* Machines with a minimum of 4 GB RAM for the Mainnet.
+
+* Machines with a minimum of 2 GB RAM for the Testnet.
+
+Storage::
+* Machines with a minimum of 40 GB HDD{fn}.
+
+== Snap
 
 {url_snapcraft}[Snap^] is a software package management system created by {url_canonical}[Canonical^]. Snaps are sandboxed, self-contained applications.
 
