@@ -1,4 +1,4 @@
-import { TransactionSignCommand as BaseTransactionSignCommand} from 'lisk-commander';
+import { TransactionSignCommand as BaseTransactionSignCommand } from 'lisk-commander';
 import { Application, PartialApplicationConfig } from 'lisk-sdk';
 import { getApplication } from '../../application';
 
