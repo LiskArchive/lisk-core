@@ -132,7 +132,7 @@ export class StartCommand extends BaseStartCommand {
 			app.registerPlugin(new FaucetPlugin(), { loadAsChildProcess: true });
 		}
 		if (flags['enable-chain-connector-plugin']) {
-			app.registerPlugin(new ChainConnectorPlugin(), { loadAsChildProcess: false });
+			app.registerPlugin(new ChainConnectorPlugin(), { loadAsChildProcess: true });
 		}
 
 		return app;
