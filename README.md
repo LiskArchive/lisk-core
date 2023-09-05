@@ -46,7 +46,8 @@ git clone https://github.com/LiskHQ/lisk-core.git
 cd lisk-core
 git checkout main
 nvm install
-npm ci
+npm i -g yarn
+yarn install --frozen-lockfile --ignore-engines
 npm run build
 ./bin/run --help
 ```
