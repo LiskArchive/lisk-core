@@ -24,6 +24,9 @@
 		"standbyDelegates": 2,
 		"delegateListRoundOffset": 2
 	},
+	"backup": {
+		"height": 20
+	},
 	"logger": {
 		"fileLogLevel": "debug",
 		"consoleLogLevel": "info"
@@ -33,11 +36,11 @@
 		"mode": "ipc"
 	},
 	"network": {
-		"port": 5000,
+		"port": 5001,
 		"seedPeers": [
 			{
 				"ip": "127.0.0.1",
-				"port": 5000
+				"port": 5001
 			}
 		]
 	},
