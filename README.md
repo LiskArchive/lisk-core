@@ -47,7 +47,7 @@ cd lisk-core
 git checkout main
 nvm install
 npm i -g yarn
-yarn install --frozen-lockfile --ignore-engines
+yarn install --frozen-lockfile
 npm run build
 ./bin/run --help
 ```

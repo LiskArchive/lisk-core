@@ -15,9 +15,8 @@ pipeline {
 				dir('lisk-core') {
 					nvm(readFile(".nvmrc").trim()) {
 						sh '''
-						npm install --registry https://npm.lisk.com/
 						npm install --global yarn
-						yarn --frozen-lockfile
+						yarn install --frozen-lockfile
 						npm run build
 						'''
 					}

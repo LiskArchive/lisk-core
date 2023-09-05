@@ -5,6 +5,6 @@ module.exports = {
 		tsconfigRootDir: __dirname,
 	},
 	rules: {
-		'@typescript-eslint/no-unsafe-argument': 'off',
+		'@typescript-eslint/no-unsafe-argument': 'warn',
 	},
 };

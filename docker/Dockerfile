@@ -13,7 +13,7 @@ USER lisk
 WORKDIR /home/lisk/build
 
 COPY ./yarn.lock ./package.json ./.npmrc ./
-RUN yarn install --frozen-lockfile --ignore-engines
+RUN yarn install --frozen-lockfile
 
 
 ##### Stage 2
