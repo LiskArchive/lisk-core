@@ -25,15 +25,13 @@ OPTIONS
   --pretty                 Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
-  passphrase:decrypt
-  "iterations=1000000&cipherText=9b1c60&iv=5c8843f52ed3c0f2aa0086b0&salt=2240b7f1aa9c899894e528cf5b600e9c&tag=23c0111213
-  4317a63bcf3d41ea74e83b&version=1"
-  passphrase:decrypt
-  "iterations=1000000&cipherText=9b1c60&iv=5c8843f52ed3c0f2aa0086b0&salt=2240b7f1aa9c899894e528cf5b600e9c&tag=23c0111213
-  4317a63bcf3d41ea74e83b&version=1" --password your-password
+  passphrase:decrypt "iterations=1000000&cipherText=9b1c60&iv=5c8843f52ed3c0f2aa0086b0&salt=2240b7f1aa9c899894e528cf5b60
+  0e9c&tag=23c01112134317a63bcf3d41ea74e83b&version=1"
+  passphrase:decrypt "iterations=1000000&cipherText=9b1c60&iv=5c8843f52ed3c0f2aa0086b0&salt=2240b7f1aa9c899894e528cf5b60
+  0e9c&tag=23c01112134317a63bcf3d41ea74e83b&version=1" --password your-password
 ```
 
-_See code: [dist/commands/passphrase/decrypt.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/passphrase/decrypt.ts)_
+_See code: [dist/commands/passphrase/decrypt.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.0-rc.0/dist/commands/passphrase/decrypt.ts)_
 
 ## `lisk-core passphrase:encrypt`
 
@@ -68,4 +66,4 @@ EXAMPLES
   passphrase:encrypt --output-public-key
 ```
 
-_See code: [dist/commands/passphrase/encrypt.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/passphrase/encrypt.ts)_
+_See code: [dist/commands/passphrase/encrypt.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.0-rc.0/dist/commands/passphrase/encrypt.ts)_

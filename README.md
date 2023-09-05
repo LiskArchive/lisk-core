@@ -32,7 +32,7 @@ The following dependencies need to be installed in order to run applications cre
 
 | Dependencies | Version |
 | ------------ | ------- |
-| NodeJS       | 16.15.0 |
+| NodeJS       | 18.16   |
 
 You can find further details on installing these dependencies in our [pre-installation setup guide](https://lisk.io/documentation/lisk-core/setup/source#pre-install).
 Clone the Lisk Core repository using Git and initialize the modules.
@@ -57,7 +57,7 @@ $ npm install -g lisk-core
 $ lisk-core COMMAND
 running command...
 $ lisk-core (-v|--version|version)
-lisk-core/3.0.4 darwin-x64 node-v16.15.0
+lisk-core/3.1.0-rc.0 darwin-arm64 node-v18.16.1
 $ lisk-core --help [COMMAND]
 USAGE
   $ lisk-core COMMAND
@@ -108,6 +108,8 @@ For a more advanced options refer to [PM2 documentation](https://pm2.keymetrics.
 [`lisk-core start`](docs/commands/start.md) supports flag and environment variable options to configure a node.
 
 Also, custom configuration through JSON file is available through the `--config, -c` flag.
+
+> NOTE: When running Lisk Core on MacOS, please configure `network.port` to use some other port other than `5000`. Starting with MacOS Monterey (version 12), it now uses the port `5000` for its AirPlay Receiver functionality. It can alternatively be configured with `--port` or `-p` command line flag or the `LISK_PORT` environment variable when starting Lisk Core.
 
 ### Example
 

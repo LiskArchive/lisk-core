@@ -4,7 +4,7 @@ Commands relating to Lisk Core forging.
 
 - [`lisk-core forging:config`](#lisk-core-forgingconfig)
 - [`lisk-core forging:disable ADDRESS`](#lisk-core-forgingdisable-address)
-- [`lisk-core forging:enable ADDRESS HEIGHT MAXHEIGHTPREVIOUSLYFORGED MAXHEIGHTPREVOTED`](#lisk-core-forgingenable-address-height-maxheightpreviouslyforged-maxheightprevoted)
+- [`lisk-core forging:enable ADDRESS [HEIGHT] [MAXHEIGHTPREVIOUSLYFORGED] [MAXHEIGHTPREVOTED]`](#lisk-core-forgingenable-address-height-maxheightpreviouslyforged-maxheightprevoted)
 - [`lisk-core forging:status`](#lisk-core-forgingstatus)
 
 ## `lisk-core forging:config`
@@ -40,7 +40,7 @@ EXAMPLES
   forging:config --count=1000000 --distance=2000 --output /tmp/forging_config.json
 ```
 
-_See code: [dist/commands/forging/config.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/forging/config.ts)_
+_See code: [dist/commands/forging/config.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.0-rc.0/dist/commands/forging/config.ts)_
 
 ## `lisk-core forging:disable ADDRESS`
 
@@ -62,8 +62,6 @@ OPTIONS
                              Examples:
                              - --password=pass:password123 (should only be used where security is not important)
 
-  --overwrite                Overwrites the forger info
-
   --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
@@ -72,15 +70,15 @@ EXAMPLES
   forging:disable ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815 --data-path ./data --password your_password
 ```
 
-_See code: [dist/commands/forging/disable.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/forging/disable.ts)_
+_See code: [dist/commands/forging/disable.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.0-rc.0/dist/commands/forging/disable.ts)_
 
-## `lisk-core forging:enable ADDRESS HEIGHT MAXHEIGHTPREVIOUSLYFORGED MAXHEIGHTPREVOTED`
+## `lisk-core forging:enable ADDRESS [HEIGHT] [MAXHEIGHTPREVIOUSLYFORGED] [MAXHEIGHTPREVOTED]`
 
 Enable forging for given delegate address.
 
 ```
 USAGE
-  $ lisk-core forging:enable ADDRESS HEIGHT MAXHEIGHTPREVIOUSLYFORGED MAXHEIGHTPREVOTED
+  $ lisk-core forging:enable ADDRESS [HEIGHT] [MAXHEIGHTPREVIOUSLYFORGED] [MAXHEIGHTPREVOTED]
 
 ARGUMENTS
   ADDRESS                    Address of an account in a base32 format.
@@ -97,18 +95,24 @@ OPTIONS
                              Examples:
                              - --password=pass:password123 (should only be used where security is not important)
 
+  -y, --yes                  Do you want to use these values to enable forging
+
   --overwrite                Overwrites the forger info
 
   --pretty                   Prints JSON in pretty format rather than condensed.
 
+  --use-status-values        Use delegates forging status values
+
 EXAMPLES
+  forging:enable ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815 --use-status-values
+  forging:enable ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815 --use-status-values --yes
   forging:enable ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815 100 100 10
   forging:enable ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815 100 100 10 --overwrite
   forging:enable ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815 100 100 10 --data-path ./data
   forging:enable ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815 100 100 10 --data-path ./data --password your_password
 ```
 
-_See code: [dist/commands/forging/enable.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/forging/enable.ts)_
+_See code: [dist/commands/forging/enable.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.0-rc.0/dist/commands/forging/enable.ts)_
 
 ## `lisk-core forging:status`
 
@@ -129,4 +133,4 @@ EXAMPLES
   forging:status --data-path ./sample --pretty
 ```
 
-_See code: [dist/commands/forging/status.ts](https://github.com/LiskHQ/lisk-core/blob/v3.0.0/dist/commands/forging/status.ts)_
+_See code: [dist/commands/forging/status.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.0-rc.0/dist/commands/forging/status.ts)_
