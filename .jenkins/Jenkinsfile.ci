@@ -17,9 +17,7 @@ pipeline {
 						sh '''
 						npm install --registry https://npm.lisk.com/
 						npm install --global yarn
-						for package in $( cat ../packages ); do
-						  yarn link "$package"
-						done
+						yarn --frozen-lockfile
 						npm run build
 						'''
 					}
