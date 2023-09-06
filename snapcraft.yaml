@@ -5,8 +5,9 @@ description: |
 adopt-info: lisk-core
 architectures: [amd64]
 
+grade: stable
 confinement: strict
-base: core18
+base: core22
 
 parts:
   lisk-core:
@@ -14,13 +15,23 @@ parts:
       - git
       - curl
       - jq
-    plugin: nodejs
-    nodejs-version: 16.15.0
-    nodejs-package-manager: npm
+    plugin: nil
+    build-environment:
+      - NODE_VERSION: '18.16'
     source: .
     override-build: |
+      export PRV=$(pwd)
+      export NODE_ARCH=$SNAP_ARCH
+      if [[ $NODE_ARCH == "amd64" ]] ; then
+          export NODE_ARCH="x64"
+      fi
+      cd /opt
+      curl -o node.tar.gz https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$NODE_ARCH.tar.gz
+      tar -zxf node.tar.gz
+      mv node-v$NODE_VERSION-linux-$NODE_ARCH node
+      export PATH="/opt/node/bin:$PATH"
+      cd "$PRV"
       snapcraftctl set-version "$(jq -r .version < package.json)"
-      export PATH=$PWD/../npm/bin:$PATH
       cd ..
       git clone https://github.com/LiskHQ/dev-cli || true
       cd dev-cli
@@ -28,17 +39,17 @@ parts:
       npm install --global typescript
       yarn
       npm run build
-      yarn global add link:$PWD
       cd ../build
       npm ci
       npm run build
-      oclif-dev pack --targets=linux-x64
-      cp dist/channels/*/*/*linux*.tar.gz ../install
-      cd ../install
+      ../dev-cli/bin/run pack --targets=linux-x64
+      cd dist
+      find . -name \*linux\*.tar.gz -exec cp {} /root/parts/lisk-core/install \;
+      cd ../../install
       tar -zvxf *.tar.gz
       rm *.tar.gz
       mkdir bin
-      cp ../npm/bin/* bin
+      cp /opt/node/bin/* bin
     stage:
       - lisk-core/*
       - bin/*

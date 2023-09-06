@@ -52,10 +52,7 @@ export default class HashCommand extends Command {
 		this.debug(`   ${getFullPath(blockchainPath)}`);
 
 		const db = getBlockchainDB(dataPath);
-		const stream = db.createReadStream({
-			keys: false,
-			values: true,
-		});
+		const stream = db.createReadStream();
 
 		const dbHash = crypto.createHash('sha256');
 

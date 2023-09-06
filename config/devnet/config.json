@@ -24,6 +24,9 @@
 		"standbyDelegates": 2,
 		"delegateListRoundOffset": 2
 	},
+	"backup": {
+		"height": 20
+	},
 	"logger": {
 		"fileLogLevel": "debug",
 		"consoleLogLevel": "info"
