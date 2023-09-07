@@ -61,7 +61,7 @@ $ npm install -g lisk-core
 $ lisk-core COMMAND
 running command...
 $ lisk-core (-v|--version|version)
-lisk-core/4.0.0-beta.5 darwin-arm64 node-v18.16.1
+lisk-core/4.0.0-rc.0 darwin-arm64 node-v18.16.1
 $ lisk-core --help [COMMAND]
 USAGE
   $ lisk-core COMMAND
@@ -83,7 +83,7 @@ USAGE
 - [`lisk-core generator`](docs/commands/generator.md) - Disable block generation for given validator address.
 - [`lisk-core genesis-block`](docs/commands/genesis-block.md) - Creates genesis block file.
 - [`lisk-core hash-onion`](docs/commands/hash-onion.md) - Create hash onions to be used by the forger.
-- [`lisk-core help`](docs/commands/help.md) - display help for lisk-core
+- [`lisk-core help`](docs/commands/help.md) - Display help for lisk-core.
 - [`lisk-core keys`](docs/commands/keys.md) - Return keys corresponding to the given passphrase.
 - [`lisk-core passphrase`](docs/commands/passphrase.md) - Commands relating to Lisk Core passphrases.
 - [`lisk-core sdk`](docs/commands/sdk.md) - Commands relating to Lisk SDK development.

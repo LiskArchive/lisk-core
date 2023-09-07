@@ -92,7 +92,13 @@ describe('LegacyModule', () => {
 			const moduleConfig = {
 				tokenIDReclaim: Buffer.from(defaultConfig.tokenIDReclaim, 'hex'),
 			} as any;
-			await expect(legacyModule.init({ genesisConfig, moduleConfig: {} })).resolves.toBeUndefined();
+			await expect(
+				legacyModule.init({
+					// Manually adding 'bftBatchSize', since SDK now internally calculates 'bftBatchSize' based on pos.numberActiveValidators + pos.numberStandbyValidators
+					genesisConfig: { ...genesisConfig, bftBatchSize: 103 },
+					moduleConfig: {},
+				}),
+			).resolves.toBeUndefined();
 			expect(legacyModule['_moduleConfig']).toEqual(moduleConfig);
 		});
 	});

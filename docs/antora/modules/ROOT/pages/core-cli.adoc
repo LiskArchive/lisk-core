@@ -617,7 +617,6 @@ $ lisk-core config:show --pretty
       "fromFile": "./config/genesis_block.blob"
     },
     "blockTime": 10,
-    "bftBatchSize": 103,
     "chainID": "04000000",
     "maxTransactionsSize": 15360
   },
@@ -733,7 +732,6 @@ $ lisk-core endpoint:invoke system_getNodeInfo --pretty
       "fromFile": "./config/genesis_block.blob"
     },
     "blockTime": 10,
-    "bftBatchSize": 103,
     "maxTransactionsSize": 15360,
     "chainID": "04000000"
   },
@@ -1478,7 +1476,6 @@ $ lisk-core system:node-info --pretty
       "fromFile": "./config/genesis_block.blob"
     },
     "blockTime": 10,
-    "bftBatchSize": 103,
     "maxTransactionsSize": 15360,
     "chainID": "04000000"
   },
