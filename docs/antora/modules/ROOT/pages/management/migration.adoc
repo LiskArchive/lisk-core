@@ -5,7 +5,7 @@
 :idseparator: -
 //TODO: Update TBD values
 :snapshotHeight: TBD
-:snapshotHeightTestnet: TBD
+:snapshotHeightTestnet: 20449414
 :initRounds: 60480
 :initRoundsTime: 1 week
 :lisk-migrator: lisk-migrator-v2.0.0-linux-x64.tar.gz
