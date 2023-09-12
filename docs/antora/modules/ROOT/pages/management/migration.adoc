@@ -5,7 +5,7 @@
 :idseparator: -
 //TODO: Update TBD values
 :snapshotHeight: TBD
-:snapshotHeightTestnet: TBD
+:snapshotHeightTestnet: 20449414
 :initRounds: 60480
 :initRoundsTime: 1 week
 :lisk-migrator: lisk-migrator-v2.0.0-linux-x64.tar.gz
@@ -33,16 +33,16 @@
 :url_cli_generatorenable: core-cli.adoc#generatorenable
 :url_cli_endpointinvoke: core-cli.adoc#endpointinvoke
 
-This guide explains how to migrate a Lisk Core v3.0.5 node to Lisk Core v4.x using the Lisk migrator v2.
+This guide explains how to migrate a Lisk Core v3.1.0 node to Lisk Core v4.x using the Lisk migrator v2.
 
 The Lisk migrator CLI will generate a new genesis block for Lisk Core v4.
-The new genesis block is created based on a snapshot of the old blockchain (running on Lisk Core v3.0.5) at a given height.
+The new genesis block is created based on a snapshot of the old blockchain (running on Lisk Core v3.1.0) at a given height.
 
 [IMPORTANT]
 ====
 All active validators on the Lisk Mainnet and the Lisk Testnet need to follow this guide to correctly migrate their nodes to the new network, in order to not miss any blocks after the network hard fork.
 
-Optionally, anyone running a Lisk Core v3.0.5 who is not an active validator can also participate in the migration process.
+Optionally, anyone running a Lisk Core v3.1.0 who is not an active validator can also participate in the migration process.
 In this case, the following steps 2.4 and 2.5 in this guide can be skipped, as they are only relevant for the current validators.
 ====
 
@@ -55,20 +55,31 @@ In this case, the following steps 2.4 and 2.5 in this guide can be skipped, as t
 ====
 The following system requirements are recommended for running the migration script:
 
-//TODO: Verify minimum values after testing
 Memory::
-* minimum of 8 GB RAM
+* minimum of 16GB  RAM
+
+Storage::
+* minimum 40GB HDD
 
 OS::
 * Ubuntu 20.04 LTS
 * Ubuntu 22.04 LTS
+====
+
+.Dependencies
+[NOTE]
+====
+The following dependencies are required for running the migration script:
 
 Node.js::
 * Version 18 (LTS)
+
+Lisk Core::
+* Version 3.1.0 or later
 ====
 
-=== Ensure you are running version 3.0.5 of Lisk Core
-Ensure you are running version 3.0.5 of Lisk Core to be able to seamlessly migrate to Lisk Core 4.0.0.
+=== Ensure you are running version 3.1.0 of Lisk Core
+Ensure you are running version 3.1.0 of Lisk Core to be able to seamlessly migrate to Lisk Core 4.0.0.
 
 Print the Lisk Core node info in the terminal, and check the value of `version`.
 
@@ -77,7 +88,7 @@ Print the Lisk Core node info in the terminal, and check the value of `version`.
 lisk-core node:info --pretty
 ----
 
-If your version is lower than 3.0.5, ensure to update Lisk Core before proceeding with the migration.
+If your version is lower than 3.1.0, ensure to update Lisk Core before proceeding with the migration.
 
 === Setting up the Lisk migrator
 
@@ -205,7 +216,7 @@ In case the `lisk-migrator` was extracted somewhere else other than in your home
 The height is needed by the `lisk-migrator` in the next step.
 A snapshot of the blockchain will be created at this particular height, which will then be used to create the genesis block for the new blockchain.
 
-=== Ensure Lisk Core v3.0.5 is fully synced with the network
+=== Ensure Lisk Core v3.1.0 is fully synced with the network
 Check the current block height of your node directly in the terminal by running the following command:
 
 [source,bash]
@@ -247,7 +258,7 @@ Mainnet::
 --
 [source,bash,subs=attributes+]
 ----
-lisk-migrator --snapshot-height {snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
+lisk-migrator --snapshot-height {snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --auto-migrate-config --auto-start-lisk-core-v4
 ----
 --
 Testnet::
@@ -255,7 +266,7 @@ Testnet::
 --
 [source,bash,subs=attributes+]
 ----
-lisk-migrator --snapshot-height {snapshotHeightTestnet} --output ~/.lisk/lisk-core/config/testnet --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
+lisk-migrator --snapshot-height {snapshotHeightTestnet} --output ~/.lisk/lisk-core/config/testnet  --auto-migrate-config --auto-start-lisk-core-v4
 ----
 --
 ====
@@ -272,7 +283,7 @@ In case a custom xref:{url_sdk_config_system}[dataPath] is defined in the config
 
 [source,bash,subs=attributes+]
 ----
-lisk-migrator --snapshot-height {snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --lisk-core-v3-data-path ~/lisk/custom/path/ --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
+lisk-migrator --snapshot-height {snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --lisk-core-v3-data-path ~/lisk/custom/path/  --auto-migrate-config --auto-start-lisk-core-v4
 ----
 ====
 
@@ -285,7 +296,7 @@ With `screen` you can detach the current terminal window into the background:
 .Example (Mainnet) footnote:snap_footnote[]
 [source,bash,subs=attributes+]
 ----
-screen -dmSL migration lisk-migrator --snapshot-height {snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
+screen -dmSL migration lisk-migrator --snapshot-height {snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet  --auto-migrate-config --auto-start-lisk-core-v4
 ----
 
 Shortly before the migration occurs, it is possible to reattach to the screen, in order to check if everything is working correctly.
@@ -319,9 +330,11 @@ screen -r 1842.migration
 
 Observe if the `lisk-migrator` finishes successfully.
 
-This can take ~10 mins against the Testnet, and ~3 hours against the Mainnet.
+Expected migration duration::
+This can take *~20-25 mins* against the *Testnet*, and *~7-7.5 hours* against the *Mainnet*.
 
-The flag `--auto-download-lisk-core-v4` will download and install Lisk Core v4 for you.
+The script will download and install Lisk Core v4 for you automatically.
+
 The flag `--auto-migrate-config` will automatically migrate the config from the old to the new node.
 
 After the snapshot height is reached, validators have approximately *{initRoundsTime}* to enable block generation, to ensure that they do not miss any blocks after the hard fork.
@@ -369,13 +382,13 @@ lisk-core system:node-info --pretty
 
 Check the value of `version` in the response, to verify you are running version 4.0.0 of Lisk Core.
 
-=== Stop Lisk Core v3.0.5
+=== Stop Lisk Core v3.1.0
 
-After the `lisk-migrator` script has finished and the announced snapshot height has passed, there is no reason to continue running Lisk Core v3.0.5, and therefore it is recommended to stop it.
+After the `lisk-migrator` script has finished and the announced snapshot height has passed, there is no reason to continue running Lisk Core v3.1.0, and therefore it is recommended to stop it.
 
 //TODO: Update with correct command to stop Lisk Core
 ////
-Navigate into the root folder of your Lisk Core v3.0.5 installation and run the following command to stop the old Lisk Core version:
+Navigate into the root folder of your Lisk Core v3.1.0 installation and run the following command to stop the old Lisk Core version:
 
 [source,bash]
 ----
@@ -385,7 +398,7 @@ lisk-core
 
 NOTE: Users that have set something up to start Lisk Core on boot, whether it's through `cron` or `systemd` or something else, should keep that in mind and adjust things accordingly so that Lisk Core 4.x gets started instead of Lisk Core 3.x.
 
-Last but not least, remove the folder with Lisk Core v3.0.5.
+Last but not least, remove the folder with Lisk Core v3.1.0.
 
 === Enable block generation after the migration (for validators)
 
