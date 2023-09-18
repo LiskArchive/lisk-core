@@ -8,9 +8,9 @@
 :snapshotHeightTestnet: 20449414
 :initRounds: 60480
 :initRoundsTime: 1 week
-:lisk-migrator: lisk-migrator-v2.0.0-linux-x64.tar.gz
-:lisk-migrator_darwinx64: lisk-migrator-v2.0.0-darwin-x64.tar.gz
-:lisk-migrator_darwinarm64: lisk-migrator-v2.0.0-darwin-arm64.tar.gz
+:lisk-migrator: lisk-migrator-v2.0.0-rc.0-linux-x64.tar.gz
+:lisk-migrator_darwinx64: lisk-migrator-v2.0.0-rc.0-darwin-x64.tar.gz
+:lisk-migrator_darwinarm64: lisk-migrator-v2.0.0-rc.0-darwin-arm64.tar.gz
 :docs_sdk: v6@lisk-sdk::
 :docs_lisk: beta@ROOT::
 // External URLs
@@ -30,6 +30,7 @@
 :url_run_pm2: {docs_lisk}run-blockchain/process-management.adoc
 :url_sdk_cli_keyscreate: {docs_sdk}client-cli.adoc#keyscreate
 :url_sdk_config_system: {docs_sdk}config.adoc#system
+:url_build_custom_config: build-blockchain/configuration.adoc#how-to-use-a-custom-configuration
 :url_cli_generatorenable: core-cli.adoc#generatorenable
 :url_cli_endpointinvoke: core-cli.adoc#endpointinvoke
 
@@ -216,6 +217,40 @@ In case the `lisk-migrator` was extracted somewhere else other than in your home
 The height is needed by the `lisk-migrator` in the next step.
 A snapshot of the blockchain will be created at this particular height, which will then be used to create the genesis block for the new blockchain.
 
+=== Add the snapshot height to the node configuration
+
+Open the `config.json` of your Lisk Core node and add a new property `backup.height` and assign it the snapshot height of the respective network.
+
+[tabs]
+====
+Mainnet::
++
+--
+[source,json,subs=attributes+]
+----
+{
+  "backup": {
+    "height": {snapshotHeight}
+  }
+}
+----
+--
+Testnet::
++
+--
+[source,json,subs=attributes+]
+----
+{
+  "backup": {
+    "height": {snapshotHeightTestnet}
+  }
+}
+----
+--
+====
+
+Restart the node with the `--overwrite-config` flag to apply the new config.
+
 === Ensure Lisk Core v3.1.0 is fully synced with the network
 Check the current block height of your node directly in the terminal by running the following command:
 
@@ -241,6 +276,24 @@ To run the command, both {url_curl}[curl^] and {url_jq}[jq^] are required to be 
 
 If both heights are equal, it is verified that your node is fully synced with the network.
 
+=== Open ports
+
+Open the necessary ports for Lisk Core v4
+
+.Node P2P communication
+[source,bash]
+----
+ufw allow 7667
+----
+
+//TODO: Is 7887 optional ormandatory to open?
+
+.Node API
+[source,bash]
+----
+ufw allow 7887
+----
+
 === Run lisk migrator
 
 [IMPORTANT]
@@ -258,7 +311,7 @@ Mainnet::
 --
 [source,bash,subs=attributes+]
 ----
-lisk-migrator --snapshot-height {snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --auto-migrate-config --auto-start-lisk-core-v4
+lisk-migrator --snapshot-height {snapshotHeight} --output ~/.lisk/lisk-core/config --auto-migrate-config --auto-start-lisk-core-v4
 ----
 --
 Testnet::
@@ -266,7 +319,7 @@ Testnet::
 --
 [source,bash,subs=attributes+]
 ----
-lisk-migrator --snapshot-height {snapshotHeightTestnet} --output ~/.lisk/lisk-core/config/testnet  --auto-migrate-config --auto-start-lisk-core-v4
+lisk-migrator --snapshot-height {snapshotHeightTestnet} --output ~/.lisk/lisk-core/config  --auto-migrate-config --auto-start-lisk-core-v4
 ----
 --
 ====
@@ -277,6 +330,7 @@ The snapshot height will be announced separately.
 * `--output`:
 The absolute path to the directory, where the newly generated genesis block should be saved.
 
+.Custom data path
 [TIP]
 ====
 In case a custom xref:{url_sdk_config_system}[dataPath] is defined in the config, different to the default path `~/.lisk/lisk-core`, then it is possible to define the data path with the `--lisk-core-v3-data-path` flag like so:
@@ -287,6 +341,18 @@ lisk-migrator --snapshot-height {snapshotHeight} --output ~/.lisk/lisk-core/conf
 ----
 ====
 
+.Custom config
+[TIP]
+====
+In case a xref:{url_build_custom_config}[custom config] is used, then it is possible to define the path to the custom config file with the `--config` flag like so:
+
+[source,bash,subs=attributes+]
+----
+lisk-migrator --snapshot-height {snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --config=/path/to/config.json --auto-migrate-config --auto-start-lisk-core-v4
+----
+====
+
+.Running the migrator in the background
 [TIP]
 ====
 It is possible to use tools such as `screen` to run the Lisk migrator in the background.
