@@ -27,6 +27,9 @@
 		"transferFixHeight": 15466999,
 		"serializationFixHeight": 15466999
 	},
+	"backup": {
+		"height": 20449414
+	},
 	"logger": {
 		"fileLogLevel": "error",
 		"consoleLogLevel": "info"
