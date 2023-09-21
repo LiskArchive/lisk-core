@@ -43,7 +43,7 @@ export const getNetworkConfigFilesPath = (
 ): { genesisBlockFilePath: string; configFilePath: string } => {
 	const basePath = path.join(dataPath, 'config', network);
 	return {
-		genesisBlockFilePath: path.join(basePath, 'genesis_block.json'),
+		genesisBlockFilePath: path.join(basePath, 'genesis_block.blob'),
 		configFilePath: path.join(basePath, 'config.json'),
 	};
 };
@@ -53,7 +53,7 @@ export const getDefaultNetworkConfigFilesPath = (
 ): { genesisBlockFilePath: string; configFilePath: string } => {
 	const basePath = path.join(getDefaultConfigDir(), 'config', network);
 	return {
-		genesisBlockFilePath: path.join(basePath, 'genesis_block.json'),
+		genesisBlockFilePath: path.join(basePath, 'genesis_block.blob'),
 		configFilePath: path.join(basePath, 'config.json'),
 	};
 };

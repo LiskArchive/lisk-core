@@ -33,7 +33,7 @@ export default class DownloadCommand extends Command {
 	static examples = [
 		'genesis-block:download --network mainnet -f',
 		'genesis-block:download --network --data-path ./lisk/',
-		'genesis-block:download --url http://mydomain.com/genesis_block.json.gz --data-path ./lisk/ --force',
+		'genesis-block:download --url http://mydomain.com/genesis_block.blob.tar.gz --data-path ./lisk/ --force',
 	];
 
 	static flags = {
@@ -73,7 +73,7 @@ export default class DownloadCommand extends Command {
 		} else if (dataPath) {
 			genesisBlockPath = getNetworkConfigFilesPath(dataPath, DEFAULT_NETWORK).genesisBlockFilePath;
 		} else {
-			genesisBlockPath = join(process.cwd(), 'genesis_block.json');
+			genesisBlockPath = join(process.cwd(), 'genesis_block.blob');
 		}
 
 		if (fs.existsSync(genesisBlockPath) && !force) {

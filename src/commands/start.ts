@@ -117,7 +117,7 @@ export class StartCommand extends BaseStartCommand {
 			env: 'LISK_ENABLE_CHAIN_CONNECTOR_PLUGIN',
 			default: false,
 		}),
-		'url': flagParser.string({
+		url: flagParser.string({
 			char: 'u',
 			description: 'The url to the genesis block snapshot.',
 		}),
@@ -132,7 +132,14 @@ export class StartCommand extends BaseStartCommand {
 				: getDefaultPath(this.config.pjson.name);
 			this.log('....', dataPath);
 			this.log(`Genesis block from "${flags.network}" does not exists.`);
-			await DownloadCommand.run(['--network', flags.network, '--url', flags.url as string, '--output', dataPath]);
+			await DownloadCommand.run([
+				'--network',
+				flags.network,
+				'--url',
+				flags.url as string,
+				'--output',
+				dataPath,
+			]);
 		}
 
 		// Set Plugins Config
