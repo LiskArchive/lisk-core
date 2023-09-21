@@ -15,7 +15,7 @@
 import { Command, Flags as flagParser } from '@oclif/core';
 import * as fs from 'fs-extra';
 import { dirname, join } from 'path';
-import { DEFAULT_NETWORK, NETWORK, DOWNLOAD_URL } from '../../constants';
+import { NETWORK, DOWNLOAD_URL } from '../../constants';
 import {
 	download,
 	downloadAndValidate,
@@ -69,9 +69,9 @@ export default class DownloadCommand extends Command {
 		if (network && dataPath) {
 			genesisBlockPath = getNetworkConfigFilesPath(dataPath, network).genesisBlockFilePath;
 		} else if (network) {
-			genesisBlockPath = getNetworkConfigFilesPath(getDefaultPath(), network).genesisBlockFilePath;
+			genesisBlockPath = getNetworkConfigFilesPath(getDefaultPath()).genesisBlockFilePath;
 		} else if (dataPath) {
-			genesisBlockPath = getNetworkConfigFilesPath(dataPath, DEFAULT_NETWORK).genesisBlockFilePath;
+			genesisBlockPath = getNetworkConfigFilesPath(dataPath).genesisBlockFilePath;
 		} else {
 			genesisBlockPath = join(process.cwd(), 'genesis_block.blob');
 		}

@@ -39,9 +39,9 @@ export const getDefaultConfigDir = (): string => path.join(__dirname, '../..');
 
 export const getNetworkConfigFilesPath = (
 	dataPath: string,
-	network: string,
+	network?: string,
 ): { genesisBlockFilePath: string; configFilePath: string } => {
-	const basePath = path.join(dataPath, 'config', network);
+	const basePath = network ? path.join(dataPath, 'config', network) : path.join(dataPath, 'config');
 	return {
 		genesisBlockFilePath: path.join(basePath, 'genesis_block.blob'),
 		configFilePath: path.join(basePath, 'config.json'),
