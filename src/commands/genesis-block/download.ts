@@ -48,7 +48,7 @@ export default class DownloadCommand extends Command {
 		}),
 		force: flagParser.boolean({
 			char: 'f',
-			description: 'Delete and overwrite existing blockchain data',
+			description: 'Delete and overwrite existing genesis block',
 			default: false,
 		}),
 	};

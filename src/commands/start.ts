@@ -125,9 +125,18 @@ export class StartCommand extends BaseStartCommand {
 			env: 'LISK_ENABLE_CHAIN_CONNECTOR_PLUGIN',
 			default: false,
 		}),
-		url: flagParser.string({
+		'genesis-block-url': flagParser.string({
 			char: 'u',
-			description: 'The url to the genesis block snapshot.',
+			env: 'LISK_GENESIS_BLOCK_URL',
+			description:
+				'The url to download the genesis block. Environment variable "LISK_GENESIS_BLOCK_URL" can also be used.',
+		}),
+		'overwrite-genesis-block': flagParser.boolean({
+			description:
+				'Download and overwrite existing genesis block. Environment variable "LISK_GENESIS_BLOCK_OVERWRITE" can also be used.',
+			env: 'LISK_GENESIS_BLOCK_OVERWRITE',
+			default: false,
+			dependsOn: ['genesis-block-url'],
 		}),
 	};
 
@@ -139,21 +148,36 @@ export class StartCommand extends BaseStartCommand {
 			: getDefaultPath(this.config.pjson.name);
 		if (
 			[NETWORK.MAINNET, NETWORK.TESTNET].includes(flags.network as NETWORK) &&
-			!fs.existsSync(
+			(!fs.existsSync(
 				path.resolve(this.getApplicationConfigDir(), flags.network, 'genesis_block.blob'),
-			)
+			) ||
+				flags['overwrite-genesis-block'])
 		) {
-			this.log(`Genesis block from "${flags.network}" does not exist.`);
-			await DownloadCommand.run([
+			if (flags['overwrite-genesis-block']) {
+				this.log(`Overwriting genesis block for "${flags.network}".`);
+			} else {
+				this.log(`Genesis block for "${flags.network}" does not exist.`);
+			}
+
+			const downloadParamsForAppConfig = [
 				'--data-path',
 				this.getApplicationDir(),
 				'--network',
 				flags.network,
 				'--url',
-				flags.url as string,
-			]);
+				flags['genesis-block-url'] as string,
+			];
+			if (flags['overwrite-genesis-block']) downloadParamsForAppConfig.push('--force');
+			await DownloadCommand.run(downloadParamsForAppConfig);
 
-			await DownloadCommand.run(['--data-path', dataPath, '--url', flags.url as string]);
+			const downloadParamsForDataDir = [
+				'--data-path',
+				dataPath,
+				'--url',
+				flags['genesis-block-url'] as string,
+			];
+			if (flags['overwrite-genesis-block']) downloadParamsForDataDir.push('--force');
+			await DownloadCommand.run(downloadParamsForDataDir);
 		}
 
 		// Set Plugins Config
