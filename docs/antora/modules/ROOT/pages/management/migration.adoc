@@ -283,6 +283,15 @@ If both heights are equal, it is verified that your node is fully synced with th
 
 Open the necessary ports for Lisk Core v4.
 
+[NOTE]
+====
+If you migrate the existing v3 config with the `--auto-migrate-config` flag in the next step <<run-lisk-migrator>>, please ensure that the necessary ports in the final v4 config are open for communication.
+
+The final config (when auto-migrating) is printed on the screen for user confirmation, can check the exact port details there.
+It should be the same that you were using with v3.
+Ideally, they should already be open.
+====
+
 .Node P2P communication
 [source,bash]
 ----
