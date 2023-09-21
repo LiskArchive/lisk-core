@@ -136,7 +136,6 @@ export class StartCommand extends BaseStartCommand {
 				'Download and overwrite existing genesis block. Environment variable "LISK_GENESIS_BLOCK_OVERWRITE" can also be used.',
 			env: 'LISK_GENESIS_BLOCK_OVERWRITE',
 			default: false,
-			dependsOn: ['genesis-block-url'],
 		}),
 	};
 
@@ -164,19 +163,18 @@ export class StartCommand extends BaseStartCommand {
 				this.getApplicationDir(),
 				'--network',
 				flags.network,
-				'--url',
-				flags['genesis-block-url'] as string,
 			];
 			if (flags['overwrite-genesis-block']) downloadParamsForAppConfig.push('--force');
+			if (flags['genesis-block-url'])
+				downloadParamsForAppConfig.push(...['--url', flags['genesis-block-url']]);
+
 			await DownloadCommand.run(downloadParamsForAppConfig);
 
-			const downloadParamsForDataDir = [
-				'--data-path',
-				dataPath,
-				'--url',
-				flags['genesis-block-url'] as string,
-			];
+			const downloadParamsForDataDir = ['--data-path', dataPath];
 			if (flags['overwrite-genesis-block']) downloadParamsForDataDir.push('--force');
+			if (flags['genesis-block-url'])
+				downloadParamsForDataDir.push(...['--url', flags['genesis-block-url']]);
+
 			await DownloadCommand.run(downloadParamsForDataDir);
 		}
 
