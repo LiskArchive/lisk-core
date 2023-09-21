@@ -14,6 +14,8 @@
  */
 /* eslint-disable no-param-reassign */
 import { Flags as flagParser } from '@oclif/core';
+import * as path from 'path';
+import * as os from 'os';
 import { BaseStartCommand } from 'lisk-commander';
 import { Application, ApplicationConfig, PartialApplicationConfig } from 'lisk-sdk';
 import { MonitorPlugin } from '@liskhq/lisk-framework-monitor-plugin';
@@ -23,10 +25,14 @@ import { FaucetPlugin } from '@liskhq/lisk-framework-faucet-plugin';
 import { ChainConnectorPlugin } from '@liskhq/lisk-framework-chain-connector-plugin';
 import { join } from 'path';
 import { getApplication } from '../application';
+import DownloadCommand from './blockchain/download';
 
 interface Flags {
 	[key: string]: string | number | boolean | undefined;
 }
+
+const defaultDir = '.lisk';
+const getDefaultPath = (name: string) => path.join(os.homedir(), defaultDir, name);
 
 const setPluginConfig = (config: ApplicationConfig, flags: Flags): void => {
 	if (flags['monitor-plugin-port'] !== undefined) {
@@ -115,6 +121,16 @@ export class StartCommand extends BaseStartCommand {
 
 	public async getApplication(config: PartialApplicationConfig): Promise<Application> {
 		const { flags } = await this.parse(StartCommand);
+		// Download Genesis block
+		if (['mainnet', 'testnet'].includes(flags.network)) {
+			const dataPath = flags['data-path']
+				? flags['data-path']
+				: getDefaultPath(this.config.pjson.name);
+			this.log('....', dataPath);
+			this.log(`Genesis block from "${flags.network}" does not exists.`);
+			await DownloadCommand.run(['--network', flags.network, '--output', dataPath]);
+		}
+
 		// Set Plugins Config
 		setPluginConfig(config as ApplicationConfig, flags);
 		const app = getApplication(config);
