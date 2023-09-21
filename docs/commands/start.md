@@ -23,11 +23,13 @@ OPTIONS
   -l, --log=trace|debug|info|warn|error|fatal          Log level. Environment variable "LISK_LOG_LEVEL" can also be
                                                        used.
 
-  -n, --network=network                                [default: default] Default network config to use. Environment
+  -n, --network=network                                [default: mainnet] Default network config to use. Environment
                                                        variable "LISK_NETWORK" can also be used.
 
   -p, --port=port                                      Open port for the peer to peer incoming connections. Environment
                                                        variable "LISK_PORT" can also be used.
+
+  -u, --url=url                                        The url to the genesis block snapshot.
 
   --api-host=api-host                                  Host to be used for api-client. Environment variable
                                                        "LISK_API_HOST" can also be used.
