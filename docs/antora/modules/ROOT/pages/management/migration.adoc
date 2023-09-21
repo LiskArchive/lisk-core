@@ -33,7 +33,7 @@
 :url_api_forgingstatus: {docs_liskv5}api/lisk-node-rpc.adoc#appgetforgingstatus
 :url_sdk_cli_keyscreate: {docs_sdk}client-cli.adoc#keyscreate
 :url_sdk_config_system: {docs_sdk}config.adoc#system
-:url_build_custom_config: build-blockchain/configuration.adoc#how-to-use-a-custom-configuration
+:url_build_custom_config: {docs_lisk}build-blockchain/configuration.adoc#how-to-use-a-custom-configuration
 :url_cli_generatorenable: core-cli.adoc#generatorenable
 :url_cli_endpointinvoke: core-cli.adoc#endpointinvoke
 
