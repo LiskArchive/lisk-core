@@ -281,7 +281,7 @@ If both heights are equal, it is verified that your node is fully synced with th
 
 === Open ports
 
-Open the necessary ports for Lisk Core v4
+Open the necessary ports for Lisk Core v4.
 
 .Node P2P communication
 [source,bash]
@@ -289,7 +289,7 @@ Open the necessary ports for Lisk Core v4
 ufw allow 7667
 ----
 
-//TODO: Is 7887 optional ormandatory to open?
+//TODO: Is 7887 optional or mandatory to open?
 
 .Node API
 [source,bash]
@@ -400,7 +400,7 @@ In case a validator node does not fulfill the hardware requirements of lisk-migr
 
 IMPORTANT: This approach should only be followed, if it is not possible to acquire the required hardware resources on a remote server, as it is quite cumbersome.
 
-If you still need to perform the migration on your local machine, these are the recommeded steps to do so:
+If you still need to perform the migration on your local machine, these are the recommended steps to do so:
 
 . Follow all steps under <<preparation>> on your local machine.
 .. DO NOT enable forging on the Lisk Core v3 node on your local machine, your validator should still be forging on the remote Lisk Core v3 node.
