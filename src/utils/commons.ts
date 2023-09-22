@@ -21,7 +21,7 @@ export const liskGenesisBlockUrl = (url: string, network: NETWORK): string => {
 		return '';
 	}
 	if (url && url.search(DOWNLOAD_URL) >= 0) {
-		return `${DOWNLOAD_URL}/${network}/genesis_block.json.tar.gz`;
+		return `${DOWNLOAD_URL}/${network}/genesis_block.blob.tar.gz`;
 	}
 	return url;
 };
