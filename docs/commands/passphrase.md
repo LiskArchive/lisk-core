@@ -31,7 +31,7 @@ EXAMPLES
   0e9c&tag=23c01112134317a63bcf3d41ea74e83b&version=1" --password your-password
 ```
 
-_See code: [dist/commands/passphrase/decrypt.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.0-rc.0/dist/commands/passphrase/decrypt.ts)_
+_See code: [dist/commands/passphrase/decrypt.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.0-rc.1/dist/commands/passphrase/decrypt.ts)_
 
 ## `lisk-core passphrase:encrypt`
 
@@ -66,4 +66,4 @@ EXAMPLES
   passphrase:encrypt --output-public-key
 ```
 
-_See code: [dist/commands/passphrase/encrypt.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.0-rc.0/dist/commands/passphrase/encrypt.ts)_
+_See code: [dist/commands/passphrase/encrypt.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.0-rc.1/dist/commands/passphrase/encrypt.ts)_

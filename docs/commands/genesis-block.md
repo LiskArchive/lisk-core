@@ -28,4 +28,4 @@ EXAMPLES
   genesis-block:download --url http://mydomain.com/genesis_block.json.gz --data-path ./lisk/ --force
 ```
 
-_See code: [dist/commands/genesis-block/download.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.0-rc.0/dist/commands/genesis-block/download.ts)_
+_See code: [dist/commands/genesis-block/download.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.0-rc.1/dist/commands/genesis-block/download.ts)_
