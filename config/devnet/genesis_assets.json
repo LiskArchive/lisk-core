@@ -928,12 +928,7 @@
 					}
 				],
 				"escrowSubstore": [],
-				"supportedTokensSubstore": [
-					{
-						"chainID": "",
-						"supportedTokenIDs": []
-					}
-				]
+				"supportedTokensSubstore": []
 			},
 			"schema": {
 				"$id": "/token/module/genesis",
