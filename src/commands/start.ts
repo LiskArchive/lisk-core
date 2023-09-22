@@ -14,6 +14,9 @@
  */
 /* eslint-disable no-param-reassign */
 import { Flags as flagParser } from '@oclif/core';
+import * as path from 'path';
+import * as os from 'os';
+import * as fs from 'fs';
 import { BaseStartCommand } from 'lisk-commander';
 import { Application, ApplicationConfig, PartialApplicationConfig } from 'lisk-sdk';
 import { MonitorPlugin } from '@liskhq/lisk-framework-monitor-plugin';
@@ -23,10 +26,16 @@ import { FaucetPlugin } from '@liskhq/lisk-framework-faucet-plugin';
 import { ChainConnectorPlugin } from '@liskhq/lisk-framework-chain-connector-plugin';
 import { join } from 'path';
 import { getApplication } from '../application';
+import DownloadCommand from './genesis-block/download';
+import { DEFAULT_NETWORK, NETWORK } from '../constants';
+import { flags as commonFlags } from '../utils/flags';
 
 interface Flags {
 	[key: string]: string | number | boolean | undefined;
 }
+
+const defaultDir = '.lisk';
+const getDefaultPath = (name: string) => path.join(os.homedir(), defaultDir, name);
 
 const setPluginConfig = (config: ApplicationConfig, flags: Flags): void => {
 	if (flags['monitor-plugin-port'] !== undefined) {
@@ -51,6 +60,11 @@ const setPluginConfig = (config: ApplicationConfig, flags: Flags): void => {
 export class StartCommand extends BaseStartCommand {
 	static flags = {
 		...BaseStartCommand.flags,
+		network: flagParser.string({
+			...commonFlags.network,
+			env: 'LISK_NETWORK',
+			default: DEFAULT_NETWORK,
+		}),
 		'enable-forger-plugin': flagParser.boolean({
 			description:
 				'Enable Forger Plugin. Environment variable "LISK_ENABLE_FORGER_PLUGIN" can also be used.',
@@ -111,10 +125,65 @@ export class StartCommand extends BaseStartCommand {
 			env: 'LISK_ENABLE_CHAIN_CONNECTOR_PLUGIN',
 			default: false,
 		}),
+		'genesis-block-url': flagParser.string({
+			char: 'u',
+			env: 'LISK_GENESIS_BLOCK_URL',
+			description:
+				'The url to download the genesis block. Environment variable "LISK_GENESIS_BLOCK_URL" can also be used.',
+		}),
+		'overwrite-genesis-block': flagParser.boolean({
+			description:
+				'Download and overwrite existing genesis block. Environment variable "LISK_GENESIS_BLOCK_OVERWRITE" can also be used.',
+			env: 'LISK_GENESIS_BLOCK_OVERWRITE',
+			default: false,
+		}),
 	};
 
 	public async getApplication(config: PartialApplicationConfig): Promise<Application> {
 		const { flags } = await this.parse(StartCommand);
+		// Download Genesis block
+		const dataPath = flags['data-path']
+			? flags['data-path']
+			: getDefaultPath(this.config.pjson.name);
+		if (
+			[NETWORK.MAINNET, NETWORK.TESTNET].includes(flags.network as NETWORK) &&
+			(!fs.existsSync(
+				path.resolve(this.getApplicationConfigDir(), flags.network, 'genesis_block.blob'),
+			) ||
+				flags['overwrite-genesis-block'])
+		) {
+			if (flags['overwrite-genesis-block']) {
+				this.log(`Overwriting genesis block for "${flags.network}".`);
+			} else {
+				this.log(`Genesis block for "${flags.network}" does not exist.`);
+			}
+
+			const downloadParamsForAppConfig = [
+				'--data-path',
+				this.getApplicationDir(),
+				'--network',
+				flags.network,
+			];
+			if (flags['overwrite-genesis-block']) {
+				downloadParamsForAppConfig.push('--force');
+			}
+			if (flags['genesis-block-url']) {
+				downloadParamsForAppConfig.push('--url', flags['genesis-block-url']);
+			}
+
+			await DownloadCommand.run(downloadParamsForAppConfig);
+
+			const downloadParamsForDataDir = ['--data-path', dataPath];
+			if (flags['overwrite-genesis-block']) {
+				downloadParamsForDataDir.push('--force');
+			}
+			if (flags['genesis-block-url']) {
+				downloadParamsForDataDir.push('--url', flags['genesis-block-url']);
+			}
+
+			await DownloadCommand.run(downloadParamsForDataDir);
+		}
+
 		// Set Plugins Config
 		setPluginConfig(config as ApplicationConfig, flags);
 		const app = getApplication(config);
@@ -140,5 +209,9 @@ export class StartCommand extends BaseStartCommand {
 
 	public getApplicationConfigDir(): string {
 		return join(__dirname, '../../config');
+	}
+
+	public getApplicationDir(): string {
+		return join(__dirname, '../..');
 	}
 }
