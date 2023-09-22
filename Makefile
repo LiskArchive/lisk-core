@@ -19,18 +19,11 @@ endif
 
 all: node_modules dist/index.js release
 
-package-lock.json:
-	git checkout package-lock.json
-	touch -r npm-shrinkwrap.json package-lock.json
-
-npm-shrinkwrap.json: package-lock.json
-	cp -f package-lock.json npm-shrinkwrap.json
-
-node_modules: npm-shrinkwrap.json
+node_modules: yarn.lock
 	yarn install --frozen-lockfile
 
 dist/index.js: node_modules
-	npm run build
+	yarn build
 
 ifndef $(CORE_VERSION)
 release: dist/channels/$(CORE_CHANNEL)/lisk-core-v$(CORE_VERSION)
@@ -51,7 +44,7 @@ build-image:
 
 build-local:
 	yarn install --frozen-lockfile
-	npm run build
+	yarn build
 
 clean: clean-image clean-local
 
