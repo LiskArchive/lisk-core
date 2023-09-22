@@ -164,16 +164,22 @@ export class StartCommand extends BaseStartCommand {
 				'--network',
 				flags.network,
 			];
-			if (flags['overwrite-genesis-block']) downloadParamsForAppConfig.push('--force');
-			if (flags['genesis-block-url'])
-				downloadParamsForAppConfig.push(...['--url', flags['genesis-block-url']]);
+			if (flags['overwrite-genesis-block']) {
+				downloadParamsForAppConfig.push('--force');
+			}
+			if (flags['genesis-block-url']) {
+				downloadParamsForAppConfig.push('--url', flags['genesis-block-url']);
+			}
 
 			await DownloadCommand.run(downloadParamsForAppConfig);
 
 			const downloadParamsForDataDir = ['--data-path', dataPath];
-			if (flags['overwrite-genesis-block']) downloadParamsForDataDir.push('--force');
-			if (flags['genesis-block-url'])
-				downloadParamsForDataDir.push(...['--url', flags['genesis-block-url']]);
+			if (flags['overwrite-genesis-block']) {
+				downloadParamsForDataDir.push('--force');
+			}
+			if (flags['genesis-block-url']) {
+				downloadParamsForDataDir.push('--url', flags['genesis-block-url']);
+			}
 
 			await DownloadCommand.run(downloadParamsForDataDir);
 		}
