@@ -31,6 +31,8 @@ OPTIONS
 
   -t, --timestamp=timestamp                  Timestamp
 
+  --export-json                              Export genesis block as JSON format along with blob
+
 EXAMPLES
   genesis-block:create --output mydir
   genesis-block:create --output mydir --assets-file ./assets.json
