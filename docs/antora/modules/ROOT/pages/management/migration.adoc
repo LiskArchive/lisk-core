@@ -8,6 +8,7 @@
 :snapshotHeightTestnet: 20449414
 :initRounds: 60480
 :initRoundsTime: 1 week
+//TODO: Update URL with new releases
 :lisk-migrator: lisk-migrator-v2.0.0-rc.0-linux-x64.tar.gz
 :lisk-migrator_darwinx64: lisk-migrator-v2.0.0-rc.0-darwin-x64.tar.gz
 :lisk-migrator_darwinarm64: lisk-migrator-v2.0.0-rc.0-darwin-arm64.tar.gz
@@ -207,7 +208,7 @@ Make the `lisk-migrator` command available in the PATH, e.g. by executing the fo
 export PATH="$PATH:$HOME/lisk-migrator/bin"
 ----
 
-In case the `lisk-migrator` was extracted somewhere else other than in your home directory, replace `$HOME` with the absolute path of where the `lisk-migrator` folder is located.
+In case the `lisk-migrator` was extracted somewhere other than your home directory, replace `$HOME` with the absolute path of where the `lisk-migrator` folder is located.
 
 === Check the announced snapshot height
 
@@ -220,6 +221,7 @@ In case the `lisk-migrator` was extracted somewhere else other than in your home
 The height is needed by the `lisk-migrator` in the next step.
 A snapshot of the blockchain will be created at this particular height, which will then be used to create the genesis block for the new blockchain.
 
+//TODO: This section can be removed after release of v3.1.0-rc.1
 === Add the snapshot height to the node configuration
 
 Open the `config.json` of your Lisk Core node, add a new property `backup.height`, and assign it the snapshot height of the respective network.
@@ -266,7 +268,7 @@ Compare the current height of your node to the network height in {url_wallet}[Li
 
 TIP: To view the current height of the *Lisk Testnet*, use the network switcher of Lisk Desktop, which can be enabled in the settings.
 
-Alternatively, users can also verify the current height by comparing `data.height` in the response from the https://service.lisk.com/api/v2/network/status endpoint.
+Alternatively, users can also verify the current height by comparing `data.height` in the response from the https://service.lisk.com/api/v2/network/status[^] endpoint.
 
 To directly check the current height via the command line, run:
 
@@ -297,8 +299,6 @@ Ideally, they should already be open.
 ----
 ufw allow 7667
 ----
-
-NOTE: Opening the ports for the node API is only mandatory, if you migrate using the `--auto-migrate-config` flag
 
 .Node API
 [source,bash]
@@ -508,8 +508,8 @@ The initial validators will be exactly the 101 validators that were in active po
 
 For the initial validators, it will be important to enable block generation as soon as possible on the new node, to not miss any block rewards.
 
-It is also important that as many as possible validators participate in the network migration.
-If only a small number of validators migrate their nodes, this can prolong the bootstrap period for a long time.
+It is also important that a maximum number of validators participate in the network migration.
+If only a small number of validators migrate their nodes, this can prolong the bootstrap period.
 Additionally, for blocks to be finalized, enough of the active validators (minimum 68) need to participate in the migration process.
 
 After {initRounds} rounds, the normal Lisk PoS protocol will be followed to generate the list of active validators, but only for the validators who have <<register-legacy-validator-keys,registered their validator keys>>.
@@ -663,6 +663,14 @@ lisk-core endpoint:invoke random_getHashOnionSeeds --pretty
 Now, it is possible to enable block generation on the new node for your validator by using the xref:{url_cli_generatorenable}[generator:enable] command of the Lisk Core CLI.
 
 First, look in the output directory of the lisk-migrator for a file called `forgingStatus.json`, this will contain the valid validator info data to enable block generation on the Lisk Core v4 node.
+
+The v3 forging info data corresponds to the v4 validator info data in the following way:
+
+From `forgingStatus.json` -> `generator:enable` command::
+* height -> `--height`
+* maxHeightPrevoted -> `--max-height-prevoted`
+* maxHeightPreviouslyForged -> `--max-height-generated`
+
 [source,bash]
 ----
 lisk-core generator:enable lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3 --height=123 --max-height-generated=101 --max-height-prevoted=101
@@ -695,7 +703,7 @@ lisk-core generator:enable lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3 --height=12
 
 .This step is crucial for migrating validators!
 IMPORTANT: As already mentioned, all non-initial validators will be *banned* during the bootstrap period.
-The registration of the legacy validator keys has to be done *latest at the end of `initRounds`*, to be eligible to generate blocks in the new network.
+The registration of the legacy validator keys has to be done at the *latest by the end of `initRounds`*, to be eligible to generate blocks in the new network.
 Otherwise, the validator will continue to be banned on the network, until the validator keys are registered in the legacy module.
 
 To register the legacy validator keys with the new node, create a new `registerKeys` transaction like so:
