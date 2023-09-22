@@ -19,6 +19,10 @@ endif
 
 all: node_modules dist/index.js release
 
+yarn.lock: 
+	git checkout yarn.lock
+	touch -r yarn.lock
+
 node_modules: yarn.lock
 	yarn install --frozen-lockfile
 
