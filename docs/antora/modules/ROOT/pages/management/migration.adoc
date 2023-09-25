@@ -674,7 +674,7 @@ Now, it is possible to enable block generation on the new node for your validato
 lisk-core generator:enable lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3 --use-status-value
 ----
 
-Replace the address `lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3` with your validator address, and set the values for `height`, `max-height-generated` and `max-height-prevoted` to the values listed in the `forgingStatus.json` file corresponding your address.
+Replace the address `lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3` with your validator address, the `--use-status-value` flag will use the validator info data that was imported in the previous step <<import-validator-info-data>>.
 
 .Don't use zeros as validator info data!
 [WARNING]
