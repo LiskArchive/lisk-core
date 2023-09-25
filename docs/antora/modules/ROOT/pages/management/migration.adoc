@@ -287,7 +287,7 @@ Mainnet::
 --
 [source,bash,subs=attributes+]
 ----
-lisk-migrator --snapshot-height {snapshotHeight} --output ~/.lisk/lisk-core/config --auto-migrate-config --auto-start-lisk-core-v4
+lisk-migrator --snapshot-height {snapshotHeight} --auto-migrate-config --auto-start-lisk-core-v4
 ----
 --
 Testnet::
@@ -324,7 +324,7 @@ In case a xref:{url_build_custom_config}[custom config] is used for Lisk Core v3
 
 [source,bash,subs=attributes+]
 ----
-lisk-migrator --snapshot-height {snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --config=/path/to/config.json --auto-migrate-config --auto-start-lisk-core-v4
+lisk-migrator --snapshot-height {snapshotHeight} --config=/path/to/config.json --auto-migrate-config --auto-start-lisk-core-v4
 ----
 ====
 
@@ -517,7 +517,7 @@ Mainnet::
 --
 [source,bash]
 ----
-lisk-core keys:create --chainid 00000000 --output ./config/keys.json --add-legacy
+lisk-core keys:create --chainid 0 --output ./config/keys.json --add-legacy
 ----
 --
 Testnet::
@@ -525,7 +525,7 @@ Testnet::
 --
 [source,bash]
 ----
-lisk-core keys:create --chainid 01000000 --output ./config/keys.json --add-legacy
+lisk-core keys:create --chainid 1 --output ./config/keys.json --add-legacy
 ----
 --
 ====
