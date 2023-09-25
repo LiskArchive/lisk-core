@@ -15,7 +15,7 @@
 import { Command, Flags as flagParser } from '@oclif/core';
 import * as fs from 'fs-extra';
 import { dirname, join } from 'path';
-import { DEFAULT_NETWORK, NETWORK, DOWNLOAD_URL } from '../../constants';
+import { NETWORK, DOWNLOAD_URL } from '../../constants';
 import {
 	download,
 	downloadAndValidate,
@@ -33,7 +33,7 @@ export default class DownloadCommand extends Command {
 	static examples = [
 		'genesis-block:download --network mainnet -f',
 		'genesis-block:download --network --data-path ./lisk/',
-		'genesis-block:download --url http://mydomain.com/genesis_block.json.gz --data-path ./lisk/ --force',
+		'genesis-block:download --url http://mydomain.com/genesis_block.blob.tar.gz --data-path ./lisk/ --force',
 	];
 
 	static flags = {
@@ -48,7 +48,7 @@ export default class DownloadCommand extends Command {
 		}),
 		force: flagParser.boolean({
 			char: 'f',
-			description: 'Delete and overwrite existing blockchain data',
+			description: 'Delete and overwrite existing genesis block',
 			default: false,
 		}),
 	};
@@ -69,11 +69,11 @@ export default class DownloadCommand extends Command {
 		if (network && dataPath) {
 			genesisBlockPath = getNetworkConfigFilesPath(dataPath, network).genesisBlockFilePath;
 		} else if (network) {
-			genesisBlockPath = getNetworkConfigFilesPath(getDefaultPath(), network).genesisBlockFilePath;
+			genesisBlockPath = getNetworkConfigFilesPath(getDefaultPath()).genesisBlockFilePath;
 		} else if (dataPath) {
-			genesisBlockPath = getNetworkConfigFilesPath(dataPath, DEFAULT_NETWORK).genesisBlockFilePath;
+			genesisBlockPath = getNetworkConfigFilesPath(dataPath).genesisBlockFilePath;
 		} else {
-			genesisBlockPath = join(process.cwd(), 'genesis_block.json');
+			genesisBlockPath = join(process.cwd(), 'genesis_block.blob');
 		}
 
 		if (fs.existsSync(genesisBlockPath) && !force) {

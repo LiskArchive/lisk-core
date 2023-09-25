@@ -23,11 +23,14 @@ OPTIONS
   -l, --log=trace|debug|info|warn|error|fatal          Log level. Environment variable "LISK_LOG_LEVEL" can also be
                                                        used.
 
-  -n, --network=network                                [default: default] Default network config to use. Environment
+  -n, --network=network                                [default: mainnet] Default network config to use. Environment
                                                        variable "LISK_NETWORK" can also be used.
 
   -p, --port=port                                      Open port for the peer to peer incoming connections. Environment
                                                        variable "LISK_PORT" can also be used.
+
+  -u, --genesis-block-url=genesis-block-url            The url to download the genesis block. Environment variable
+                                                       "LISK_GENESIS_BLOCK_URL" can also be used.
 
   --api-host=api-host                                  Host to be used for api-client. Environment variable
                                                        "LISK_API_HOST" can also be used.
@@ -77,6 +80,9 @@ OPTIONS
                                                        used.
 
   --overwrite-config                                   Overwrite network configs if they exist already
+
+  --overwrite-genesis-block                            Download and overwrite existing genesis block. Environment
+                                                       variable "LISK_GENESIS_BLOCK_OVERWRITE" can also be used.
 
   --seed-peers=seed-peers                              Seed peers to initially connect to in format of comma separated
                                                        "ip:port". IP can be DNS name or IPV4 format. Environment
