@@ -83,8 +83,8 @@ Lisk Core::
 * Version 3.1.0 or later
 ====
 
-=== Ensure you are running version 3.1.0 of Lisk Core
-Ensure you are running version 3.1.0 of Lisk Core to be able to seamlessly migrate to Lisk Core 4.0.0.
+=== Ensure you are running version 3.1.0-rc.1 of Lisk Core
+Ensure you are running version 3.1.0-rc.1 of Lisk Core to be able to seamlessly migrate to Lisk Core 4.0.0.
 
 Print the Lisk Core node info in the terminal, and check the value of `version`.
 
@@ -93,7 +93,7 @@ Print the Lisk Core node info in the terminal, and check the value of `version`.
 lisk-core node:info --pretty
 ----
 
-If your version is lower than 3.1.0, ensure to update Lisk Core before proceeding with the migration.
+NOTE: If your version is lower than 3.1.0-rc.1, ensure to update Lisk Core before proceeding with the migration.
 
 === Setting up the Lisk migrator
 
@@ -304,8 +304,6 @@ lisk-migrator --snapshot-height {snapshotHeightTestnet} --auto-migrate-config --
 * `--snapshot-height`:
 The height on which the blockchain snapshot will be performed.
 The snapshot height will be announced separately.
-* `--output`:
-The absolute path to the directory, where the newly generated genesis block should be saved.
 
 CAUTION: If you choose to specify custom output path with the `--output` flag, please don't specify the default data directory for Lisk Core (`~/.lisk/lisk-core`) or any sub-directory within it, as it might lead to errors during the migration.
 
@@ -388,8 +386,33 @@ NOTE: If the node is not migrated, but started at a later point in time, it will
 For validators, this might result in missing blocks.
 For everyone else, it will not have any impact.
 
+=== Stop Lisk Core v3.1.0
+
+After the `lisk-migrator` script has finished and the announced snapshot height has passed, there is no reason to continue running Lisk Core v3.1.0, and therefore it is recommended to stop it.
+
+[IMPORTANT]
+====
+It is important to stop Lisk Core v3 *before* starting Lisk Core v4.
+If the migrator is started with `--auto-start-lisk-core-v4` flag, the user is prompted to verify that Lisk Core v3 is stopped - only afterwards, the migration script will continue.
+====
+
+//TODO: Update with correct command to stop Lisk Core
+////
+Navigate into the root folder of your Lisk Core v3.1.0 installation and run the following command to stop the old Lisk Core version:
+
+[source,bash]
+----
+lisk-core
+----
+////
+
+NOTE: Users that have set something up to start Lisk Core on boot, whether it's through `cron` or `systemd` or something else, should keep that in mind and adjust things accordingly so that Lisk Core 4.x gets started instead of Lisk Core 3.x.
+
+Last but not least, remove the folder with Lisk Core v3.1.0.
+
+
 === Start Lisk Core v4
-If you set the flag `--auto-start-lisk-core-v4` when running lisk-migrator, it will start Lisk Core v4 in the foreground right after successful migration.
+If you set the flag `--auto-start-lisk-core-v4` when running lisk-migrator, it will start Lisk Core v4 in the background (managed by PM2) right after successful migration.
 
 Otherwise, start Lisk Core manually like so:
 
@@ -426,24 +449,6 @@ lisk-core system:node-info --pretty
 
 Check the value of `version` in the response, to verify you are running version 4.0.0 of Lisk Core.
 
-=== Stop Lisk Core v3.1.0
-
-After the `lisk-migrator` script has finished and the announced snapshot height has passed, there is no reason to continue running Lisk Core v3.1.0, and therefore it is recommended to stop it.
-
-//TODO: Update with correct command to stop Lisk Core
-////
-Navigate into the root folder of your Lisk Core v3.1.0 installation and run the following command to stop the old Lisk Core version:
-
-[source,bash]
-----
-lisk-core
-----
-////
-
-NOTE: Users that have set something up to start Lisk Core on boot, whether it's through `cron` or `systemd` or something else, should keep that in mind and adjust things accordingly so that Lisk Core 4.x gets started instead of Lisk Core 3.x.
-
-Last but not least, remove the folder with Lisk Core v3.1.0.
-
 === Enable block generation after the migration (for validators)
 
 After migration, *101 initial validators* will be active to generate blocks during the `initRounds`.
@@ -462,11 +467,13 @@ Additionally, for blocks to be finalized, enough of the active validators (minim
 
 After {initRounds} rounds, the normal Lisk PoS protocol will be followed to generate the list of active validators, but only for the validators who have <<register-legacy-validator-keys,registered their validator keys>>.
 
-WARNING: All validators who *did not register their keys* until the bootstrap period ends will stay *banned*.
+WARNING: All migrated validators who *did not register their keys* until the bootstrap period ends will stay *banned*.
 To be un-banned, a validator needs to <<register-legacy-validator-keys>>.
 
 ==== Allow methods in the node config
 To be able to run certain validator-related commands of the node, it is required to enable security-sensitive methods in the node config.
+
+NOTE: If you used the migrator with the `--auto-start-lisk-core-v4` flag, it is not necessary to update the config, as it is already done by the migrator.
 
 .config.json
 [source,json]
@@ -493,6 +500,8 @@ Add the `namespace`, to allow all endpoints of `namespace`, or `namespace_endpoi
 It is possible to generate all relevant validator keys to enable block generation from the account passphrase.
 
 To do so, use the command xref:{url_sdk_cli_keyscreate}[keys:create].
+
+IMPORTANT: The flag `--add-legacy` is only available in Lisk Core v4.0.0-rc.2.
 
 [tabs]
 ====
@@ -538,7 +547,7 @@ This will generate the following file, which includes all important keys for the
   "keys": [
     {
       "address": "lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3",
-      "keyPath": "m/44'/134'/0'",
+      "keyPath": "legacy",
       "publicKey": "6290c8b58de8b71fedb7e3cb9a6ee9426aa3e7ac0141f278526375d46705b546",
       "privateKey": "759305903f7bbb449cf2fd22e6da476792b63e24558e266a4859f9ed3c91fd7e6290c8b58de8b71fedb7e3cb9a6ee9426aa3e7ac0141f278526375d46705b546",
       "plain": {
@@ -590,13 +599,6 @@ After creating the validator keys as suggested in the  <<create-the-validator-ke
 lisk-core keys:import --file-path config/keys.json
 ----
 
-To verify, that the validator keys were imported as intended, invoke the `pos_getValidator` endpoint with your validator address as parameter:
-
-[source,bash]
-----
-lisk-core endpoint:invoke pos_getValidator '{ "address": "lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3" }' --pretty
-----
-
 ==== Set the hash onion
 Without the hash onion, a validator won't be able to receive any rewards for generating new blocks, although the blocks would still be valid in that case.
 To not miss any rewards, it is of high interest for a validator to set the hash onion, before enabling block generation on the node.
@@ -610,7 +612,11 @@ lisk-core endpoint:invoke random_setHashOnion '{"address":"lskqaxxmj78frvgpjgwvf
 
 ==== Import validator info data
 
-Look in the output directory of the lisk-migrator for a file called `forgingStatus.json`, this will contain the valid validator info data to enable block generation on the Lisk Core v4 node.
+Look in the output directory of the lisk-migrator for a file called `forgingStatus.json` (the specific location will be in the migrator output), this will contain the valid validator info data to enable block generation on the Lisk Core v4 node.
+
+.Migrator output example
+ Finished exporting forging status to /root/lisk-migrator/output/15f0dacc1060e91818224a94286b13aa04279c640bd5d6f193182031d133df7c/forgingStatus.json
+
 Alternatively, the relevant data can be obtained as well by fetching the necessary values from Lisk Service, *after the snapshot height has been reached.*
 
 Please note that the `generatorAddress` needs to be updated by the user to the appropriate address:
