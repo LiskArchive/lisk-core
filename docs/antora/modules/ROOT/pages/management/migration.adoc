@@ -391,7 +391,7 @@ Now follow the remaining <<migration-steps>>.
 Observe if the `lisk-migrator` finishes successfully.
 
 Expected migration duration::
-This can take *~20-25 mins* against the *Testnet*, and *~7-7.5 hours* against the *Mainnet*.
+This can take *~3 mins* against the *Testnet*, and *~5 mins* against the *Mainnet*.
 
 The script will download and install Lisk Core v4 for you automatically.
 
@@ -598,12 +598,6 @@ To verify, that the validator keys were imported as intended, invoke the `pos_ge
 lisk-core endpoint:invoke pos_getValidator '{ "address": "lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3" }' --pretty
 ----
 
-[source,bash]
-----
-lisk-core generator:enable lskbgyrx3v76jxowgkgthu9yaf3dr29wqxbtxz8yp --use-status-value
-lisk-core transaction:create legacy registerKeys 10000000 --send
-----
-
 ==== Set the hash onion
 Without the hash onion, a validator won't be able to receive any rewards for generating new blocks, although the blocks would still be valid in that case.
 To not miss any rewards, it is of high interest for a validator to set the hash onion, before enabling block generation on the node.
@@ -637,6 +631,17 @@ lisk-core endpoint:invoke random_getHashOnionSeeds --pretty
 
 ==== Import validator info data
 
+Look in the output directory of the lisk-migrator for a file called `forgingStatus.json`, this will contain the valid validator info data to enable block generation on the Lisk Core v4 node.
+
+The v3 forging info data corresponds to the v4 validator info data in the following way:
+
+From `forgingStatus.json` -> `generator:enable` command::
+* height -> `--height`
+* maxHeightPrevoted -> `--max-height-prevoted`
+* maxHeightPreviouslyForged -> `--max-height-generated`
+
+To import the validator info data, invoke the endpoint `generator_setStatus` like so:
+
 [source,bash]
 ----
 lisk-core endpoint:invoke generator_setStatus '{ "address": "lskbgyrx3v76jxowgkgthu9yaf3dr29wqxbtxz8yp", "height": 20432255, "maxHeightGenerated": 20432207, "maxHeightPrevoted": 20432159 }' --pretty
@@ -646,18 +651,9 @@ lisk-core endpoint:invoke generator_setStatus '{ "address": "lskbgyrx3v76jxowgkg
 
 Now, it is possible to enable block generation on the new node for your validator by using the xref:{url_cli_generatorenable}[generator:enable] command of the Lisk Core CLI.
 
-First, look in the output directory of the lisk-migrator for a file called `forgingStatus.json`, this will contain the valid validator info data to enable block generation on the Lisk Core v4 node.
-
-The v3 forging info data corresponds to the v4 validator info data in the following way:
-
-From `forgingStatus.json` -> `generator:enable` command::
-* height -> `--height`
-* maxHeightPrevoted -> `--max-height-prevoted`
-* maxHeightPreviouslyForged -> `--max-height-generated`
-
 [source,bash]
 ----
-lisk-core generator:enable lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3 --height=123 --max-height-generated=101 --max-height-prevoted=101
+lisk-core generator:enable lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3 --use-status-value
 ----
 
 Replace the address `lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3` with your validator address, and set the values for `height`, `max-height-generated` and `max-height-prevoted` to the values listed in the `forgingStatus.json` file corresponding your address.
@@ -694,7 +690,7 @@ To register the legacy validator keys with the new node, create a new `registerK
 
 [source,bash]
 ----
-lisk-core transaction:create legacy registerKeys 10000000
+lisk-core transaction:create legacy registerKeys 10000000 --send
 ----
 
 It will ask you for the required parameters:
