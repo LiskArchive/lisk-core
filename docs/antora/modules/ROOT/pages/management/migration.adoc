@@ -510,10 +510,25 @@ It is possible to generate all relevant validator keys to enable block generatio
 
 To do so, use the command xref:{url_sdk_cli_keyscreate}[keys:create].
 
+[tabs]
+====
+Mainnet::
++
+--
 [source,bash]
 ----
-lisk-core keys:create --chainid 1 --output ./config/keys.json --add-legacy
+lisk-core keys:create --chainid 00000000 --output ./config/keys.json --add-legacy
 ----
+--
+Testnet::
++
+--
+[source,bash]
+----
+lisk-core keys:create --chainid 01000000 --output ./config/keys.json --add-legacy
+----
+--
+====
 
 Next, you will be prompted for the validator *passphrase*, and it will also ask for a *password*, in order to symmetrically encrypt the passphrase for the config.
 
