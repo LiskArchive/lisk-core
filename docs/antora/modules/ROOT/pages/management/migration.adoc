@@ -77,7 +77,7 @@ OS::
 The following dependencies are required for running the migration script:
 
 Node.js::
-* Version 18 (LTS)
+* Version 18 (LTS) installed via NVM
 
 Lisk Core::
 * Version 3.1.0 or later
@@ -620,11 +620,8 @@ Look in the output directory of the lisk-migrator for a file called `forgingStat
 .Migrator output example
  Finished exporting forging status to /root/lisk-migrator/output/15f0dacc1060e91818224a94286b13aa04279c640bd5d6f193182031d133df7c/forgingStatus.json
 
-Alternatively, the relevant data can be obtained as well by fetching the necessary values from Lisk Service, *after the snapshot height has been reached.*
-
-Please note that the `generatorAddress` needs to be updated by the user to the appropriate address:
-
-https://testnet-service.lisk.com/api/v2/blocks?generatorAddress=lskbgyrx3v76jxowgkgthu9yaf3dr29wqxbtxz8yp&height=:20449414&limit=1[^]
+//TODO: Needs to be verified by research team
+//Alternatively, if the `forgingStatus.json` file is missing, the validator can use the snapshot height for `height`, `maxHeightPrevoted` and `maxHeightGenerated` to enable block generation.
 
 The v3 forging info data corresponds to the v4 validator info data in the following way:
 
