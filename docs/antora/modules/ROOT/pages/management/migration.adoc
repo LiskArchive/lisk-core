@@ -394,6 +394,9 @@ After the `lisk-migrator` script has finished and the announced snapshot height 
 ====
 It is important to stop Lisk Core v3 *before* starting Lisk Core v4.
 If the migrator is started with `--auto-start-lisk-core-v4` flag, the user is prompted to verify that Lisk Core v3 is stopped - only afterwards, the migration script will continue.
+
+.Prompt when
+ Please stop Lisk Core v3 to continue. Type 'yes' and press Enter when ready. [yes/no]: yes
 ====
 
 //TODO: Update with correct command to stop Lisk Core
