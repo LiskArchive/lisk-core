@@ -617,9 +617,9 @@ https://testnet-service.lisk.com/api/v2/blocks?generatorAddress=lskbgyrx3v76jxow
 
 The v3 forging info data corresponds to the v4 validator info data in the following way:
 
-* height -> height
-* maxHeightPrevoted -> maxHeightPrevoted
-* maxHeightPreviouslyForged -> maxHeightGenerated
+* `height` -> `height`
+* `maxHeightPrevoted` -> `maxHeightPrevoted`
+* `maxHeightPreviouslyForged` -> `maxHeightGenerated`
 
 To import the validator info data, invoke the endpoint `generator_setStatus` like so:
 
