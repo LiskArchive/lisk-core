@@ -1,5 +1,6 @@
 = Testnet and Mainnet v4 migration guide
 :toc: preamble
+:toclevels: 4
 :experimental:
 :idprefix:
 :idseparator: -
