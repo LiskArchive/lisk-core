@@ -611,7 +611,8 @@ lisk-core endpoint:invoke random_setHashOnion '{"address":"lskqaxxmj78frvgpjgwvf
 ==== Import validator info data
 
 Look in the output directory of the lisk-migrator for a file called `forgingStatus.json`, this will contain the valid validator info data to enable block generation on the Lisk Core v4 node.
-Alternatively, the relevant data can be obtained as well by fetching the necessary values from Lisk Service, after the snapshot height has been reached.
+Alternatively, the relevant data can be obtained as well by fetching the necessary values from Lisk Service, *after the snapshot height has been reached.*
+
 Please note that the `generatorAddress` needs to be updated by the user to the appropriate address:
 
 https://testnet-service.lisk.com/api/v2/blocks?generatorAddress=lskbgyrx3v76jxowgkgthu9yaf3dr29wqxbtxz8yp&height=:20449414&limit=1[^]
