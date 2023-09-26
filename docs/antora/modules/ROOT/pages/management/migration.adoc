@@ -669,10 +669,6 @@ lisk-core generator:enable lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3 --height=12
 
 === Register legacy validator keys
 
-NOTE: Will be updated soon
-
-////
-
 .This step is crucial for migrating validators!
 IMPORTANT: As already mentioned, all non-initial validators will be *banned* during the bootstrap period.
 The registration of the legacy validator keys has to be done at the *latest by the end of `initRounds`*, to be eligible to generate blocks in the new network.
@@ -682,7 +678,7 @@ To register the legacy validator keys with the new node, create a new `registerK
 
 [source,bash]
 ----
-lisk-core transaction:create legacy registerKeys 10000000 --send
+lisk-core transaction:create legacy registerKeys 10000000 --key-derivation-path=legacy --send
 ----
 
 It will ask you for the required parameters:
@@ -695,7 +691,7 @@ It will ask you for the required parameters:
 
 The required parameters can be obtained from the `keys.json` file, which was created in step <<create-the-validator-keys>> previously.
 
-////
+NOTE: The information to send transactions from a multisig account will be updated soon.
 
 The migration of Lisk Core from v3 to v4 is now completed.
 
