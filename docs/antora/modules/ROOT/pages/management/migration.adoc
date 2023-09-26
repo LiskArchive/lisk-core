@@ -543,9 +543,28 @@ Set the hash-onion by invoking the xref:{}[setHashOnion] endpoint via the xref:{
 lisk-core endpoint:invoke random_setHashOnion '{"address":"lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3"}'
 ----
 
+<<<<<<< Updated upstream
 [CAUTION]
 ====
 If you see the following error after running the command:
+=======
+==== Import validator info data
+
+Look in the output directory of the lisk-migrator for a file called `forgingStatus.json` (the specific location will be in the migrator output), this will contain the valid validator info data to enable block generation on the Lisk Core v4 node.
+
+.Migrator output example
+ Finished exporting forging status to /root/lisk-migrator/output/15f0dacc1060e91818224a94286b13aa04279c640bd5d6f193182031d133df7c/forgingStatus.json
+
+Alternatively, if the `forgingStatus.json` file is missing, the validator can use the snapshot height for `height`, `maxHeightPrevoted` and `maxHeightGenerated` to enable block generation.
+
+The v3 forging info data corresponds to the v4 validator info data in the following way:
+
+* `height` -> `height`
+* `maxHeightPrevoted` -> `maxHeightPrevoted`
+* `maxHeightPreviouslyForged` -> `maxHeightGenerated`
+
+To import the validator info data, invoke the endpoint `generator_setStatus` like so:
+>>>>>>> Stashed changes
 
 [source,bash]
 ----
