@@ -620,8 +620,7 @@ Look in the output directory of the lisk-migrator for a file called `forgingStat
 .Migrator output example
  Finished exporting forging status to /root/lisk-migrator/output/15f0dacc1060e91818224a94286b13aa04279c640bd5d6f193182031d133df7c/forgingStatus.json
 
-//TODO: Needs to be verified by research team
-//Alternatively, if the `forgingStatus.json` file is missing, the validator can use the snapshot height for `height`, `maxHeightPrevoted` and `maxHeightGenerated` to enable block generation.
+Alternatively, if the `forgingStatus.json` file is missing, the validator can use the snapshot height for `height`, `maxHeightPrevoted` and `maxHeightGenerated` to enable block generation.
 
 The v3 forging info data corresponds to the v4 validator info data in the following way:
 
