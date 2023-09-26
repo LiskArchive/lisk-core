@@ -691,7 +691,7 @@ It will ask you for the required parameters:
 
 The required parameters can be obtained from the `keys.json` file, which was created in step <<create-the-validator-keys>> previously.
 
-NOTE: The information to send transactions from a multisig account will be updated soon.
+NOTE: To send transactions from multisignature accounts, please follow the instructions xref:beta@ROOT::integrate-blockchain/multisignature-auccounts-and-transactions.adoc#how-to-create-a-multi-signature-transaction[here].
 
 The migration of Lisk Core from v3 to v4 is now completed.
 
