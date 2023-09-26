@@ -7,11 +7,11 @@
 //TODO: Update TBD values
 :snapshotHeight: TBD
 :snapshotHeightTestnet: 20449414
-:initRounds: 60480
+:initRounds: 587
 :initRoundsTime: 1 week
-:lisk-migrator: lisk-migrator-v2.0.0-rc.2-linux-x64.tar.gz
-:lisk-migrator_darwinx64: lisk-migrator-v2.0.0-rc.2-darwin-x64.tar.gz
-:lisk-migrator_darwinarm64: lisk-migrator-v2.0.0-rc.2-darwin-arm64.tar.gz
+:lisk-migrator: lisk-migrator-v2.0.0-rc.3-linux-x64.tar.gz
+:lisk-migrator_darwinx64: lisk-migrator-v2.0.0-rc.3-darwin-x64.tar.gz
+:lisk-migrator_darwinarm64: lisk-migrator-v2.0.0-rc.3-darwin-arm64.tar.gz
 :docs_sdk: v6@lisk-sdk::
 :docs_lisk: beta@ROOT::
 :docs_liskv5: ROOT::
@@ -93,7 +93,7 @@ Print the Lisk Core node info in the terminal, and check the value of `version`.
 lisk-core node:info --pretty
 ----
 
-NOTE: If your version is lower than 3.1.0-rc.1, ensure to update Lisk Core before proceeding with the migration.
+NOTE: If your version is 3.1.0-rc.0, please ensure to set `backup.height` to the announced snapshot height in your custom config and restart the node with the `--overwrite-config` flag.
 
 === Setting up the Lisk migrator
 
@@ -504,7 +504,7 @@ It is possible to generate all relevant validator keys to enable block generatio
 
 To do so, use the command xref:{url_sdk_cli_keyscreate}[keys:create].
 
-IMPORTANT: The flag `--add-legacy` is only available in Lisk Core v4.0.0-rc.2.
+IMPORTANT: The flag `--add-legacy` is only available in Lisk Core v4.0.0-rc.2 or later.
 
 [tabs]
 ====
@@ -670,6 +670,10 @@ lisk-core generator:enable lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3 --height=12
 
 === Register legacy validator keys
 
+NOTE: Will be updated soon
+
+////
+
 .This step is crucial for migrating validators!
 IMPORTANT: As already mentioned, all non-initial validators will be *banned* during the bootstrap period.
 The registration of the legacy validator keys has to be done at the *latest by the end of `initRounds`*, to be eligible to generate blocks in the new network.
@@ -691,6 +695,8 @@ It will ask you for the required parameters:
 ----
 
 The required parameters can be obtained from the `keys.json` file, which was created in step <<create-the-validator-keys>> previously.
+
+////
 
 The migration of Lisk Core from v3 to v4 is now completed.
 
