@@ -29,7 +29,7 @@
 	},
 	"logger": {
 		"fileLogLevel": "error",
-		"consoleLogLevel": "none"
+		"consoleLogLevel": "info"
 	},
 	"network": {
 		"seedPeers": [
