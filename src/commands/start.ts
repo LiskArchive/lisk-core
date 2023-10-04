@@ -18,17 +18,23 @@ import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
 import { BaseStartCommand } from 'lisk-commander';
-import { Application, ApplicationConfig, PartialApplicationConfig } from 'lisk-sdk';
+import {
+	Application,
+	ApplicationConfig,
+	PartialApplicationConfig,
+	applicationConfigSchema,
+	utils,
+} from 'lisk-sdk';
 import { MonitorPlugin } from '@liskhq/lisk-framework-monitor-plugin';
 import { ForgerPlugin } from '@liskhq/lisk-framework-forger-plugin';
 import { ReportMisbehaviorPlugin } from '@liskhq/lisk-framework-report-misbehavior-plugin';
 import { FaucetPlugin } from '@liskhq/lisk-framework-faucet-plugin';
 import { ChainConnectorPlugin } from '@liskhq/lisk-framework-chain-connector-plugin';
-import { join } from 'path';
 import { getApplication } from '../application';
 import DownloadCommand from './genesis-block/download';
-import { DEFAULT_NETWORK, NETWORK } from '../constants';
+import { DEFAULT_NETWORK, DOWNLOAD_URL, NETWORK } from '../constants';
 import { flags as commonFlags } from '../utils/flags';
+import { liskGenesisBlockUrl } from '../utils/commons';
 
 interface Flags {
 	[key: string]: string | number | boolean | undefined;
@@ -179,6 +185,11 @@ export class StartCommand extends BaseStartCommand {
 			}
 			if (flags['genesis-block-url']) {
 				downloadParamsForDataDir.push('--url', flags['genesis-block-url']);
+			} else {
+				downloadParamsForDataDir.push(
+					'--url',
+					liskGenesisBlockUrl(DOWNLOAD_URL, flags.network as NETWORK),
+				);
 			}
 
 			await DownloadCommand.run(downloadParamsForDataDir);
@@ -186,7 +197,9 @@ export class StartCommand extends BaseStartCommand {
 
 		// Set Plugins Config
 		setPluginConfig(config as ApplicationConfig, flags);
-		const app = getApplication(config);
+		const app = getApplication(
+			utils.objects.mergeDeep({}, applicationConfigSchema.default, config),
+		);
 
 		if (flags['enable-forger-plugin']) {
 			app.registerPlugin(new ForgerPlugin(), { loadAsChildProcess: true });
@@ -208,10 +221,10 @@ export class StartCommand extends BaseStartCommand {
 	}
 
 	public getApplicationConfigDir(): string {
-		return join(__dirname, '../../config');
+		return path.join(__dirname, '../../config');
 	}
 
 	public getApplicationDir(): string {
-		return join(__dirname, '../..');
+		return path.join(__dirname, '../..');
 	}
 }
