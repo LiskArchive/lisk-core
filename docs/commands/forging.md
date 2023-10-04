@@ -40,8 +40,6 @@ EXAMPLES
   forging:config --count=1000000 --distance=2000 --output /tmp/forging_config.json
 ```
 
-_See code: [dist/commands/forging/config.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.0-rc.1/dist/commands/forging/config.ts)_
-
 ## `lisk-core forging:disable ADDRESS`
 
 Disable forging for given delegate address.
@@ -69,8 +67,6 @@ EXAMPLES
   forging:disable ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815 --data-path ./data
   forging:disable ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815 --data-path ./data --password your_password
 ```
-
-_See code: [dist/commands/forging/disable.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.0-rc.1/dist/commands/forging/disable.ts)_
 
 ## `lisk-core forging:enable ADDRESS [HEIGHT] [MAXHEIGHTPREVIOUSLYFORGED] [MAXHEIGHTPREVOTED]`
 
@@ -112,8 +108,6 @@ EXAMPLES
   forging:enable ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815 100 100 10 --data-path ./data --password your_password
 ```
 
-_See code: [dist/commands/forging/enable.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.0-rc.1/dist/commands/forging/enable.ts)_
-
 ## `lisk-core forging:status`
 
 Get forging information for the locally running node.
@@ -132,5 +126,3 @@ EXAMPLES
   forging:status
   forging:status --data-path ./sample --pretty
 ```
-
-_See code: [dist/commands/forging/status.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.0-rc.1/dist/commands/forging/status.ts)_
