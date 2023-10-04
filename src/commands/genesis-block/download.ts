@@ -105,8 +105,9 @@ export default class DownloadCommand extends Command {
 		this.log('Extracting genesis block file.');
 		await extract(downloadDir, fileName, downloadDir, 0);
 
-		this.log('Removing downloaded genesis block');
+		this.log('Removing downloaded genesis block tarball');
 		fs.unlinkSync(filePath);
+		if (fs.existsSync(`${filePath}.SHA256`)) fs.unlinkSync(`${filePath}.SHA256`);
 
 		this.log('Download completed.');
 		this.log(`   ${genesisBlockPath}`);
