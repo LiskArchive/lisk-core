@@ -44,11 +44,11 @@ export default class DownloadCommand extends Command {
 		}),
 		url: flagParser.string({
 			char: 'u',
-			description: 'The url to the genesis block.',
+			description: 'The url to download the genesis block from.',
 		}),
 		force: flagParser.boolean({
 			char: 'f',
-			description: 'Delete and overwrite existing genesis block',
+			description: 'Delete and overwrite existing genesis block.',
 			default: false,
 		}),
 	};
@@ -85,7 +85,7 @@ export default class DownloadCommand extends Command {
 		const downloadDir = dirname(genesisBlockPath);
 		const { fileName, filePath } = getDownloadedFileInfo(downloadUrl, downloadDir);
 
-		this.log(`Downloading genesis block from ${downloadUrl}`);
+		this.log(`Downloading genesis block from ${downloadUrl}.`);
 
 		if (customUrl) {
 			await download(downloadUrl, downloadDir);
@@ -98,15 +98,16 @@ export default class DownloadCommand extends Command {
 		}
 
 		if (fs.existsSync(genesisBlockPath) && force) {
-			this.log(`Removing existing genesis block at ${genesisBlockPath}`);
+			this.log(`Removing existing genesis block at ${genesisBlockPath}.`);
 			fs.unlinkSync(genesisBlockPath);
 		}
 
 		this.log('Extracting genesis block file.');
 		await extract(downloadDir, fileName, downloadDir, 0);
 
-		this.log('Removing downloaded genesis block');
+		this.log('Removing downloaded genesis block tarball.');
 		fs.unlinkSync(filePath);
+		if (fs.existsSync(`${filePath}.SHA256`)) fs.unlinkSync(`${filePath}.SHA256`);
 
 		this.log('Download completed.');
 		this.log(`   ${genesisBlockPath}`);

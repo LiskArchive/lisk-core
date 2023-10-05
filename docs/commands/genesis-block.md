@@ -54,11 +54,11 @@ OPTIONS
   -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
                              can also be used.
 
-  -f, --force                Delete and overwrite existing genesis block
+  -f, --force                Delete and overwrite existing genesis block.
 
   -n, --network=network      Default network config to use. Environment variable "LISK_NETWORK" can also be used.
 
-  -u, --url=url              The url to the genesis block.
+  -u, --url=url              The url to download the genesis block from.
 
 EXAMPLES
   genesis-block:download --network mainnet -f
