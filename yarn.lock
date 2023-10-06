@@ -651,10 +651,10 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@liskhq/lisk-api-client@^6.0.0-rc.1":
-  version "6.0.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@liskhq/lisk-api-client/-/lisk-api-client-6.0.0-rc.1.tgz#b0611b7b8f76369f5de499a63118fb1085da23a8"
-  integrity sha512-sZ59KXjTLUSSeAgx4JSCBRy6E2CaPXkJSeQRIWwfgw5nUw/q1VYGqbtxrMwo8WhRuMqg4X1uHy4HaBQIeftGjw==
+"@liskhq/lisk-api-client@^6.0.0-rc.2":
+  version "6.0.0-rc.2"
+  resolved "https://registry.yarnpkg.com/@liskhq/lisk-api-client/-/lisk-api-client-6.0.0-rc.2.tgz#f87755b7bc372da78a53c566fada53cf8e01cbb6"
+  integrity sha512-JaVONjJtTqE05UnpGrqwgwNolSXrwjicVXjYlAL4NaKn8dD5EVv7xy3ph0IOpABVZiupPbBluEmMRDR9/OvBgQ==
   dependencies:
     "@liskhq/lisk-codec" "^0.4.0-rc.1"
     "@liskhq/lisk-cryptography" "^4.0.0-rc.1"
@@ -664,10 +664,10 @@
     ws "8.11.0"
     zeromq "6.0.0-beta.6"
 
-"@liskhq/lisk-chain@^0.5.0-rc.1":
-  version "0.5.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@liskhq/lisk-chain/-/lisk-chain-0.5.0-rc.1.tgz#8ad344b6069621517ffbebfaf4f1211b3321e0a0"
-  integrity sha512-ysklaVBQypjFfnOSoW3AZTwvnXbo8KAIvy0llyPzJDYvQx5G6gUW4+yISm6W4emR4kI5e8ro6loiY8x6mY3iEQ==
+"@liskhq/lisk-chain@^0.5.0-rc.2":
+  version "0.5.0-rc.2"
+  resolved "https://registry.yarnpkg.com/@liskhq/lisk-chain/-/lisk-chain-0.5.0-rc.2.tgz#029e9b165830e5c9053b8c709ae0dd2fed23e57a"
+  integrity sha512-uAPUcopNm3c2TurOHXqbncGvJp03Q6JAA18wbhRHCCzXR3MVLY60x0TMXJ+k1RV6rMDQ+NmfTIjDun7cZ2+ydg==
   dependencies:
     "@liskhq/lisk-codec" "^0.4.0-rc.1"
     "@liskhq/lisk-cryptography" "^4.0.0-rc.1"
@@ -677,12 +677,12 @@
     "@liskhq/lisk-validator" "^0.8.0-rc.1"
     debug "4.3.4"
 
-"@liskhq/lisk-client@^6.0.0-rc.1":
-  version "6.0.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@liskhq/lisk-client/-/lisk-client-6.0.0-rc.1.tgz#ae987f5103efb12e215b784d86e0fa1aa8013de6"
-  integrity sha512-5viBohsL+0JWtVuCyTFmwzLlzmxBUWamq0YZk7c8cDPNk/Yt+mQ/WPnKRqr8FLejLYOipArP+U4YnOyLMQVDuA==
+"@liskhq/lisk-client@^6.0.0-rc.2":
+  version "6.0.0-rc.2"
+  resolved "https://registry.yarnpkg.com/@liskhq/lisk-client/-/lisk-client-6.0.0-rc.2.tgz#80fde721479e7fd4b573383193065d46b4a1defb"
+  integrity sha512-svaaVZd4EIJNfe7lBhluBaOCnsjku7ZArXOF/JIA7ylMm/48Od6I1EUIX2dYLJS7Waxm3w9Ji+oQL0UpZYQtLA==
   dependencies:
-    "@liskhq/lisk-api-client" "^6.0.0-rc.1"
+    "@liskhq/lisk-api-client" "^6.0.0-rc.2"
     "@liskhq/lisk-codec" "^0.4.0-rc.1"
     "@liskhq/lisk-cryptography" "^4.0.0-rc.1"
     "@liskhq/lisk-passphrase" "^4.0.0-rc.0"
@@ -721,62 +721,62 @@
     cargo-cp-artifact "^0.1"
     shelljs "^0.8.5"
 
-"@liskhq/lisk-framework-chain-connector-plugin@0.1.0-rc.1":
-  version "0.1.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@liskhq/lisk-framework-chain-connector-plugin/-/lisk-framework-chain-connector-plugin-0.1.0-rc.1.tgz#c3f78a0ae18049e27313c9c03a51e8beb0a7f3f0"
-  integrity sha512-ikedZ9jQctVDCt8Cx2/Plr6ToEaenhKsqmlrP9/eAwDTNU4tsoliY0By+Luc6kZ/QudgRJteVlENhaTS19Xt8g==
+"@liskhq/lisk-framework-chain-connector-plugin@0.1.0-rc.2":
+  version "0.1.0-rc.2"
+  resolved "https://registry.yarnpkg.com/@liskhq/lisk-framework-chain-connector-plugin/-/lisk-framework-chain-connector-plugin-0.1.0-rc.2.tgz#2a0c8f9fd4e09e629dd2c17ed2b2a9f47e7180a5"
+  integrity sha512-z9hJjqBLiKM7Xoz2udCJYuCekbYjQT60TEVn4ofKyQDV0xKyTsKHtPhr/EwLsl1YKbfjQp2vEUF05qfno2LeSA==
   dependencies:
     debug "4.3.4"
     fs-extra "11.1.0"
-    lisk-sdk "^6.0.0-rc.1"
+    lisk-sdk "^6.0.0-rc.2"
 
-"@liskhq/lisk-framework-faucet-plugin@0.3.0-rc.1":
-  version "0.3.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@liskhq/lisk-framework-faucet-plugin/-/lisk-framework-faucet-plugin-0.3.0-rc.1.tgz#bd432061649bf2168b73e458d1eb399031603a1a"
-  integrity sha512-ZMETLST9cDhjqb49V/nVuB0SLmviRQXM5dJsvhC9SSxo0aNZIaFqf0E+4bBtoMstQ2xu4czGVkfFWb1RyiWJDQ==
+"@liskhq/lisk-framework-faucet-plugin@0.3.0-rc.2":
+  version "0.3.0-rc.2"
+  resolved "https://registry.yarnpkg.com/@liskhq/lisk-framework-faucet-plugin/-/lisk-framework-faucet-plugin-0.3.0-rc.2.tgz#7770f0bc186c78b0507c3e4c2727cd0e76f9c853"
+  integrity sha512-TruWcfUyidMSZ8E4dZENMGCr1sQziryYHYD92xPUhubEsFe6fR195quspi5HUFYHzLsMbfYsNpImt1al0wDiTQ==
   dependencies:
     "@csstools/normalize.css" "12.0.0"
-    "@liskhq/lisk-api-client" "^6.0.0-rc.1"
-    "@liskhq/lisk-client" "^6.0.0-rc.1"
+    "@liskhq/lisk-api-client" "^6.0.0-rc.2"
+    "@liskhq/lisk-client" "^6.0.0-rc.2"
     "@liskhq/lisk-cryptography" "^4.0.0-rc.1"
     "@liskhq/lisk-transactions" "^6.0.0-rc.1"
     "@liskhq/lisk-utils" "^0.4.0-rc.0"
     "@liskhq/lisk-validator" "^0.8.0-rc.1"
     axios "1.2.0"
     express "4.18.2"
-    lisk-sdk "^6.0.0-rc.1"
+    lisk-sdk "^6.0.0-rc.2"
     react "^17.0.1"
     react-dom "^17.0.1"
     react-router-dom "^5.2.0"
 
-"@liskhq/lisk-framework-forger-plugin@0.4.0-rc.1":
-  version "0.4.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@liskhq/lisk-framework-forger-plugin/-/lisk-framework-forger-plugin-0.4.0-rc.1.tgz#9bc45421584907a455a725e6ae7b77c1a78eb3bd"
-  integrity sha512-YOllmjxlWOZyw0SB/LROviOjAJHpwpMx5H7MB+xkFmbaYrFqAjUQyz9wDPuwmlplB7K7+ta/5T/qIku8OIqpDg==
+"@liskhq/lisk-framework-forger-plugin@0.4.0-rc.2":
+  version "0.4.0-rc.2"
+  resolved "https://registry.yarnpkg.com/@liskhq/lisk-framework-forger-plugin/-/lisk-framework-forger-plugin-0.4.0-rc.2.tgz#9e778a64afff898f7b74dac751ae1209c7ce1999"
+  integrity sha512-JalLcsV173l1IglOjTXY4UfLtP+ltw4tf0GJpDB/Z41eeAu2pXkcnkmSowGEk8Brs7PTHSfPrOQE/TQ43+mT7w==
   dependencies:
     debug "4.3.4"
     fs-extra "11.1.0"
-    lisk-sdk "^6.0.0-rc.1"
+    lisk-sdk "^6.0.0-rc.2"
 
-"@liskhq/lisk-framework-monitor-plugin@0.4.0-rc.1":
-  version "0.4.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@liskhq/lisk-framework-monitor-plugin/-/lisk-framework-monitor-plugin-0.4.0-rc.1.tgz#1be0b414e92edbadb34109eed22d761539cfd7b0"
-  integrity sha512-llDFgydpVBi8OeWZZmEP+3aoGV4WOumu6QzLcwizR81FhEGyP0b+4h/Ud03fW0PVlELmRZ3RB6iYnPPiY8J8cw==
+"@liskhq/lisk-framework-monitor-plugin@0.4.0-rc.2":
+  version "0.4.0-rc.2"
+  resolved "https://registry.yarnpkg.com/@liskhq/lisk-framework-monitor-plugin/-/lisk-framework-monitor-plugin-0.4.0-rc.2.tgz#5c4d0967bba22e57f9a7c606b3a97de5a8fc69a7"
+  integrity sha512-w+0u89ziMbuVrd+NBeQNjGmJLB4/kmTLM9MyejkVLdDpHbleMZUeH3RKOmpizsCzt0nkQVk5LP3+HnCbxozr7A==
   dependencies:
     cors "2.8.5"
     express "4.18.2"
     express-rate-limit "6.7.0"
     ip "1.1.5"
-    lisk-sdk "^6.0.0-rc.1"
+    lisk-sdk "^6.0.0-rc.2"
 
-"@liskhq/lisk-framework-report-misbehavior-plugin@0.4.0-rc.1":
-  version "0.4.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@liskhq/lisk-framework-report-misbehavior-plugin/-/lisk-framework-report-misbehavior-plugin-0.4.0-rc.1.tgz#326f85252439df5c1f9d955590a8c586d0aa0711"
-  integrity sha512-Ajqp1pmEz09Sotyl2JdP59rFcocJGvgmDIxoHZVP8+8O1RUzZzUyHYvTKfqHM1JfZQd/S6o2YsM7V9Jc2mEBWA==
+"@liskhq/lisk-framework-report-misbehavior-plugin@0.4.0-rc.2":
+  version "0.4.0-rc.2"
+  resolved "https://registry.yarnpkg.com/@liskhq/lisk-framework-report-misbehavior-plugin/-/lisk-framework-report-misbehavior-plugin-0.4.0-rc.2.tgz#331bb0febcd07990d311961f2cf01cf637435341"
+  integrity sha512-x4gKR8IrVrg1c4vQNtTyjYpxMEEKRAnIeUn7oDoHPnEixPp0A7pwpVrCeEMIAfs+ISPp2eWlA0CHgAT1ksz6Ng==
   dependencies:
     "@liskhq/lisk-cryptography" "^4.0.0-rc.1"
     fs-extra "11.1.0"
-    lisk-sdk "^6.0.0-rc.1"
+    lisk-sdk "^6.0.0-rc.2"
 
 "@liskhq/lisk-p2p@^0.9.0-rc.1":
   version "0.9.0-rc.1"
@@ -5525,14 +5525,14 @@ lint-staged@10.5.4:
     string-argv "0.3.1"
     stringify-object "^3.3.0"
 
-lisk-commander@6.0.0-rc.2:
-  version "6.0.0-rc.2"
-  resolved "https://registry.yarnpkg.com/lisk-commander/-/lisk-commander-6.0.0-rc.2.tgz#2f085bf163686edef9c5cdcc14a3ce9123c4e687"
-  integrity sha512-G2nnkdkBgNPVq7DkvBf5tOZqVArtJDazlYsE01MV+458AeObB5n8KaiyR4QK8Dcj3k/vmDd2KrgTQHvXnpdH7g==
+lisk-commander@6.0.0-rc.3:
+  version "6.0.0-rc.3"
+  resolved "https://registry.yarnpkg.com/lisk-commander/-/lisk-commander-6.0.0-rc.3.tgz#300ad049cd0a937d9758e8c8e6d950138d51349c"
+  integrity sha512-31rRFuBSoyCn6gAML3ZUUJfDxD8yQ0r4wgYssF/HS8XA0fjEfen21BlQ/XYxQOeunfVpIlNe0XwYUtMWKGuD9w==
   dependencies:
-    "@liskhq/lisk-api-client" "^6.0.0-rc.1"
-    "@liskhq/lisk-chain" "^0.5.0-rc.1"
-    "@liskhq/lisk-client" "^6.0.0-rc.1"
+    "@liskhq/lisk-api-client" "^6.0.0-rc.2"
+    "@liskhq/lisk-chain" "^0.5.0-rc.2"
+    "@liskhq/lisk-client" "^6.0.0-rc.2"
     "@liskhq/lisk-codec" "^0.4.0-rc.1"
     "@liskhq/lisk-cryptography" "^4.0.0-rc.1"
     "@liskhq/lisk-db" "0.3.10"
@@ -5550,7 +5550,7 @@ lisk-commander@6.0.0-rc.2:
     cli-table3 "0.6.0"
     fs-extra "11.1.0"
     inquirer "8.2.5"
-    lisk-framework "^0.11.0-rc.1"
+    lisk-framework "^0.11.0-rc.2"
     listr "0.14.3"
     progress "2.0.3"
     semver "7.5.2"
@@ -5561,14 +5561,14 @@ lisk-commander@6.0.0-rc.2:
     yeoman-environment "3.12.1"
     yeoman-generator "5.7.0"
 
-lisk-framework@^0.11.0-rc.1:
-  version "0.11.0-rc.1"
-  resolved "https://registry.yarnpkg.com/lisk-framework/-/lisk-framework-0.11.0-rc.1.tgz#43a1e1be64eba2cb28c0f716d2aad8c7fb7e49ea"
-  integrity sha512-EfCwBtEiluGnDPUv8TPxUBfcsAuzScaSCfAv7zkcdmCNK6tuwU2hhnHMzMEhtT2PziYwUS4WUOpSDbX0h02UZg==
+lisk-framework@^0.11.0-rc.2:
+  version "0.11.0-rc.2"
+  resolved "https://registry.yarnpkg.com/lisk-framework/-/lisk-framework-0.11.0-rc.2.tgz#d63a0a2c3caef5312f83319771a80126df5a7c6f"
+  integrity sha512-LyuBobEb4AOmXo8MrS+u6xjMw0kb+PMmuRdC+eE7RtfaW2QiGq3Ip764aR5w/evrJ4UeRgFQmeBQ+nXlY36D3w==
   dependencies:
     "@chainsafe/blst" "0.2.9"
-    "@liskhq/lisk-api-client" "^6.0.0-rc.1"
-    "@liskhq/lisk-chain" "^0.5.0-rc.1"
+    "@liskhq/lisk-api-client" "^6.0.0-rc.2"
+    "@liskhq/lisk-chain" "^0.5.0-rc.2"
     "@liskhq/lisk-codec" "^0.4.0-rc.1"
     "@liskhq/lisk-cryptography" "^4.0.0-rc.1"
     "@liskhq/lisk-db" "0.3.10"
@@ -5588,13 +5588,13 @@ lisk-framework@^0.11.0-rc.1:
     ws "8.11.0"
     zeromq "6.0.0-beta.6"
 
-lisk-sdk@6.0.0-rc.1, lisk-sdk@^6.0.0-rc.1:
-  version "6.0.0-rc.1"
-  resolved "https://registry.yarnpkg.com/lisk-sdk/-/lisk-sdk-6.0.0-rc.1.tgz#20b9660b694f61326949f673ff7a37a43cfaf963"
-  integrity sha512-Lir+S5dDJ3o/XHE/s9wwNgXmgKFepaHiqfOjrbT6UNPISZdsVwnUUqgoP/4gvBSnL6Z6wWstU2cCaMnk3MrRNQ==
+lisk-sdk@6.0.0-rc.2, lisk-sdk@^6.0.0-rc.2:
+  version "6.0.0-rc.2"
+  resolved "https://registry.yarnpkg.com/lisk-sdk/-/lisk-sdk-6.0.0-rc.2.tgz#5f2eac281925aba37f72992739d442810c4777ec"
+  integrity sha512-fF7mwzPzyRG2GhaYnEPIIuh8viSpblLmSG+qbgHxjEJGWkganXubTF7P/Nvtejkt8tPEDzkuek/LQI26t6XsAw==
   dependencies:
-    "@liskhq/lisk-api-client" "^6.0.0-rc.1"
-    "@liskhq/lisk-chain" "^0.5.0-rc.1"
+    "@liskhq/lisk-api-client" "^6.0.0-rc.2"
+    "@liskhq/lisk-chain" "^0.5.0-rc.2"
     "@liskhq/lisk-codec" "^0.4.0-rc.1"
     "@liskhq/lisk-cryptography" "^4.0.0-rc.1"
     "@liskhq/lisk-db" "0.3.10"
@@ -5605,7 +5605,7 @@ lisk-sdk@6.0.0-rc.1, lisk-sdk@^6.0.0-rc.1:
     "@liskhq/lisk-tree" "^0.4.0-rc.1"
     "@liskhq/lisk-utils" "^0.4.0-rc.0"
     "@liskhq/lisk-validator" "^0.8.0-rc.1"
-    lisk-framework "^0.11.0-rc.1"
+    lisk-framework "^0.11.0-rc.2"
 
 listr-silent-renderer@^1.1.1:
   version "1.1.1"
