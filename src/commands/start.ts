@@ -15,7 +15,6 @@
 /* eslint-disable no-param-reassign */
 import { Flags as flagParser } from '@oclif/core';
 import * as path from 'path';
-import * as os from 'os';
 import * as fs from 'fs';
 import { BaseStartCommand } from 'lisk-commander';
 import {
@@ -32,16 +31,12 @@ import { FaucetPlugin } from '@liskhq/lisk-framework-faucet-plugin';
 import { ChainConnectorPlugin } from '@liskhq/lisk-framework-chain-connector-plugin';
 import { getApplication } from '../application';
 import DownloadCommand from './genesis-block/download';
-import { DEFAULT_NETWORK, DOWNLOAD_URL, NETWORK } from '../constants';
+import { DEFAULT_NETWORK, NETWORK } from '../constants';
 import { flags as commonFlags } from '../utils/flags';
-import { liskGenesisBlockUrl } from '../utils/commons';
 
 interface Flags {
 	[key: string]: string | number | boolean | undefined;
 }
-
-const defaultDir = '.lisk';
-const getDefaultPath = (name: string) => path.join(os.homedir(), defaultDir, name);
 
 const setPluginConfig = (config: ApplicationConfig, flags: Flags): void => {
 	if (flags['monitor-plugin-port'] !== undefined) {
@@ -145,12 +140,9 @@ export class StartCommand extends BaseStartCommand {
 		}),
 	};
 
-	public async getApplication(config: PartialApplicationConfig): Promise<Application> {
-		const { flags } = await this.parse(StartCommand);
+	public async init(): Promise<void> {
 		// Download Genesis block
-		const dataPath = flags['data-path']
-			? flags['data-path']
-			: getDefaultPath(this.config.pjson.name);
+		const { flags } = await this.parse(StartCommand);
 		if (
 			[NETWORK.MAINNET, NETWORK.TESTNET].includes(flags.network as NETWORK) &&
 			(!fs.existsSync(
@@ -178,22 +170,11 @@ export class StartCommand extends BaseStartCommand {
 			}
 
 			await DownloadCommand.run(downloadParamsForAppConfig);
-
-			const downloadParamsForDataDir = ['--data-path', dataPath];
-			if (flags['overwrite-genesis-block']) {
-				downloadParamsForDataDir.push('--force');
-			}
-			if (flags['genesis-block-url']) {
-				downloadParamsForDataDir.push('--url', flags['genesis-block-url']);
-			} else {
-				downloadParamsForDataDir.push(
-					'--url',
-					liskGenesisBlockUrl(DOWNLOAD_URL, flags.network as NETWORK),
-				);
-			}
-
-			await DownloadCommand.run(downloadParamsForDataDir);
 		}
+	}
+
+	public async getApplication(config: PartialApplicationConfig): Promise<Application> {
+		const { flags } = await this.parse(StartCommand);
 
 		// Set Plugins Config
 		setPluginConfig(config as ApplicationConfig, flags);
