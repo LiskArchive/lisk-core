@@ -29,8 +29,10 @@ OPTIONS
   -p, --port=port                                      Open port for the peer to peer incoming connections. Environment
                                                        variable "LISK_PORT" can also be used.
 
-  -u, --genesis-block-url=genesis-block-url            The url to download the genesis block. Environment variable
-                                                       "LISK_GENESIS_BLOCK_URL" can also be used.
+  -u, --genesis-block-url=genesis-block-url            The URL to download the genesis block. Environment variable
+                                                       "LISK_GENESIS_BLOCK_URL" can also be used. Kindly ensure that the
+                                                       provided URL downloads the genesis block 'blob' in the tarball
+                                                       format.
 
   --api-host=api-host                                  Host to be used for api-client. Environment variable
                                                        "LISK_API_HOST" can also be used.
@@ -99,4 +101,4 @@ EXAMPLES
   start --network testnet --config ~/my_custom_config.json
 ```
 
-_See code: [dist/commands/start.ts](https://github.com/LiskHQ/lisk-core/blob/v4.0.0-rc.5/dist/commands/start.ts)_
+_See code: [dist/commands/start.ts](https://github.com/LiskHQ/lisk-core/blob/v4.0.0-rc.6/dist/commands/start.ts)_
