@@ -130,7 +130,7 @@ export class StartCommand extends BaseStartCommand {
 			char: 'u',
 			env: 'LISK_GENESIS_BLOCK_URL',
 			description:
-				'The url to download the genesis block. Environment variable "LISK_GENESIS_BLOCK_URL" can also be used.',
+				'The URL to download the genesis block. Environment variable "LISK_GENESIS_BLOCK_URL" can also be used. Kindly ensure that the provided URL downloads the genesis block \'blob\' in the tarball format.',
 		}),
 		'overwrite-genesis-block': flagParser.boolean({
 			description:
