@@ -38,6 +38,8 @@ Storage::
 * Machines with a minimum of 40 GB HDD{fn}.
 
 include::partial$create-a-new-user.adoc[]
+
+include::partial$firewall-setup.adoc[]
 // === Create a new user `lisk`
 
 // // [source,bash]
