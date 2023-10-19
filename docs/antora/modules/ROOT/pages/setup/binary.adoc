@@ -174,11 +174,12 @@ Remember to export the nvm path, (this should be performed automatically by the 
 
 === Download and execute the installation script
 
-
 Download Lisk Core.
 
 [tabs]
 ====
+// TODO: Uncomment the block below just before the Mainnet migration.
+////
 Mainnet::
 +
 --
@@ -196,6 +197,8 @@ curl -o lisk-core.tar.gz https://downloads.lisk.com/lisk/mainnet/4.0.0/lisk-core
 curl -o lisk-core.tar.gz https://downloads.lisk.com/lisk/mainnet/4.0.0/lisk-core-v4.0.0-darwin-x64.tar.gz
 ----
 --
+////
+
 Testnet::
 +
 --
@@ -203,14 +206,14 @@ Testnet::
 
 [source,bash]
 ----
-curl -o lisk-core.tar.gz https://downloads.lisk.com/lisk/testnet/4.0.0/lisk-core-v4.0.0-linux-x64.tar.gz
+curl -o lisk-core.tar.gz https://downloads.lisk.com/lisk/testnet/4.0.0-rc.6/lisk-core-v4.0.0-rc.6-linux-x64.tar.gz
 ----
 
 *MacOS:*
 
 [source,bash]
 ----
-curl -o lisk-core.tar.gz https://downloads.lisk.com/lisk/testnet/4.0.0/lisk-core-v4.0.0-darwin-x64.tar.gz
+curl -o lisk-core.tar.gz https://downloads.lisk.com/lisk/testnet/4.0.0-rc.6/lisk-core-v4.0.0-rc.6-darwin-x64.tar.gz
 ----
 --
 ====
