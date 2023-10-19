@@ -40,6 +40,9 @@ Memory::
 Storage::
 * Machines with a minimum of 40 GB HDD{fn}.
 
+include::partial$firewall-setup.adoc[]
+
+
 [[install]]
 == Installation
 

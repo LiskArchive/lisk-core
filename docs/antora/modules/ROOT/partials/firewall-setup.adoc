@@ -1,0 +1,21 @@
+=== Open ports
+
+Please ensure, that the xref:beta@ROOT::understand-blockchain/mainchain.adoc[necessary ports] are open to run Lisk Core as intended.
+
+For example, in case https://wiki.ubuntu.com/UncomplicatedFirewall[ufw^] is used on Ubuntu to manage the firewall settings, the respective ports can be opened as follows:
+
+NOTE: `7667` and `7887` are the default ports.
+If you configured custom ports in the node config file, adjust the examples to these specific ports.
+
+.Node P2P communication
+[source,bash]
+----
+ufw allow 7667
+----
+
+.Node API
+[source,bash]
+----
+ufw allow 7887
+----
+

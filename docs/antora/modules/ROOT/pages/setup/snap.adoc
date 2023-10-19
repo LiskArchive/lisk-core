@@ -33,6 +33,8 @@ Memory::
 Storage::
 * Machines with a minimum of 40 GB HDD{fn}.
 
+include::partial$firewall-setup.adoc[]
+
 == Snap
 
 {url_snapcraft}[Snap^] is a software package management system created by {url_canonical}[Canonical^]. Snaps are sandboxed, self-contained applications.

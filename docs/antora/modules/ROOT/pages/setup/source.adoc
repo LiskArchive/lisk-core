@@ -145,6 +145,8 @@ brew install node@18
 --
 ====
 
+include::partial$firewall-setup.adoc[]
+
 === PM2 (optional)
 
 Install {url_pm2}[PM2^] for managing the start and stop of the application process in the background as shown below:
