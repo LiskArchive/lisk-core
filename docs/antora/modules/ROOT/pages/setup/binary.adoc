@@ -51,7 +51,7 @@ Once completed, you will have a functioning node on the Lisk Network.
 
 When using a MAC powered by Apple Silicon, please adhere to the following setup instructions:
 
-=== Environment setup requirements for Apple Silicon processors
+=== Environment setup requirements (Apple Silicon processors only)
 
 
 As a first step, please ensure to clean the old Node.js installations (with arm64 binaries).
@@ -150,7 +150,7 @@ arch -x86_64 nvm install 18
 // TIP: For installing docker on M1 chips, check out the guide about {url_install_docker_mac}[installing Docker on a Mac^].
 //TODO: Test if installing Python is necessary
 
-==== Install Python (For Macs running on Apple Silicon)
+==== Install Python
 
 To install Python on a Mac powered by Apple Silicon, execute the following commands:
 
