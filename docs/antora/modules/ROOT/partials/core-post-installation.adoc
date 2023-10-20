@@ -24,10 +24,10 @@ It is recommended to use a process manager such as {url_pm2}[PM2^] to run Lisk C
 To make use of all the Lisk Core commands, enable IPC in the config.
 
 .Example: Enable IPC & WS via config.json
-[source,json]
+[source,jsonc]
 ----
 "rpc": {
-    // Enable RPC communication over 'ipc' or 'ws'
+    // Enable RPC communication over 'ipc' and 'ws'
     "modes": ["ipc", "ws"]
 
     // In case `modes` include `ws` then, the following port is used
@@ -45,6 +45,8 @@ Alternatively, start Lisk Core with the flag `--api-ipc` to enable IPC:
 ----
 lisk-core start --api-ipc
 ----
+
+NOTE: Please note that specifying any of the `--api-ipc`, `--api-ws`, or `--api-http` flags in the lisk-core start command overrides the `rpc.modes` settings in the `config.json`.
 
 // === Log rotation
 
