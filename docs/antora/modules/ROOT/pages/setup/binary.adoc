@@ -51,7 +51,7 @@ Once completed, you will have a functioning node on the Lisk Network.
 
 When using a MAC powered by Apple Silicon, please adhere to the following setup instructions:
 
-=== Environment setup requirements
+=== Environment setup requirements for Apple Silicon processors
 
 
 As a first step, please ensure to clean the old Node.js installations (with arm64 binaries).
