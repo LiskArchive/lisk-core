@@ -53,6 +53,7 @@ When using a MAC powered by Apple Silicon, please adhere to the following setup 
 
 === Environment setup requirements
 
+
 As a first step, please ensure to clean the old Node.js installations (with arm64 binaries).
 
 [source,bash]
