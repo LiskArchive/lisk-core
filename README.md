@@ -10,7 +10,7 @@
 ![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/liskhq/lisk-core)
 [![Code coverage](https://codecov.io/gh/LiskHQ/lisk-core/branch/development/graph/badge.svg?token=U0CU1XQZ52)](https://codecov.io/gh/LiskHQ/lisk-core)
 
-Lisk is a next-generation crypto-currency and decentralized application platform, written entirely in JavaScript. The official documentation about the whole ecosystem can be found in https://lisk.com/docs.
+Lisk is a next-generation crypto-currency and decentralized application platform, written entirely in JavaScript. The official documentation about the entire ecosystem can be found at https://lisk.com/docs.
 
 [Lisk Core](https://lisk.com/documentation/lisk-core/) is the program that implements the [Lisk Protocol](https://lisk.com/documentation/lisk-sdk/protocol/). In other words, Lisk Core is what every machine needs to set-up to run a node that allows for participation in the network.
 
@@ -61,7 +61,7 @@ $ npm install -g lisk-core
 $ lisk-core COMMAND
 running command...
 $ lisk-core (-v|--version|version)
-lisk-core/4.0.0-rc.6 darwin-arm64 node-v18.16.1
+lisk-core/4.0.0-rc.7 darwin-arm64 node-v18.16.1
 $ lisk-core --help [COMMAND]
 USAGE
   $ lisk-core COMMAND
