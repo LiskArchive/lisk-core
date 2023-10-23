@@ -24,7 +24,7 @@
 		"keys": {}
 	},
 	"network": {
-		"version": "1.0",
+		"version": "5.0",
 		"seedPeers": [
 			{
 				"ip": "betanet-seed-01.lisk.com",
