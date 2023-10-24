@@ -678,7 +678,7 @@ To register the legacy validator keys with the new node, create a new `registerK
 
 [source,bash]
 ----
-lisk-core transaction:create legacy registerKeys 10000000 --key-derivation-path=legacy --send
+lisk-core transaction:create legacy registerKeys 400000 --key-derivation-path=legacy --send
 ----
 
 It will ask you for the required parameters:
