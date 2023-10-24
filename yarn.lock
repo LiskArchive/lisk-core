@@ -721,19 +721,19 @@
     cargo-cp-artifact "^0.1"
     shelljs "^0.8.5"
 
-"@liskhq/lisk-framework-chain-connector-plugin@0.1.0-rc.4":
-  version "0.1.0-rc.4"
-  resolved "https://registry.yarnpkg.com/@liskhq/lisk-framework-chain-connector-plugin/-/lisk-framework-chain-connector-plugin-0.1.0-rc.4.tgz#6281cbc60c3a3483c1e666b615b6173607b55067"
-  integrity sha512-jTE28vfqn/TCkTo4Q+j4KJ/ZcNZ2Zm0Def6y+ngClrlmD0GL340+dviRQCVEo1G5wIeJ6DAYSyOpZVkF3ZT6ZQ==
+"@liskhq/lisk-framework-chain-connector-plugin@0.1.0-rc.5":
+  version "0.1.0-rc.5"
+  resolved "https://registry.yarnpkg.com/@liskhq/lisk-framework-chain-connector-plugin/-/lisk-framework-chain-connector-plugin-0.1.0-rc.5.tgz#0d4067a44d64651607b3d8eb1fc2a7cba69b13ab"
+  integrity sha512-LP1SNhx3+zCo7Pvj9vHxwUzmk/6vQD14mhdDHEH8Sy6vLXNBU6O7752eSsUHnyglAg01MFqMRd7BaYgpIV9tBg==
   dependencies:
     debug "4.3.4"
     fs-extra "11.1.0"
-    lisk-sdk "^6.0.0-rc.4"
+    lisk-sdk "^6.0.0-rc.5"
 
-"@liskhq/lisk-framework-faucet-plugin@0.3.0-rc.4":
-  version "0.3.0-rc.4"
-  resolved "https://registry.yarnpkg.com/@liskhq/lisk-framework-faucet-plugin/-/lisk-framework-faucet-plugin-0.3.0-rc.4.tgz#6ae121b825d3b4bedb89238be8af9bdc8bbfa001"
-  integrity sha512-iqLn2AwGx268KJbJQzjel/2pigTlUz6brhPH5o8o3IkwHA8thXuDe7+M5wVF9ULnN7cHCs8uKYC838uuJ5jeWA==
+"@liskhq/lisk-framework-faucet-plugin@0.3.0-rc.5":
+  version "0.3.0-rc.5"
+  resolved "https://registry.yarnpkg.com/@liskhq/lisk-framework-faucet-plugin/-/lisk-framework-faucet-plugin-0.3.0-rc.5.tgz#dd6beae97550b7315a62d0a6626c12399dffed5d"
+  integrity sha512-ltJjXYkOocVYZssDC4F6LOrE1ErGhos5sDOBq9AOPT08FfEF5WWUZWUO4WeuvVqdoNkpjOKtc2ilFJO0wOVx9Q==
   dependencies:
     "@csstools/normalize.css" "12.0.0"
     "@liskhq/lisk-api-client" "^6.0.0-rc.4"
@@ -744,39 +744,39 @@
     "@liskhq/lisk-validator" "^0.8.0-rc.2"
     axios "1.2.0"
     express "4.18.2"
-    lisk-sdk "^6.0.0-rc.4"
+    lisk-sdk "^6.0.0-rc.5"
     react "^17.0.1"
     react-dom "^17.0.1"
     react-router-dom "^5.2.0"
 
-"@liskhq/lisk-framework-forger-plugin@0.4.0-rc.4":
-  version "0.4.0-rc.4"
-  resolved "https://registry.yarnpkg.com/@liskhq/lisk-framework-forger-plugin/-/lisk-framework-forger-plugin-0.4.0-rc.4.tgz#4dd5c25c47e314d2d108ea621f2f5e3e016ec92f"
-  integrity sha512-55o7yYLQxipgz17LCcoq9aAuJeklkyzdUV0ZlVaDWRaRwLSG5soXxGxCv7DrMeSypro0mjiML+8RH7yT/VkdJQ==
+"@liskhq/lisk-framework-forger-plugin@0.4.0-rc.5":
+  version "0.4.0-rc.5"
+  resolved "https://registry.yarnpkg.com/@liskhq/lisk-framework-forger-plugin/-/lisk-framework-forger-plugin-0.4.0-rc.5.tgz#47e77d30d735548a9eebe494fa0f0d30ad5180f9"
+  integrity sha512-hq1lEuLdhxIiZJrmhNT76Y2JIA7iVcagbK5tcwIM90pH8L36+rHx+IlPWhcBW1mUE2ajBS3uB1+hWMtpNC2LGw==
   dependencies:
     debug "4.3.4"
     fs-extra "11.1.0"
-    lisk-sdk "^6.0.0-rc.4"
+    lisk-sdk "^6.0.0-rc.5"
 
-"@liskhq/lisk-framework-monitor-plugin@0.4.0-rc.4":
-  version "0.4.0-rc.4"
-  resolved "https://registry.yarnpkg.com/@liskhq/lisk-framework-monitor-plugin/-/lisk-framework-monitor-plugin-0.4.0-rc.4.tgz#e2fa15388b8eba8d6cab90df50b377f6c6a3713e"
-  integrity sha512-rgew5jnO9EUbUxLOyj48D9uiMLheIe/QMVd65UnpXmmgUzcXT/+Ixi+YfEsjoQdtaLOnqXekFV72of+VNlxa8g==
+"@liskhq/lisk-framework-monitor-plugin@0.4.0-rc.5":
+  version "0.4.0-rc.5"
+  resolved "https://registry.yarnpkg.com/@liskhq/lisk-framework-monitor-plugin/-/lisk-framework-monitor-plugin-0.4.0-rc.5.tgz#a35287d574ba6f1b1ab9a7fbbf4c056979af127d"
+  integrity sha512-DNURX80+TLyxcjFjpAe+85hKTkbH+PmdksIc4BuxYIxu7KgKu8JZKbnoqH3JO7vmBi2YMVc0adYHmvRBYZwPaw==
   dependencies:
     cors "2.8.5"
     express "4.18.2"
     express-rate-limit "6.7.0"
     ip "1.1.5"
-    lisk-sdk "^6.0.0-rc.4"
+    lisk-sdk "^6.0.0-rc.5"
 
-"@liskhq/lisk-framework-report-misbehavior-plugin@0.4.0-rc.4":
-  version "0.4.0-rc.4"
-  resolved "https://registry.yarnpkg.com/@liskhq/lisk-framework-report-misbehavior-plugin/-/lisk-framework-report-misbehavior-plugin-0.4.0-rc.4.tgz#a41d8aa2c055ba598563ab47602c4332b7d64fe1"
-  integrity sha512-bssoBB+mw50VBP1mI4uRGcc3EPzM2KBTJKNSRUgVYEg++0fydHDRO5WUCxTE54NssrRqI7hPZkl0NWkOEt4yeA==
+"@liskhq/lisk-framework-report-misbehavior-plugin@0.4.0-rc.5":
+  version "0.4.0-rc.5"
+  resolved "https://registry.yarnpkg.com/@liskhq/lisk-framework-report-misbehavior-plugin/-/lisk-framework-report-misbehavior-plugin-0.4.0-rc.5.tgz#ce5870dc93a6a1ed48a546c9f20e95a323ddc5a3"
+  integrity sha512-EBSOncKzYZQSiFywlnUPIbAFCBt5MSwtO5HvOBNaWqSDz32qMqMTD/nkGTUElPzC+zi/Vubq+g6i1goggTaAjA==
   dependencies:
     "@liskhq/lisk-cryptography" "^4.0.0-rc.2"
     fs-extra "11.1.0"
-    lisk-sdk "^6.0.0-rc.4"
+    lisk-sdk "^6.0.0-rc.5"
 
 "@liskhq/lisk-p2p@^0.9.0-rc.2":
   version "0.9.0-rc.2"
@@ -1553,9 +1553,9 @@
   integrity sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ==
 
 "@types/node@*":
-  version "20.8.7"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.8.7.tgz#ad23827850843de973096edfc5abc9e922492a25"
-  integrity sha512-21TKHHh3eUHIi2MloeptJWALuCu5H7HQTdTrWIFReA8ad+aggoX+lRes3ex7/FtpC+sVUpFMQ+QTfYr74mruiQ==
+  version "20.8.8"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.8.8.tgz#adee050b422061ad5255fc38ff71b2bb96ea2a0e"
+  integrity sha512-YRsdVxq6OaLfmR9Hy816IMp33xOBjfyOgUd77ehqg96CFywxAPbDbXvAsuN2KVg2HOT8Eh6uAfU+l4WffwPVrQ==
   dependencies:
     undici-types "~5.25.1"
 
@@ -3200,9 +3200,9 @@ ejs@^3.1.6, ejs@^3.1.8:
     jake "^10.8.5"
 
 electron-to-chromium@^1.4.535:
-  version "1.4.563"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.563.tgz#dabb424202754c1fed2d2938ff564b23d3bbf0d3"
-  integrity sha512-dg5gj5qOgfZNkPNeyKBZQAQitIQ/xwfIDmEQJHCbXaD9ebTZxwJXUsDYcBlAvZGZLi+/354l35J1wkmP6CqYaw==
+  version "1.4.565"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.565.tgz#205f3746a759ec3c43bce98b9eef5445f2721ea9"
+  integrity sha512-XbMoT6yIvg2xzcbs5hCADi0dXBh4//En3oFXmtPX+jiyyiCTiM9DGFT2SLottjpEs9Z8Mh8SqahbR96MaHfuSg==
 
 elegant-spinner@^1.0.1:
   version "1.0.1"
@@ -5564,10 +5564,10 @@ lisk-commander@6.0.0-rc.5:
     yeoman-environment "3.12.1"
     yeoman-generator "5.7.0"
 
-lisk-framework@^0.11.0-rc.4:
-  version "0.11.0-rc.4"
-  resolved "https://registry.yarnpkg.com/lisk-framework/-/lisk-framework-0.11.0-rc.4.tgz#bec20ce39aee6c25b2e5666894d5abe7f9af9f64"
-  integrity sha512-qdf5E0wPrNsFW1fgcg/4incehCbBHhud2zoQxdJprosINpSL6IZRmGeT/JbqgqkyMBHa8Q1zHS7AdNEH0zd1ng==
+lisk-framework@^0.11.0-rc.4, lisk-framework@^0.11.0-rc.5:
+  version "0.11.0-rc.5"
+  resolved "https://registry.yarnpkg.com/lisk-framework/-/lisk-framework-0.11.0-rc.5.tgz#1b281b9facd253158444541ed6a978bf48c8c29e"
+  integrity sha512-mF/GZtnCfyClrc7mUmotIzlE213rZodKtzdusxrEHeK6G6wK9GQUc2ag+gJP8tf6PvsKUh9EKiI4kQV4HJOmIA==
   dependencies:
     "@chainsafe/blst" "0.2.9"
     "@liskhq/lisk-api-client" "^6.0.0-rc.4"
@@ -5591,10 +5591,10 @@ lisk-framework@^0.11.0-rc.4:
     ws "8.11.0"
     zeromq "6.0.0-beta.6"
 
-lisk-sdk@6.0.0-rc.4, lisk-sdk@^6.0.0-rc.4:
-  version "6.0.0-rc.4"
-  resolved "https://registry.yarnpkg.com/lisk-sdk/-/lisk-sdk-6.0.0-rc.4.tgz#9c651f20ab76298fa5eeb90cce1b1e495a45667f"
-  integrity sha512-pGGSMXmlNYEzD0iBPpufG15YONKt3EntlUOp/LBSeymR9yLMeoFUFTVxpZ3XYgKCC/+hR+NkF9btSwLDl+ALQQ==
+lisk-sdk@6.0.0-rc.5, lisk-sdk@^6.0.0-rc.5:
+  version "6.0.0-rc.5"
+  resolved "https://registry.yarnpkg.com/lisk-sdk/-/lisk-sdk-6.0.0-rc.5.tgz#85dcf84958ca541baa0e502489fd6b9a5a8cec12"
+  integrity sha512-lWjN01Jy0CzPNoSnXUS1QEkG6Ofp4in3QBkHxUBMhmtH0OjGq5gw0F5SpMBvllD8FjBBFWjZ17CGNIJzfYZMrA==
   dependencies:
     "@liskhq/lisk-api-client" "^6.0.0-rc.4"
     "@liskhq/lisk-chain" "^0.5.0-rc.4"
@@ -5608,7 +5608,7 @@ lisk-sdk@6.0.0-rc.4, lisk-sdk@^6.0.0-rc.4:
     "@liskhq/lisk-tree" "^0.4.0-rc.2"
     "@liskhq/lisk-utils" "^0.4.0-rc.0"
     "@liskhq/lisk-validator" "^0.8.0-rc.2"
-    lisk-framework "^0.11.0-rc.4"
+    lisk-framework "^0.11.0-rc.5"
 
 listr-silent-renderer@^1.1.1:
   version "1.1.1"
