@@ -46,7 +46,7 @@ Alternatively, start Lisk Core with the flag `--api-ipc` to enable IPC:
 lisk-core start --api-ipc
 ----
 
-NOTE: Please note that specifying any of the `--api-ipc`, `--api-ws`, or `--api-http` flags in the lisk-core start command overrides the `rpc.modes` settings in the `config.json`.
+NOTE: Please note that specifying any of the `--api-ipc`, `--api-ws`, or `--api-http` flags in the `lisk-core start` command overrides the `rpc.modes` settings in the `config.json`.
 
 // === Log rotation
 
