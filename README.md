@@ -10,11 +10,11 @@
 ![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/liskhq/lisk-core)
 [![Code coverage](https://codecov.io/gh/LiskHQ/lisk-core/branch/development/graph/badge.svg?token=U0CU1XQZ52)](https://codecov.io/gh/LiskHQ/lisk-core)
 
-Lisk is a next-generation crypto-currency and decentralized application platform, written entirely in JavaScript. The official documentation about the whole ecosystem can be found in https://lisk.com/docs.
+Lisk is a next-generation crypto-currency and decentralized application platform, written entirely in JavaScript. The official documentation about the entire ecosystem can be found at https://lisk.com/docs.
 
-[Lisk Core](https://lisk.com/documentation/lisk-core/) is the program that implements the [Lisk Protocol](https://lisk.com/documentation/lisk-sdk/protocol/). In other words, Lisk Core is what every machine needs to set-up to run a node that allows for participation in the network.
+[Lisk Core](https://lisk.com/documentation/lisk-core/v4/index.html) is the program that implements the [Lisk Protocol](https://lisk.com/documentation/beta/introduction.html#the-lisk-protocol). In other words, Lisk Core is what every machine needs to set-up to run a node that allows for participation in the network.
 
-This document details how to install Lisk Core from source and from npm registry, but there are two other ways to participate in the network: [binaries](https://lisk.com/documentation/lisk-core/setup/binary) and [Docker images](https://lisk.com/documentation/lisk-core/setup/docker).
+This document details how to install Lisk Core from source and from npm registry, but there are two other ways to participate in the network: [binaries](https://lisk.com/documentation/lisk-core/v4/setup/binary.html) and [Docker images](https://lisk.com/documentation/lisk-core/v4/setup/docker.html).
 If you have satisfied the requirements from the Pre-Installation section, you can jump directly to the next section [Installation Steps](#installation).
 
 ## Index
@@ -190,7 +190,7 @@ Running a command will overwrite the default config and use the specified option
 lisk-core start -n devnet -c ./custom-config.json --overwrite-config
 ```
 
-For a more detailed understanding of configuration read this [online documentation](https://lisk.com/documentation/lisk-core/reference/config.html).
+For a more detailed understanding of configuration read this [online documentation](https://lisk.com/documentation/lisk-core/v4/management/configuration.html).
 
 ## Tests
 
