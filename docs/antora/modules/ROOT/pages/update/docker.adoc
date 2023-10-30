@@ -23,213 +23,74 @@ Christopher Braithwaite <christopher.braithwaite@lightcurve.io>
 This document describes how to run Lisk Core as a Docker image-based container.
 Lisk Core version 4 does not have any external dependencies and hence does not require using `docker-compose`.
 
-== Pre-installation
 
-=== Hardware requirements
+== Upgrade Lisk Core
 
-The following system requirements are recommended:
-
-Memory::
-* Machines with a minimum of 4 GB RAM for the Mainnet.
-
-* Machines with a minimum of 2 GB RAM for the Testnet.
-
-Storage::
-* Machines with a minimum of 40 GB HDD{fn}.
-
-include::partial$create-a-new-user.adoc[]
-
-include::partial$firewall-setup.adoc[]
-// === Create a new user `lisk`
-
-// // [source,bash]
-// ----
-// adduser lisk
-// ----
-//
-// Add the `lisk` user to the `sudo` user group:
-//
-// [source,bash]
-// ----
-// sudo usermod -aG sudo lisk
-// ----
-
-=== Install Docker
-To run Lisk Core in Docker, firstly it is necessary to install the Docker engine.
-Determine if your platform can run Docker as described below.
-
-Please refer to the {url_docker_install}[Docker installation] page.
+To upgrade the Docker container to a desired version, please follow one of the two options below.
+To find all the tagged versions for Lisk Core, please check the {url_tags}[available tags] on GitHub.
 
 [tabs]
 ====
-Ubuntu::
+Option A - Download pre-built images from DockerHub::
 +
 --
-Please refer to the {url_docker_install_linux}[Docker installation for ubuntu].
-
-IMPORTANT: Configure Docker, in order that it can be run without `sudo` rights: {url_docker_linux_post_install}[linux post install].
-
-Install `make` using your package manager.
-For example, use `apt-get` if running Ubuntu as shown below:
-
-[source,bash]
+. Stop Lisk Core
++
 ----
-sudo apt-get install curl make
+make stop
 ----
+NOTE: In case the database needs to be flushed please execute the `make down` command instead. Please check the {url_rel_notes}[release notes] for the relevant version to see if the existing databases need to be flushed.
+
+. Manually download the image from `DockerHub`.
++
+
+[source,sh]
+----
+docker image pull lisk-core
+----
+NOTE: To download a specific version of Lisk Core, please include the tag after `lisk-core` in the above command. For example, `lisk-core:4.0.0`
+
+. Start Lisk Core in the containers.
++
+----
+make start ARGS="-n mainnet --api-ws"
+----
+NOTE: Please customize `ARGS` as per your requirements.
 --
-MacOS::
+Option B - Build images locally ::
 +
 --
-Please refer to {url_docker_install_mac}[Docker installation for Mac^].
-Install `make` using {url_xcode}[XCode].
+Build the images locally using the following steps.
+Navigate inside the lisk-core root folder, and execute the following commands.
+
+. Stop Lisk Core
++
+----
+make stop
+----
+NOTE: In case the database needs to be flushed please execute the `make down` command instead. Please check the {url_rel_notes}[release notes] for the relevant version to see if the existing databases need to be flushed.
+
+. Checkout the version with *`git checkout <tag>`*
++
+----
+git checkout v4.0.0
+----
+
+. Build the required updated Docker image
++
+----
+make build-image
+----
+
+. Start Lisk Core in the container
++
+----
+make start ARGS="-n mainnet --api-ws"
+----
+NOTE: Please customize `ARGS` as per your requirements.
 --
 
-Windows::
-+
---
-Please refer to {url_docker_install_windows}[Docker installation for Windows^].
---
 ====
 
+// Check this : To verify the microservice logs, please refer to the <<Logging>> section.
 
-
-== Lisk Core download
-
-[source,bash]
-----
-git clone https://github.com/LiskHQ/lisk-core.git #<1>
-cd lisk-core/docker                  #<2>
-git checkout v4.0.0 -b v4.0.0 #<3>
-----
-
-<1> Clone the repository.
-<2> Navigate into the `lisk-core` root folder.
-<3> Check out the latest release tag.
-
-NOTE: Please check for the latest release in the {url_core_releases}[Lisk Core releases^] list.
-
-== Run
-
-.Podman
-[NOTE]
-====
-It is also possible to use {url_podman}[podman] instead of docker by simply replacing the occurrences of docker with `podman`, in the following examples or alternatively by creating an alias with `alias docker=podman`.
-// Simply replace occurrences of `docker` with `podman` or `alias docker=podman`.
-
-
-====
-
-Create a "lisk-core" container:
-
-[tabs]
-====
-Mainnet::
-+
---
-
-[source,bash]
-----
-docker run --volume lisk-data:/home/lisk/.lisk \
-           --publish 7887:7887 \
-           --name lisk-core \
-           lisk/core:4.0.0 \
-           start --network=mainnet
-----
-
-[NOTE]
-=====
-The default log levels for Mainnet are:
-
-[source,json]
-----
-"logger": {
-    "fileLogLevel": "error",
-    "LogLevel": "none"
-},
-----
-
-So if you start the node, it won't show any logs in the console.
-This is the recommended setting for reducing the number of logs for a running node.
-However, to verify that the node started correctly, update the log levels in the config to `info` or lower.
-
-Alternatively, start the node with the following flag:
-
-[source,bash]
-----
-start --network mainnet --console-log=info
-----
-
-// See the xref:{url_run_logging}[] guide for more information about logging.
-// TODO: Update hyperlinks
-=====
---
-Testnet::
-+
---
-
-[source,bash]
-----
-docker run --volume lisk-data:/home/lisk/.lisk \
-           --publish 7887:7887 \
-           --name lisk-core \
-           lisk/core:4.0.0 \
-           start --network=testnet
-----
-
---
-Devnet::
-+
---
-[source,bash]
-----
-docker run --volume lisk-data:/home/lisk/.lisk \
-           --publish 7887:7887 \
-           --name lisk-core \
-           lisk/core:4.0.0 \
-           start --network=devnet
-----
---
-NOTE: The passphrase for the genesis account(s) can be found here in the Lisk Core GitHub repository under the following path: {url_devnet_passphrase}[config/devnet/passphrase.json].
-====
-
-== Configuration
-
-Further parameters can be passed after `--network`, for example, as shown below:
-
-[source,bash]
-----
-docker run --volume lisk-data:/home/lisk/.lisk \
-           --publish 7667:7667 \
-           --publish 127.0.0.1:7887:7887 \
-           --name lisk-core \
-           lisk/core:4.0.0 \
-           start --network=testnet --api-ws --api-http --log=debug
-----
-
-Environment variables can be set with `--env`:
-
-[source,bash]
-----
-docker run --volume lisk-data:/home/lisk/.lisk \
-           --publish 7667:7667 \
-           --env LISK_CONSOLE_LOG_LEVEL=debug \
-           --name lisk-core \
-           lisk/core:4.0.0 \
-           start --network=mainnet
-----
-
-//TODO: Add link back, once docs are updated
-//See the xref:{url_config}[] guide for a reference of more configuration options.
-
-
-
-== Import blockchain snapshot
-
-[source,bash]
-----
-docker run --volume lisk-data:/home/lisk/.lisk -it --rm lisk/core:4.0.0 blockchain download --network=betanet --output=/home/lisk/.lisk/tmp/
-docker run --volume lisk-data:/home/lisk/.lisk -it --rm lisk/core:4.0.0 blockchain import /home/lisk/.lisk/tmp/blockchain.db.tar.gz
-docker run --volume lisk-data:/home/lisk/.lisk -it --rm --entrypoint rm lisk/core:4.0.0 -f /home/lisk/.lisk/tmp/blockchain.db.tar.gz
-docker start lisk-core
-docker logs -f lisk-core
-----
