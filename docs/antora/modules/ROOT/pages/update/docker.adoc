@@ -1,6 +1,6 @@
 = Update Docker setup
-Mona Bärenfänger <mona@lightcurve.io>
-:description: How to install and setup up a Lisk Core node with Docker.
+Christopher Braithwaite <christopher.braithwaite@lightcurve.io>
+:description: How to update up a Lisk Core node with Docker.
 :toc:
 // Settings
 // External URLs
