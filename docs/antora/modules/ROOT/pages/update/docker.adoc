@@ -1,0 +1,235 @@
+= Update Docker setup
+Mona Bärenfänger <mona@lightcurve.io>
+:description: How to install and setup up a Lisk Core node with Docker.
+:toc:
+// Settings
+// External URLs
+:url_core_releases: https://github.com/LiskHQ/lisk-core/releases
+:url_podman: https://github.com/containers/podman/
+:url_docker_install: https://docs.docker.com/engine/installation/#desktop
+:url_docker_install_linux: https://docs.docker.com/engine/installation/#server
+:url_docker_install_mac: https://docs.docker.com/docker-for-mac/install/
+:url_docker_install_windows: https://docs.docker.com/docker-for-windows/install/
+:url_docker_linux_post_install: https://docs.docker.com/install/linux/linux-postinstall
+:url_xcode: https://developer.apple.com/xcode/features/
+:url_devnet_passphrase: https://github.com/LiskHQ/lisk-core/blob/development/config/devnet/passphrase.json
+// Project URLs
+:url_config: management/configuration.adoc
+:url_upgrade_source: update/source.adoc
+:url_run_logging: lisk-core::run-blockchain/logging.adoc
+:url_run_logging: ROOT::run-blockchain/logging.adoc
+:fn: footnote:hdd[These recommendations are derived from the log level settings, in the event that the user needs to increase storage to prevent limited memory access and potential memory-related problems with a node. Furthermore, as more transactions are processed and added to the blockchain, the size of the blockchain increases over time and this directly affects the HDD storage requirements for a blockchain node. Hence, adhering to the above listed requirements is highly recommended.]
+
+This document describes how to run Lisk Core as a Docker image-based container.
+Lisk Core version 4 does not have any external dependencies and hence does not require using `docker-compose`.
+
+== Pre-installation
+
+=== Hardware requirements
+
+The following system requirements are recommended:
+
+Memory::
+* Machines with a minimum of 4 GB RAM for the Mainnet.
+
+* Machines with a minimum of 2 GB RAM for the Testnet.
+
+Storage::
+* Machines with a minimum of 40 GB HDD{fn}.
+
+include::partial$create-a-new-user.adoc[]
+
+include::partial$firewall-setup.adoc[]
+// === Create a new user `lisk`
+
+// // [source,bash]
+// ----
+// adduser lisk
+// ----
+//
+// Add the `lisk` user to the `sudo` user group:
+//
+// [source,bash]
+// ----
+// sudo usermod -aG sudo lisk
+// ----
+
+=== Install Docker
+To run Lisk Core in Docker, firstly it is necessary to install the Docker engine.
+Determine if your platform can run Docker as described below.
+
+Please refer to the {url_docker_install}[Docker installation] page.
+
+[tabs]
+====
+Ubuntu::
++
+--
+Please refer to the {url_docker_install_linux}[Docker installation for ubuntu].
+
+IMPORTANT: Configure Docker, in order that it can be run without `sudo` rights: {url_docker_linux_post_install}[linux post install].
+
+Install `make` using your package manager.
+For example, use `apt-get` if running Ubuntu as shown below:
+
+[source,bash]
+----
+sudo apt-get install curl make
+----
+--
+MacOS::
++
+--
+Please refer to {url_docker_install_mac}[Docker installation for Mac^].
+Install `make` using {url_xcode}[XCode].
+--
+
+Windows::
++
+--
+Please refer to {url_docker_install_windows}[Docker installation for Windows^].
+--
+====
+
+
+
+== Lisk Core download
+
+[source,bash]
+----
+git clone https://github.com/LiskHQ/lisk-core.git #<1>
+cd lisk-core/docker                  #<2>
+git checkout v4.0.0 -b v4.0.0 #<3>
+----
+
+<1> Clone the repository.
+<2> Navigate into the `lisk-core` root folder.
+<3> Check out the latest release tag.
+
+NOTE: Please check for the latest release in the {url_core_releases}[Lisk Core releases^] list.
+
+== Run
+
+.Podman
+[NOTE]
+====
+It is also possible to use {url_podman}[podman] instead of docker by simply replacing the occurrences of docker with `podman`, in the following examples or alternatively by creating an alias with `alias docker=podman`.
+// Simply replace occurrences of `docker` with `podman` or `alias docker=podman`.
+
+
+====
+
+Create a "lisk-core" container:
+
+[tabs]
+====
+Mainnet::
++
+--
+
+[source,bash]
+----
+docker run --volume lisk-data:/home/lisk/.lisk \
+           --publish 7887:7887 \
+           --name lisk-core \
+           lisk/core:4.0.0 \
+           start --network=mainnet
+----
+
+[NOTE]
+=====
+The default log levels for Mainnet are:
+
+[source,json]
+----
+"logger": {
+    "fileLogLevel": "error",
+    "LogLevel": "none"
+},
+----
+
+So if you start the node, it won't show any logs in the console.
+This is the recommended setting for reducing the number of logs for a running node.
+However, to verify that the node started correctly, update the log levels in the config to `info` or lower.
+
+Alternatively, start the node with the following flag:
+
+[source,bash]
+----
+start --network mainnet --console-log=info
+----
+
+// See the xref:{url_run_logging}[] guide for more information about logging.
+// TODO: Update hyperlinks
+=====
+--
+Testnet::
++
+--
+
+[source,bash]
+----
+docker run --volume lisk-data:/home/lisk/.lisk \
+           --publish 7887:7887 \
+           --name lisk-core \
+           lisk/core:4.0.0 \
+           start --network=testnet
+----
+
+--
+Devnet::
++
+--
+[source,bash]
+----
+docker run --volume lisk-data:/home/lisk/.lisk \
+           --publish 7887:7887 \
+           --name lisk-core \
+           lisk/core:4.0.0 \
+           start --network=devnet
+----
+--
+NOTE: The passphrase for the genesis account(s) can be found here in the Lisk Core GitHub repository under the following path: {url_devnet_passphrase}[config/devnet/passphrase.json].
+====
+
+== Configuration
+
+Further parameters can be passed after `--network`, for example, as shown below:
+
+[source,bash]
+----
+docker run --volume lisk-data:/home/lisk/.lisk \
+           --publish 7667:7667 \
+           --publish 127.0.0.1:7887:7887 \
+           --name lisk-core \
+           lisk/core:4.0.0 \
+           start --network=testnet --api-ws --api-http --log=debug
+----
+
+Environment variables can be set with `--env`:
+
+[source,bash]
+----
+docker run --volume lisk-data:/home/lisk/.lisk \
+           --publish 7667:7667 \
+           --env LISK_CONSOLE_LOG_LEVEL=debug \
+           --name lisk-core \
+           lisk/core:4.0.0 \
+           start --network=mainnet
+----
+
+//TODO: Add link back, once docs are updated
+//See the xref:{url_config}[] guide for a reference of more configuration options.
+
+
+
+== Import blockchain snapshot
+
+[source,bash]
+----
+docker run --volume lisk-data:/home/lisk/.lisk -it --rm lisk/core:4.0.0 blockchain download --network=betanet --output=/home/lisk/.lisk/tmp/
+docker run --volume lisk-data:/home/lisk/.lisk -it --rm lisk/core:4.0.0 blockchain import /home/lisk/.lisk/tmp/blockchain.db.tar.gz
+docker run --volume lisk-data:/home/lisk/.lisk -it --rm --entrypoint rm lisk/core:4.0.0 -f /home/lisk/.lisk/tmp/blockchain.db.tar.gz
+docker start lisk-core
+docker logs -f lisk-core
+----
