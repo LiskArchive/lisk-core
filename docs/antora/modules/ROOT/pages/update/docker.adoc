@@ -5,6 +5,8 @@ Christopher Braithwaite <christopher.braithwaite@lightcurve.io>
 // Settings
 // External URLs
 :url_core_releases: https://github.com/LiskHQ/lisk-core/releases
+:url_rel_notes: https://github.com/LiskHQ/lisk-core/releases
+:url_tags: https://github.com/LiskHQ/lisk-core/tags
 :url_podman: https://github.com/containers/podman/
 :url_docker_install: https://docs.docker.com/engine/installation/#desktop
 :url_docker_install_linux: https://docs.docker.com/engine/installation/#server
@@ -28,7 +30,6 @@ Lisk Core version 4 does not have any external dependencies and hence does not r
 
 To upgrade the Docker container to a desired version, please follow one of the two options below.
 To find all the tagged versions for Lisk Core, please check the {url_tags}[available tags] on GitHub.
-
 [tabs]
 ====
 Option A - Download pre-built images from DockerHub::
