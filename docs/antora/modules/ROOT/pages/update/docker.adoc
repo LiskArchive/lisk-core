@@ -20,7 +20,7 @@ Christopher Braithwaite <christopher.braithwaite@lightcurve.io>
 :url_run_logging: ROOT::run-blockchain/logging.adoc
 :fn: footnote:hdd[These recommendations are derived from the log level settings, in the event that the user needs to increase storage to prevent limited memory access and potential memory-related problems with a node. Furthermore, as more transactions are processed and added to the blockchain, the size of the blockchain increases over time and this directly affects the HDD storage requirements for a blockchain node. Hence, adhering to the above listed requirements is highly recommended.]
 
-This document describes how to run Lisk Core as a Docker image-based container.
+This page describes how to update the Docker image-based container in Lisk Core.
 Lisk Core version 4 does not have any external dependencies and hence does not require using `docker-compose`.
 
 
