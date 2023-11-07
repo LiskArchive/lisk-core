@@ -53,13 +53,13 @@ OPTIONS
   --pretty                                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
-  transaction:create 2 0 100000000 
+  transaction:create 2 0 100000000
   --asset='{"amount":100000000,"recipientAddress":"ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815","data":"send token"}'
-  transaction:create 2 0 100000000 
-  --asset='{"amount":100000000,"recipientAddress":"ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815","data":"send token"}' 
+  transaction:create 2 0 100000000
+  --asset='{"amount":100000000,"recipientAddress":"ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815","data":"send token"}'
   --json
-  transaction:create 2 0 100000000 --offline --network mainnet --network-identifier 
-  873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 --nonce 1 
+  transaction:create 2 0 100000000 --offline --network mainnet --network-identifier
+  873da85a2cee70da631d90b0f17fada8c3ac9b83b2613f4ca5fddd374d1034b3 --nonce 1
   --asset='{"amount":100000000,"recipientAddress":"ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815","data":"send token"}'
 ```
 
