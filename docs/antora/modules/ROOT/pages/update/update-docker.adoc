@@ -77,5 +77,3 @@ NOTE: Please customize `ARGS` as per your requirements.
 --
 ====
 
-// Check this : To verify the microservice logs, please refer to the <<Logging>> section.
-
