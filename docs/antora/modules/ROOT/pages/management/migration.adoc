@@ -386,6 +386,20 @@ NOTE: If the node is not migrated, but started at a later point in time, it will
 For validators, this might result in missing blocks.
 For everyone else, it will not have any impact.
 
+.How to verify a successful migration
+[TIP]
+====
+To verify that the migrator created the correct new genesis block, compare the newly created genesis block with others by comparing the hash of the genesis block:
+
+[source,bash]
+----
+grep \"id\": ./lisk-migrator/output/15f0dacc1060e91818224a94286b13aa04279c640bd5d6f193182031d133df7c/genesis_block.json
+----
+
+The hashes can be shared in the dedicated network channel on {url_lisk_chat}[lisk.chat^].
+
+====
+
 === Stop Lisk Core v3.1.0
 
 After the `lisk-migrator` script has finished and the announced snapshot height has passed, there is no reason to continue running Lisk Core v3.1.0, and therefore it is recommended to stop it.
@@ -620,7 +634,8 @@ Look in the output directory of the lisk-migrator for a file called `forgingStat
 .Migrator output example
  Finished exporting forging status to /root/lisk-migrator/output/15f0dacc1060e91818224a94286b13aa04279c640bd5d6f193182031d133df7c/forgingStatus.json
 
-Alternatively, if the `forgingStatus.json` file is missing, the validator can use the snapshot height for `height`, `maxHeightPrevoted` and `maxHeightGenerated` to enable block generation.
+.Alternative in case of lost data
+TIP: In case the validator info data is lost, the validator can use the snapshot height for `height`, `maxHeightPrevoted` and `maxHeightGenerated` to enable block generation safely.
 
 The v3 forging info data corresponds to the v4 validator info data in the following way:
 
