@@ -22,3 +22,5 @@ EXAMPLES
   node:info
   node:info --data-path ./lisk
 ```
+
+_See code: [dist/commands/node/info.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.1/dist/commands/node/info.ts)_

@@ -63,7 +63,7 @@ EXAMPLES
   --asset='{"amount":100000000,"recipientAddress":"ab0041a7d3f7b2c290b5b834d46bdc7b7eb85815","data":"send token"}'
 ```
 
-_See code: [dist/commands/transaction/create.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.0/dist/commands/transaction/create.ts)_
+_See code: [dist/commands/transaction/create.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.1/dist/commands/transaction/create.ts)_
 
 ## `lisk-core transaction:get ID`
 
@@ -86,7 +86,7 @@ EXAMPLE
   transaction:get eab06c6a22e88bca7150e0347a7d976acd070cb9284423e6eabecd657acc1263
 ```
 
-_See code: [dist/commands/transaction/get.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.0/dist/commands/transaction/get.ts)_
+_See code: [dist/commands/transaction/get.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.1/dist/commands/transaction/get.ts)_
 
 ## `lisk-core transaction:send TRANSACTION`
 
@@ -111,7 +111,7 @@ EXAMPLE
   2cea39d58aa84809aa87bcfe6feaac46211c80472ad9297fd87727709f5d7e7b4134caf106b02
 ```
 
-_See code: [dist/commands/transaction/send.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.0/dist/commands/transaction/send.ts)_
+_See code: [dist/commands/transaction/send.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.1/dist/commands/transaction/send.ts)_
 
 ## `lisk-core transaction:sign TRANSACTION`
 
@@ -160,4 +160,4 @@ EXAMPLES
   transaction:sign <hex-encoded-binary-transaction> --network testnet
 ```
 
-_See code: [dist/commands/transaction/sign.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.0/dist/commands/transaction/sign.ts)_
+_See code: [dist/commands/transaction/sign.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.1/dist/commands/transaction/sign.ts)_
