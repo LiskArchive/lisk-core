@@ -19,4 +19,4 @@ EXAMPLE
   sdk:link /path/to/lisk-sdk/sdk
 ```
 
-_See code: [dist/commands/sdk/link.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.0/dist/commands/sdk/link.ts)_
+_See code: [dist/commands/sdk/link.ts](https://github.com/LiskHQ/lisk-core/blob/v3.1.1/dist/commands/sdk/link.ts)_

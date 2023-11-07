@@ -51,23 +51,20 @@ npm run build
 ## From NPM
 
 <!-- usage -->
-
 ```sh-session
 $ npm install -g lisk-core
 $ lisk-core COMMAND
 running command...
 $ lisk-core (-v|--version|version)
-lisk-core/3.1.0 darwin-arm64 node-v18.16.1
+lisk-core/3.1.1 darwin-arm64 node-v18.16.1
 $ lisk-core --help [COMMAND]
 USAGE
   $ lisk-core COMMAND
 ...
 ```
-
 <!-- usagestop -->
 
 <!-- commands -->
-
 # Command Topics
 
 - [`lisk-core account`](docs/commands/account.md) - Commands relating to Lisk Core accounts.
