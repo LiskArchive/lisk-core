@@ -4,14 +4,13 @@
 :experimental:
 :idprefix:
 :idseparator: -
-//TODO: Update TBD values
-:snapshotHeight: TBD
+:snapshotHeight: 23390991
 :snapshotHeightTestnet: 20449414
 :initRounds: 587
 :initRoundsTime: 1 week
-:lisk-migrator: lisk-migrator-v2.0.0-rc.3-linux-x64.tar.gz
-:lisk-migrator_darwinx64: lisk-migrator-v2.0.0-rc.3-darwin-x64.tar.gz
-:lisk-migrator_darwinarm64: lisk-migrator-v2.0.0-rc.3-darwin-arm64.tar.gz
+:lisk-migrator: lisk-migrator-v2.0.0-rc.5-linux-x64.tar.gz
+:lisk-migrator_darwinx64: lisk-migrator-v2.0.0-rc.5-darwin-x64.tar.gz
+:lisk-migrator_darwinarm64: lisk-migrator-v2.0.0-rc.5-darwin-arm64.tar.gz
 :docs_sdk: v6@lisk-sdk::
 :docs_lisk: beta@ROOT::
 :docs_liskv5: ROOT::
@@ -24,9 +23,8 @@
 :url_lisk_migrator_darwinx64: https://downloads.lisk.com/lisk-migrator/{lisk-migrator_darwinx64}
 :url_wallet: https://lisk.com/wallet
 :url_jsonrpc: https://www.jsonrpc.org/specification
-//TODO: Update links to blog posts
 :url_lisk_blog_migration: https://lisk.com/blog/posts/announcing-lisk-testnet-v4-migration
-:url_lisk_blog_migration_mainnet: https://lisk.com/blog/development/announcing-lisk-mainnet-v3-migration
+:url_lisk_blog_migration_mainnet: https://lisk.com/blog/posts/announcing-lisk-mainnet-v4-migration
 // Project URLs
 :url_run_validator: {docs_lisk}run-blockchain/become-validator.adoc
 :url_run_pm2: {docs_lisk}run-blockchain/process-management.adoc
@@ -38,16 +36,16 @@
 :url_cli_generatorenable: core-cli.adoc#generatorenable
 :url_cli_endpointinvoke: core-cli.adoc#endpointinvoke
 
-This guide explains how to migrate a Lisk Core v3.1.0 node to Lisk Core v4.x using the Lisk migrator v2.
+This guide explains how to migrate a Lisk Core v3 node to Lisk Core v4 using the Lisk migrator v2.
 
 The Lisk migrator CLI will generate a new genesis block for Lisk Core v4.
-The new genesis block is created based on a snapshot of the old blockchain (running on Lisk Core v3.1.0) at a given height.
+The new genesis block is created based on a snapshot of the old blockchain (running on Lisk Core v3.1.1) at a given height.
 
 [IMPORTANT]
 ====
 All active validators on the Lisk Mainnet and the Lisk Testnet need to follow this guide to correctly migrate their nodes to the new network, in order to not miss any blocks after the network hard fork.
 
-Optionally, anyone running a Lisk Core v3.1.0 who is not an active validator can also participate in the migration process.
+Optionally, anyone running a Lisk Core v3.1.1 who is not an active validator can also participate in the migration process.
 In this case, the following steps 2.4 and 2.5 in this guide can be skipped, as they are only relevant for the current validators.
 ====
 
@@ -80,11 +78,11 @@ Node.js::
 * Version 18 (LTS) installed via NVM
 
 Lisk Core::
-* Version 3.1.0 or later
+* Version 3.1.1 or later
 ====
 
-=== Ensure you are running version 3.1.0-rc.1 of Lisk Core
-Ensure you are running version 3.1.0-rc.1 of Lisk Core to be able to seamlessly migrate to Lisk Core 4.0.0.
+=== Ensure you are running version 3.1.1 of Lisk Core
+Ensure you are running version 3.1.1 of Lisk Core to be able to seamlessly migrate to Lisk Core 4.0.0.
 
 Print the Lisk Core node info in the terminal, and check the value of `version`.
 
@@ -93,7 +91,7 @@ Print the Lisk Core node info in the terminal, and check the value of `version`.
 lisk-core node:info --pretty
 ----
 
-NOTE: If your version is 3.1.0-rc.0, please ensure to set `backup.height` to the announced snapshot height in your custom config and restart the node with the `--overwrite-config` flag.
+NOTE: If your version is 3.1.1-rc.0, please ensure to set `backup.height` to the announced snapshot height in your custom config and restart the node with the `--overwrite-config` flag.
 
 === Setting up the Lisk migrator
 
@@ -212,16 +210,15 @@ In case the `lisk-migrator` was extracted somewhere other than your home directo
 
 === Check the announced snapshot height
 
-//TODO: update links to blog posts once created
 * For Mainnet: {snapshotHeight} +
-//For more information check the {url_lisk_blog_migration_mainnet}[Mainnet migration announcement^].
+For more information check the {url_lisk_blog_migration_mainnet}[Mainnet migration announcement^].
 * For Testnet: {snapshotHeightTestnet} +
 For more information check the {url_lisk_blog_migration}[Testnet migration announcement^].
 
 The height is needed by the `lisk-migrator` in the next step.
 A snapshot of the blockchain will be created at this particular height, which will then be used to create the genesis block for the new blockchain.
 
-=== Ensure Lisk Core v3.1.0 is fully synced with the network
+=== Ensure Lisk Core v3.1.1 is fully synced with the network
 Check the current block height of your node directly in the terminal by running the following command:
 
 [source,bash]
@@ -400,9 +397,9 @@ The hashes can be shared in the dedicated network channel on {url_lisk_chat}[lis
 
 ====
 
-=== Stop Lisk Core v3.1.0
+=== Stop Lisk Core v3.1.1
 
-After the `lisk-migrator` script has finished and the announced snapshot height has passed, there is no reason to continue running Lisk Core v3.1.0, and therefore it is recommended to stop it.
+After the `lisk-migrator` script has finished and the announced snapshot height has passed, there is no reason to continue running Lisk Core v3.1.1, and therefore it is recommended to stop it.
 
 [IMPORTANT]
 ====
@@ -415,7 +412,7 @@ If the migrator is started with `--auto-start-lisk-core-v4` flag, the user is pr
 
 //TODO: Update with correct command to stop Lisk Core
 ////
-Navigate into the root folder of your Lisk Core v3.1.0 installation and run the following command to stop the old Lisk Core version:
+Navigate into the root folder of your Lisk Core v3.1.1 installation and run the following command to stop the old Lisk Core version:
 
 [source,bash]
 ----
@@ -425,7 +422,7 @@ lisk-core
 
 NOTE: Users that have set something up to start Lisk Core on boot, whether it's through `cron` or `systemd` or something else, should keep that in mind and adjust things accordingly so that Lisk Core 4.x gets started instead of Lisk Core 3.x.
 
-Last but not least, remove the folder with Lisk Core v3.1.0.
+Last but not least, remove the folder with Lisk Core v3.1.1.
 
 
 === Start Lisk Core v4
