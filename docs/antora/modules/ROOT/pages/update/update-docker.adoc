@@ -73,7 +73,7 @@ make build-image
 ----
 make start ARGS="-n mainnet --api-ws"
 ----
-NOTE: Please customize `ARGS` as per your requirements.
+NOTE: Please customize the `ARGS` as per your requirements.
 --
 ====
 
