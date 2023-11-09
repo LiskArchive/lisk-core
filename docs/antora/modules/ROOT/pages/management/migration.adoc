@@ -390,7 +390,7 @@ To verify that the migrator created the correct new genesis block, compare the n
 
 [source,bash]
 ----
-grep \"id\": ./lisk-migrator/output/15f0dacc1060e91818224a94286b13aa04279c640bd5d6f193182031d133df7c/genesis_block.json
+grep \"id\": ./lisk-migrator/output/4c09e6a781fc4c7bdb936ee815de8f94190f8a7519becd9de2081832be309a99/genesis_block.json
 ----
 
 The hashes can be shared in the dedicated network channel on {url_lisk_chat}[lisk.chat^].
@@ -631,7 +631,7 @@ Look in the output directory of the lisk-migrator for a file called `forgingStat
 .Migrator output example
  Finished exporting forging status to /root/lisk-migrator/output/15f0dacc1060e91818224a94286b13aa04279c640bd5d6f193182031d133df7c/forgingStatus.json
 
-.Alternative in case of lost data
+.Alternative option in the event of data loss
 TIP: In case the validator info data is lost, the validator can use the snapshot height for `height`, `maxHeightPrevoted` and `maxHeightGenerated` to enable block generation safely.
 
 The v3 forging info data corresponds to the v4 validator info data in the following way:
