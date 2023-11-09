@@ -74,7 +74,7 @@ Following that, open a terminal in Intel mode. Optionally, to verify that the te
 
 [source,bash]
 ----
-$ arch
+arch
 i386
 ----
 // === Install Rosetta
