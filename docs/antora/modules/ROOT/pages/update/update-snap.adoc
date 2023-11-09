@@ -40,7 +40,7 @@ include::partial$firewall-setup.adoc[]
 
 Snaps update automatically, and by default, the snap daemon checks for updates 4 times a day. Each update check is called a refresh.
 
-However, when and how often, these updates occur can be modified with the snap refresh command .
+However, when and how often, these updates occur can be modified with the snap refresh command as shown below.
 Updates can be set to occur on Friday at midnight, for example, or for specific days of the month, such as only the third Monday, or even the last Friday of the month, between 23:00 to 01:00 the next day.
 
 NOTE: Snaps running in devmode, or installed locally, are typically intended for testing and do not update automatically until they’ve been published and downloaded from the store.
