@@ -91,7 +91,7 @@ Print the Lisk Core node info in the terminal, and check the value of `version`.
 lisk-core node:info --pretty
 ----
 
-NOTE: If your version is 3.1.1-rc.0, please ensure to set `backup.height` to the announced snapshot height in your custom config and restart the node with the `--overwrite-config` flag.
+NOTE: If your version is 3.1.1, please ensure to set `backup.height` to the announced snapshot height in your custom config and restart the node with the `--overwrite-config` flag.
 
 === Setting up the Lisk migrator
 
