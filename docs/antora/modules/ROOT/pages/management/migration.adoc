@@ -84,9 +84,9 @@ Lisk Core::
 === Ensure you are running version 3.1.0 (or later) of Lisk Core
 Ensure you are running version 3.1.0 (or later) of Lisk Core to be able to seamlessly migrate to Lisk Core 4.0.0.
 
-We *recommend* to install *v3.1.1* of Lisk Core, because it comes with the Mainnet snapshot height preconfigured.
+We *recommend* to install *v3.1.1* of Lisk Core, because it comes with the Mainnet snapshot height preconfigured. If using an existing data directory, kindly make sure to use the `--overwrite-config` flag when restarting the application.
 
-Print the Lisk Core node info in the terminal, and check the value of `version`.
+Print the Lisk Core node info in the terminal, and check the value of `version`. Also, kindly ensure that the `backup.height` property is present and the corresponding value matches the announced migration height of {snapshotHeight}.
 
 [source,bash]
 ----
