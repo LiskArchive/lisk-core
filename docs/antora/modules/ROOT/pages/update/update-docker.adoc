@@ -25,7 +25,6 @@ Option A - Download pre-built images from DockerHub::
 ----
 make stop
 ----
-NOTE: In case the database needs to be flushed please execute the `make down` command instead. Please check the {url_rel_notes}[release notes] for the relevant version to see if the existing databases need to be flushed.
 
 . Manually download the image from `DockerHub`.
 +
