@@ -161,18 +161,20 @@ npm install pm2 -g
 This section details how to install Lisk Core from the source code.
 When completed, a functioning node on the Lisk network will exist.
 
+Executing the following commands below will enable you to clone the repository, navigate into the `lisk-core` root folder, check out the latest release tag, and install the dependencies.
+
 [source,bash]
 ----
-git clone https://github.com/LiskHQ/lisk-core.git #<1>
-cd lisk-core                                      #<2>
-git checkout v4.0.0 -b v4.0.0                     #<3>
-npm install --global                              #<4>
+git clone https://github.com/LiskHQ/lisk-core.git
+cd lisk-core
+git checkout v4.0.0 -b v4.0.0
+npm install --global
 ----
 
-<1> Clone the repository.
-<2> Navigate into the `lisk-core` root folder.
-<3> Check out the latest release tag.
-<4> Install dependencies.
+// <1> Clone the repository.
+// <2> Navigate into the `lisk-core` root folder.
+// <3> Check out the latest release tag.
+// <4> Install dependencies.
 
 NOTE: Please check for the latest release in {url_core_releases}[core releases^].
 
@@ -181,9 +183,14 @@ To test that Lisk Core is built and configured correctly, execute the following 
 [source,bash]
 ----
 lisk-core start --network devnet
-# From another terminal
+----
+To perform this from another terminal, execute the following command:
+
+[source,bash]
+----
 lisk-core system node-info
 ----
+
 
 If the process is running correctly, no errors are thrown in the logs.
 
