@@ -27,7 +27,7 @@ VERSION
   lisk-core/4.0.0 darwin-arm64 node-v18.16.0
 
 USAGE
-  $ lisk-core [COMMAND]
+  lisk-core [COMMAND]
 
 TOPICS
   block          Commands relating to Lisk Core blocks.
@@ -58,7 +58,7 @@ Displays autocomplete installation instructions.
 [source,bash]
 ----
 USAGE
-  $ lisk-core autocomplete [SHELL] [-r]
+  lisk-core autocomplete [SHELL] [-r]
 
 ARGUMENTS
   SHELL  shell type
@@ -70,13 +70,13 @@ DESCRIPTION
   display autocomplete installation instructions
 
 EXAMPLES
-  $ lisk-core autocomplete
+  lisk-core autocomplete
 
-  $ lisk-core autocomplete bash
+  lisk-core autocomplete bash
 
-  $ lisk-core autocomplete zsh
+  lisk-core autocomplete zsh
 
-  $ lisk-core autocomplete --refresh-cache
+  lisk-core autocomplete --refresh-cache
 ----
 
 .Example
@@ -84,7 +84,7 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core autocomplete
+lisk-core autocomplete
 Building the autocomplete cache... done
 
 Setup Instructions for LISK-CORE CLI Autocomplete ---
@@ -108,7 +108,7 @@ Provides an interactive Javascript {url_read_eval_print_loop}[REPL] session to r
 [source,bash]
 ----
 USAGE
-  $ lisk-core console [--api-ipc <value>] [--api-ws <value>]
+  lisk-core console [--api-ipc <value>] [--api-ws <value>]
 
 FLAGS
   --api-ipc=<value>  Enable api-client with IPC communication.
@@ -142,7 +142,7 @@ Creates hash onions to be used by a generator.
 [source,bash]
 ----
 USAGE
-  $ lisk-core hash-onion [-o <value>] [-c <value>] [-d <value>] [--pretty]
+  lisk-core hash-onion [-o <value>] [-c <value>] [-d <value>] [--pretty]
 
 FLAGS
   -c, --count=<value>     [default: 1000000] Total number of hashes to produce
@@ -186,10 +186,10 @@ Starts the blockchain node.
 [source,bash]
 ----
 USAGE
-  $ lisk-core start [-d <value>] [-n <value>] [-c <value>] [--overwrite-config] [-p <value>] [--api-ipc] [--api-ws] [--api-http] [--api-port <value>]
-    [--api-host <value>] [-l trace|debug|info|warn|error|fatal] [--seed-peers <value>] [--enable-forger-plugin] [--enable-monitor-plugin] [--monitor-plugin-port <value>]
-    [--monitor-plugin-whitelist <value>] [--enable-report-misbehavior-plugin] [--enable-faucet-plugin] [--faucet-plugin-port <value>] [--enable-dashboard-plugin]
-    [--dashboard-plugin-port <value>] [--enable-chain-connector-plugin]
+  lisk-core start [-d <value>] [-n <value>] [-c <value>] [--overwrite-config] [-p <value>] [--api-ipc] [--api-ws] [--api-http] [--api-port <value>]
+  [--api-host <value>] [-l trace|debug|info|warn|error|fatal] [--seed-peers <value>] [--enable-forger-plugin] [--enable-monitor-plugin] [--monitor-plugin-port <value>]
+  [--monitor-plugin-whitelist <value>] [--enable-report-misbehavior-plugin] [--enable-faucet-plugin] [--faucet-plugin-port <value>] [--enable-dashboard-plugin]
+  [--dashboard-plugin-port <value>] [--enable-chain-connector-plugin]
 
 FLAGS
   -c, --config=<value>                File path to a custom config. Environment variable "LISK_CONFIG_FILE" can also be used.
@@ -256,7 +256,7 @@ Commands relating to Lisk Core blocks.
 [source,bash]
 ----
 USAGE
-  $ lisk-core block COMMAND
+  lisk-core block COMMAND
 
 COMMANDS
   block:get  Get block information for a given id or height.
@@ -268,7 +268,7 @@ Gets block information for a given id or height.
 [source,bash]
 ----
 USAGE
-  $ lisk-core block:get [INPUT] [-d <value>] [--pretty]
+  lisk-core block:get [INPUT] [-d <value>] [--pretty]
 
 ARGUMENTS
   INPUT  Height in number or block id in hex format.
@@ -335,7 +335,7 @@ Commands relating to Lisk Core blockchain data.
 [source,bash]
 ----
 USAGE
-  $ lisk-core blockchain:COMMAND
+  lisk-core blockchain:COMMAND
 
 COMMANDS
   blockchain:download  Download snapshot from <URL>.
@@ -351,7 +351,7 @@ Download the snapshot from the given <URL>.
 [source,bash]
 ----
 USAGE
-  $ lisk-core blockchain:download [-n <value>] [-o <value>] [-u <value>]
+  lisk-core blockchain:download [-n <value>] [-o <value>] [-u <value>]
 
 FLAGS
   -n, --network=<value>  [default: mainnet] Default network config to use. Environment variable "LISK_NETWORK" can also be used.
