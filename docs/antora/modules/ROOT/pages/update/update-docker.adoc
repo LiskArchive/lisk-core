@@ -1,4 +1,4 @@
-= Update Docker setup
+= Update Lisk Core (Docker)
 Christopher Braithwaite <christopher.braithwaite@lightcurve.io>
 :description: How to update up a Lisk Core node with Docker.
 :toc:
