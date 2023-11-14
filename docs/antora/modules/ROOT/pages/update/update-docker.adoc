@@ -11,7 +11,6 @@ Christopher Braithwaite <christopher.braithwaite@lightcurve.io>
 This page describes how to update the Docker image-based container in Lisk Core.
 Lisk Core version 4 does not have any external dependencies, and hence does not require using `docker-compose`.
 
-== Upgrade Lisk Core
 
 To upgrade the Docker container to a desired version, please follow one of the two options below.
 To find all the tagged versions for Lisk Core, please check the {url_tags}[available tags] on GitHub.
