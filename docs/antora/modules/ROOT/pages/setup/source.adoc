@@ -168,7 +168,8 @@ Executing the following commands below will enable you to clone the repository, 
 git clone https://github.com/LiskHQ/lisk-core.git
 cd lisk-core
 git checkout v4.0.0 -b v4.0.0
-npm install --global
+yarn install --frozen-lockfile
+yarn build
 ----
 
 // <1> Clone the repository.
