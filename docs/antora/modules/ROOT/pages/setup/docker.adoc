@@ -98,7 +98,13 @@ The following commands below describe how to clone the repository, then how to n
 [source,bash]
 ----
 git clone https://github.com/LiskHQ/lisk-core.git
+----
+[source,bash]
+----
 cd lisk-core/docker
+----
+[source,bash]
+----
 git checkout v4.0.0 -b v4.0.0
 ----
 
