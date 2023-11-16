@@ -185,7 +185,7 @@ Remember to export the nvm path, (this should be performed automatically by the 
 
 ====
 
- === Download and extract the binary executable
+=== Download and extract the binary executable
 
 Download Lisk Core.
 
