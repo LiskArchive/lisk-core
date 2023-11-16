@@ -75,8 +75,16 @@ Following that, open a terminal in Intel mode. Optionally, to verify that the te
 [source,bash]
 ----
 arch
+----
+.Response
+[%collapsible]
+====
+[source,bash]
+----
 i386
 ----
+====
+
 // === Install Rosetta
 
 ==== Install Homebrew
