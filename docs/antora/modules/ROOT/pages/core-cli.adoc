@@ -108,7 +108,7 @@ Provides an interactive Javascript {url_read_eval_print_loop}[REPL] session to r
 [source,bash]
 ----
 USAGE
-  lisk-core console [--api-ipc <value>] [--api-ws <value>]
+  lisk-core console
 
 FLAGS
   --api-ipc=<value>  Enable api-client with IPC communication.
