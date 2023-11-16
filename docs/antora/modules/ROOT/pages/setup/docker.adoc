@@ -95,14 +95,19 @@ Please refer to {url_docker_install_windows}[Docker installation for Windows^].
 
 The following commands below describe how to clone the repository, then how to navigate into the `lisk-core` root folder, and how to check out the latest release tag.
 
+.Clone the repository
 [source,bash]
 ----
 git clone https://github.com/LiskHQ/lisk-core.git
 ----
+
+.Navigate into the `lisk-core` root folder
 [source,bash]
 ----
 cd lisk-core/docker
 ----
+
+.Check out the latest release tag
 [source,bash]
 ----
 git checkout v4.0.0 -b v4.0.0
