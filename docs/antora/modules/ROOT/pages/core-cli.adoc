@@ -58,7 +58,7 @@ Displays autocomplete installation instructions.
 [source,bash]
 ----
 USAGE
-  lisk-core autocomplete [SHELL] [-r]
+  lisk-core autocomplete  [SHELL]
 
 ARGUMENTS
   SHELL  shell type
@@ -142,7 +142,7 @@ Creates hash onions to be used by a generator.
 [source,bash]
 ----
 USAGE
-  lisk-core hash-onion [-o <value>] [-c <value>] [-d <value>] [--pretty]
+  lisk-core hash-onion
 
 FLAGS
   -c, --count=<value>     [default: 1000000] Total number of hashes to produce
@@ -186,10 +186,7 @@ Starts the blockchain node.
 [source,bash]
 ----
 USAGE
-  lisk-core start [-d <value>] [-n <value>] [-c <value>] [--overwrite-config] [-p <value>] [--api-ipc] [--api-ws] [--api-http] [--api-port <value>]
-  [--api-host <value>] [-l trace|debug|info|warn|error|fatal] [--seed-peers <value>] [--enable-forger-plugin] [--enable-monitor-plugin] [--monitor-plugin-port <value>]
-  [--monitor-plugin-whitelist <value>] [--enable-report-misbehavior-plugin] [--enable-faucet-plugin] [--faucet-plugin-port <value>] [--enable-dashboard-plugin]
-  [--dashboard-plugin-port <value>] [--enable-chain-connector-plugin]
+  lisk-core start
 
 FLAGS
   -c, --config=<value>                File path to a custom config. Environment variable "LISK_CONFIG_FILE" can also be used.
@@ -268,7 +265,7 @@ Gets block information for a given id or height.
 [source,bash]
 ----
 USAGE
-  lisk-core block:get [INPUT] [-d <value>] [--pretty]
+  lisk-core block:get [INPUT]
 
 ARGUMENTS
   INPUT  Height in number or block id in hex format.
@@ -351,7 +348,7 @@ Download the snapshot from the given <URL>.
 [source,bash]
 ----
 USAGE
-  lisk-core blockchain:download [-n <value>] [-o <value>] [-u <value>]
+  lisk-core blockchain:download
 
 FLAGS
   -n, --network=<value>  [default: mainnet] Default network config to use. Environment variable "LISK_NETWORK" can also be used.
@@ -388,7 +385,7 @@ Exports the blockchain's data to a file.
 [source,bash]
 ----
 USAGE
-  lisk-core blockchain:export [-d <value>] [-o <value>]
+  lisk-core blockchain:export
 
 FLAGS
   -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
@@ -422,7 +419,7 @@ Generates SHA256 hash from the blockchain\'s data.
 [source,bash]
 ----
 USAGE
-  lisk-core blockchain:hash [-d <value>]
+  lisk-core blockchain:hash
 
 FLAGS
   -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
@@ -452,7 +449,7 @@ Imports the blockchain's data from a file.
 [source,bash]
 ----
 USAGE
-  lisk-core blockchain:import [FILEPATH] [-d <value>] [-f]
+  lisk-core blockchain:import [FILEPATH]
 
 ARGUMENTS
   FILEPATH  Path to the gzipped blockchain data.
@@ -491,7 +488,7 @@ Resets the blockchain's data.
 [source,bash]
 ----
 USAGE
-  lisk-core blockchain:reset [-d <value>] [-y]
+  lisk-core blockchain:reset
 
 FLAGS
   -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
@@ -539,7 +536,7 @@ Creates a configuration file for the blockchain application.
 [source,bash]
 ----
 USAGE
-  lisk-core config:create -i <value> [-o <value>] [-l <value>]
+  lisk-core config:create
 
 FLAGS
   -i, --chain-id=<value>  (required) ChainID in hex format. For example, Lisk mainnet mainchain is 00000000
@@ -573,7 +570,7 @@ Shows the application's config.
 [source,bash]
 ----
 USAGE
-  lisk-core config:show [-d <value>] [-c <value>] [--pretty]
+  lisk-core config:show
 
 FLAGS
   -c, --config=<value>     File path to a custom config. Environment variable "LISK_CONFIG_FILE" can also be used.
@@ -685,7 +682,7 @@ Invokes the provided endpoint.
 [source,bash]
 ----
 USAGE
-  lisk-core endpoint:invoke [ENDPOINT] [PARAMS] [-d <value>] [--pretty] [-f <value>]
+  lisk-core endpoint:invoke [ENDPOINT] [PARAMS]
 
 ARGUMENTS
   ENDPOINT  Endpoint to invoke
@@ -750,7 +747,7 @@ Returns the list of all the module endpoints
 [source,bash]
 ----
 USAGE
-  lisk-core endpoint:list [ENDPOINT] [-d <value>] [--pretty] [-m <value>] [-i]
+  lisk-core endpoint:list [ENDPOINT]
 
 ARGUMENTS
   ENDPOINT  Endpoint name (Optional)
@@ -864,7 +861,7 @@ Disables block generation for a given generator's address.
 [source,bash]
 ----
 USAGE
-  lisk-core generator:disable [ADDRESS] [-d <value>] [--pretty] [-w <value>]
+  lisk-core generator:disable
 
 ARGUMENTS
   ADDRESS  Address of an account in a lisk32 format.
@@ -905,7 +902,7 @@ Enables block generation for a given generator\'s address.
 [source,bash]
 ----
 USAGE
-  lisk-core generator:enable [ADDRESS] [-d <value>] [--pretty] [-w <value>] [--height <value>] [--max-height-generated <value>] [--max-height-prevoted <value>]
+  lisk-core generator:enable [ADDRESS]
     [--use-status-value]
 
 ARGUMENTS
@@ -959,7 +956,7 @@ Exports generator's data to a file.
 [source,bash]
 ----
 USAGE
-  lisk-core generator:export [-d <value>] [--pretty] [-o <value>]
+  lisk-core generator:export
 
 FLAGS
   -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
@@ -990,7 +987,7 @@ Imports generator's data from a file.
 [source,bash]
 ----
 USAGE
-  lisk-core generator:import -f <value> [-d <value>] [--pretty]
+  lisk-core generator:import
 
 FLAGS
   -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
@@ -1021,7 +1018,7 @@ Gets block generation information for the locally running node.
 [source,bash]
 ----
 USAGE
-  lisk-core generator:status [-d <value>] [--pretty]
+  lisk-core generator:status
 
 FLAGS
   -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
@@ -1077,7 +1074,7 @@ Creates a genesis block file and the corresponding generator\'s configuration da
 [source,bash]
 ----
 USAGE
-  lisk-core genesis-block:create -f <value> [-n <value>] [-c <value>] [-o <value>]
+  lisk-core genesis-block:create
 
 FLAGS
   -c, --config=<value>       File path to a custom config. Environment variable "LISK_CONFIG_FILE" can also be used.
@@ -1139,7 +1136,7 @@ Download genesis block.
 [source,bash]
 ----
 USAGE
-  lisk-core genesis-block:download [-d <value>] [-n <value>] [-u <value>] [-f]
+  lisk-core genesis-block:download
 
 FLAGS
   -d, --data-path=<value>  Directory path to specify where node data is stored.
@@ -1201,7 +1198,7 @@ Return keys corresponding to the given passphrase.
 [source,bash]
 ----
 USAGE
-  lisk-core keys:create [-o <value>] [-p <value>] [-n] [-w <value>] [-c <value>] [-f <value>] [-i <value>]
+  lisk-core keys:create
 
 FLAGS
   -c, --count=<value>       [default: 1] Number of keys to create
@@ -1294,7 +1291,7 @@ Encrypt keys from a file and overwrite the file.
 [source,bash]
 ----
 USAGE
-  lisk-core keys:encrypt -f <value> [-w <value>]
+  lisk-core keys:encrypt
 
 FLAGS
   -f, --file-path=<value>  (required) Path of the file to encrypt from
@@ -1365,7 +1362,7 @@ Export keys to a file.
 [source,bash]
 ----
 USAGE
-  lisk-core keys:export -o <value> [-d <value>] [--pretty]
+  lisk-core keys:export
 
 FLAGS
   -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
@@ -1396,7 +1393,7 @@ Import keys from a file.
 [source,bash]
 ----
 USAGE
-  lisk-core keys:import -f <value> [-d <value>] [--pretty]
+  lisk-core keys:import
 
 FLAGS
   -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
@@ -1440,7 +1437,7 @@ Gets a node's information from a running Lisk application.
 [source,bash]
 ----
 USAGE
-  lisk-core system:node-info [-d <value>] [--pretty]
+  lisk-core system:node-info
 
 FLAGS
   -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
@@ -1494,7 +1491,7 @@ Gets a node's metadata from a running Lisk application.
 [source,bash]
 ----
 USAGE
-  lisk-core system:metadata [-d <value>] [--pretty]
+  lisk-core system:metadata
 
 FLAGS
   -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
@@ -7623,7 +7620,7 @@ Decrypts the secret passphrase using the password provided at the time of encryp
 [source,bash]
 ----
 USAGE
-  lisk-core passphrase:create [-o <value>]
+  lisk-core passphrase:create
 
 FLAGS
   -o, --output=<value>  The output directory. Default will set to current working directory.
@@ -7655,7 +7652,7 @@ Decrypts the secret passphrase using the password provided at the time of encryp
 [source,bash]
 ----
 USAGE
-  lisk-core passphrase:decrypt -f <value> [-w <value>]
+  lisk-core passphrase:decrypt
 
 FLAGS
   -f, --file-path=<value>  (required) Path of the file to import from
@@ -7690,7 +7687,7 @@ Encrypts the secret passphrase using a password.
 [source,bash]
 ----
 USAGE
-  lisk-core passphrase:encrypt [-w <value>] [-p <value>] [--output-public-key] [-o <value>]
+  lisk-core passphrase:encrypt
 
 FLAGS
   -o, --output=<value>      The output directory. Default will set to current working directory.
@@ -7811,8 +7808,7 @@ NOTE: The fee and amount are expected in Beddows!
 [source,bash]
 ----
 USAGE
-  lisk-core transaction:create [MODULE] [COMMAND] [FEE] [-p <value>] [-a <value>] [-j] [--offline] [--send] [--no-signature] [--chain-id <value>] [--nonce <value>] [-s
-    <value>] [-d <value>] [-k <value>] [--pretty] [-f <value>]
+  lisk-core transaction:create [MODULE] [COMMAND] [FEE]
 
 ARGUMENTS
   MODULE   Registered transaction module.
@@ -7876,7 +7872,7 @@ Gets a transaction from the local node by ID.
 [source,bash]
 ----
 USAGE
-  lisk-core transaction:get [ID] [-d <value>] [--pretty]
+  lisk-core transaction:get [ID]
 
 ARGUMENTS
   ID  Transaction ID in hex format.
@@ -7924,7 +7920,7 @@ Sends a transaction to the local node.
 [source,bash]
 ----
 USAGE
-  lisk-core transaction:send [TRANSACTION] [-d <value>] [--pretty]
+  lisk-core transaction:send [TRANSACTION]
 
 ARGUMENTS
   TRANSACTION  A transaction to be sent to the node encoded as hex string
@@ -7956,8 +7952,7 @@ Signs an encoded transaction.
 [source,bash]
 ----
 USAGE
-  lisk-core transaction:sign [TRANSACTION] [-p <value>] [-j] [--offline] [--mandatory-keys <value>] [--optional-keys <value>] [--chain-id <value>] [-d <value>] [-k
-    <value>] [--pretty]
+  lisk-core transaction:sign [TRANSACTION]
 
 ARGUMENTS
   TRANSACTION  The transaction to be signed encoded as hex string
