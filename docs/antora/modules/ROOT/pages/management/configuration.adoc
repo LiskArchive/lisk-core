@@ -15,6 +15,7 @@ Mona Bärenfänger <mona@lightcurve.io>
 :url_enable_pom: management/enabling-misbehavior-report.adoc
 :url_management_forging: management/forging.adoc
 :url_pm2_restart: management/pm2.adoc#refreshing-restarting-lisk-core
+:url_config_options: https://lisk.com/documentation/lisk-sdk/v6/references/typedoc/modules/_liskhq_lisk_framework_report_misbehavior_plugin.html#$config-options
 // :url_source: management/source.adoc
 :url_sdk_plugins: lisk-sdk::plugins/index.adoc
 //TODO: Update the commented out hyperlinks once the pages are available.
@@ -71,8 +72,37 @@ Use the dedicated flags to enable them on the application start:
 ----
 lisk-core start --enable-report-misbehavior-plugin
 ----
+Alternatively, a user can enable plugins by the setting the corresponding environment instead of specifying the flag.
+For example, as shown in the command below:
 
-Alternatively, enable the plugins directly in the config file, see <<using-a-custom-config-file>>.
+[source,bash]
+----
+export LISK_ENABLE_REPORT_MISBEHAVIOR_PLUGIN=true
+lisk-core start
+----
+
+NOTE: Ensure the config file is updated with the necessary based on the plugin requirements.
+The config requirements specific to each plugin can be found in the corresponding documentation xref:{url_config_options}[here].
+Please find an example below on how to configure the `reportMisbehaviour` Plugin in your Lisk Core custom config.
+
+
+.custom-config.json
+[source,bash]
+----
+{
+  plugins: {
+    reportMisbehavior: {
+      dataPath: '~/.lisk/report-misbehavior',
+      cleanupFrequency: 3600,
+      encryptedPassphrase: '',
+      fee: 100000000
+    }
+  }
+}
+----
+
+
+// Alternatively, enable the plugins directly in the config file, see <<using-a-custom-config-file>>.
 
 [TIP]
 ====
