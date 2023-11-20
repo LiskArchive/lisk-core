@@ -102,8 +102,8 @@ The following system requirements are recommended for validator nodes:
 
 #### Memory
 
-- Machines with a minimum of 4 GB RAM for the Mainnet.
-- Machines with a minimum of 2 GB RAM for the Testnet.
+- Machines with a minimum of 8 GB RAM for the Mainnet.
+- Machines with a minimum of 8 GB RAM for the Testnet.
 
 #### Storage
 
