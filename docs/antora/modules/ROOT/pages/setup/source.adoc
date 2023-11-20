@@ -180,25 +180,30 @@ cd lisk-core/docker
 ----
 git checkout v4.0.0 -b v4.0.0
 ----
+NOTE: Please check for the latest release in {url_core_releases}[Lisk Core releases^].
+
 .Install dependencies
 [source,bash]
 ----
 yarn install --frozen-lockfile
 ----
+.Build the binary
 [source,bash]
 ----
 yarn build
 ----
-
-NOTE: Please check for the latest release in {url_core_releases}[core releases^].
-
+To set up the Lisk core alias, add the following line to your `~/.profile` and run `source ~/.profile`.
+[source,bash]
+----
+alias lisk-core=/home/lisk/lisk-core/bin/run
+----
 To test that Lisk Core is built and configured correctly, execute the following command below to connect to the network:
 
 [source,bash]
 ----
 lisk-core start --network devnet
 ----
-To perform this from another terminal, execute the following command:
+From another terminal, execute the following command:
 
 [source,bash]
 ----
