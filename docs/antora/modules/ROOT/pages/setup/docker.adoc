@@ -104,7 +104,7 @@ git clone https://github.com/LiskHQ/lisk-core.git
 .Navigate into the `lisk-core` root folder
 [source,bash]
 ----
-cd lisk-core/docker
+cd lisk-core
 ----
 
 .Check out the latest release tag
