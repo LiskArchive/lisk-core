@@ -192,7 +192,7 @@ yarn install --frozen-lockfile
 ----
 yarn build
 ----
-To set up the Lisk core alias, add the following line to your `~/.profile` and run `source ~/.profile`.
+Set up the `lisk-core` alias: Append the following line to your `~/.profile` file and run `source ~/.profile`.
 [source,bash]
 ----
 alias lisk-core=/home/lisk/lisk-core/bin/run
