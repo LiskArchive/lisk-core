@@ -1,10 +1,11 @@
 * xref:index.adoc[]
 * Setup
 ** xref:setup/npm.adoc[]
-** xref:setup/snap.adoc[]
 ** xref:setup/binary.adoc[]
 ** xref:setup/docker.adoc[]
 ** xref:setup/source.adoc[]
+* Update
+** xref:update/update-docker.adoc[]
 * Management
 ** xref:management/configuration.adoc[]
 ** xref:management/migration.adoc[]
