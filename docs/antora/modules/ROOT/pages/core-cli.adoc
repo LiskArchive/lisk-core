@@ -7870,19 +7870,18 @@ Gets a transaction from the local node by ID.
 [source,bash]
 ----
 USAGE
-  lisk-core transaction:get [ID]
+  $ lisk-core transaction:get ID
 
 ARGUMENTS
   ID  Transaction ID in hex format.
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  --pretty                 Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Get transaction from local node by ID.
+  --pretty                   Prints JSON in pretty format rather than condensed.
 
-EXAMPLES
+EXAMPLE
   transaction:get eab06c6a22e88bca7150e0347a7d976acd070cb9284423e6eabecd657acc1263
 ----
 
@@ -7918,20 +7917,21 @@ Sends a transaction to the local node.
 [source,bash]
 ----
 USAGE
-  lisk-core transaction:send [TRANSACTION]
+  $ lisk-core transaction:send TRANSACTION
 
 ARGUMENTS
   TRANSACTION  A transaction to be sent to the node encoded as hex string
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  --pretty                 Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Send transaction to the local node.
+  --pretty                   Prints JSON in pretty format rather than condensed.
 
-EXAMPLES
-  transaction:send 080810011880cab5ee012220fd061b9146691f3c56504be051175d5b76d1b1d0179c5c4370e18534c58821222a2408641214ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e324028edd3601cdc35a41bb23415a0d9f3c3e9cf188d9971adf18742cea39d58aa84809aa87bcfe6feaac46211c80472ad9297fd87727709f5d7e7b4134caf106b02
+EXAMPLE
+  transaction:send 080810011880cab5ee012220fd061b9146691f3c56504be051175d5b76d1b1d0179c5c4370e18534c58821222a2408641214a
+  b0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e324028edd3601cdc35a41bb23415a0d9f3c3e9cf188d9971adf1874
+  2cea39d58aa84809aa87bcfe6feaac46211c80472ad9297fd87727709f5d7e7b4134caf106b02
 ----
 
 .Example 
@@ -7950,30 +7950,38 @@ Signs an encoded transaction.
 [source,bash]
 ----
 USAGE
-  lisk-core transaction:sign [TRANSACTION]
+  $ lisk-core transaction:sign TRANSACTION
 
 ARGUMENTS
   TRANSACTION  The transaction to be signed encoded as hex string
 
-FLAGS
-  -d, --data-path=<value>            Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  -j, --json                         Print the transaction in JSON format.
-  -k, --key-derivation-path=<value>  [default: m/44'/134'/0'] Key derivation path to use to derive keypair from passphrase
-  -p, --passphrase=<value>           Specifies a source for your secret passphrase. Command will prompt you for input if this option is not set.
-                                     	Examples:
-                                     	- --passphrase='my secret passphrase' (should only be used where security is not important)
-  --chain-id=<value>
-  --mandatory-keys=<value>           Mandatory publicKey string in hex format.
-  --offline                          Specify whether to connect to a local node or not.
-  --optional-keys=<value>            Optional publicKey string in hex format.
-  --pretty                           Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path                      Directory path to specify where node data is stored. Environment
+                                                 variable "LISK_DATA_PATH" can also be used.
 
-DESCRIPTION
-  Sign encoded transaction.
+  -j, --json                                     Print the transaction in JSON format.
+
+  -k, --key-derivation-path=key-derivation-path  [default: m/44'/134'/0'] Key derivation path to use to derive keypair
+                                                 from passphrase
+
+  -p, --passphrase=passphrase                    Specifies a source for your secret passphrase. Command will prompt you
+                                                 for input if this option is not set.
+                                                 Examples:
+                                                 - --passphrase='my secret passphrase' (should only be used where
+                                                 security is not important)
+
+  --chain-id=chain-id
+
+  --mandatory-keys=mandatory-keys                Mandatory publicKey string in hex format.
+
+  --offline                                      Specify whether to connect to a local node or not.
+
+  --optional-keys=optional-keys                  Optional publicKey string in hex format.
+
+  --pretty                                       Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
   transaction:sign <hex-encoded-binary-transaction>
-
   transaction:sign <hex-encoded-binary-transaction> --network testnet
 ----
 
