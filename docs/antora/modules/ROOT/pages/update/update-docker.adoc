@@ -1,0 +1,76 @@
+= Update Lisk Core (Docker)
+Christopher Braithwaite <christopher.braithwaite@lightcurve.io>
+:description: How to update up a Lisk Core node with Docker.
+:toc:
+// Settings
+// External URLs
+:url_core_releases: https://github.com/LiskHQ/lisk-core/releases
+:url_rel_notes: https://github.com/LiskHQ/lisk-core/releases
+:url_tags: https://github.com/LiskHQ/lisk-core/tags
+
+This page describes how to update the Docker image-based container in Lisk Core.
+Lisk Core version 4 does not have any external dependencies, and hence does not require using `docker-compose`.
+
+
+To upgrade the Docker container to a desired version, please follow one of the two options below.
+To find all the tagged versions for Lisk Core, please check the {url_tags}[available tags] on GitHub.
+[tabs]
+====
+Option A - Download pre-built images from DockerHub::
++
+--
+. Stop Lisk Core
++
+----
+make stop
+----
+
+. Manually download the image from `DockerHub`.
++
+
+[source,sh]
+----
+docker image pull lisk-core
+----
+NOTE: To download a specific version of Lisk Core, please include the tag after `lisk-core` in the above command. For example, `lisk-core:4.0.0`
+
+. Start Lisk Core in the containers.
++
+----
+make start ARGS="-n mainnet --api-ws"
+----
+NOTE: Please customize `ARGS` as per your requirements.
+--
+Option B - Build images locally ::
++
+--
+Build the images locally using the following steps.
+Navigate inside the lisk-core root folder, and execute the following commands.
+
+. Stop Lisk Core
++
+----
+make stop
+----
+
+. Checkout the version with *`git checkout <tag>`*
++
+----
+git checkout v4.0.0
+----
+
+. Build the required updated Docker image
++
+----
+make build-image
+----
+
+. Start Lisk Core in the container
++
+----
+make start ARGS="-n mainnet --api-ws"
+----
+NOTE: Please customize the `ARGS` as per your requirements.
+--
+====
+

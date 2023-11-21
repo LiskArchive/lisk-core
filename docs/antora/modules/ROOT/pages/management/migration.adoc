@@ -4,14 +4,13 @@
 :experimental:
 :idprefix:
 :idseparator: -
-//TODO: Update TBD values
-:snapshotHeight: TBD
+:snapshotHeight: 23390991
 :snapshotHeightTestnet: 20449414
 :initRounds: 587
 :initRoundsTime: 1 week
-:lisk-migrator: lisk-migrator-v2.0.0-rc.3-linux-x64.tar.gz
-:lisk-migrator_darwinx64: lisk-migrator-v2.0.0-rc.3-darwin-x64.tar.gz
-:lisk-migrator_darwinarm64: lisk-migrator-v2.0.0-rc.3-darwin-arm64.tar.gz
+:lisk-migrator: lisk-migrator-v2.0.0-linux-x64.tar.gz
+:lisk-migrator_darwinx64: lisk-migrator-v2.0.0-darwin-x64.tar.gz
+:lisk-migrator_darwinarm64: lisk-migrator-v2.0.0-darwin-arm64.tar.gz
 :docs_sdk: v6@lisk-sdk::
 :docs_lisk: beta@ROOT::
 :docs_liskv5: ROOT::
@@ -24,9 +23,8 @@
 :url_lisk_migrator_darwinx64: https://downloads.lisk.com/lisk-migrator/{lisk-migrator_darwinx64}
 :url_wallet: https://lisk.com/wallet
 :url_jsonrpc: https://www.jsonrpc.org/specification
-//TODO: Update links to blog posts
 :url_lisk_blog_migration: https://lisk.com/blog/posts/announcing-lisk-testnet-v4-migration
-:url_lisk_blog_migration_mainnet: https://lisk.com/blog/development/announcing-lisk-mainnet-v3-migration
+:url_lisk_blog_migration_mainnet: https://lisk.com/blog/posts/announcing-lisk-mainnet-v4-migration
 // Project URLs
 :url_run_validator: {docs_lisk}run-blockchain/become-validator.adoc
 :url_run_pm2: {docs_lisk}run-blockchain/process-management.adoc
@@ -38,16 +36,16 @@
 :url_cli_generatorenable: core-cli.adoc#generatorenable
 :url_cli_endpointinvoke: core-cli.adoc#endpointinvoke
 
-This guide explains how to migrate a Lisk Core v3.1.0 node to Lisk Core v4.x using the Lisk migrator v2.
+This guide explains how to migrate a Lisk Core v3 node to Lisk Core v4 using the Lisk Migrator v2.
 
 The Lisk migrator CLI will generate a new genesis block for Lisk Core v4.
-The new genesis block is created based on a snapshot of the old blockchain (running on Lisk Core v3.1.0) at a given height.
+The new genesis block is created based on a snapshot of the old blockchain (running on Lisk Core v3.1.0 or later) at a given height.
 
 [IMPORTANT]
 ====
 All active validators on the Lisk Mainnet and the Lisk Testnet need to follow this guide to correctly migrate their nodes to the new network, in order to not miss any blocks after the network hard fork.
 
-Optionally, anyone running a Lisk Core v3.1.0 who is not an active validator can also participate in the migration process.
+Optionally, anyone running a Lisk Core v3.1.0 (or later) who is not an active validator can also participate in the migration process.
 In this case, the following steps 2.4 and 2.5 in this guide can be skipped, as they are only relevant for the current validators.
 ====
 
@@ -61,7 +59,7 @@ In this case, the following steps 2.4 and 2.5 in this guide can be skipped, as t
 The following system requirements are recommended for running the migration script:
 
 Memory::
-* minimum of 4GB  RAM
+* minimum of 8GB  RAM
 
 Storage::
 * minimum 40GB HDD
@@ -83,19 +81,21 @@ Lisk Core::
 * Version 3.1.0 or later
 ====
 
-=== Ensure you are running version 3.1.0-rc.1 of Lisk Core
-Ensure you are running version 3.1.0-rc.1 of Lisk Core to be able to seamlessly migrate to Lisk Core 4.0.0.
+=== Ensure you are running version 3.1.0 (or later) of Lisk Core
+Ensure you are running version 3.1.0 (or later) of Lisk Core to be able to seamlessly migrate to Lisk Core 4.0.0.
 
-Print the Lisk Core node info in the terminal, and check the value of `version`.
+We *recommend* to install *v3.1.1* of Lisk Core, because it comes with the Mainnet snapshot height pre-configured. If using an existing data directory, kindly make sure to use the `--overwrite-config` flag when restarting the application.
+
+Print the Lisk Core node info in the terminal, and check the value of `version`. Also, kindly ensure that the `backup.height` property is present and the corresponding value matches the announced migration height of {snapshotHeight}.
 
 [source,bash]
 ----
 lisk-core node:info --pretty
 ----
 
-NOTE: If your version is 3.1.0-rc.0, please ensure to set `backup.height` to the announced snapshot height in your custom config and restart the node with the `--overwrite-config` flag.
+NOTE: If your version is 3.1.0, please ensure to set `backup.height` to the announced snapshot height in your node config and restart the node with the `--overwrite-config` flag.
 
-=== Setting up the Lisk migrator
+=== Setting up the Lisk Migrator
 
 ==== Download the migration script
 Navigate into the folder where you want to install the Lisk Migrator, and then download the migration script by running the following command in the terminal:
@@ -212,16 +212,15 @@ In case the `lisk-migrator` was extracted somewhere other than your home directo
 
 === Check the announced snapshot height
 
-//TODO: update links to blog posts once created
 * For Mainnet: {snapshotHeight} +
-//For more information check the {url_lisk_blog_migration_mainnet}[Mainnet migration announcement^].
+For more information check the {url_lisk_blog_migration_mainnet}[Mainnet migration announcement^].
 * For Testnet: {snapshotHeightTestnet} +
 For more information check the {url_lisk_blog_migration}[Testnet migration announcement^].
 
 The height is needed by the `lisk-migrator` in the next step.
 A snapshot of the blockchain will be created at this particular height, which will then be used to create the genesis block for the new blockchain.
 
-=== Ensure Lisk Core v3.1.0 is fully synced with the network
+=== Ensure Lisk Core v3.1.x is fully synced with the network
 Check the current block height of your node directly in the terminal by running the following command:
 
 [source,bash]
@@ -386,9 +385,23 @@ NOTE: If the node is not migrated, but started at a later point in time, it will
 For validators, this might result in missing blocks.
 For everyone else, it will not have any impact.
 
-=== Stop Lisk Core v3.1.0
+.How to verify a successful migration
+[TIP]
+====
+To verify that the migrator created the correct new genesis block, compare the newly created genesis block with others by comparing the hash of the genesis block:
 
-After the `lisk-migrator` script has finished and the announced snapshot height has passed, there is no reason to continue running Lisk Core v3.1.0, and therefore it is recommended to stop it.
+[source,bash]
+----
+grep \"id\": ./lisk-migrator/output/4c09e6a781fc4c7bdb936ee815de8f94190f8a7519becd9de2081832be309a99/genesis_block.json
+----
+
+The hashes can be shared in the dedicated network channel on {url_lisk_chat}[lisk.chat^].
+
+====
+
+=== Stop Lisk Core v3.1.x
+
+After the `lisk-migrator` script has finished and the announced snapshot height has passed, there is no reason to continue running Lisk Core v3.1.x, and therefore it is recommended to stop it.
 
 [IMPORTANT]
 ====
@@ -401,7 +414,7 @@ If the migrator is started with `--auto-start-lisk-core-v4` flag, the user is pr
 
 //TODO: Update with correct command to stop Lisk Core
 ////
-Navigate into the root folder of your Lisk Core v3.1.0 installation and run the following command to stop the old Lisk Core version:
+Navigate into the root folder of your Lisk Core v3.1.x installation and run the following command to stop the old Lisk Core version:
 
 [source,bash]
 ----
@@ -409,9 +422,9 @@ lisk-core
 ----
 ////
 
-NOTE: Users that have set something up to start Lisk Core on boot, whether it's through `cron` or `systemd` or something else, should keep that in mind and adjust things accordingly so that Lisk Core 4.x gets started instead of Lisk Core 3.x.
+NOTE: Users that have set something up to start Lisk Core on boot, whether it's through `cron` or `systemd` or something else, should keep that in mind and adjust things accordingly so that Lisk Core 4.0.0 gets started instead of Lisk Core 3.1.x.
 
-Last but not least, remove the folder with Lisk Core v3.1.0.
+Last but not least, remove the folder with Lisk Core v3.1.x.
 
 
 === Start Lisk Core v4
@@ -620,7 +633,8 @@ Look in the output directory of the lisk-migrator for a file called `forgingStat
 .Migrator output example
  Finished exporting forging status to /root/lisk-migrator/output/15f0dacc1060e91818224a94286b13aa04279c640bd5d6f193182031d133df7c/forgingStatus.json
 
-Alternatively, if the `forgingStatus.json` file is missing, the validator can use the snapshot height for `height`, `maxHeightPrevoted` and `maxHeightGenerated` to enable block generation.
+.Alternative option in the event of data loss
+TIP: In case the validator info data is lost, the validator can use the **snapshot height** for `height`, `maxHeightPrevoted` and `maxHeightGenerated` to enable block generation safely.
 
 The v3 forging info data corresponds to the v4 validator info data in the following way:
 
