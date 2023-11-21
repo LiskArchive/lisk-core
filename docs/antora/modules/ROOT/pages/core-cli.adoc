@@ -1421,7 +1421,7 @@ Commands relating to a Lisk Core node.
 [source,bash]
 ----
 USAGE
-  lisk-core system:COMMAND
+  lisk-core system
 
 COMMANDS
   system:node-info      Get node information from a running application.
@@ -1434,18 +1434,16 @@ Gets a node's information from a running Lisk application.
 [source,bash]
 ----
 USAGE
-  lisk-core system:node-info
+  $ lisk-core system:node-info
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  --pretty                 Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Get node information from a running application.
+  --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
   system:node-info
-
   system:node-info --data-path ./lisk
 ----
 
@@ -1488,18 +1486,16 @@ Gets a node's metadata from a running Lisk application.
 [source,bash]
 ----
 USAGE
-  lisk-core system:metadata
+  $ lisk-core system:metadata
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  --pretty                 Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Get node metadata from a running application.
+  --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
   system:metadata
-
   system:metadata --data-path ./lisk
 ----
 
@@ -7603,7 +7599,7 @@ Commands relating to Lisk Core passphrases.
 [source,bash]
 ----
 USAGE
-  lisk-core passphrase:COMMAND
+  lisk-core passphrase
 
 COMMANDS
   passphrase:create   Returns a randomly generated 24 words mnemonic passphrase.
@@ -7617,17 +7613,13 @@ Decrypts the secret passphrase using the password provided at the time of encryp
 [source,bash]
 ----
 USAGE
-  lisk-core passphrase:create
+  $ lisk-core passphrase:create
 
-FLAGS
-  -o, --output=<value>  The output directory. Default will set to current working directory.
-
-DESCRIPTION
-  Returns a randomly generated 24 words mnemonic passphrase.
+OPTIONS
+  -o, --output=output  The output directory. Default will set to current working directory.
 
 EXAMPLES
   passphrase:create
-
   passphrase:create --output /mypath/passphrase.json
 ----
 
@@ -7649,20 +7641,18 @@ Decrypts the secret passphrase using the password provided at the time of encryp
 [source,bash]
 ----
 USAGE
-  lisk-core passphrase:decrypt
+  $ lisk-core passphrase:decrypt
 
-FLAGS
-  -f, --file-path=<value>  (required) Path of the file to import from
-  -w, --password=<value>   Specifies a source for your secret password. Command will prompt you for input if this option is not set.
-                           	Examples:
-                           	- --password=pass:password123 (should only be used where security is not important)
+OPTIONS
+  -f, --file-path=file-path  (required) Path of the file to import from
 
-DESCRIPTION
-  Decrypt secret passphrase using the password provided at the time of encryption.
+  -w, --password=password    Specifies a source for your secret password. Command will prompt you for input if this
+                             option is not set.
+                             Examples:
+                             - --password=pass:password123 (should only be used where security is not important)
 
 EXAMPLES
   passphrase:decrypt --file-path ./my/path/output.json
-
   passphrase:decrypt --file-path ./my/path/output.json --password your-password
 ----
 
@@ -7684,30 +7674,30 @@ Encrypts the secret passphrase using a password.
 [source,bash]
 ----
 USAGE
-  lisk-core passphrase:encrypt
+  $ lisk-core passphrase:encrypt
 
-FLAGS
-  -o, --output=<value>      The output directory. Default will set to current working directory.
-  -p, --passphrase=<value>  Specifies a source for your secret passphrase. Command will prompt you for input if this option is not set.
-                            	Examples:
-                            	- --passphrase='my secret passphrase' (should only be used where security is not important)
-  -w, --password=<value>    Specifies a source for your secret password. Command will prompt you for input if this option is not set.
-                            	Examples:
-                            	- --password=pass:password123 (should only be used where security is not important)
-  --output-public-key       Includes the public key in the output. This option is provided for the convenience of node operators.
+OPTIONS
+  -o, --output=output          The output directory. Default will set to current working directory.
 
-DESCRIPTION
-  Encrypt secret passphrase using password.
+  -p, --passphrase=passphrase  Specifies a source for your secret passphrase. Command will prompt you for input if this
+                               option is not set.
+                               Examples:
+                               - --passphrase='my secret passphrase' (should only be used where security is not
+                               important)
+
+  -w, --password=password      Specifies a source for your secret password. Command will prompt you for input if this
+                               option is not set.
+                               Examples:
+                               - --password=pass:password123 (should only be used where security is not important)
+
+  --output-public-key          Includes the public key in the output. This option is provided for the convenience of
+                               node operators.
 
 EXAMPLES
   passphrase:encrypt
-
   passphrase:encrypt --passphrase your-passphrase --output /mypath/keys.json
-
   passphrase:encrypt --password your-password
-
   passphrase:encrypt --password your-password --passphrase your-passphrase --output /mypath/keys.json
-
   passphrase:encrypt --output-public-key --output /mypath/keys.json
 ----
 
@@ -7748,7 +7738,7 @@ Commands relating to Lisk SDK development.
 [source,bash]
 ----
 USAGE
-  lisk-core sdk:COMMAND
+  lisk-core sdk
 
 COMMANDS
   sdk:link  Symlink specific SDK folder during development.
@@ -7760,15 +7750,12 @@ Creates a symbolic link to the specified SDK folder during development.
 [source,bash]
 ----
 USAGE
-  lisk-core sdk:link [TARGETSDKFOLDER]
+  $ lisk-core sdk:link TARGETSDKFOLDER
 
 ARGUMENTS
   TARGETSDKFOLDER  The path to the lisk SDK folder
 
-DESCRIPTION
-  Symlink specific SDK folder during development.
-
-EXAMPLES
+EXAMPLE
   sdk:link /path/to/lisk-sdk/sdk
 ----
 
@@ -7788,7 +7775,7 @@ Commands relating to Lisk Core transactions.
 [source,bash]
 ----
 USAGE
-  lisk-core transaction:COMMAND
+  lisk-core transaction
 
 COMMANDS
   transaction:create  Create transaction which can be broadcasted to the network. Note: fee and amount should be in Beddows!!
@@ -7805,45 +7792,59 @@ NOTE: The fee and amount are expected in Beddows!
 [source,bash]
 ----
 USAGE
-  lisk-core transaction:create [MODULE] [COMMAND] [FEE]
+  $ lisk-core transaction:create MODULE COMMAND FEE
 
 ARGUMENTS
   MODULE   Registered transaction module.
   COMMAND  Registered transaction command.
   FEE      Transaction fee in Beddows.
 
-FLAGS
-  -a, --params=<value>               Creates transaction with specific params information
-  -d, --data-path=<value>            Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  -f, --file=<value>                 The file to upload.
-                                     	Example:
-                                     		--file=./myfile.json
-  -j, --json                         Print the transaction in JSON format.
-  -k, --key-derivation-path=<value>  [default: m/44'/134'/0'] Key derivation path to use to derive keypair from passphrase
-  -p, --passphrase=<value>           Specifies a source for your secret passphrase. Command will prompt you for input if this option is not set.
-                                     	Examples:
-                                     	- --passphrase='my secret passphrase' (should only be used where security is not important)
-  -s, --sender-public-key=<value>    Set a custom senderPublicKey property for the transaction, to be used when account address does not correspond to signer's private
-                                     key
-  --chain-id=<value>
-  --no-signature                     Creates the transaction without a signature. Your passphrase will therefore not be required
-  --nonce=<value>                    Nonce of the transaction.
-  --offline                          Specify whether to connect to a local node or not.
-  --pretty                           Prints JSON in pretty format rather than condensed.
-  --send                             Create and immediately send transaction to a node
+OPTIONS
+  -a, --params=params                            Creates transaction with specific params information
 
-DESCRIPTION
-  Create transaction which can be broadcasted to the network. Note: fee and amount should be in Beddows!!
+  -d, --data-path=data-path                      Directory path to specify where node data is stored. Environment
+                                                 variable "LISK_DATA_PATH" can also be used.
+
+  -f, --file=file                                The file to upload.
+                                                 Example:
+                                                 --file=./myfile.json
+
+  -j, --json                                     Print the transaction in JSON format.
+
+  -k, --key-derivation-path=key-derivation-path  [default: m/44'/134'/0'] Key derivation path to use to derive keypair
+                                                 from passphrase
+
+  -p, --passphrase=passphrase                    Specifies a source for your secret passphrase. Command will prompt you
+                                                 for input if this option is not set.
+                                                 Examples:
+                                                 - --passphrase='my secret passphrase' (should only be used where
+                                                 security is not important)
+
+  -s, --sender-public-key=sender-public-key      Set a custom senderPublicKey property for the transaction, to be used
+                                                 when account address does not correspond to signer's private key
+
+  --chain-id=chain-id
+
+  --no-signature                                 Creates the transaction without a signature. Your passphrase will
+                                                 therefore not be required
+
+  --nonce=nonce                                  Nonce of the transaction.
+
+  --offline                                      Specify whether to connect to a local node or not.
+
+  --pretty                                       Prints JSON in pretty format rather than condensed.
+
+  --send                                         Create and immediately send transaction to a node
 
 EXAMPLES
-  transaction:create token transfer 100000000 --params='{"amount":100000000,"recipientAddress":"lskycz7hvr8yfu74bcwxy2n4mopfmjancgdvxq8xz","data":"send token"}'
-
-  transaction:create token transfer 100000000 --params='{"amount":100000000,"recipientAddress":"lskycz7hvr8yfu74bcwxy2n4mopfmjancgdvxq8xz","data":"send token"}' --json
-
-  transaction:create token transfer 100000000 --offline --network mainnet --chain-id 10000000 --nonce 1 --params='{"amount":100000000,"recipientAddress":"lskycz7hvr8yfu74bcwxy2n4mopfmjancgdvxq8xz","data":"send token"}'
-
+  transaction:create token transfer 100000000 --params='{"amount":100000000,"tokenID":"0400000000000000","recipientAddre
+  ss":"lskycz7hvr8yfu74bcwxy2n4mopfmjancgdvxq8xz","data":"send token"}'
+  transaction:create token transfer 100000000 --params='{"amount":100000000,"tokenID":"0400000000000000","recipientAddre
+  ss":"lskycz7hvr8yfu74bcwxy2n4mopfmjancgdvxq8xz","data":"send token"}' --json
+  transaction:create token transfer 100000000 --offline --network mainnet --chain-id 10000000 --nonce 1 --params='{"amou
+  nt":100000000,"tokenID":"0400000000000000","recipientAddress":"lskycz7hvr8yfu74bcwxy2n4mopfmjancgdvxq8xz","data":"send
+   token"}'
   transaction:create token transfer 100000000 --file=/txn_params.json
-
   transaction:create token transfer 100000000 --file=/txn_params.json --json
 ----
 
