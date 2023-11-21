@@ -178,7 +178,7 @@ cd lisk-core
 .Check out the latest release tag
 [source,bash]
 ----
-git checkout v4.0.0 -b v4.0.0
+git checkout v4.0.0
 ----
 NOTE: Please check for the latest release in {url_core_releases}[Lisk Core releases^].
 
