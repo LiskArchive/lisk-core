@@ -674,7 +674,7 @@ Commands relating to invoking and listing the endpoints.
 [source,bash]
 ----
 USAGE
-  lisk-core endpoint:COMMAND
+  lisk-core endpoint
 
 COMMANDS
   endpoint:invoke  Invokes the provided endpoint.
@@ -687,29 +687,25 @@ Invokes the provided endpoint.
 [source,bash]
 ----
 USAGE
-  lisk-core endpoint:invoke [ENDPOINT] [PARAMS]
+  $ lisk-core endpoint:invoke ENDPOINT [PARAMS]
 
 ARGUMENTS
   ENDPOINT  Endpoint to invoke
   PARAMS    Endpoint parameters (Optional)
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  -f, --file=<value>       Input file.
-  --pretty                 Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Invokes the provided endpoint.
+  -f, --file=file            Input file.
+
+  --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
   endpoint:invoke {endpoint} {parameters}
-
   endpoint:invoke --data-path --file
-
   endpoint:invoke generator_getAllKeys
-
   endpoint:invoke consensus_getBFTParameters '{"height": 2}' -d ~/.lisk/pos-mainchain --pretty
-
   endpoint:invoke consensus_getBFTParameters -f ./input.json
 ----
 
@@ -752,35 +748,29 @@ Returns the list of all the module endpoints
 [source,bash]
 ----
 USAGE
-  lisk-core endpoint:list [ENDPOINT]
+  $ lisk-core endpoint:list [ENDPOINT]
 
 ARGUMENTS
   ENDPOINT  Endpoint name (Optional)
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  -i, --info               Prints additional info; Request and Response objects.
-  -m, --module=<value>     Parent module.
-  --pretty                 Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Lists registered endpoints.
+  -i, --info                 Prints additional info; Request and Response objects.
+
+  -m, --module=module        Parent module.
+
+  --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
   endpoint:list
-
   endpoint:list {endpoint} -m {module}
-
   endpoint:list {endpoint} -m {module} -i
-
   endpoint:list -m validator
-
   endopint:list getBalance
-
   endpoint:list get -m token
-
   endpoint:list getBalances -m token -i --pretty
-
   endpoint:list getBalances -m token -d ~/.lisk/pos-mainchain
 ----
 
@@ -850,7 +840,7 @@ Commands relating to the block generation and generator-info of a blockchain.
 [source,bash]
 ----
 USAGE
-  lisk-core generator:COMMAND
+  lisk-core generator
 
 COMMANDS
   generator:disable  Disable block generation for given validator address.
@@ -866,26 +856,25 @@ Disables block generation for a given generator's address.
 [source,bash]
 ----
 USAGE
-  lisk-core generator:disable
+  $ lisk-core generator:disable ADDRESS
 
 ARGUMENTS
   ADDRESS  Address of an account in a lisk32 format.
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  -w, --password=<value>   Specifies a source for your secret password. Command will prompt you for input if this option is not set.
-                           	Examples:
-                           	- --password=pass:password123 (should only be used where security is not important)
-  --pretty                 Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Disable block generation for given validator address.
+  -w, --password=password    Specifies a source for your secret password. Command will prompt you for input if this
+                             option is not set.
+                             Examples:
+                             - --password=pass:password123 (should only be used where security is not important)
+
+  --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
   generator:disable lskycz7hvr8yfu74bcwxy2n4mopfmjancgdvxq8xz
-
   generator:disable lskycz7hvr8yfu74bcwxy2n4mopfmjancgdvxq8xz --data-path ./data
-
   generator:disable lskycz7hvr8yfu74bcwxy2n4mopfmjancgdvxq8xz --data-path ./data --password your_password
 ----
 
@@ -907,34 +896,39 @@ Enables block generation for a given generator\'s address.
 [source,bash]
 ----
 USAGE
-  lisk-core generator:enable [ADDRESS]
-    [--use-status-value]
+  $ lisk-core generator:enable ADDRESS
 
 ARGUMENTS
   ADDRESS  Address of an account in a lisk32 format.
 
-FLAGS
-  -d, --data-path=<value>         Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  -w, --password=<value>          Specifies a source for your secret password. Command will prompt you for input if this option is not set.
-                                  	Examples:
-                                  	- --password=pass:password123 (should only be used where security is not important)
-  --height=<value>                Last generated block height.
-  --max-height-generated=<value>  Validator's largest previously generated height.
-  --max-height-prevoted=<value>   Validator's largest prevoted height for a block.
-  --pretty                        Prints JSON in pretty format rather than condensed.
-  --use-status-value              Use status value from the connected node
+OPTIONS
+  -d, --data-path=data-path                    Directory path to specify where node data is stored. Environment variable
+                                               "LISK_DATA_PATH" can also be used.
 
-DESCRIPTION
-  Enable block generation for given validator address.
+  -w, --password=password                      Specifies a source for your secret password. Command will prompt you for
+                                               input if this option is not set.
+                                               Examples:
+                                               - --password=pass:password123 (should only be used where security is not
+                                               important)
+
+  --height=height                              Last generated block height.
+
+  --max-height-generated=max-height-generated  Validator's largest previously generated height.
+
+  --max-height-prevoted=max-height-prevoted    Validator's largest prevoted height for a block.
+
+  --pretty                                     Prints JSON in pretty format rather than condensed.
+
+  --use-status-value                           Use status value from the connected node
 
 EXAMPLES
   generator:enable lsk24cd35u4jdq8szo3pnsqe5dsxwrnazyqqqg5eu --use-status-value
-
-  generator:enable lsk24cd35u4jdq8szo3pnsqe5dsxwrnazyqqqg5eu --height=100 --max-height-generated=30 --max-height-prevoted=10
-
-  generator:enable lsk24cd35u4jdq8szo3pnsqe5dsxwrnazyqqqg5eu --height=100 --max-height-generated=30 --max-height-prevoted=10 --data-path ./data
-
-  generator:enable lsk24cd35u4jdq8szo3pnsqe5dsxwrnazyqqqg5eu --height=100 --max-height-generated=30 --max-height-prevoted=10 --data-path ./data --password your_password
+  generator:enable lsk24cd35u4jdq8szo3pnsqe5dsxwrnazyqqqg5eu --height=100 --max-height-generated=30
+  --max-height-prevoted=10
+  generator:enable lsk24cd35u4jdq8szo3pnsqe5dsxwrnazyqqqg5eu --height=100 --max-height-generated=30
+  --max-height-prevoted=10 --data-path ./data
+  generator:enable lsk24cd35u4jdq8szo3pnsqe5dsxwrnazyqqqg5eu --height=100 --max-height-generated=30
+  --max-height-prevoted=10 --data-path ./data --password your_password
 ----
 
 .Example
@@ -961,20 +955,20 @@ Exports generator's data to a file.
 [source,bash]
 ----
 USAGE
-  lisk-core generator:export
+  $ lisk-core generator:export
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  -o, --output=<value>     The output directory. Default will set to current working directory.
-  --pretty                 Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Export to <FILE>.
+  -o, --output=output        The output directory. Default will set to current working directory.
+
+  --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
-  generator:export --output /mypath/genInfo.json
-
-  generator:export --output /mypath/genInfo.json --data-path ./data
+  generator:export
+  generator:export --output /mypath/generator_info.json
+  generator:export --output /mypath/generator_info.json --data-path ./data
 ----
 
 .Example 
@@ -992,19 +986,18 @@ Imports generator's data from a file.
 [source,bash]
 ----
 USAGE
-  lisk-core generator:import
+  $ lisk-core generator:import
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  -f, --file-path=<value>  (required) Path of the file to import from
-  --pretty                 Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Import from <FILE>.
+  -f, --file-path=file-path  (required) Path of the file to import from
+
+  --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
   generator:import --file-path ./my/path/genInfo.json
-
   generator:import --file-path ./my/path/genInfo.json --data-path ./data
 ----
 
@@ -1023,18 +1016,16 @@ Gets block generation information for the locally running node.
 [source,bash]
 ----
 USAGE
-  lisk-core generator:status
+  $ lisk-core generator:status
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  --pretty                 Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Get forging information for the locally running node.
+  --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
   generator:status
-
   generator:status --data-path ./sample --pretty
 ----
 
@@ -1066,7 +1057,7 @@ Commands relating to the genesis block.
 [source,bash]
 ----
 USAGE
-  lisk-core genesis-block COMMAND
+  lisk-core genesis-block
 
 COMMANDS
   genesis-block:create    Creates genesis block file.
@@ -1079,21 +1070,32 @@ Creates a genesis block file and the corresponding generator\'s configuration da
 [source,bash]
 ----
 USAGE
-  lisk-core genesis-block:create
+  $ lisk-core genesis-block:create
 
-FLAGS
-  -c, --config=<value>       File path to a custom config. Environment variable "LISK_CONFIG_FILE" can also be used.
-  -f, --assets-file=<value>  (required) Path to file which contains genesis block asset in JSON format
-  -n, --network=<value>      [default: default] Default network config to use. Environment variable "LISK_NETWORK" can also be used.
-  -o, --output=<value>       [default: config] Output folder path of the generated genesis block
+OPTIONS
+  -c, --config=config                        File path to a custom config. Environment variable "LISK_CONFIG_FILE" can
+                                             also be used.
 
-DESCRIPTION
-  Creates genesis block file.
+  -f, --assets-file=assets-file              (required) Path to file which contains genesis block asset in JSON format
+
+  -h, --height=height                        Genesis block height
+
+  -n, --network=network                      [default: default] Default network config to use. Environment variable
+                                             "LISK_NETWORK" can also be used.
+
+  -o, --output=output                        [default: config] Output folder path of the generated genesis block
+
+  -p, --previous-block-id=previous-block-id  Previous block id
+
+  -t, --timestamp=timestamp                  Timestamp
+
+  --export-json                              Export genesis block as JSON format along with blob
 
 EXAMPLES
   genesis-block:create --output mydir
-
   genesis-block:create --output mydir --assets-file ./assets.json
+  genesis-block:create --output mydir --assets-file ./assets.json --height 2 --timestamp 1592924699 --previous-block-id
+  085d7c9b7bddc8052be9eefe185f407682a495f1b4498677df1480026b74f2e9
 ----
 
 .Example 
@@ -1141,25 +1143,21 @@ Download genesis block.
 [source,bash]
 ----
 USAGE
-  lisk-core genesis-block:download
+  $ lisk-core genesis-block:download
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored.
-                           Environment variable "LISK_DATA_PATH" can also be
-                           used.
-  -f, --force              Delete and overwrite existing blockchain data
-  -n, --network=<value>    Default network config to use. Environment variable
-                           "LISK_NETWORK" can also be used.
-  -u, --url=<value>        The url to the genesis block.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Download genesis block.
+  -f, --force                Delete and overwrite existing genesis block.
+
+  -n, --network=network      Default network config to use. Environment variable "LISK_NETWORK" can also be used.
+
+  -u, --url=url              The url to download the genesis block from.
 
 EXAMPLES
   genesis-block:download --network mainnet -f
-
   genesis-block:download --network --data-path ./lisk/
-
   genesis-block:download --url http://mydomain.com/genesis_block.blob.tar.gz --data-path ./lisk/ --force
 ----
 
@@ -1186,7 +1184,7 @@ Return keys corresponding to the given passphrase.
 [source,bash]
 ----
 USAGE
-  lisk-core keys:COMMAND
+  lisk-core keys
 
 COMMANDS
   keys:create   Return keys corresponding to the given passphrase.
@@ -1203,40 +1201,38 @@ Return keys corresponding to the given passphrase.
 [source,bash]
 ----
 USAGE
-  lisk-core keys:create
+  $ lisk-core keys:create
 
-FLAGS
-  -c, --count=<value>       [default: 1] Number of keys to create
-  -f, --offset=<value>      Offset for the key derivation path
-  -i, --chainid=<value>     Chain id
-  -n, --no-encrypt          No encrypted message object to be created
-  -o, --output=<value>      The output directory. Default will set to current working directory.
-  -p, --passphrase=<value>  Specifies a source for your secret passphrase. Command will prompt you for input if this option is not set.
-                            	Examples:
-                            	- --passphrase='my secret passphrase' (should only be used where security is not important)
-  -w, --password=<value>    Specifies a source for your secret password. Command will prompt you for input if this option is not set.
-                            	Examples:
-                            	- --password=pass:password123 (should only be used where security is not important)
+OPTIONS
+  -c, --count=count            [default: 1] Number of keys to create
+  -f, --offset=offset          [default: 0] Offset for the key derivation path
+  -i, --chainid=chainid        [default: 0] Chain id
+  -n, --no-encrypt             No encrypted message object to be created
+  -o, --output=output          The output directory. Default will set to current working directory.
 
-DESCRIPTION
-  Return keys corresponding to the given passphrase.
+  -p, --passphrase=passphrase  Specifies a source for your secret passphrase. Command will prompt you for input if this
+                               option is not set.
+                               Examples:
+                               - --passphrase='my secret passphrase' (should only be used where security is not
+                               important)
+
+  -w, --password=password      Specifies a source for your secret password. Command will prompt you for input if this
+                               option is not set.
+                               Examples:
+                               - --password=pass:password123 (should only be used where security is not important)
+
+  --add-legacy                 Add legacy key derivation path to the result
 
 EXAMPLES
   keys:create
-
   keys:create --passphrase your-passphrase
-
   keys:create --passphrase your-passphrase --no-encrypt
-
   keys:create --passphrase your-passphrase --password your-password
-
   keys:create --passphrase your-passphrase --password your-password --count 2
-
   keys:create --passphrase your-passphrase --no-encrypt --count 2 --offset 1
-
   keys:create --passphrase your-passphrase --no-encrypt --count 2 --offset 1 --chainid 1
-
-  keys:create --passphrase your-passphrase --password your-password --count 2 --offset 1 --chainid 1 --output /mypath/keys.json
+  keys:create --passphrase your-passphrase --password your-password --count 2 --offset 1 --chainid 1 --output
+  /mypath/keys.json
 ----
 
 .Example 
@@ -1296,20 +1292,18 @@ Encrypt keys from a file and overwrite the file.
 [source,bash]
 ----
 USAGE
-  lisk-core keys:encrypt
+  $ lisk-core keys:encrypt
 
-FLAGS
-  -f, --file-path=<value>  (required) Path of the file to encrypt from
-  -w, --password=<value>   Specifies a source for your secret password. Command will prompt you for input if this option is not set.
-                           	Examples:
-                           	- --password=pass:password123 (should only be used where security is not important)
+OPTIONS
+  -f, --file-path=file-path  (required) Path of the file to encrypt from
 
-DESCRIPTION
-  Encrypt keys from a file and overwrite the file
+  -w, --password=password    Specifies a source for your secret password. Command will prompt you for input if this
+                             option is not set.
+                             Examples:
+                             - --password=pass:password123 (should only be used where security is not important)
 
 EXAMPLES
   keys:encrypt --file-path ./my/path/keys.json
-
   keys:encrypt --file-path ./my/path/keys.json --password mypass
 ----
 
