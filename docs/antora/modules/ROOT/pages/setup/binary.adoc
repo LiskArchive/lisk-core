@@ -14,7 +14,7 @@ Christopher Braithwaite <christopher.braithwaite@lightcurve.io> Mona Bärenfäng
 // Project URLs
 :url_run_logging: lisk-docs::run-blockchain/logging.adoc
 :fn: footnote:hdd[These recommendations are derived from the log level settings, in the event that the user needs to increase storage to prevent limited memory access and potential memory-related problems with a node. Furthermore, as more transactions are processed and added to the blockchain, the size of the blockchain increases over time and this directly affects the HDD storage requirements for a blockchain node. Hence, adhering to the above listed requirements is highly recommended.]
-:lisk_core_latest_version: 4.0.0-rc.6
+:lisk_core_latest_version: 4.0.0
 
 The binary installation offers an easy and automated approach to setting up Lisk Core.
 
@@ -33,9 +33,9 @@ The binary installation offers an easy and automated approach to setting up Lisk
 The following system requirements are recommended:
 
 Memory::
-* Machines with a minimum of 4 GB RAM for the Mainnet.
+* Machines with a minimum of 8 GB RAM for the Mainnet.
 
-* Machines with a minimum of 2 GB RAM for the Testnet.
+* Machines with a minimum of 8 GB RAM for the Testnet.
 
 Storage::
 * Machines with a minimum of 40 GB HDD{fn}.

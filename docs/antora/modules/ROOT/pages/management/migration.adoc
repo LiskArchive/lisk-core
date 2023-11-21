@@ -8,9 +8,9 @@
 :snapshotHeightTestnet: 20449414
 :initRounds: 587
 :initRoundsTime: 1 week
-:lisk-migrator: lisk-migrator-v2.0.0-rc.5-linux-x64.tar.gz
-:lisk-migrator_darwinx64: lisk-migrator-v2.0.0-rc.5-darwin-x64.tar.gz
-:lisk-migrator_darwinarm64: lisk-migrator-v2.0.0-rc.5-darwin-arm64.tar.gz
+:lisk-migrator: lisk-migrator-v2.0.0-linux-x64.tar.gz
+:lisk-migrator_darwinx64: lisk-migrator-v2.0.0-darwin-x64.tar.gz
+:lisk-migrator_darwinarm64: lisk-migrator-v2.0.0-darwin-arm64.tar.gz
 :docs_sdk: v6@lisk-sdk::
 :docs_lisk: beta@ROOT::
 :docs_liskv5: ROOT::
@@ -59,7 +59,7 @@ In this case, the following steps 2.4 and 2.5 in this guide can be skipped, as t
 The following system requirements are recommended for running the migration script:
 
 Memory::
-* minimum of 4GB  RAM
+* minimum of 8GB  RAM
 
 Storage::
 * minimum 40GB HDD
@@ -84,7 +84,7 @@ Lisk Core::
 === Ensure you are running version 3.1.0 (or later) of Lisk Core
 Ensure you are running version 3.1.0 (or later) of Lisk Core to be able to seamlessly migrate to Lisk Core 4.0.0.
 
-We *recommend* to install *v3.1.1* of Lisk Core, because it comes with the Mainnet snapshot height preconfigured. If using an existing data directory, kindly make sure to use the `--overwrite-config` flag when restarting the application.
+We *recommend* to install *v3.1.1* of Lisk Core, because it comes with the Mainnet snapshot height pre-configured. If using an existing data directory, kindly make sure to use the `--overwrite-config` flag when restarting the application.
 
 Print the Lisk Core node info in the terminal, and check the value of `version`. Also, kindly ensure that the `backup.height` property is present and the corresponding value matches the announced migration height of {snapshotHeight}.
 
@@ -517,7 +517,7 @@ It is possible to generate all relevant validator keys to enable block generatio
 
 To do so, use the command xref:{url_sdk_cli_keyscreate}[keys:create].
 
-IMPORTANT: The flag `--add-legacy` is only available in Lisk Core v4.0.0-rc.2 or later.
+IMPORTANT: The flag `--add-legacy` is only available in Lisk Core v4.0.0 or later.
 
 [tabs]
 ====
