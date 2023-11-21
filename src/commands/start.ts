@@ -93,7 +93,7 @@ export class StartCommand extends BaseStartCommand {
 		'enable-report-misbehavior-plugin': flagParser.boolean({
 			description:
 				'Enable ReportMisbehavior Plugin. Environment variable "LISK_ENABLE_REPORT_MISBEHAVIOR_PLUGIN" can also be used.',
-			env: 'LISK_ENABLE_MONITOR_PLUGIN',
+			env: 'LISK_ENABLE_REPORT_MISBEHAVIOR_PLUGIN',
 			default: false,
 		}),
 		'enable-faucet-plugin': flagParser.boolean({
@@ -128,9 +128,9 @@ export class StartCommand extends BaseStartCommand {
 		}),
 		'genesis-block-url': flagParser.string({
 			char: 'u',
-			env: 'LISK_GENESIS_BLOCK_URL',
 			description:
 				'The URL to download the genesis block. Environment variable "LISK_GENESIS_BLOCK_URL" can also be used. Kindly ensure that the provided URL downloads the genesis block \'blob\' in the tarball format.',
+			env: 'LISK_GENESIS_BLOCK_URL',
 		}),
 		'overwrite-genesis-block': flagParser.boolean({
 			description:

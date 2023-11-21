@@ -61,7 +61,7 @@ $ npm install -g lisk-core
 $ lisk-core COMMAND
 running command...
 $ lisk-core (-v|--version|version)
-lisk-core/4.0.0-rc.6 darwin-arm64 node-v18.16.1
+lisk-core/4.0.1 darwin-arm64 node-v18.16.1
 $ lisk-core --help [COMMAND]
 USAGE
   $ lisk-core COMMAND
@@ -102,8 +102,8 @@ The following system requirements are recommended for validator nodes:
 
 #### Memory
 
-- Machines with a minimum of 4 GB RAM for the Mainnet.
-- Machines with a minimum of 2 GB RAM for the Testnet.
+- Machines with a minimum of 8 GB RAM for the Mainnet.
+- Machines with a minimum of 8 GB RAM for the Testnet.
 
 #### Storage
 
