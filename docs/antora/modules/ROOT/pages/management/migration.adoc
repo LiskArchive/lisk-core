@@ -517,7 +517,7 @@ It is possible to generate all relevant validator keys to enable block generatio
 
 To do so, use the command xref:{url_sdk_cli_keyscreate}[keys:create].
 
-IMPORTANT: The flag `--add-legacy` is only available in Lisk Core v4.0.0-rc.2 or later.
+IMPORTANT: The flag `--add-legacy` is only available in Lisk Core v4.0.0 or later.
 
 [tabs]
 ====
