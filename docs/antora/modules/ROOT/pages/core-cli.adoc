@@ -1361,19 +1361,18 @@ Export keys to a file.
 [source,bash]
 ----
 USAGE
-  lisk-core keys:export
+  $ lisk-core keys:export
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  -o, --output=<value>     (required) The output directory. Default will set to current working directory.
-  --pretty                 Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Export to <FILE>.
+  -o, --output=output        (required) The output directory. Default will set to current working directory.
+
+  --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
   keys:export --output /mypath/keys.json
-
   keys:export --output /mypath/keys.json --data-path ./data
 ----
 
@@ -1392,19 +1391,18 @@ Import keys from a file.
 [source,bash]
 ----
 USAGE
-  lisk-core keys:import
+  $ lisk-core keys:import
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  -f, --file-path=<value>  (required) Path of the file to import from
-  --pretty                 Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Import from <FILE>.
+  -f, --file-path=file-path  (required) Path of the file to import from
+
+  --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
   keys:import --file-path ./my/path/keys.json
-
   keys:import --file-path ./my/path/keys.json --data-path ./data
 ----
 
