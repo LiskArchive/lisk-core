@@ -58,25 +58,19 @@ Displays autocomplete installation instructions.
 [source,bash]
 ----
 USAGE
-  lisk-core autocomplete  [SHELL]
+  $ lisk-core autocomplete [SHELL]
 
 ARGUMENTS
   SHELL  shell type
 
-FLAGS
+OPTIONS
   -r, --refresh-cache  Refresh cache (ignores displaying instructions)
 
-DESCRIPTION
-  display autocomplete installation instructions
-
 EXAMPLES
-  lisk-core autocomplete
-
-  lisk-core autocomplete bash
-
-  lisk-core autocomplete zsh
-
-  lisk-core autocomplete --refresh-cache
+  $ lisk-core autocomplete
+  $ lisk-core autocomplete bash
+  $ lisk-core autocomplete zsh
+  $ lisk-core autocomplete --refresh-cache
 ----
 
 .Example
@@ -108,20 +102,15 @@ Provides an interactive Javascript {url_read_eval_print_loop}[REPL] session to r
 [source,bash]
 ----
 USAGE
-  lisk-core console
+  $ lisk-core console
 
-FLAGS
-  --api-ipc=<value>  Enable api-client with IPC communication.
-  --api-ws=<value>   Enable api-client with Websocket communication.
-
-DESCRIPTION
-  Lisk interactive REPL session to run commands.
+OPTIONS
+  --api-ipc=api-ipc  Enable api-client with IPC communication.
+  --api-ws=api-ws    Enable api-client with Websocket communication.
 
 EXAMPLES
   console
-
   console --api-ws=ws://localhost:8080
-
   console --api-ipc=/path/to/server
 ----
 
