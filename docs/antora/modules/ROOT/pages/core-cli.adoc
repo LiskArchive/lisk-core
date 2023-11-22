@@ -480,7 +480,7 @@ EXAMPLES
 ====
 [source,bash]
 ----
-lisk-core blockchain:hash --data-path /Users/XYZ/.lisk/lisk-core/data
+lisk-core blockchain:hash
 ----
 .Response
 ----
@@ -601,7 +601,7 @@ EXAMPLES
 ====
 [source,bash]
 ----
-lisk-core config:create --output /Users/XYZ --chain-id 04000000
+lisk-core config:create --chain-id 04000000
 ----
 .Response
 ----
@@ -932,6 +932,9 @@ EXAMPLES
 [source,bash]
 ----
 $ lisk-core generator:disable lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3
+----
+.Response
+----
 ? Enter password to decrypt the encrypted passphrase:  ********
 
 Disabled block generation for lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3
@@ -1028,6 +1031,10 @@ EXAMPLES
 ----
 lisk-core generator:export --output /Users/XYZ/genInfo.json
 ----
+.Response
+----
+Generator info is exported to /Users/XYZ/genInfo.json
+----
 ====
 
 ==== generator:import
@@ -1056,7 +1063,11 @@ EXAMPLES
 ====
 [source,bash]
 ----
-./bin/run generator:import --file-path /Users/XYZ/genInfo.json
+lisk-core generator:import --file-path /Users/XYZ/genInfo.json
+----
+.Response
+----
+No response
 ----
 ====
 
@@ -1418,8 +1429,6 @@ lisk-core keys:encrypt --file-path ./my/path/keys.json --password mypass
 ----
 ====
 
-
-
 ==== keys:export
 Export keys to a file.
 
@@ -1447,6 +1456,10 @@ EXAMPLES
 [source,bash]
 ----
 lisk-core keys:export --output ~/mypath/mykeys.json
+----
+.Response
+----
+No response
 ----
 ====
 
@@ -1477,6 +1490,10 @@ EXAMPLES
 [source,bash]
 ----
 lisk-core keys:import --file-path ~/mykeys.json
+----
+.Response
+----
+No response
 ----
 ====
 
