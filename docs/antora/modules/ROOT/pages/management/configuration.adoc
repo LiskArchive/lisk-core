@@ -4,7 +4,9 @@ Mona Bärenfänger <mona@lightcurve.io>
 // Settings
 :toc:
 :source-highlighter: coderay
+:docs_general: beta@ROOT::
 :v_sdk: master
+
 // External URLs
 // Project URLs
 :url_config: reference/cli.adoc
@@ -16,6 +18,12 @@ Mona Bärenfänger <mona@lightcurve.io>
 :url_management_forging: management/forging.adoc
 :url_pm2_restart: management/pm2.adoc#refreshing-restarting-lisk-core
 :url_config_options: https://lisk.com/documentation/lisk-sdk/v6/references/typedoc/modules/_liskhq_lisk_framework_report_misbehavior_plugin.html#$config-options
+
+
+:url_enable_misbehavior: {docs_general}run-blockchain/enabling-misbehavior-report.adoc
+:url_dashboard: {docs_general}build-blockchain/using-dashboard.adoc
+
+
 // :url_source: management/source.adoc
 :url_sdk_plugins: lisk-sdk::plugins/index.adoc
 //TODO: Update the commented out hyperlinks once the pages are available.
@@ -66,127 +74,6 @@ NOTE: Remember to restart the node for the new config changes to take effect.
 == Enabling plugins
 
 Plugins are not enabled by default.
-Use the dedicated flags to enable them on the application start:
+Dedicated flags can be used to enable them on the application start.
 
-[source,bash]
-----
-lisk-core start -c ./custom-config.json --enable-report-misbehavior-plugin
-----
-Alternatively, a user can enable plugins by the setting the corresponding environment instead of specifying the flag.
-For example, as shown in the command below:
-
-[source,bash]
-----
-export LISK_ENABLE_REPORT_MISBEHAVIOR_PLUGIN=true
-lisk-core start -c ./custom-config.json
-----
-
-NOTE: Ensure the config file is updated with the necessary based on the plugin requirements.
-The config requirements specific to each plugin can be found in the corresponding documentation xref:{url_config_options}[here].
-Please find an example below on how to configure the `reportMisbehaviour` Plugin in your Lisk Core custom config.
-
-
-.custom-config.json
-[source,json]
-----
-{
-  "plugins": {
-    "reportMisbehavior": {
-      "clearBlockHeadersInterval": 60000,
-      "encryptedPrivateKey": "kdf=argon2id&cipher=aes-128-gcm&version=1&ciphertext=aa92aefc87797b8e107e0ebc8f863333b8dbc173b7d6e75b0f3ca1f5113d64050247a2c79679840193ea564a34c80f7e3d8ff77d5a9a2cd7e9c1e912e707b38206d4700485013ae14e33db2e31f4f0cfeee5fdbe4e2356cce179819f87da348cf2fe057f6e320b809db3ffdad7cbae86c568184caebe3ba44edb49c59e263012&mac=e4d31ce6274e3dd83c70732f9965846114d53e07e831b1f5bb9a841e1731d85a&salt=a3fd8ab81c91b9b5&iv=c3028fe54417f71e1caba5727be0040d&tag=f97a0df7b6349f90310ebf3eed4dde42&iterations=1&parallelism=4&memorySize=2097023",
-      "fee": 100000000
-    }
-  }
-}
-----
-
-
-// Alternatively, enable the plugins directly in the config file, see <<using-a-custom-config-file>>.
-
-[TIP]
-====
-For more detailed descriptions of the available plugins, go to the xref:{url_sdk_plugins}[].
-
-// See also xref:{url_enable_pom}[] and xref:{url_config_start}[Lisk Core CLI: start]
-See also the **Report Misbehaviour** plugin and the `Lisk Core CLI: start` command.
-====
-////
-[IMPORTANT]
-====
-If you are using the Docker image, Lisk Core is configured in a slightly different manner.
-Please go to the xref:{url_docker}[Docker image commands] page to find out more regarding the docker-specific configuration of the Lisk Core.
-====
-
-[[network_specific_config]]
-== Network-specific config files
-
-The root folder for all configurations is `config/`.
-The *default* network is `devnet`.
-To connect to another network, specify the `network` when starting the Lisk Core as described in xref:{url_config}[Config reference].
-The *network specific configurations* can be found under `config/<network>/config.json`, whereby `<network>` can be any of these values listed below:
-
-* `devnet`
-* `betanet`
-
-[IMPORTANT]
-====
-Do not override any value in the files mentioned above, as the changes will be overwritten everytime the Lisk Core is upgraded.
-If a custom configuration is required, use the environment variables or alternatively create your own `.json` file and pass it as xref:{url_config_clo}[command line option].
-====
-
-
-== Custom config file
-
-Only the values required to be overwritten are necessary.
-For all other options the pre-defined values will be used as described in the <<order, Config Load Order>> section.
-
-[NOTE]
-====
-The *Application* and *Commander application* both provide a `config.json`, which can be customized as desired.
-
-For the *Source code*, the config file needs to be created separately and needs to be passed as described below:
-====
-
-[tabs]
-=====
-Application::
-+
---
-The Lisk Core application provides a custom `config.json` which is stored in the root folder of your Lisk Core installation by default.
-
-For example, if Lisk Core is installed under `~/lisk-beta`, then the config is stored directly in `~/lisk-beta/config.json`.
-
-The updated `config.json` will be used automatically when reloading the node with the following command:
-
-[source,bash]
-----
-bash lisk.sh reload
-----
---
-Commander application::
-+
---
-Lisk Commander provides a custom `config.json` which is stored in the root folder of your Lisk Core instance by default.
-
-For example, if Lisk Core is installed under `~/.lisk/instances/lisk-betanet`, then the config is stored directly in `~/.lisk/instances/lisk-beta/config.json`.
-
-The `config.json` will be used automatically when reloading the node with the following command:
-
-[source,bash]
-----
-lisk core:restart lisk-betanet
-----
---
-Source code::
-+
---
-[source,bash]
-----
-pm2 stop lisk <1>
-LISK_CONFIG_FILE=<CONFIG_PATH> pm2 start lisk <2>
-----
-<1> Stop Lisk Core in the case whereby it is running.
-<2> Replace `<CONFIG_PATH>` with the path to your custom config file.
---
-=====
-////
+However, to enable the following plugins it is recommended to view the following detailed guides here, on how to register and enable the xref:{url_enable_misbehavior}[Misbehavior plugin], and also the xref:{url_dashboard}[Dashboard plugin].
