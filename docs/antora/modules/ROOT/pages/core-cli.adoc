@@ -283,7 +283,7 @@ Starting Lisk lisk-core at /Users/XYZ/.lisk/lisk-core
 Starting the app at /Users/XYZ/.lisk/lisk-core
 If you experience any type of error, please open an issue on Lisk GitHub: https://github.com/LiskHQ/lisk-sdk/issues
 Contribution guidelines can be found at Lisk-sdk: https://github.com/LiskHQ/lisk-sdk/blob/development/docs/CONTRIBUTING.md
-
+...
 ----
 ====
 
@@ -480,7 +480,7 @@ EXAMPLES
 ====
 [source,bash]
 ----
-lisk-core blockchain:hash --data-path /Users/xyz/blockchain.db
+lisk-core blockchain:hash --data-path /Users/XYZ/.lisk/lisk-core/data
 ----
 .Response
 ----
@@ -602,6 +602,10 @@ EXAMPLES
 [source,bash]
 ----
 lisk-core config:create --output /Users/XYZ --chain-id 04000000
+----
+.Response
+----
+No response
 ----
 ====
 
