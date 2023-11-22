@@ -79,6 +79,9 @@ EXAMPLES
 [source,bash]
 ----
 lisk-core autocomplete
+----
+.Response
+----
 Building the autocomplete cache... done
 
 Setup Instructions for LISK-CORE CLI Autocomplete ---
@@ -119,7 +122,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core console
+lisk-core console
+----
+.Response
+----
 Entering Lisk REPL: type `Ctrl+C` or `.exit` to exit
 lisk-core >
 ----
@@ -149,7 +155,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core hash-onion --count=10 --distance=2 --pretty 
+lisk-core hash-onion --count=10 --distance=2 --pretty
+----
+.Response
+----
 {
   "count": 10,
   "distance": 2,
@@ -266,7 +275,7 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core start --network devnet --api-ws
+lisk-core start --network devnet --api-ws
 ----
 ====
 
@@ -311,7 +320,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core block:get 2 --pretty
+lisk-core block:get 2 --pretty
+----
+.Response
+----
 {
   "header": {
     "version": 2,
@@ -393,7 +405,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core blockchain:download
+lisk-core blockchain:download
+----
+.Response
+----
 Downloading snapshot from https://snapshots.lisk.com/mainnet/blockchain.db.tar.gz to /Users/XYZ
 Downloaded to path: /Users/XYZ
 ----
@@ -424,7 +439,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core blockchain:export
+lisk-core blockchain:export
+----
+.Response
+----
 Exporting blockchain:
    /Users/XYZ/.lisk/lisk-core/data
 Export completed:
@@ -454,7 +472,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core blockchain:hash --data-path /Users/xyz/blockchain.db
+lisk-core blockchain:hash --data-path /Users/xyz/blockchain.db
+----
+.Response
+----
 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
 ----
 ====
@@ -487,7 +508,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core blockchain:import /Users/XYZ/blockchain.tar.gz --force
+lisk-core blockchain:import /Users/XYZ/blockchain.tar.gz --force
+----
+.Response
+----
 Importing blockchain from /Users/XYZ/blockchain.tar.gz
 Import completed.
    /Users/XYZ/.lisk/lisk-core
@@ -520,7 +544,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core blockchain:reset
+lisk-core blockchain:reset
+----
+.Response
+----
 ? Are you sure you want to reset the db? yes
 Blockchain data has been reset.
 ----
@@ -532,7 +559,7 @@ Commands relating to the configuration of the blockchain client.
 [source,bash]
 ----
 USAGE
-  lisk-core config
+ $ lisk-core config
 
 COMMANDS
   config:create  Creates network configuration file.
@@ -566,7 +593,7 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core config:create --output /Users/XYZ --chain-id 04000000
+lisk-core config:create --output /Users/XYZ --chain-id 04000000
 ----
 ====
 
@@ -598,7 +625,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core config:show --pretty
+lisk-core config:show --pretty
+----
+.Response
+----
 {
   "system": {
     "dataPath": "/Users/XYZ/.lisk/lisk-core",
@@ -674,7 +704,7 @@ Commands relating to invoking and listing the endpoints.
 [source,bash]
 ----
 USAGE
-  lisk-core endpoint
+  $ lisk-core endpoint
 
 COMMANDS
   endpoint:invoke  Invokes the provided endpoint.
@@ -714,7 +744,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core endpoint:invoke system_getNodeInfo --pretty
+lisk-core endpoint:invoke system_getNodeInfo --pretty
+----
+.Response
+----
 {
   "version": "4.0.0-alpha.18",
   "networkVersion": "1.0",
@@ -779,7 +812,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core endpoint:list --pretty
+lisk-core endpoint:list --pretty
+----
+.Response
+----
 [
   "auth_getAuthAccount",
   "auth_isValidNonce",
@@ -840,7 +876,7 @@ Commands relating to the block generation and generator-info of a blockchain.
 [source,bash]
 ----
 USAGE
-  lisk-core generator
+  $ lisk-core generator
 
 COMMANDS
   generator:disable  Disable block generation for given validator address.
@@ -936,8 +972,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core generator:enable lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3 --use-status-value
-
+lisk-core generator:enable lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3 --use-status-value
+----
+.Response
+----
  Current block generation status for validator account lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3 is:
 {"height":14814092,"maxHeightPrevoted":14814017,"maxHeightGenerated":14814025}
 ? Do you want to use the above values to enable block generation? yes
@@ -976,7 +1014,7 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core generator:export --output /Users/XYZ/genInfo.json
+lisk-core generator:export --output /Users/XYZ/genInfo.json
 ----
 ====
 
@@ -1006,7 +1044,7 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$./bin/run generator:import --file-path /Users/XYZ/genInfo.json
+./bin/run generator:import --file-path /Users/XYZ/genInfo.json
 ----
 ====
 
@@ -1034,7 +1072,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core generator:status --pretty
+lisk-core generator:status --pretty
+----
+.Response
+----
 {
   "info": {
     "status":
@@ -1057,7 +1098,7 @@ Commands relating to the genesis block.
 [source,bash]
 ----
 USAGE
-  lisk-core genesis-block
+  $ lisk-core genesis-block
 
 COMMANDS
   genesis-block:create    Creates genesis block file.
@@ -1103,7 +1144,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core genesis-block:create --assets-file genesis_assets.json --output ./devnet
+lisk-core genesis-block:create --assets-file genesis_assets.json --output ./devnet
+----
+.Response
+----
 2023-04-07T16:47:08.874Z INFO XYZ.local application 55996 Registered and initialized fee module
 2023-04-07T16:47:08.875Z INFO XYZ.local application 55996 Registered and initialized auth module
 2023-04-07T16:47:08.875Z INFO XYZ.local application 55996 Registered auth module has command registerMultisignature
@@ -1166,7 +1210,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core genesis-block:download --network mainnet -f
+lisk-core genesis-block:download --network mainnet -f
+----
+.Response
+----
 Downloading genesis block from https://downloads.lisk.com/lisk/mainnet/genesis_block.blob.tar.gz
 Downloaded to path: /Users/XYZ/.lisk/lisk-core/config/mainnet/genesis_block.blob.tar.gz.
 Verified checksum: a69fe85969ce8727b6490a07ced612bbc36a5c377a54f2b6fab58c058d1663b5.
@@ -1184,7 +1231,7 @@ Return keys corresponding to the given passphrase.
 [source,bash]
 ----
 USAGE
-  lisk-core keys
+  $ lisk-core keys
 
 COMMANDS
   keys:create   Return keys corresponding to the given passphrase.
@@ -1240,7 +1287,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core keys:create
+lisk-core keys:create
+----
+.Response
+----
 ? Please enter passphrase:  [hidden]
 ? Please re-enter passphrase:  [hidden]
 Warning: Passphrase contains 24 words instead of expected 12. Passphrase contains 23 whitespaces instead of expected 11.
@@ -1313,7 +1363,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core keys:encrypt --file-path ./my/path/keys.json --password mypass
+lisk-core keys:encrypt --file-path ./my/path/keys.json --password mypass
+----
+.Response
+----
 {
   "keys": [
       {
@@ -1381,7 +1434,7 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core keys:export --output ~/mypath/mykeys.json
+lisk-core keys:export --output ~/mypath/mykeys.json
 ----
 ====
 
@@ -1411,7 +1464,7 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core keys:import --file-path ~/mykeys.json
+lisk-core keys:import --file-path ~/mykeys.json
 ----
 ====
 
@@ -1421,7 +1474,7 @@ Commands relating to a Lisk Core node.
 [source,bash]
 ----
 USAGE
-  lisk-core system
+  $ lisk-core system
 
 COMMANDS
   system:node-info      Get node information from a running application.
@@ -1452,7 +1505,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core system:node-info --pretty
+lisk-core system:node-info --pretty
+----
+.Response
+----
 {
   "version": "4.0.0-alpha.18",
   "networkVersion": "1.0",
@@ -1504,7 +1560,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core system:metadata --pretty
+lisk-core system:metadata --pretty
+----
+.Response
+----
 {
   "modules": [
     {
@@ -7599,7 +7658,7 @@ Commands relating to Lisk Core passphrases.
 [source,bash]
 ----
 USAGE
-  lisk-core passphrase
+  $ lisk-core passphrase
 
 COMMANDS
   passphrase:create   Returns a randomly generated 24 words mnemonic passphrase.
@@ -7628,7 +7687,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core passphrase:create
+lisk-core passphrase:create
+----
+.Response
+----
 {
   "passphrase": "lava empower laundry taxi believe cute boss stairs bicycle vivid dirt vendor accuse identify general run knock medal chief space remain flush extra bike"
 }
@@ -7661,7 +7723,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core passphrase:decrypt --file-path ./my/path/keys.json
+lisk-core passphrase:decrypt --file-path ./my/path/keys.json
+----
+.Response
+----
 ? Please enter password:  [hidden]
 ? Please re-enter password:  [hidden]
 {"passphrase":"my secret passphrase"}
@@ -7706,7 +7771,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core passphrase:encrypt -p 'my secret passphrase'
+lisk-core passphrase:encrypt -p 'my secret passphrase'
+----
+.Response
+----
 ? Please enter password:  [hidden]
 ? Please re-enter password:  [hidden]
 {
@@ -7738,7 +7806,7 @@ Commands relating to Lisk SDK development.
 [source,bash]
 ----
 USAGE
-  lisk-core sdk
+  $ lisk-core sdk
 
 COMMANDS
   sdk:link  Symlink specific SDK folder during development.
@@ -7764,7 +7832,10 @@ EXAMPLE
 ====
 [source,bash]
 ----
-$ lisk-core sdk:link ~/XYZ/Documents/GitHub/lisk-sdk
+lisk-core sdk:link ~/XYZ/Documents/GitHub/lisk-sdk
+----
+.Response
+----
 Linked /Users/XYZ/Documents/GitHub/lisk-sdk to /lisk-sdk.
 ----
 ====
@@ -7775,7 +7846,7 @@ Commands relating to Lisk Core transactions.
 [source,bash]
 ----
 USAGE
-  lisk-core transaction
+  $ lisk-core transaction
 
 COMMANDS
   transaction:create  Create transaction which can be broadcasted to the network. Note: fee and amount should be in Beddows!!
@@ -7853,7 +7924,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core transaction:create token transfer 100000000
+lisk-core transaction:create token transfer 100000000
+----
+.Response
+----
 ? Please enter passphrase:  [hidden]
 Warning: Passphrase contains 24 words instead of expected 12. Passphrase contains 23 whitespaces instead of expected 11.
 ? Please enter: tokenID:  0400000000000000
@@ -7890,7 +7964,10 @@ EXAMPLE
 ====
 [source,bash]
 ----
-$ lisk-core transaction:get ef9296e17308d99c012597cb5d0f90539a5bd87ae6a2a2ce4f64c0529bcc3c31 --pretty
+lisk-core transaction:get ef9296e17308d99c012597cb5d0f90539a5bd87ae6a2a2ce4f64c0529bcc3c31 --pretty
+----
+.Response
+----
 {
   "module": "token",
   "command": "transfer",
@@ -7939,7 +8016,10 @@ EXAMPLE
 ====
 [source,bash]
 ----
-$ lisk-core transaction:send 0a05746f6b656e12087472616e7366657218002080c2d72f2a203972849f2ab66376a68671c10a00e8b8b67d880434cc65b04c6ed886dfa91c2c32320a08040000000000000010011a140282ed03925a5c31271fa3b70bb94ce12fd83ea9220e53656e64696e6720746f6b656e733a40497ee511d6537fd9e05e1615bae8d9e186af8b871a9bc1ae8d317cfe3da3669e1cdf36e3d12e16639cb49d727a230f0a8254f9bb8b9630f3aca3aa91e5517109
+lisk-core transaction:send 0a05746f6b656e12087472616e7366657218002080c2d72f2a203972849f2ab66376a68671c10a00e8b8b67d880434cc65b04c6ed886dfa91c2c32320a08040000000000000010011a140282ed03925a5c31271fa3b70bb94ce12fd83ea9220e53656e64696e6720746f6b656e733a40497ee511d6537fd9e05e1615bae8d9e186af8b871a9bc1ae8d317cfe3da3669e1cdf36e3d12e16639cb49d727a230f0a8254f9bb8b9630f3aca3aa91e5517109
+----
+.Response
+----
 Transaction with id: 'ef9296e17308d99c012597cb5d0f90539a5bd87ae6a2a2ce4f64c0529bcc3c31' received by node.
 ----
 ====
@@ -7990,7 +8070,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core transaction:sign 0a05746f6b656e12087472616e7366657218012080c2d72f2a20a3f96c50d0446220ef2f98240898515cbba8155730679ca35326d98dcfb680f032250a08000000000000000010011a140326f20343173a4e5e5daa354a1bc96b594717b722014c3a4008174cd6816439265bff92ce93687ce4d6a65877d69d6c43dd1c1696312cf4c74962c0be7f047fd21482877e21d5ae56f638323ece64bc92a14386f96fe41c06 --pretty
+lisk-core transaction:sign 0a05746f6b656e12087472616e7366657218012080c2d72f2a20a3f96c50d0446220ef2f98240898515cbba8155730679ca35326d98dcfb680f032250a08000000000000000010011a140326f20343173a4e5e5daa354a1bc96b594717b722014c3a4008174cd6816439265bff92ce93687ce4d6a65877d69d6c43dd1c1696312cf4c74962c0be7f047fd21482877e21d5ae56f638323ece64bc92a14386f96fe41c06 --pretty
+----
+.Response
+----
 ? Please enter passphrase:  [hidden]
 ? Please re-enter passphrase:  [hidden]
 {
