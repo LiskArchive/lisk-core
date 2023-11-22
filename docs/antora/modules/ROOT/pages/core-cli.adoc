@@ -100,7 +100,7 @@ Enjoy!
 ====
 
 === console
-Provides an interactive Javascript {url_read_eval_print_loop}[REPL] session to run LISK commands.
+Provides an interactive Javascript {url_read_eval_print_loop}[REPL^] session to run LISK commands.
 
 [source,bash]
 ----
