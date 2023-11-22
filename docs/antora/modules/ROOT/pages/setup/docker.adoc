@@ -101,7 +101,7 @@ The following commands below describe how to clone the repository, then how to n
 git clone https://github.com/LiskHQ/lisk-core.git
 ----
 
-.Navigate into the `lisk-core` root folder
+.Navigate into the "lisk-core" root folder
 [source,bash]
 ----
 cd lisk-core
