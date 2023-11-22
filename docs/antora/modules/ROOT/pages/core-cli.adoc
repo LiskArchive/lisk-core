@@ -277,6 +277,14 @@ EXAMPLES
 ----
 lisk-core start --network devnet --api-ws
 ----
+.Response
+----
+Starting Lisk lisk-core at /Users/XYZ/.lisk/lisk-core
+Starting the app at /Users/XYZ/.lisk/lisk-core
+If you experience any type of error, please open an issue on Lisk GitHub: https://github.com/LiskHQ/lisk-sdk/issues
+Contribution guidelines can be found at Lisk-sdk: https://github.com/LiskHQ/lisk-sdk/blob/development/docs/CONTRIBUTING.md
+
+----
 ====
 
 == Topics
@@ -287,7 +295,7 @@ Commands relating to Lisk Core blocks.
 [source,bash]
 ----
 USAGE
-  lisk-core block
+  $ lisk-core block
 
 COMMANDS
   block:get  Get block information for a given id or height.
