@@ -135,7 +135,7 @@ For a more advanced options refer to [PM2 documentation](https://pm2.keymetrics.
 
 In addition, custom configuration through the JSON file can be made available through the `--config, -c` flag.
 
-> **NOTE**: As a security measure, access to all the methods on the node over the IPC and HTTP API by default are disabled. To allow access, the `system.allowedMethods` property within the custom node config file may be configured as shown below.
+> **NOTE**: As a security measure, access to all the methods on the node over the IPC and HTTP API by default are disabled. To allow access, the `rpc.allowedMethods` property within the custom node config file may be configured as shown below.
 >
 > - `rpc.allowedMethods: ["system_getNodeInfo"]` - Expose specific methods
 > - `rpc.allowedMethods: ["system", "token"]` - Expose all the registered methods under the specified namespaces
