@@ -603,12 +603,8 @@ EXAMPLES
 ----
 lisk-core config:create --chain-id 04000000
 ----
-.Response
-----
-No response
-----
-====
 
+====
 
 ==== config:show
 Shows the application's config.
