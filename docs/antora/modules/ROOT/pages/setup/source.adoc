@@ -197,6 +197,7 @@ Set up the `lisk-core` alias: Append the following line to your `~/.profile` fil
 ----
 alias lisk-core=/home/lisk/lisk-core/bin/run
 ----
+NOTE: In the command above, please replace `/home/lisk/lisk-core` with the absolute path to your "lisk-core" directory. To find the exact path on your system, change to your "lisk-core" directory and run the `pwd` command.
 To test that Lisk Core is built and configured correctly, execute the following command below to connect to the network:
 
 [source,bash]
