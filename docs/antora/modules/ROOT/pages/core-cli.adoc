@@ -5,7 +5,7 @@ Muhammad Talha <muhammad.talha@lightcurve.io>
 :toclevels: 5
 :page-toclevels: 4
 :url_sdk_references_config: master@lisk-sdk::references/config.adoc
-
+:source-language: bash
 // External URLs
 :url_read_eval_print_loop: https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop
 
