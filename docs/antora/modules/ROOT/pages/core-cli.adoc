@@ -1061,10 +1061,7 @@ EXAMPLES
 ----
 lisk-core generator:import --file-path /Users/XYZ/genInfo.json
 ----
-.Response
-----
-No response
-----
+
 ====
 
 ==== generator:status
@@ -1453,10 +1450,7 @@ EXAMPLES
 ----
 lisk-core keys:export --output ~/mypath/mykeys.json
 ----
-.Response
-----
-No response
-----
+
 ====
 
 ==== keys:import
@@ -1487,10 +1481,7 @@ EXAMPLES
 ----
 lisk-core keys:import --file-path ~/mykeys.json
 ----
-.Response
-----
-No response
-----
+
 ====
 
 === system
