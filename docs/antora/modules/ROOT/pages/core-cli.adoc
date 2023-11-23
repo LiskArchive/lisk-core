@@ -375,7 +375,7 @@ Commands relating to Lisk Core blockchain data.
 [source,bash]
 ----
 USAGE
-  lisk-core blockchain
+  $ lisk-core blockchain
 
 COMMANDS
   blockchain:download  Download snapshot from <URL>.
