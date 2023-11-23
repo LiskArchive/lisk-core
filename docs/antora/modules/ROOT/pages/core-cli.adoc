@@ -27,7 +27,7 @@ VERSION
   lisk-core/4.0.0 darwin-arm64 node-v18.16.0
 
 USAGE
-  lisk-core [COMMAND]
+  $ lisk-core [COMMAND]
 
 TOPICS
   block          Commands relating to Lisk Core blocks.
