@@ -5,7 +5,7 @@ Muhammad Talha <muhammad.talha@lightcurve.io>
 :toclevels: 5
 :page-toclevels: 4
 :url_sdk_references_config: master@lisk-sdk::references/config.adoc
-
+:source-language: bash
 // External URLs
 :url_read_eval_print_loop: https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop
 
@@ -58,24 +58,18 @@ Displays autocomplete installation instructions.
 [source,bash]
 ----
 USAGE
-  $ lisk-core autocomplete [SHELL] [-r]
+  $ lisk-core autocomplete [SHELL]
 
 ARGUMENTS
   SHELL  shell type
 
-FLAGS
+OPTIONS
   -r, --refresh-cache  Refresh cache (ignores displaying instructions)
-
-DESCRIPTION
-  display autocomplete installation instructions
 
 EXAMPLES
   $ lisk-core autocomplete
-
   $ lisk-core autocomplete bash
-
   $ lisk-core autocomplete zsh
-
   $ lisk-core autocomplete --refresh-cache
 ----
 
@@ -84,7 +78,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core autocomplete
+lisk-core autocomplete
+----
+.Response
+----
 Building the autocomplete cache... done
 
 Setup Instructions for LISK-CORE CLI Autocomplete ---
@@ -103,25 +100,20 @@ Enjoy!
 ====
 
 === console
-Provides an interactive Javascript {url_read_eval_print_loop}[REPL] session to run LISK commands.
+Provides an interactive Javascript {url_read_eval_print_loop}[REPL^] session to run LISK commands.
 
 [source,bash]
 ----
 USAGE
-  $ lisk-core console [--api-ipc <value>] [--api-ws <value>]
+  $ lisk-core console
 
-FLAGS
-  --api-ipc=<value>  Enable api-client with IPC communication.
-  --api-ws=<value>   Enable api-client with Websocket communication.
-
-DESCRIPTION
-  Lisk interactive REPL session to run commands.
+OPTIONS
+  --api-ipc=api-ipc  Enable api-client with IPC communication.
+  --api-ws=api-ws    Enable api-client with Websocket communication.
 
 EXAMPLES
   console
-
   console --api-ws=ws://localhost:8080
-
   console --api-ipc=/path/to/server
 ----
 
@@ -130,7 +122,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core console
+lisk-core console
+----
+.Response
+----
 Entering Lisk REPL: type `Ctrl+C` or `.exit` to exit
 lisk-core >
 ----
@@ -142,20 +137,16 @@ Creates hash onions to be used by a generator.
 [source,bash]
 ----
 USAGE
-  $ lisk-core hash-onion [-o <value>] [-c <value>] [-d <value>] [--pretty]
+  $ lisk-core hash-onion
 
-FLAGS
-  -c, --count=<value>     [default: 1000000] Total number of hashes to produce
-  -d, --distance=<value>  [default: 1000] Distance between each hashes
-  -o, --output=<value>    Output file path
-  --pretty                Prints JSON in pretty format rather than condensed.
-
-DESCRIPTION
-  Create hash onions to be used by the generator.
+OPTIONS
+  -c, --count=count        [default: 1000000] Total number of hashes to produce
+  -d, --distance=distance  [default: 1000] Distance between each hash
+  -o, --output=output      Output file path
+  --pretty                 Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
   hash-onion --count=1000000 --distance=2000 --pretty
-
   hash-onion --count=1000000 --distance=2000 --output ~/my_onion.json
 ----
 
@@ -164,7 +155,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core hash-onion --count=10 --distance=2 --pretty 
+lisk-core hash-onion --count=10 --distance=2 --pretty
+----
+.Response
+----
 {
   "count": 10,
   "distance": 2,
@@ -186,56 +180,93 @@ Starts the blockchain node.
 [source,bash]
 ----
 USAGE
-  $ lisk-core start [-d <value>] [-n <value>] [-c <value>] [--overwrite-config] [-p <value>] [--api-ipc] [--api-ws] [--api-http] [--api-port <value>]
-    [--api-host <value>] [-l trace|debug|info|warn|error|fatal] [--seed-peers <value>] [--enable-forger-plugin] [--enable-monitor-plugin] [--monitor-plugin-port <value>]
-    [--monitor-plugin-whitelist <value>] [--enable-report-misbehavior-plugin] [--enable-faucet-plugin] [--faucet-plugin-port <value>] [--enable-dashboard-plugin]
-    [--dashboard-plugin-port <value>] [--enable-chain-connector-plugin]
+  $ lisk-core start
 
-FLAGS
-  -c, --config=<value>                File path to a custom config. Environment variable "LISK_CONFIG_FILE" can also be used.
-  -d, --data-path=<value>             Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  -l, --log=<option>                  Log level. Environment variable "LISK_LOG_LEVEL" can also be used.
-                                      <options: trace|debug|info|warn|error|fatal>
-  -n, --network=<value>               [default: default] Default network config to use. Environment variable "LISK_NETWORK" can also be used.
-  -p, --port=<value>                  Open port for the peer to peer incoming connections. Environment variable "LISK_PORT" can also be used.
-  --api-host=<value>                  Host to be used for api-client. Environment variable "LISK_API_HOST" can also be used.
-  --api-http                          Enable HTTP communication for api-client. Environment variable "LISK_API_HTTP" can also be used.
-  --api-ipc                           Enable IPC communication. This will load plugins as a child process and communicate over IPC. Environment variable "LISK_API_IPC"
-                                      can also be used.
-  --api-port=<value>                  Port to be used for api-client. Environment variable "LISK_API_PORT" can also be used.
-  --api-ws                            Enable websocket communication for api-client. Environment variable "LISK_API_WS" can also be used.
-  --dashboard-plugin-port=<value>     Port to be used for Dashboard Plugin. Environment variable "LISK_DASHBOARD_PLUGIN_PORT" can also be used.
-  --enable-chain-connector-plugin     Enable Chain Connector Plugin. Environment variable "LISK_ENABLE_CHAIN_CONNECTOR_PLUGIN" can also be used.
-  --enable-dashboard-plugin           Enable Dashboard Plugin. Environment variable "LISK_ENABLE_DASHBOARD_PLUGIN" can also be used.
-  --enable-faucet-plugin              Enable Faucet Plugin. Environment variable "LISK_ENABLE_FAUCET_PLUGIN" can also be used.
-  --enable-forger-plugin              Enable Forger Plugin. Environment variable "LISK_ENABLE_FORGER_PLUGIN" can also be used.
-  --enable-monitor-plugin             Enable Monitor Plugin. Environment variable "LISK_ENABLE_MONITOR_PLUGIN" can also be used.
-  --enable-report-misbehavior-plugin  Enable ReportMisbehavior Plugin. Environment variable "LISK_ENABLE_REPORT_MISBEHAVIOR_PLUGIN" can also be used.
-  --faucet-plugin-port=<value>        Port to be used for Faucet Plugin. Environment variable "LISK_FAUCET_PLUGIN_PORT" can also be used.
-  --monitor-plugin-port=<value>       Port to be used for Monitor Plugin. Environment variable "LISK_MONITOR_PLUGIN_PORT" can also be used.
-  --monitor-plugin-whitelist=<value>  List of IPs in comma separated value to allow the connection. Environment variable "LISK_MONITOR_PLUGIN_WHITELIST" can also be used.
-  --overwrite-config                  Overwrite network configs if they exist already
-  --seed-peers=<value>                Seed peers to initially connect to in format of comma separated "ip:port". IP can be DNS name or IPV4 format. Environment variable
-                                      "LISK_SEED_PEERS" can also be used.
+OPTIONS
+  -c, --config=config                                  File path to a custom config. Environment variable
+                                                       "LISK_CONFIG_FILE" can also be used.
 
-DESCRIPTION
-  Start Blockchain Node.
+  -d, --data-path=data-path                            Directory path to specify where node data is stored. Environment
+                                                       variable "LISK_DATA_PATH" can also be used.
+
+  -l, --log=trace|debug|info|warn|error|fatal          Log level. Environment variable "LISK_LOG_LEVEL" can also be
+                                                       used.
+
+  -n, --network=network                                [default: mainnet] Default network config to use. Environment
+                                                       variable "LISK_NETWORK" can also be used.
+
+  -p, --port=port                                      Open port for the peer to peer incoming connections. Environment
+                                                       variable "LISK_PORT" can also be used.
+
+  -u, --genesis-block-url=genesis-block-url            The URL to download the genesis block. Environment variable
+                                                       "LISK_GENESIS_BLOCK_URL" can also be used. Kindly ensure that the
+                                                       provided URL downloads the genesis block 'blob' in the tarball
+                                                       format.
+
+  --api-host=api-host                                  Host to be used for api-client. Environment variable
+                                                       "LISK_API_HOST" can also be used.
+
+  --api-http                                           Enable HTTP communication for api-client. Environment variable
+                                                       "LISK_API_HTTP" can also be used.
+
+  --api-ipc                                            Enable IPC communication. This will load plugins as a child
+                                                       process and communicate over IPC. Environment variable
+                                                       "LISK_API_IPC" can also be used.
+
+  --api-port=api-port                                  Port to be used for api-client. Environment variable
+                                                       "LISK_API_PORT" can also be used.
+
+  --api-ws                                             Enable websocket communication for api-client. Environment
+                                                       variable "LISK_API_WS" can also be used.
+
+  --dashboard-plugin-port=dashboard-plugin-port        Port to be used for Dashboard Plugin. Environment variable
+                                                       "LISK_DASHBOARD_PLUGIN_PORT" can also be used.
+
+  --enable-chain-connector-plugin                      Enable Chain Connector Plugin. Environment variable
+                                                       "LISK_ENABLE_CHAIN_CONNECTOR_PLUGIN" can also be used.
+
+  --enable-dashboard-plugin                            Enable Dashboard Plugin. Environment variable
+                                                       "LISK_ENABLE_DASHBOARD_PLUGIN" can also be used.
+
+  --enable-faucet-plugin                               Enable Faucet Plugin. Environment variable
+                                                       "LISK_ENABLE_FAUCET_PLUGIN" can also be used.
+
+  --enable-forger-plugin                               Enable Forger Plugin. Environment variable
+                                                       "LISK_ENABLE_FORGER_PLUGIN" can also be used.
+
+  --enable-monitor-plugin                              Enable Monitor Plugin. Environment variable
+                                                       "LISK_ENABLE_MONITOR_PLUGIN" can also be used.
+
+  --enable-report-misbehavior-plugin                   Enable ReportMisbehavior Plugin. Environment variable
+                                                       "LISK_ENABLE_REPORT_MISBEHAVIOR_PLUGIN" can also be used.
+
+  --faucet-plugin-port=faucet-plugin-port              Port to be used for Faucet Plugin. Environment variable
+                                                       "LISK_FAUCET_PLUGIN_PORT" can also be used.
+
+  --monitor-plugin-port=monitor-plugin-port            Port to be used for Monitor Plugin. Environment variable
+                                                       "LISK_MONITOR_PLUGIN_PORT" can also be used.
+
+  --monitor-plugin-whitelist=monitor-plugin-whitelist  List of IPs in comma separated value to allow the connection.
+                                                       Environment variable "LISK_MONITOR_PLUGIN_WHITELIST" can also be
+                                                       used.
+
+  --overwrite-config                                   Overwrite network configs if they exist already
+
+  --overwrite-genesis-block                            Download and overwrite existing genesis block. Environment
+                                                       variable "LISK_GENESIS_BLOCK_OVERWRITE" can also be used.
+
+  --seed-peers=seed-peers                              Seed peers to initially connect to in format of comma separated
+                                                       "ip:port". IP can be DNS name or IPV4 format. Environment
+                                                       variable "LISK_SEED_PEERS" can also be used.
 
 EXAMPLES
   start
-
   start --network devnet --data-path /path/to/data-dir --log debug
-
   start --network devnet --api-ws
-
   start --network devnet --api-ws --api-port 8888
-
   start --network devnet --port 9000
-
   start --network devnet --port 9002 --seed-peers 127.0.0.1:9001,127.0.0.1:9000
-
   start --network testnet --overwrite-config
-
   start --network testnet --config ~/my_custom_config.json
 ----
 
@@ -244,7 +275,15 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core start --network devnet --api-ws
+lisk-core start --network devnet --api-ws
+----
+.Response
+----
+Starting Lisk lisk-core at /Users/XYZ/.lisk/lisk-core
+Starting the app at /Users/XYZ/.lisk/lisk-core
+If you experience any type of error, please open an issue on Lisk GitHub: https://github.com/LiskHQ/lisk-sdk/issues
+Contribution guidelines can be found at Lisk-sdk: https://github.com/LiskHQ/lisk-sdk/blob/development/docs/CONTRIBUTING.md
+...
 ----
 ====
 
@@ -256,7 +295,7 @@ Commands relating to Lisk Core blocks.
 [source,bash]
 ----
 USAGE
-  $ lisk-core block COMMAND
+  $ lisk-core block
 
 COMMANDS
   block:get  Get block information for a given id or height.
@@ -268,21 +307,19 @@ Gets block information for a given id or height.
 [source,bash]
 ----
 USAGE
-  $ lisk-core block:get [INPUT] [-d <value>] [--pretty]
+  $ lisk-core block:get INPUT
 
 ARGUMENTS
   INPUT  Height in number or block id in hex format.
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  --pretty                 Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Get block information for a given id or height.
+  --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
   block:get e082e79d01016632c451c9df9276e486cb7f460dc793ff5b10d8f71eecec28b4
-
   block:get 2
 ----
 
@@ -291,7 +328,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core block:get 2 --pretty
+lisk-core block:get 2 --pretty
+----
+.Response
+----
 {
   "header": {
     "version": 2,
@@ -335,7 +375,7 @@ Commands relating to Lisk Core blockchain data.
 [source,bash]
 ----
 USAGE
-  $ lisk-core blockchain:COMMAND
+  $ lisk-core blockchain
 
 COMMANDS
   blockchain:download  Download snapshot from <URL>.
@@ -351,23 +391,21 @@ Download the snapshot from the given <URL>.
 [source,bash]
 ----
 USAGE
-  $ lisk-core blockchain:download [-n <value>] [-o <value>] [-u <value>]
+  $ lisk-core blockchain:download
 
-FLAGS
-  -n, --network=<value>  [default: mainnet] Default network config to use. Environment variable "LISK_NETWORK" can also be used.
-  -o, --output=<value>   Directory path to specify where snapshot is downloaded. By default outputs the files to current working directory.
-  -u, --url=<value>      The url to the snapshot.
+OPTIONS
+  -n, --network=network  [default: mainnet] Default network config to use. Environment variable "LISK_NETWORK" can also
+                         be used.
 
-DESCRIPTION
-  Download snapshot from <URL>.
+  -o, --output=output    Directory path to specify where snapshot is downloaded. By default outputs the files to current
+                         working directory.
+
+  -u, --url=url          The url to the snapshot.
 
 EXAMPLES
-  blockchain:download
-
-  blockchain:download --network betanet
-
-  blockchain:download --url https://snapshots.lisk.com/mainnet/blockchain.db.tar.gz --output ./downloads
-
+  download
+  download --network betanet
+  download --url https://snapshots.lisk.com/mainnet/blockchain.db.tar.gz --output ./downloads
 ----
 
 .Example 
@@ -375,7 +413,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core blockchain:download
+lisk-core blockchain:download
+----
+.Response
+----
 Downloading snapshot from https://snapshots.lisk.com/mainnet/blockchain.db.tar.gz to /Users/XYZ
 Downloaded to path: /Users/XYZ
 ----
@@ -388,18 +429,16 @@ Exports the blockchain's data to a file.
 [source,bash]
 ----
 USAGE
-  $ lisk-core blockchain:export [-d <value>] [-o <value>]
+  $ lisk-core blockchain:export
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  -o, --output=<value>     The output directory. Default will set to current working directory.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Export to <FILE>.
+  -o, --output=output        The output directory. Default will set to current working directory.
 
 EXAMPLES
   blockchain:export
-
   blockchain:export --data-path ./data --output ./my/path/
 ----
 
@@ -408,7 +447,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core blockchain:export
+lisk-core blockchain:export
+----
+.Response
+----
 Exporting blockchain:
    /Users/XYZ/.lisk/lisk-core/data
 Export completed:
@@ -422,17 +464,14 @@ Generates SHA256 hash from the blockchain\'s data.
 [source,bash]
 ----
 USAGE
-  $ lisk-core blockchain:hash [-d <value>]
+  $ lisk-core blockchain:hash
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-
-DESCRIPTION
-  Generate SHA256 hash from <PATH>.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
 EXAMPLES
   blockchain:hash
-
   blockchain:hash --data-path ./data
 ----
 
@@ -441,7 +480,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core blockchain:hash --data-path /Users/xyz/blockchain.db
+lisk-core blockchain:hash
+----
+.Response
+----
 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
 ----
 ====
@@ -452,23 +494,20 @@ Imports the blockchain's data from a file.
 [source,bash]
 ----
 USAGE
-  $ lisk-core blockchain:import [FILEPATH] [-d <value>] [-f]
+  $ lisk-core blockchain:import FILEPATH
 
 ARGUMENTS
   FILEPATH  Path to the gzipped blockchain data.
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  -f, --force              Delete and overwrite existing blockchain data
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Import from <FILE>.
+  -f, --force                Delete and overwrite existing blockchain data
 
 EXAMPLES
   blockchain:import ./path/to/blockchain.tar.gz
-
   blockchain:import ./path/to/blockchain.tar.gz --data-path ./lisk/
-
   blockchain:import ./path/to/blockchain.tar.gz --data-path ./lisk/ --force
 ----
 
@@ -477,7 +516,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core blockchain:import /Users/XYZ/blockchain.tar.gz --force
+lisk-core blockchain:import /Users/XYZ/blockchain.tar.gz --force
+----
+.Response
+----
 Importing blockchain from /Users/XYZ/blockchain.tar.gz
 Import completed.
    /Users/XYZ/.lisk/lisk-core
@@ -491,20 +533,17 @@ Resets the blockchain's data.
 [source,bash]
 ----
 USAGE
-  $ lisk-core blockchain:reset [-d <value>] [-y]
+  $ lisk-core blockchain:reset
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  -y, --yes                Skip confirmation prompt.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Reset the blockchain data.
+  -y, --yes                  Skip confirmation prompt.
 
 EXAMPLES
   blockchain:reset
-
   blockchain:reset --data-path ./lisk
-
   blockchain:reset --yes
 ----
 
@@ -513,7 +552,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core blockchain:reset
+lisk-core blockchain:reset
+----
+.Response
+----
 ? Are you sure you want to reset the db? yes
 Blockchain data has been reset.
 ----
@@ -525,7 +567,7 @@ Commands relating to the configuration of the blockchain client.
 [source,bash]
 ----
 USAGE
-  $ lisk-core config:COMMAND
+ $ lisk-core config
 
 COMMANDS
   config:create  Creates network configuration file.
@@ -539,21 +581,18 @@ Creates a configuration file for the blockchain application.
 [source,bash]
 ----
 USAGE
-  $ lisk-core config:create -i <value> [-o <value>] [-l <value>]
+  $ lisk-core config:create
 
-FLAGS
-  -i, --chain-id=<value>  (required) ChainID in hex format. For example, Lisk mainnet mainchain is 00000000
-  -l, --label=<value>     [default: beta-sdk-app] App Label
-  -o, --output=<value>    [default: /home/lisk/workspace/lisk-core-publish_development/lisk-core] Directory where the config file is saved
+OPTIONS
+  -i, --chain-id=chain-id  (required) ChainID in hex format. For example, Lisk mainnet mainchain is 00000000
+  -l, --label=label        [default: beta-sdk-app] App Label
 
-DESCRIPTION
-  Creates network configuration file.
+  -o, --output=output      [default: /Users/sameer/Documents/Lisk/github/lisk-core] Directory where the config file is
+                           saved
 
 EXAMPLES
   config:create --output mydir
-
   config:create --output mydir --label beta-sdk-app
-
   config:create --output mydir --label beta-sdk-app --community-identifier sdk
 ----
 
@@ -562,10 +601,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core config:create --output /Users/XYZ --chain-id 04000000
+lisk-core config:create --chain-id 04000000
 ----
-====
 
+====
 
 ==== config:show
 Shows the application's config.
@@ -573,21 +612,19 @@ Shows the application's config.
 [source,bash]
 ----
 USAGE
-  $ lisk-core config:show [-d <value>] [-c <value>] [--pretty]
+  $ lisk-core config:show
 
-FLAGS
-  -c, --config=<value>     File path to a custom config. Environment variable "LISK_CONFIG_FILE" can also be used.
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  --pretty                 Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -c, --config=config        File path to a custom config. Environment variable "LISK_CONFIG_FILE" can also be used.
 
-DESCRIPTION
-  Show application config.
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
+
+  --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
   config:show
-
   config:show --pretty
-
   config:show --config ./custom-config.json --data-path ./data
 ----
 
@@ -596,7 +633,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core config:show --pretty
+lisk-core config:show --pretty
+----
+.Response
+----
 {
   "system": {
     "dataPath": "/Users/XYZ/.lisk/lisk-core",
@@ -672,7 +712,7 @@ Commands relating to invoking and listing the endpoints.
 [source,bash]
 ----
 USAGE
-  $ lisk-core endpoint:COMMAND
+  $ lisk-core endpoint
 
 COMMANDS
   endpoint:invoke  Invokes the provided endpoint.
@@ -685,29 +725,25 @@ Invokes the provided endpoint.
 [source,bash]
 ----
 USAGE
-  $ lisk-core endpoint:invoke [ENDPOINT] [PARAMS] [-d <value>] [--pretty] [-f <value>]
+  $ lisk-core endpoint:invoke ENDPOINT [PARAMS]
 
 ARGUMENTS
   ENDPOINT  Endpoint to invoke
   PARAMS    Endpoint parameters (Optional)
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  -f, --file=<value>       Input file.
-  --pretty                 Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Invokes the provided endpoint.
+  -f, --file=file            Input file.
+
+  --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
   endpoint:invoke {endpoint} {parameters}
-
   endpoint:invoke --data-path --file
-
   endpoint:invoke generator_getAllKeys
-
   endpoint:invoke consensus_getBFTParameters '{"height": 2}' -d ~/.lisk/pos-mainchain --pretty
-
   endpoint:invoke consensus_getBFTParameters -f ./input.json
 ----
 
@@ -716,7 +752,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core endpoint:invoke system_getNodeInfo --pretty
+lisk-core endpoint:invoke system_getNodeInfo --pretty
+----
+.Response
+----
 {
   "version": "4.0.0-alpha.18",
   "networkVersion": "1.0",
@@ -750,35 +789,29 @@ Returns the list of all the module endpoints
 [source,bash]
 ----
 USAGE
-  $ lisk-core endpoint:list [ENDPOINT] [-d <value>] [--pretty] [-m <value>] [-i]
+  $ lisk-core endpoint:list [ENDPOINT]
 
 ARGUMENTS
   ENDPOINT  Endpoint name (Optional)
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  -i, --info               Prints additional info; Request and Response objects.
-  -m, --module=<value>     Parent module.
-  --pretty                 Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Lists registered endpoints.
+  -i, --info                 Prints additional info; Request and Response objects.
+
+  -m, --module=module        Parent module.
+
+  --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
   endpoint:list
-
   endpoint:list {endpoint} -m {module}
-
   endpoint:list {endpoint} -m {module} -i
-
   endpoint:list -m validator
-
   endopint:list getBalance
-
   endpoint:list get -m token
-
   endpoint:list getBalances -m token -i --pretty
-
   endpoint:list getBalances -m token -d ~/.lisk/pos-mainchain
 ----
 
@@ -787,7 +820,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core endpoint:list --pretty
+lisk-core endpoint:list --pretty
+----
+.Response
+----
 [
   "auth_getAuthAccount",
   "auth_isValidNonce",
@@ -848,7 +884,7 @@ Commands relating to the block generation and generator-info of a blockchain.
 [source,bash]
 ----
 USAGE
-  $ lisk-core generator:COMMAND
+  $ lisk-core generator
 
 COMMANDS
   generator:disable  Disable block generation for given validator address.
@@ -864,26 +900,25 @@ Disables block generation for a given generator's address.
 [source,bash]
 ----
 USAGE
-  $ lisk-core generator:disable [ADDRESS] [-d <value>] [--pretty] [-w <value>]
+  $ lisk-core generator:disable ADDRESS
 
 ARGUMENTS
   ADDRESS  Address of an account in a lisk32 format.
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  -w, --password=<value>   Specifies a source for your secret password. Command will prompt you for input if this option is not set.
-                           	Examples:
-                           	- --password=pass:password123 (should only be used where security is not important)
-  --pretty                 Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Disable block generation for given validator address.
+  -w, --password=password    Specifies a source for your secret password. Command will prompt you for input if this
+                             option is not set.
+                             Examples:
+                             - --password=pass:password123 (should only be used where security is not important)
+
+  --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
   generator:disable lskycz7hvr8yfu74bcwxy2n4mopfmjancgdvxq8xz
-
   generator:disable lskycz7hvr8yfu74bcwxy2n4mopfmjancgdvxq8xz --data-path ./data
-
   generator:disable lskycz7hvr8yfu74bcwxy2n4mopfmjancgdvxq8xz --data-path ./data --password your_password
 ----
 
@@ -893,6 +928,9 @@ EXAMPLES
 [source,bash]
 ----
 $ lisk-core generator:disable lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3
+----
+.Response
+----
 ? Enter password to decrypt the encrypted passphrase:  ********
 
 Disabled block generation for lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3
@@ -905,34 +943,39 @@ Enables block generation for a given generator\'s address.
 [source,bash]
 ----
 USAGE
-  $ lisk-core generator:enable [ADDRESS] [-d <value>] [--pretty] [-w <value>] [--height <value>] [--max-height-generated <value>] [--max-height-prevoted <value>]
-    [--use-status-value]
+  $ lisk-core generator:enable ADDRESS
 
 ARGUMENTS
   ADDRESS  Address of an account in a lisk32 format.
 
-FLAGS
-  -d, --data-path=<value>         Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  -w, --password=<value>          Specifies a source for your secret password. Command will prompt you for input if this option is not set.
-                                  	Examples:
-                                  	- --password=pass:password123 (should only be used where security is not important)
-  --height=<value>                Last generated block height.
-  --max-height-generated=<value>  Validator's largest previously generated height.
-  --max-height-prevoted=<value>   Validator's largest prevoted height for a block.
-  --pretty                        Prints JSON in pretty format rather than condensed.
-  --use-status-value              Use status value from the connected node
+OPTIONS
+  -d, --data-path=data-path                    Directory path to specify where node data is stored. Environment variable
+                                               "LISK_DATA_PATH" can also be used.
 
-DESCRIPTION
-  Enable block generation for given validator address.
+  -w, --password=password                      Specifies a source for your secret password. Command will prompt you for
+                                               input if this option is not set.
+                                               Examples:
+                                               - --password=pass:password123 (should only be used where security is not
+                                               important)
+
+  --height=height                              Last generated block height.
+
+  --max-height-generated=max-height-generated  Validator's largest previously generated height.
+
+  --max-height-prevoted=max-height-prevoted    Validator's largest prevoted height for a block.
+
+  --pretty                                     Prints JSON in pretty format rather than condensed.
+
+  --use-status-value                           Use status value from the connected node
 
 EXAMPLES
   generator:enable lsk24cd35u4jdq8szo3pnsqe5dsxwrnazyqqqg5eu --use-status-value
-
-  generator:enable lsk24cd35u4jdq8szo3pnsqe5dsxwrnazyqqqg5eu --height=100 --max-height-generated=30 --max-height-prevoted=10
-
-  generator:enable lsk24cd35u4jdq8szo3pnsqe5dsxwrnazyqqqg5eu --height=100 --max-height-generated=30 --max-height-prevoted=10 --data-path ./data
-
-  generator:enable lsk24cd35u4jdq8szo3pnsqe5dsxwrnazyqqqg5eu --height=100 --max-height-generated=30 --max-height-prevoted=10 --data-path ./data --password your_password
+  generator:enable lsk24cd35u4jdq8szo3pnsqe5dsxwrnazyqqqg5eu --height=100 --max-height-generated=30
+  --max-height-prevoted=10
+  generator:enable lsk24cd35u4jdq8szo3pnsqe5dsxwrnazyqqqg5eu --height=100 --max-height-generated=30
+  --max-height-prevoted=10 --data-path ./data
+  generator:enable lsk24cd35u4jdq8szo3pnsqe5dsxwrnazyqqqg5eu --height=100 --max-height-generated=30
+  --max-height-prevoted=10 --data-path ./data --password your_password
 ----
 
 .Example
@@ -940,8 +983,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core generator:enable lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3 --use-status-value
-
+lisk-core generator:enable lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3 --use-status-value
+----
+.Response
+----
  Current block generation status for validator account lskqaxxmj78frvgpjgwvf4yqjjkcrr9yhn2sxxwm3 is:
 {"height":14814092,"maxHeightPrevoted":14814017,"maxHeightGenerated":14814025}
 ? Do you want to use the above values to enable block generation? yes
@@ -959,20 +1004,20 @@ Exports generator's data to a file.
 [source,bash]
 ----
 USAGE
-  $ lisk-core generator:export [-d <value>] [--pretty] [-o <value>]
+  $ lisk-core generator:export
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  -o, --output=<value>     The output directory. Default will set to current working directory.
-  --pretty                 Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Export to <FILE>.
+  -o, --output=output        The output directory. Default will set to current working directory.
+
+  --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
-  generator:export --output /mypath/genInfo.json
-
-  generator:export --output /mypath/genInfo.json --data-path ./data
+  generator:export
+  generator:export --output /mypath/generator_info.json
+  generator:export --output /mypath/generator_info.json --data-path ./data
 ----
 
 .Example 
@@ -980,7 +1025,11 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core generator:export --output /Users/XYZ/genInfo.json
+lisk-core generator:export --output /Users/XYZ/genInfo.json
+----
+.Response
+----
+Generator info is exported to /Users/XYZ/genInfo.json
 ----
 ====
 
@@ -990,19 +1039,18 @@ Imports generator's data from a file.
 [source,bash]
 ----
 USAGE
-  $ lisk-core generator:import -f <value> [-d <value>] [--pretty]
+  $ lisk-core generator:import
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  -f, --file-path=<value>  (required) Path of the file to import from
-  --pretty                 Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Import from <FILE>.
+  -f, --file-path=file-path  (required) Path of the file to import from
+
+  --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
   generator:import --file-path ./my/path/genInfo.json
-
   generator:import --file-path ./my/path/genInfo.json --data-path ./data
 ----
 
@@ -1011,8 +1059,9 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$./bin/run generator:import --file-path /Users/XYZ/genInfo.json
+lisk-core generator:import --file-path /Users/XYZ/genInfo.json
 ----
+
 ====
 
 ==== generator:status
@@ -1021,18 +1070,16 @@ Gets block generation information for the locally running node.
 [source,bash]
 ----
 USAGE
-  $ lisk-core generator:status [-d <value>] [--pretty]
+  $ lisk-core generator:status
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  --pretty                 Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Get forging information for the locally running node.
+  --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
   generator:status
-
   generator:status --data-path ./sample --pretty
 ----
 
@@ -1041,7 +1088,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core generator:status --pretty
+lisk-core generator:status --pretty
+----
+.Response
+----
 {
   "info": {
     "status":
@@ -1064,7 +1114,7 @@ Commands relating to the genesis block.
 [source,bash]
 ----
 USAGE
-  $ lisk-core genesis-block COMMAND
+  $ lisk-core genesis-block
 
 COMMANDS
   genesis-block:create    Creates genesis block file.
@@ -1077,21 +1127,32 @@ Creates a genesis block file and the corresponding generator\'s configuration da
 [source,bash]
 ----
 USAGE
-  $ lisk-core genesis-block:create -f <value> [-n <value>] [-c <value>] [-o <value>]
+  $ lisk-core genesis-block:create
 
-FLAGS
-  -c, --config=<value>       File path to a custom config. Environment variable "LISK_CONFIG_FILE" can also be used.
-  -f, --assets-file=<value>  (required) Path to file which contains genesis block asset in JSON format
-  -n, --network=<value>      [default: default] Default network config to use. Environment variable "LISK_NETWORK" can also be used.
-  -o, --output=<value>       [default: config] Output folder path of the generated genesis block
+OPTIONS
+  -c, --config=config                        File path to a custom config. Environment variable "LISK_CONFIG_FILE" can
+                                             also be used.
 
-DESCRIPTION
-  Creates genesis block file.
+  -f, --assets-file=assets-file              (required) Path to file which contains genesis block asset in JSON format
+
+  -h, --height=height                        Genesis block height
+
+  -n, --network=network                      [default: default] Default network config to use. Environment variable
+                                             "LISK_NETWORK" can also be used.
+
+  -o, --output=output                        [default: config] Output folder path of the generated genesis block
+
+  -p, --previous-block-id=previous-block-id  Previous block id
+
+  -t, --timestamp=timestamp                  Timestamp
+
+  --export-json                              Export genesis block as JSON format along with blob
 
 EXAMPLES
   genesis-block:create --output mydir
-
   genesis-block:create --output mydir --assets-file ./assets.json
+  genesis-block:create --output mydir --assets-file ./assets.json --height 2 --timestamp 1592924699 --previous-block-id
+  085d7c9b7bddc8052be9eefe185f407682a495f1b4498677df1480026b74f2e9
 ----
 
 .Example 
@@ -1099,7 +1160,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core genesis-block:create --assets-file genesis_assets.json --output ./devnet
+lisk-core genesis-block:create --assets-file genesis_assets.json --output ./devnet
+----
+.Response
+----
 2023-04-07T16:47:08.874Z INFO XYZ.local application 55996 Registered and initialized fee module
 2023-04-07T16:47:08.875Z INFO XYZ.local application 55996 Registered and initialized auth module
 2023-04-07T16:47:08.875Z INFO XYZ.local application 55996 Registered auth module has command registerMultisignature
@@ -1139,25 +1203,21 @@ Download genesis block.
 [source,bash]
 ----
 USAGE
-  $ lisk-core genesis-block:download [-d <value>] [-n <value>] [-u <value>] [-f]
+  $ lisk-core genesis-block:download
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored.
-                           Environment variable "LISK_DATA_PATH" can also be
-                           used.
-  -f, --force              Delete and overwrite existing blockchain data
-  -n, --network=<value>    Default network config to use. Environment variable
-                           "LISK_NETWORK" can also be used.
-  -u, --url=<value>        The url to the genesis block.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Download genesis block.
+  -f, --force                Delete and overwrite existing genesis block.
+
+  -n, --network=network      Default network config to use. Environment variable "LISK_NETWORK" can also be used.
+
+  -u, --url=url              The url to download the genesis block from.
 
 EXAMPLES
   genesis-block:download --network mainnet -f
-
   genesis-block:download --network --data-path ./lisk/
-
   genesis-block:download --url http://mydomain.com/genesis_block.blob.tar.gz --data-path ./lisk/ --force
 ----
 
@@ -1166,7 +1226,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core genesis-block:download --network mainnet -f
+lisk-core genesis-block:download --network mainnet -f
+----
+.Response
+----
 Downloading genesis block from https://downloads.lisk.com/lisk/mainnet/genesis_block.blob.tar.gz
 Downloaded to path: /Users/XYZ/.lisk/lisk-core/config/mainnet/genesis_block.blob.tar.gz.
 Verified checksum: a69fe85969ce8727b6490a07ced612bbc36a5c377a54f2b6fab58c058d1663b5.
@@ -1184,7 +1247,7 @@ Return keys corresponding to the given passphrase.
 [source,bash]
 ----
 USAGE
-  $ lisk-core keys:COMMAND
+  $ lisk-core keys
 
 COMMANDS
   keys:create   Return keys corresponding to the given passphrase.
@@ -1201,40 +1264,38 @@ Return keys corresponding to the given passphrase.
 [source,bash]
 ----
 USAGE
-  $ lisk-core keys:create [-o <value>] [-p <value>] [-n] [-w <value>] [-c <value>] [-f <value>] [-i <value>]
+  $ lisk-core keys:create
 
-FLAGS
-  -c, --count=<value>       [default: 1] Number of keys to create
-  -f, --offset=<value>      Offset for the key derivation path
-  -i, --chainid=<value>     Chain id
-  -n, --no-encrypt          No encrypted message object to be created
-  -o, --output=<value>      The output directory. Default will set to current working directory.
-  -p, --passphrase=<value>  Specifies a source for your secret passphrase. Command will prompt you for input if this option is not set.
-                            	Examples:
-                            	- --passphrase='my secret passphrase' (should only be used where security is not important)
-  -w, --password=<value>    Specifies a source for your secret password. Command will prompt you for input if this option is not set.
-                            	Examples:
-                            	- --password=pass:password123 (should only be used where security is not important)
+OPTIONS
+  -c, --count=count            [default: 1] Number of keys to create
+  -f, --offset=offset          [default: 0] Offset for the key derivation path
+  -i, --chainid=chainid        [default: 0] Chain id
+  -n, --no-encrypt             No encrypted message object to be created
+  -o, --output=output          The output directory. Default will set to current working directory.
 
-DESCRIPTION
-  Return keys corresponding to the given passphrase.
+  -p, --passphrase=passphrase  Specifies a source for your secret passphrase. Command will prompt you for input if this
+                               option is not set.
+                               Examples:
+                               - --passphrase='my secret passphrase' (should only be used where security is not
+                               important)
+
+  -w, --password=password      Specifies a source for your secret password. Command will prompt you for input if this
+                               option is not set.
+                               Examples:
+                               - --password=pass:password123 (should only be used where security is not important)
+
+  --add-legacy                 Add legacy key derivation path to the result
 
 EXAMPLES
   keys:create
-
   keys:create --passphrase your-passphrase
-
   keys:create --passphrase your-passphrase --no-encrypt
-
   keys:create --passphrase your-passphrase --password your-password
-
   keys:create --passphrase your-passphrase --password your-password --count 2
-
   keys:create --passphrase your-passphrase --no-encrypt --count 2 --offset 1
-
   keys:create --passphrase your-passphrase --no-encrypt --count 2 --offset 1 --chainid 1
-
-  keys:create --passphrase your-passphrase --password your-password --count 2 --offset 1 --chainid 1 --output /mypath/keys.json
+  keys:create --passphrase your-passphrase --password your-password --count 2 --offset 1 --chainid 1 --output
+  /mypath/keys.json
 ----
 
 .Example 
@@ -1242,7 +1303,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core keys:create
+lisk-core keys:create
+----
+.Response
+----
 ? Please enter passphrase:  [hidden]
 ? Please re-enter passphrase:  [hidden]
 Warning: Passphrase contains 24 words instead of expected 12. Passphrase contains 23 whitespaces instead of expected 11.
@@ -1294,20 +1358,18 @@ Encrypt keys from a file and overwrite the file.
 [source,bash]
 ----
 USAGE
-  $ lisk-core keys:encrypt -f <value> [-w <value>]
+  $ lisk-core keys:encrypt
 
-FLAGS
-  -f, --file-path=<value>  (required) Path of the file to encrypt from
-  -w, --password=<value>   Specifies a source for your secret password. Command will prompt you for input if this option is not set.
-                           	Examples:
-                           	- --password=pass:password123 (should only be used where security is not important)
+OPTIONS
+  -f, --file-path=file-path  (required) Path of the file to encrypt from
 
-DESCRIPTION
-  Encrypt keys from a file and overwrite the file
+  -w, --password=password    Specifies a source for your secret password. Command will prompt you for input if this
+                             option is not set.
+                             Examples:
+                             - --password=pass:password123 (should only be used where security is not important)
 
 EXAMPLES
   keys:encrypt --file-path ./my/path/keys.json
-
   keys:encrypt --file-path ./my/path/keys.json --password mypass
 ----
 
@@ -1317,7 +1379,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core keys:encrypt --file-path ./my/path/keys.json --password mypass
+lisk-core keys:encrypt --file-path ./my/path/keys.json --password mypass
+----
+.Response
+----
 {
   "keys": [
       {
@@ -1357,27 +1422,24 @@ $ lisk-core keys:encrypt --file-path ./my/path/keys.json --password mypass
 ----
 ====
 
-
-
 ==== keys:export
 Export keys to a file.
 
 [source,bash]
 ----
 USAGE
-  $ lisk-core keys:export -o <value> [-d <value>] [--pretty]
+  $ lisk-core keys:export
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  -o, --output=<value>     (required) The output directory. Default will set to current working directory.
-  --pretty                 Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Export to <FILE>.
+  -o, --output=output        (required) The output directory. Default will set to current working directory.
+
+  --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
   keys:export --output /mypath/keys.json
-
   keys:export --output /mypath/keys.json --data-path ./data
 ----
 
@@ -1386,8 +1448,9 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core keys:export --output ~/mypath/mykeys.json
+lisk-core keys:export --output ~/mypath/mykeys.json
 ----
+
 ====
 
 ==== keys:import
@@ -1396,19 +1459,18 @@ Import keys from a file.
 [source,bash]
 ----
 USAGE
-  $ lisk-core keys:import -f <value> [-d <value>] [--pretty]
+  $ lisk-core keys:import
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  -f, --file-path=<value>  (required) Path of the file to import from
-  --pretty                 Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Import from <FILE>.
+  -f, --file-path=file-path  (required) Path of the file to import from
+
+  --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
   keys:import --file-path ./my/path/keys.json
-
   keys:import --file-path ./my/path/keys.json --data-path ./data
 ----
 
@@ -1417,8 +1479,9 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core keys:import --file-path ~/mykeys.json
+lisk-core keys:import --file-path ~/mykeys.json
 ----
+
 ====
 
 === system
@@ -1427,7 +1490,7 @@ Commands relating to a Lisk Core node.
 [source,bash]
 ----
 USAGE
-  $ lisk-core system:COMMAND
+  $ lisk-core system
 
 COMMANDS
   system:node-info      Get node information from a running application.
@@ -1440,18 +1503,16 @@ Gets a node's information from a running Lisk application.
 [source,bash]
 ----
 USAGE
-  $ lisk-core system:node-info [-d <value>] [--pretty]
+  $ lisk-core system:node-info
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  --pretty                 Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Get node information from a running application.
+  --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
   system:node-info
-
   system:node-info --data-path ./lisk
 ----
 
@@ -1460,7 +1521,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core system:node-info --pretty
+lisk-core system:node-info --pretty
+----
+.Response
+----
 {
   "version": "4.0.0-alpha.18",
   "networkVersion": "1.0",
@@ -1494,18 +1558,16 @@ Gets a node's metadata from a running Lisk application.
 [source,bash]
 ----
 USAGE
-  $ lisk-core system:metadata [-d <value>] [--pretty]
+  $ lisk-core system:metadata
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  --pretty                 Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Get node metadata from a running application.
+  --pretty                   Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
   system:metadata
-
   system:metadata --data-path ./lisk
 ----
 
@@ -1514,7 +1576,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core system:metadata --pretty
+lisk-core system:metadata --pretty
+----
+.Response
+----
 {
   "modules": [
     {
@@ -7609,7 +7674,7 @@ Commands relating to Lisk Core passphrases.
 [source,bash]
 ----
 USAGE
-  $ lisk-core passphrase:COMMAND
+  $ lisk-core passphrase
 
 COMMANDS
   passphrase:create   Returns a randomly generated 24 words mnemonic passphrase.
@@ -7623,17 +7688,13 @@ Decrypts the secret passphrase using the password provided at the time of encryp
 [source,bash]
 ----
 USAGE
-  $ lisk-core passphrase:create [-o <value>]
+  $ lisk-core passphrase:create
 
-FLAGS
-  -o, --output=<value>  The output directory. Default will set to current working directory.
-
-DESCRIPTION
-  Returns a randomly generated 24 words mnemonic passphrase.
+OPTIONS
+  -o, --output=output  The output directory. Default will set to current working directory.
 
 EXAMPLES
   passphrase:create
-
   passphrase:create --output /mypath/passphrase.json
 ----
 
@@ -7642,7 +7703,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core passphrase:create
+lisk-core passphrase:create
+----
+.Response
+----
 {
   "passphrase": "lava empower laundry taxi believe cute boss stairs bicycle vivid dirt vendor accuse identify general run knock medal chief space remain flush extra bike"
 }
@@ -7655,20 +7719,18 @@ Decrypts the secret passphrase using the password provided at the time of encryp
 [source,bash]
 ----
 USAGE
-  $ lisk-core passphrase:decrypt -f <value> [-w <value>]
+  $ lisk-core passphrase:decrypt
 
-FLAGS
-  -f, --file-path=<value>  (required) Path of the file to import from
-  -w, --password=<value>   Specifies a source for your secret password. Command will prompt you for input if this option is not set.
-                           	Examples:
-                           	- --password=pass:password123 (should only be used where security is not important)
+OPTIONS
+  -f, --file-path=file-path  (required) Path of the file to import from
 
-DESCRIPTION
-  Decrypt secret passphrase using the password provided at the time of encryption.
+  -w, --password=password    Specifies a source for your secret password. Command will prompt you for input if this
+                             option is not set.
+                             Examples:
+                             - --password=pass:password123 (should only be used where security is not important)
 
 EXAMPLES
   passphrase:decrypt --file-path ./my/path/output.json
-
   passphrase:decrypt --file-path ./my/path/output.json --password your-password
 ----
 
@@ -7677,7 +7739,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core passphrase:decrypt --file-path ./my/path/keys.json
+lisk-core passphrase:decrypt --file-path ./my/path/keys.json
+----
+.Response
+----
 ? Please enter password:  [hidden]
 ? Please re-enter password:  [hidden]
 {"passphrase":"my secret passphrase"}
@@ -7690,30 +7755,30 @@ Encrypts the secret passphrase using a password.
 [source,bash]
 ----
 USAGE
-  $ lisk-core passphrase:encrypt [-w <value>] [-p <value>] [--output-public-key] [-o <value>]
+  $ lisk-core passphrase:encrypt
 
-FLAGS
-  -o, --output=<value>      The output directory. Default will set to current working directory.
-  -p, --passphrase=<value>  Specifies a source for your secret passphrase. Command will prompt you for input if this option is not set.
-                            	Examples:
-                            	- --passphrase='my secret passphrase' (should only be used where security is not important)
-  -w, --password=<value>    Specifies a source for your secret password. Command will prompt you for input if this option is not set.
-                            	Examples:
-                            	- --password=pass:password123 (should only be used where security is not important)
-  --output-public-key       Includes the public key in the output. This option is provided for the convenience of node operators.
+OPTIONS
+  -o, --output=output          The output directory. Default will set to current working directory.
 
-DESCRIPTION
-  Encrypt secret passphrase using password.
+  -p, --passphrase=passphrase  Specifies a source for your secret passphrase. Command will prompt you for input if this
+                               option is not set.
+                               Examples:
+                               - --passphrase='my secret passphrase' (should only be used where security is not
+                               important)
+
+  -w, --password=password      Specifies a source for your secret password. Command will prompt you for input if this
+                               option is not set.
+                               Examples:
+                               - --password=pass:password123 (should only be used where security is not important)
+
+  --output-public-key          Includes the public key in the output. This option is provided for the convenience of
+                               node operators.
 
 EXAMPLES
   passphrase:encrypt
-
   passphrase:encrypt --passphrase your-passphrase --output /mypath/keys.json
-
   passphrase:encrypt --password your-password
-
   passphrase:encrypt --password your-password --passphrase your-passphrase --output /mypath/keys.json
-
   passphrase:encrypt --output-public-key --output /mypath/keys.json
 ----
 
@@ -7722,7 +7787,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core passphrase:encrypt -p 'my secret passphrase'
+lisk-core passphrase:encrypt -p 'my secret passphrase'
+----
+.Response
+----
 ? Please enter password:  [hidden]
 ? Please re-enter password:  [hidden]
 {
@@ -7754,7 +7822,7 @@ Commands relating to Lisk SDK development.
 [source,bash]
 ----
 USAGE
-  $ lisk-core sdk:COMMAND
+  $ lisk-core sdk
 
 COMMANDS
   sdk:link  Symlink specific SDK folder during development.
@@ -7766,15 +7834,12 @@ Creates a symbolic link to the specified SDK folder during development.
 [source,bash]
 ----
 USAGE
-  $ lisk-core sdk:link [TARGETSDKFOLDER]
+  $ lisk-core sdk:link TARGETSDKFOLDER
 
 ARGUMENTS
   TARGETSDKFOLDER  The path to the lisk SDK folder
 
-DESCRIPTION
-  Symlink specific SDK folder during development.
-
-EXAMPLES
+EXAMPLE
   sdk:link /path/to/lisk-sdk/sdk
 ----
 
@@ -7783,7 +7848,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core sdk:link ~/XYZ/Documents/GitHub/lisk-sdk
+lisk-core sdk:link ~/XYZ/Documents/GitHub/lisk-sdk
+----
+.Response
+----
 Linked /Users/XYZ/Documents/GitHub/lisk-sdk to /lisk-sdk.
 ----
 ====
@@ -7794,7 +7862,7 @@ Commands relating to Lisk Core transactions.
 [source,bash]
 ----
 USAGE
-  $ lisk-core transaction:COMMAND
+  $ lisk-core transaction
 
 COMMANDS
   transaction:create  Create transaction which can be broadcasted to the network. Note: fee and amount should be in Beddows!!
@@ -7811,46 +7879,59 @@ NOTE: The fee and amount are expected in Beddows!
 [source,bash]
 ----
 USAGE
-  $ lisk-core transaction:create [MODULE] [COMMAND] [FEE] [-p <value>] [-a <value>] [-j] [--offline] [--send] [--no-signature] [--chain-id <value>] [--nonce <value>] [-s
-    <value>] [-d <value>] [-k <value>] [--pretty] [-f <value>]
+  $ lisk-core transaction:create MODULE COMMAND FEE
 
 ARGUMENTS
   MODULE   Registered transaction module.
   COMMAND  Registered transaction command.
   FEE      Transaction fee in Beddows.
 
-FLAGS
-  -a, --params=<value>               Creates transaction with specific params information
-  -d, --data-path=<value>            Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  -f, --file=<value>                 The file to upload.
-                                     	Example:
-                                     		--file=./myfile.json
-  -j, --json                         Print the transaction in JSON format.
-  -k, --key-derivation-path=<value>  [default: m/44'/134'/0'] Key derivation path to use to derive keypair from passphrase
-  -p, --passphrase=<value>           Specifies a source for your secret passphrase. Command will prompt you for input if this option is not set.
-                                     	Examples:
-                                     	- --passphrase='my secret passphrase' (should only be used where security is not important)
-  -s, --sender-public-key=<value>    Set a custom senderPublicKey property for the transaction, to be used when account address does not correspond to signer's private
-                                     key
-  --chain-id=<value>
-  --no-signature                     Creates the transaction without a signature. Your passphrase will therefore not be required
-  --nonce=<value>                    Nonce of the transaction.
-  --offline                          Specify whether to connect to a local node or not.
-  --pretty                           Prints JSON in pretty format rather than condensed.
-  --send                             Create and immediately send transaction to a node
+OPTIONS
+  -a, --params=params                            Creates transaction with specific params information
 
-DESCRIPTION
-  Create transaction which can be broadcasted to the network. Note: fee and amount should be in Beddows!!
+  -d, --data-path=data-path                      Directory path to specify where node data is stored. Environment
+                                                 variable "LISK_DATA_PATH" can also be used.
+
+  -f, --file=file                                The file to upload.
+                                                 Example:
+                                                 --file=./myfile.json
+
+  -j, --json                                     Print the transaction in JSON format.
+
+  -k, --key-derivation-path=key-derivation-path  [default: m/44'/134'/0'] Key derivation path to use to derive keypair
+                                                 from passphrase
+
+  -p, --passphrase=passphrase                    Specifies a source for your secret passphrase. Command will prompt you
+                                                 for input if this option is not set.
+                                                 Examples:
+                                                 - --passphrase='my secret passphrase' (should only be used where
+                                                 security is not important)
+
+  -s, --sender-public-key=sender-public-key      Set a custom senderPublicKey property for the transaction, to be used
+                                                 when account address does not correspond to signer's private key
+
+  --chain-id=chain-id
+
+  --no-signature                                 Creates the transaction without a signature. Your passphrase will
+                                                 therefore not be required
+
+  --nonce=nonce                                  Nonce of the transaction.
+
+  --offline                                      Specify whether to connect to a local node or not.
+
+  --pretty                                       Prints JSON in pretty format rather than condensed.
+
+  --send                                         Create and immediately send transaction to a node
 
 EXAMPLES
-  transaction:create token transfer 100000000 --params='{"amount":100000000,"recipientAddress":"lskycz7hvr8yfu74bcwxy2n4mopfmjancgdvxq8xz","data":"send token"}'
-
-  transaction:create token transfer 100000000 --params='{"amount":100000000,"recipientAddress":"lskycz7hvr8yfu74bcwxy2n4mopfmjancgdvxq8xz","data":"send token"}' --json
-
-  transaction:create token transfer 100000000 --offline --network mainnet --chain-id 10000000 --nonce 1 --params='{"amount":100000000,"recipientAddress":"lskycz7hvr8yfu74bcwxy2n4mopfmjancgdvxq8xz","data":"send token"}'
-
+  transaction:create token transfer 100000000 --params='{"amount":100000000,"tokenID":"0400000000000000","recipientAddre
+  ss":"lskycz7hvr8yfu74bcwxy2n4mopfmjancgdvxq8xz","data":"send token"}'
+  transaction:create token transfer 100000000 --params='{"amount":100000000,"tokenID":"0400000000000000","recipientAddre
+  ss":"lskycz7hvr8yfu74bcwxy2n4mopfmjancgdvxq8xz","data":"send token"}' --json
+  transaction:create token transfer 100000000 --offline --network mainnet --chain-id 10000000 --nonce 1 --params='{"amou
+  nt":100000000,"tokenID":"0400000000000000","recipientAddress":"lskycz7hvr8yfu74bcwxy2n4mopfmjancgdvxq8xz","data":"send
+   token"}'
   transaction:create token transfer 100000000 --file=/txn_params.json
-
   transaction:create token transfer 100000000 --file=/txn_params.json --json
 ----
 
@@ -7859,7 +7940,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core transaction:create token transfer 100000000
+lisk-core transaction:create token transfer 100000000
+----
+.Response
+----
 ? Please enter passphrase:  [hidden]
 Warning: Passphrase contains 24 words instead of expected 12. Passphrase contains 23 whitespaces instead of expected 11.
 ? Please enter: tokenID:  0400000000000000
@@ -7876,19 +7960,18 @@ Gets a transaction from the local node by ID.
 [source,bash]
 ----
 USAGE
-  $ lisk-core transaction:get [ID] [-d <value>] [--pretty]
+  $ lisk-core transaction:get ID
 
 ARGUMENTS
   ID  Transaction ID in hex format.
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  --pretty                 Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Get transaction from local node by ID.
+  --pretty                   Prints JSON in pretty format rather than condensed.
 
-EXAMPLES
+EXAMPLE
   transaction:get eab06c6a22e88bca7150e0347a7d976acd070cb9284423e6eabecd657acc1263
 ----
 
@@ -7897,7 +7980,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core transaction:get ef9296e17308d99c012597cb5d0f90539a5bd87ae6a2a2ce4f64c0529bcc3c31 --pretty
+lisk-core transaction:get ef9296e17308d99c012597cb5d0f90539a5bd87ae6a2a2ce4f64c0529bcc3c31 --pretty
+----
+.Response
+----
 {
   "module": "token",
   "command": "transfer",
@@ -7924,20 +8010,21 @@ Sends a transaction to the local node.
 [source,bash]
 ----
 USAGE
-  $ lisk-core transaction:send [TRANSACTION] [-d <value>] [--pretty]
+  $ lisk-core transaction:send TRANSACTION
 
 ARGUMENTS
   TRANSACTION  A transaction to be sent to the node encoded as hex string
 
-FLAGS
-  -d, --data-path=<value>  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  --pretty                 Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path  Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH"
+                             can also be used.
 
-DESCRIPTION
-  Send transaction to the local node.
+  --pretty                   Prints JSON in pretty format rather than condensed.
 
-EXAMPLES
-  transaction:send 080810011880cab5ee012220fd061b9146691f3c56504be051175d5b76d1b1d0179c5c4370e18534c58821222a2408641214ab0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e324028edd3601cdc35a41bb23415a0d9f3c3e9cf188d9971adf18742cea39d58aa84809aa87bcfe6feaac46211c80472ad9297fd87727709f5d7e7b4134caf106b02
+EXAMPLE
+  transaction:send 080810011880cab5ee012220fd061b9146691f3c56504be051175d5b76d1b1d0179c5c4370e18534c58821222a2408641214a
+  b0041a7d3f7b2c290b5b834d46bdc7b7eb858151a0a73656e6420746f6b656e324028edd3601cdc35a41bb23415a0d9f3c3e9cf188d9971adf1874
+  2cea39d58aa84809aa87bcfe6feaac46211c80472ad9297fd87727709f5d7e7b4134caf106b02
 ----
 
 .Example 
@@ -7945,7 +8032,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core transaction:send 0a05746f6b656e12087472616e7366657218002080c2d72f2a203972849f2ab66376a68671c10a00e8b8b67d880434cc65b04c6ed886dfa91c2c32320a08040000000000000010011a140282ed03925a5c31271fa3b70bb94ce12fd83ea9220e53656e64696e6720746f6b656e733a40497ee511d6537fd9e05e1615bae8d9e186af8b871a9bc1ae8d317cfe3da3669e1cdf36e3d12e16639cb49d727a230f0a8254f9bb8b9630f3aca3aa91e5517109
+lisk-core transaction:send 0a05746f6b656e12087472616e7366657218002080c2d72f2a203972849f2ab66376a68671c10a00e8b8b67d880434cc65b04c6ed886dfa91c2c32320a08040000000000000010011a140282ed03925a5c31271fa3b70bb94ce12fd83ea9220e53656e64696e6720746f6b656e733a40497ee511d6537fd9e05e1615bae8d9e186af8b871a9bc1ae8d317cfe3da3669e1cdf36e3d12e16639cb49d727a230f0a8254f9bb8b9630f3aca3aa91e5517109
+----
+.Response
+----
 Transaction with id: 'ef9296e17308d99c012597cb5d0f90539a5bd87ae6a2a2ce4f64c0529bcc3c31' received by node.
 ----
 ====
@@ -7956,31 +8046,38 @@ Signs an encoded transaction.
 [source,bash]
 ----
 USAGE
-  $ lisk-core transaction:sign [TRANSACTION] [-p <value>] [-j] [--offline] [--mandatory-keys <value>] [--optional-keys <value>] [--chain-id <value>] [-d <value>] [-k
-    <value>] [--pretty]
+  $ lisk-core transaction:sign TRANSACTION
 
 ARGUMENTS
   TRANSACTION  The transaction to be signed encoded as hex string
 
-FLAGS
-  -d, --data-path=<value>            Directory path to specify where node data is stored. Environment variable "LISK_DATA_PATH" can also be used.
-  -j, --json                         Print the transaction in JSON format.
-  -k, --key-derivation-path=<value>  [default: m/44'/134'/0'] Key derivation path to use to derive keypair from passphrase
-  -p, --passphrase=<value>           Specifies a source for your secret passphrase. Command will prompt you for input if this option is not set.
-                                     	Examples:
-                                     	- --passphrase='my secret passphrase' (should only be used where security is not important)
-  --chain-id=<value>
-  --mandatory-keys=<value>           Mandatory publicKey string in hex format.
-  --offline                          Specify whether to connect to a local node or not.
-  --optional-keys=<value>            Optional publicKey string in hex format.
-  --pretty                           Prints JSON in pretty format rather than condensed.
+OPTIONS
+  -d, --data-path=data-path                      Directory path to specify where node data is stored. Environment
+                                                 variable "LISK_DATA_PATH" can also be used.
 
-DESCRIPTION
-  Sign encoded transaction.
+  -j, --json                                     Print the transaction in JSON format.
+
+  -k, --key-derivation-path=key-derivation-path  [default: m/44'/134'/0'] Key derivation path to use to derive keypair
+                                                 from passphrase
+
+  -p, --passphrase=passphrase                    Specifies a source for your secret passphrase. Command will prompt you
+                                                 for input if this option is not set.
+                                                 Examples:
+                                                 - --passphrase='my secret passphrase' (should only be used where
+                                                 security is not important)
+
+  --chain-id=chain-id
+
+  --mandatory-keys=mandatory-keys                Mandatory publicKey string in hex format.
+
+  --offline                                      Specify whether to connect to a local node or not.
+
+  --optional-keys=optional-keys                  Optional publicKey string in hex format.
+
+  --pretty                                       Prints JSON in pretty format rather than condensed.
 
 EXAMPLES
   transaction:sign <hex-encoded-binary-transaction>
-
   transaction:sign <hex-encoded-binary-transaction> --network testnet
 ----
 
@@ -7989,7 +8086,10 @@ EXAMPLES
 ====
 [source,bash]
 ----
-$ lisk-core transaction:sign 0a05746f6b656e12087472616e7366657218012080c2d72f2a20a3f96c50d0446220ef2f98240898515cbba8155730679ca35326d98dcfb680f032250a08000000000000000010011a140326f20343173a4e5e5daa354a1bc96b594717b722014c3a4008174cd6816439265bff92ce93687ce4d6a65877d69d6c43dd1c1696312cf4c74962c0be7f047fd21482877e21d5ae56f638323ece64bc92a14386f96fe41c06 --pretty
+lisk-core transaction:sign 0a05746f6b656e12087472616e7366657218012080c2d72f2a20a3f96c50d0446220ef2f98240898515cbba8155730679ca35326d98dcfb680f032250a08000000000000000010011a140326f20343173a4e5e5daa354a1bc96b594717b722014c3a4008174cd6816439265bff92ce93687ce4d6a65877d69d6c43dd1c1696312cf4c74962c0be7f047fd21482877e21d5ae56f638323ece64bc92a14386f96fe41c06 --pretty
+----
+.Response
+----
 ? Please enter passphrase:  [hidden]
 ? Please re-enter passphrase:  [hidden]
 {

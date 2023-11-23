@@ -91,20 +91,33 @@ Please refer to {url_docker_install_windows}[Docker installation for Windows^].
 --
 ====
 
-
-
 == Lisk Core download
 
+The following commands below describe how to clone the repository, then how to navigate into the `lisk-core` root folder, and how to check out the latest release tag.
+
+.Clone the repository
 [source,bash]
 ----
-git clone https://github.com/LiskHQ/lisk-core.git #<1>
-cd lisk-core/docker                  #<2>
-git checkout v4.0.0 -b v4.0.0 #<3>
+git clone https://github.com/LiskHQ/lisk-core.git
 ----
 
-<1> Clone the repository.
-<2> Navigate into the `lisk-core` root folder.
-<3> Check out the latest release tag.
+.Navigate into the "lisk-core" root folder
+[source,bash]
+----
+cd lisk-core
+----
+
+.Check out the latest release tag
+[source,bash]
+----
+git checkout v4.0.0
+----
+
+.Build the docker image
+[source,bash]
+----
+make build-image
+----
 
 NOTE: Please check for the latest release in the {url_core_releases}[Lisk Core releases^] list.
 
@@ -115,7 +128,6 @@ NOTE: Please check for the latest release in the {url_core_releases}[Lisk Core r
 ====
 It is also possible to use {url_podman}[podman] instead of docker by simply replacing the occurrences of docker with `podman`, in the following examples or alternatively by creating an alias with `alias docker=podman`.
 // Simply replace occurrences of `docker` with `podman` or `alias docker=podman`.
-
 
 ====
 

@@ -161,29 +161,58 @@ npm install pm2 -g
 This section details how to install Lisk Core from the source code.
 When completed, a functioning node on the Lisk network will exist.
 
+Executing the following commands below will enable you to clone the repository, navigate into the `lisk-core` root folder, check out the latest release tag, and install the dependencies.
+
+.Clone the repository
 [source,bash]
 ----
-git clone https://github.com/LiskHQ/lisk-core.git #<1>
-cd lisk-core                                      #<2>
-git checkout v4.0.0 -b v4.0.0                     #<3>
-npm install --global                              #<4>
+git clone https://github.com/LiskHQ/lisk-core.git
 ----
 
-<1> Clone the repository.
-<2> Navigate into the `lisk-core` root folder.
-<3> Check out the latest release tag.
-<4> Install dependencies.
+.Navigate into the "lisk-core" root folder
+[source,bash]
+----
+cd lisk-core
+----
 
-NOTE: Please check for the latest release in {url_core_releases}[core releases^].
+.Check out the latest release tag
+[source,bash]
+----
+git checkout v4.0.0
+----
+NOTE: Please check for the latest release in {url_core_releases}[Lisk Core releases^].
+
+.Install dependencies
+[source,bash]
+----
+yarn install --frozen-lockfile
+----
+.Build the binary
+[source,bash]
+----
+yarn build
+----
+Set up the `lisk-core` alias: Append the following line to your `~/.profile` file and run `source ~/.profile`.
+[source,bash]
+----
+alias lisk-core=/home/lisk/lisk-core/bin/run
+----
+NOTE: In the command above, please replace `/home/lisk/lisk-core` with the absolute path to your "lisk-core" directory.
+To find the exact path on your system, change to your "lisk-core" directory and run the `pwd` command.
 
 To test that Lisk Core is built and configured correctly, execute the following command below to connect to the network:
 
 [source,bash]
 ----
 lisk-core start --network devnet
-# From another terminal
+----
+From another terminal, execute the following command:
+
+[source,bash]
+----
 lisk-core system node-info
 ----
+
 
 If the process is running correctly, no errors are thrown in the logs.
 
