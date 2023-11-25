@@ -6,7 +6,7 @@ Note: It is also possible to use [podman](https://github.com/containers/podman/)
 
 ## Run
 
-Create a "lisk-core" container for betanet:
+Run a "lisk-core" container against the mainnet:
 
 ```
 docker run --volume lisk-data:/home/lisk/.lisk \
