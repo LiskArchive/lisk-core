@@ -4,7 +4,7 @@ Mona Bärenfänger <mona@lightcurve.io>
 // Settings
 :toc:
 :source-highlighter: coderay
-:docs_general: beta@ROOT::
+:docs_general: ROOT::
 :v_sdk: master
 
 // External URLs

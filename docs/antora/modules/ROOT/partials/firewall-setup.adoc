@@ -1,6 +1,6 @@
 === Open ports
 
-Please ensure, that the xref:beta@ROOT::understand-blockchain/mainchain.adoc[necessary ports] are open to run Lisk Core as intended.
+Please ensure, that the xref:ROOT::understand-blockchain/mainchain.adoc[necessary ports] are open to run Lisk Core as intended.
 
 For example, in case https://wiki.ubuntu.com/UncomplicatedFirewall[ufw^] is used on Ubuntu to manage the firewall settings, the respective ports can be opened as follows:
 
