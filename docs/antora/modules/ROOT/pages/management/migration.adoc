@@ -11,8 +11,8 @@
 :lisk-migrator: lisk-migrator-v2.0.1-linux-x64.tar.gz
 :lisk-migrator_darwinx64: lisk-migrator-v2.0.1-darwin-x64.tar.gz
 :lisk-migrator_darwinarm64: lisk-migrator-v2.0.1-darwin-arm64.tar.gz
-:docs_sdk: v6@lisk-sdk::
-:docs_lisk: beta@ROOT::
+:docs_sdk: lisk-sdk::
+:docs_lisk: ROOT::
 :docs_liskv5: ROOT::
 // External URLs
 :url_curl: https://curl.se/
@@ -705,7 +705,7 @@ It will ask you for the required parameters:
 
 The required parameters can be obtained from the `keys.json` file, which was created in step <<create-the-validator-keys>> previously.
 
-NOTE: To send transactions from multisignature accounts, please follow the instructions xref:beta@ROOT::integrate-blockchain/multisignature-accounts-and-transactions.adoc#how-to-create-a-multi-signature-transaction[here].
+NOTE: To send transactions from multisignature accounts, please follow the instructions xref:ROOT::integrate-blockchain/multisignature-accounts-and-transactions.adoc#how-to-create-a-multi-signature-transaction[here].
 
 The migration of Lisk Core from v3 to v4 is now completed.
 
