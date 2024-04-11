@@ -24,8 +24,9 @@ pipeline {
 				dir('lisk-core') {
 					nvm(readFile(".nvmrc").trim()) {
 						sh '''
-						npm install --registry https://npm.lisk.com/
-						npm run build
+						npm install --global yarn
+						yarn install --frozen-lockfile
+						yarn build
 						'''
 					}
 				}
@@ -35,7 +36,7 @@ pipeline {
 			steps {
 				dir('lisk-core') {
 					nvm(readFile(".nvmrc").trim()) {
-						sh 'npm run lint'
+						sh 'yarn lint'
 					}
 				}
 			}
@@ -45,7 +46,7 @@ pipeline {
 				dir('lisk-core') {
 					nvm(readFile(".nvmrc").trim()) {
 						sh '''
-						npm run format
+						yarn format
 						if [ -z "$(git status --untracked-files=no --porcelain)" ]; then
 							echo "All files formatted"
 						else
