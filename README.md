@@ -60,7 +60,7 @@ $ npm install -g lisk-core
 $ lisk-core COMMAND
 running command...
 $ lisk-core (-v|--version|version)
-lisk-core/4.0.5 darwin-arm64 node-v18.20.2
+lisk-core/4.0.6 darwin-arm64 node-v18.20.2
 $ lisk-core --help [COMMAND]
 USAGE
   $ lisk-core COMMAND

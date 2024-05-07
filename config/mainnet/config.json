@@ -4,13 +4,21 @@
 		"logLevel": "info",
 		"keepEventsForHeights": 300,
 		"keepInclusionProofsForHeights": 300,
-		"inclusionProofKeys": []
+		"inclusionProofKeys": [],
+		"backup": {
+			"height": 24823618
+		}
 	},
 	"rpc": {
 		"modes": ["ipc", "ws"],
 		"port": 7887,
 		"host": "127.0.0.1",
-		"allowedMethods": []
+		"allowedMethods": [
+			"system_getMetadata",
+			"system_getSchema",
+			"system_getNodeInfo",
+			"pos_getConstants"
+		]
 	},
 	"genesis": {
 		"block": {

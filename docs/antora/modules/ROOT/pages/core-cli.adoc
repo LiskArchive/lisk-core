@@ -24,7 +24,7 @@ Displays a summary of all available CLI commands of Lisk Core.
 Lisk blockchain application platform
 
 VERSION
-  lisk-core/4.0.5 darwin-arm64 node-v18.20.2
+  lisk-core/4.0.6 darwin-arm64 node-v18.20.2
 
 USAGE
   $ lisk-core [COMMAND]

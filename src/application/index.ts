@@ -14,13 +14,17 @@
 import { Application, PartialApplicationConfig } from 'lisk-sdk';
 
 import { LegacyModule } from './modules';
+import { ShutdownNodePlugin } from './plugins';
 
 export const getApplication = (config: PartialApplicationConfig): Application => {
 	const { app, method } = Application.defaultApplication(config, true);
-	const legacyModule = new LegacyModule();
 
+	const legacyModule = new LegacyModule();
 	legacyModule.addDependencies(method.token, method.validator, method.pos);
 	app.registerModule(legacyModule);
+
+	// Important: For the plugin to work, do not load it as a child process
+	app.registerPlugin(new ShutdownNodePlugin());
 
 	return app;
 };

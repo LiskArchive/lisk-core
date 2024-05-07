@@ -101,4 +101,4 @@ EXAMPLES
   start --network testnet --config ~/my_custom_config.json
 ```
 
-_See code: [dist/commands/start.ts](https://github.com/LiskHQ/lisk-core/blob/v4.0.5/dist/commands/start.ts)_
+_See code: [dist/commands/start.ts](https://github.com/LiskHQ/lisk-core/blob/v4.0.6/dist/commands/start.ts)_
